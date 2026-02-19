@@ -1,0 +1,689 @@
+================================================================================
+  FactoryCore Plugin - Release Log
+  Version: 1.0.0 | Author: aithor | Date: 2026-02-19
+  Minecraft: 1.21.4 | Java: 17+ | API: 1.21
+================================================================================
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                        ENGLISH VERSION                                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+================================================================================
+  v1.0.0 - Initial Release
+  Release Date: February 19, 2026
+================================================================================
+
+  OVERVIEW
+  --------
+  FactoryCore is a factory-based economy plugin for Minecraft Spigot/Paper
+  servers. It creates a manufacturing-driven economy where players collect
+  raw resources, process them through various factory types, and sell
+  finished products. The Machine Parts system creates a constant demand
+  cycle that encourages specialization and trade between players.
+
+  REQUIRED DEPENDENCIES: Vault, WorldEdit, WorldGuard
+  OPTIONAL DEPENDENCIES: PlaceholderAPI
+
+--------------------------------------------------------------------------------
+  [1] FACTORY SYSTEM
+--------------------------------------------------------------------------------
+
+  + 4 Factory Types:
+    - Steel Mill     : Converts raw resources into advanced resources
+                       Base Price: $100,000 | Icon: IRON_BLOCK
+    - Refinery       : Produces fuel for all factories
+                       Base Price: $150,000 | Icon: FURNACE
+    - Workshop       : Produces machine parts consumed by ALL factories
+                       Base Price: $200,000 | Icon: ANVIL
+    - Advanced Factory: Produces high-value final products for sale
+                       Base Price: $250,000 | Icon: NETHER_STAR
+
+  + Factory Ownership System
+    - Players can buy and own factories
+    - Factory sell price: 50% of purchase price (configurable)
+    - Factories are bound to WorldGuard regions
+
+  + Factory Level System (1-5 levels):
+    - Production cost reduction: 5% per level
+    - Production time reduction: 10% per level
+    - Additional storage slots: +9 per level
+    - Additional tax: +2.5% per level
+    - Upgrade cost scales: Level 2 = 50% of factory price, etc.
+
+  + Factory Status Tracking:
+    - RUNNING, STOPPED, OUT OF MACHINE PARTS
+
+--------------------------------------------------------------------------------
+  [2] PRODUCTION SYSTEM
+--------------------------------------------------------------------------------
+
+  + 16 Predefined Recipes across all factory types:
+
+    Steel Mill Recipes:
+    - Steel Ingot Production     (300s) : 5 Iron + 2 Coal + 1 Fuel + 1 Gear -> 10 Steel
+    - Carbon Fiber Production    (450s) : 10 Coal + 3 Iron + 2 Refined Fuel + 1 Adv Gear -> 8 Carbon Fiber
+
+    Refinery Recipes:
+    - Basic Fuel Production      (200s) : 8 Coal + 1 Basic Gear -> 16 Basic Fuel
+    - Refined Fuel Production    (350s) : 12 Coal + 4 Iron + 1 Adv Gear -> 10 Refined Fuel
+    - Premium Fuel Production    (500s) : 20 Coal + 5 Gold + 1 Circuit Board -> 8 Premium Fuel
+
+    Workshop Recipes:
+    - Basic Gear Production      (250s) : 8 Iron + 4 Redstone + 2 Fuel + 1 Gear -> 6 Basic Gear
+    - Advanced Gear Production   (400s) : 6 Gold + 8 Redstone + 3 Ref Fuel + 1 Adv Gear -> 5 Adv Gear
+    - Engine Part Production     (350s) : 10 Iron + 5 Copper + 6 Redstone + 3 Fuel + 1 Engine -> 4 Engine Part
+    - Circuit Board Production   (450s) : 12 Copper + 4 Gold + 10 Redstone + 4 Ref Fuel + 1 CB -> 3 Circuit Board
+    - Hydraulic System Production(600s) : 15 Iron + 2 Diamond + 12 Redstone + 3 Prem Fuel + 1 HS -> 2 Hydraulic Sys
+
+    Advanced Factory Recipes:
+    - Advanced Weapon            (600s) : Steel + Carbon + Copper + Prem Fuel + CB -> 1 Adv Weapon
+    - Advanced Armor             (650s) : Steel + Carbon + Gold Alloy + Prem Fuel + HS -> 1 Adv Armor
+    - Electronic Component       (500s) : Ref Copper + Gold Alloy + Carbon + Ref Fuel + CB -> 2 Electronic Comp
+    - Luxury Item                (800s) : Gold Alloy + Steel + Carbon + Copper + Prem Fuel + HS + CB -> 1 Luxury
+    - Refined Copper             (300s) : 10 Copper + 2 Basic Fuel + 1 Engine Part -> 8 Refined Copper
+    - Gold Alloy                 (400s) : 8 Gold + 4 Iron + 3 Refined Fuel + 2 Adv Gear -> 6 Gold Alloy
+
+  + BossBar progress indicator during production
+  + Production queue system (max 5 queue slots)
+  + Console command execution on production completion
+  + Economy rewards upon production completion
+
+--------------------------------------------------------------------------------
+  [3] RESOURCE SYSTEM
+--------------------------------------------------------------------------------
+
+  + 5 Resource Categories with 21 total resources:
+
+    Raw Resources (6):
+    - Iron Ore, Coal Ore, Copper Ore, Gold Ore, Diamond Ore, Redstone Dust
+
+    Advanced Resources (4):
+    - Steel Ingot, Refined Copper, Gold Alloy, Carbon Fiber
+
+    Final Resources (4) - Sellable Products:
+    - Advanced Weapon    ($5,000)
+    - Advanced Armor     ($4,500)
+    - Electronic Component ($3,000)
+    - Luxury Item        ($10,000)
+
+    Fuel (3):
+    - Basic Fuel, Refined Fuel, Premium Fuel
+
+    Machine Parts (5):
+    - Basic Gear, Advanced Gear, Engine Part, Circuit Board, Hydraulic System
+
+  + Custom Model Data support for all resources
+  + Enchantment glow effect for rare items
+  + Full item customization via resources.yml
+
+--------------------------------------------------------------------------------
+  [4] ECONOMY & TAX SYSTEM
+--------------------------------------------------------------------------------
+
+  + Full Vault integration for all economic transactions
+  + Configurable currency symbol and decimal places
+
+  + Tax System:
+    - Tax rate: 5% of factory price (configurable)
+    - Tax interval: Every 3 Minecraft days (144,000 ticks)
+    - Level multiplier: +2.5% additional tax per level
+    - Due period: 7 days before overdue
+    - Late fee: 5% penalty on overdue taxes
+    - Player notifications on tax assessment and overdue
+
+  + Salary System:
+    - Rate: 1% of factory price (configurable)
+    - Interval: Every 1 Minecraft day (24,000 ticks)
+
+  + Invoice Management:
+    - Automatic invoice generation for tax and salary
+    - Pay individual or all invoices at once
+    - Overdue tracking with penalties
+    - Factory disabled on unpaid overdue invoices
+
+--------------------------------------------------------------------------------
+  [5] NPC EMPLOYEE SYSTEM
+--------------------------------------------------------------------------------
+
+  + Custom Villager NPCs as factory employees
+  + 5 Employee Tiers available in Employee Shop:
+    - Apprentice Worker   ($500,   salary $50)   : -5% production time
+    - Skilled Craftsman   ($1,500, salary $120)  : -15% production time
+    - Steel Forger        ($2,500, salary $200)  : -20% production time
+    - Refinery Operator   ($3,500, salary $280)  : -25% production time
+    - Master Engineer     ($6,000, salary $450)  : -35% production time
+
+  + Advanced NPC Behavior:
+    - Head tracking: NPCs look at nearby players (6 block radius)
+    - Idle animations: Random head movement with smooth interpolation
+    - Particle effects: Unique particles per factory type
+      (VILLAGER_HAPPY, FLAME, SMOKE, CRIT_MAGIC, ENCHANTMENT_TABLE)
+    - Hologram display above NPCs
+    - Ambient sounds (ENTITY_VILLAGER_AMBIENT)
+    - Interaction sounds (ENTITY_VILLAGER_YES)
+    - Body rotation following head direction
+    - Invulnerable and AI-disabled
+    - Auto-respawn check system
+
+  + 4 NPC Templates matching factory types:
+    - Steel Mill Worker (ARMORER, PLAINS)
+    - Refinery Operator (TOOLSMITH, DESERT)
+    - Workshop Engineer (WEAPONSMITH, SNOW)
+    - Advanced Factory Manager (LIBRARIAN, JUNGLE)
+
+--------------------------------------------------------------------------------
+  [6] GUI SYSTEM
+--------------------------------------------------------------------------------
+
+  + 17 Interactive GUI Screens:
+    - HubGUI              : Central navigation hub with player head & quick stats
+    - MainMenuGUI         : Factory-specific management panel
+    - FactoryBrowseGUI    : Browse and purchase available factories
+    - MyFactoriesGUI      : View and manage owned factories
+    - RecipeSelectionGUI  : Choose production recipes
+    - RecipeConfirmationGUI: Confirm recipe before starting
+    - StorageGUI          : Manage factory input storage
+    - OutputStorageGUI    : Collect production output items
+    - InvoiceGUI          : View individual factory invoices
+    - InvoiceCenterGUI    : Centralized invoice management
+    - TaxCenterGUI        : View and pay factory taxes
+    - UpgradeGUI          : Upgrade factory levels
+    - EmployeesCenterGUI  : Manage all employees
+    - EmployeeShopGUI     : Purchase new employees
+    - MarketplaceGUI      : Buy/sell resources with other players
+    - HelpInfoGUI         : In-game help and information
+    - FactoryGUI          : Direct factory interaction panel
+
+  + Configurable GUI elements (border, back, close, confirm, cancel items)
+  + Sound effects for GUI interactions
+
+--------------------------------------------------------------------------------
+  [7] MARKETPLACE SYSTEM
+--------------------------------------------------------------------------------
+
+  + Player-to-player resource trading
+  + Configurable marketplace tax rate (5% default)
+  + Maximum 10 listings per player (configurable)
+  + Listing expiration: 7 days (168 hours)
+  + Min/Max price limits ($0.01 - $1,000,000)
+  + Earnings collection system
+  + Admin cleanup and statistics commands
+
+--------------------------------------------------------------------------------
+  [8] STORAGE SYSTEM
+--------------------------------------------------------------------------------
+
+  + Per-factory input and output storage
+  + Base 9 slots, expandable +9 per factory level (max 54 at level 5)
+  + Persistent storage across server restarts (YAML-based)
+  + Item deposit and withdrawal with validation
+  + Only FactoryCore resources can be deposited
+  + Protected filler slots and info items (non-interactable)
+
+--------------------------------------------------------------------------------
+  [9] COMMAND SYSTEM
+--------------------------------------------------------------------------------
+
+  + Main Command: /factorycore (alias: /fc)
+
+  User Commands:
+    /fc hub          - Open the main hub menu
+    /fc browse       - Browse available factories
+    /fc my           - View your owned factories
+    /fc invoices     - View invoice center
+    /fc taxes        - View tax center
+    /fc employees    - Manage employees
+    /fc market       - Open marketplace
+    /fc buy <id>     - Buy a factory
+    /fc sell <id>    - Sell a factory
+    /fc info <id>    - View factory information
+    /fc gui <id>     - Open factory GUI
+    /fc tp <id>      - Teleport to factory
+    /fc help         - View help
+    /fc version      - View plugin version
+
+  Admin Commands:
+    /fc admin create <region> <id> <type> <price>  - Create factory
+    /fc admin remove <id>                          - Remove factory
+    /fc admin list                                 - List all factories
+    /fc admin info <id>                            - View factory details
+    /fc admin reload                               - Reload plugin
+    /fc admin setowner <id> <player>               - Set factory owner
+    /fc admin teleport <id>                        - Teleport to factory
+    /fc admin give <resource> <amount> <player>    - Give resources
+    /fc admin npc spawn <id>                       - Spawn NPC
+    /fc admin npc remove <id>                      - Remove NPC
+    /fc admin tax <assess|check>                   - Manage taxes
+    /fc admin market <cleanup|stats>               - Manage marketplace
+
+  + Full tab completion support
+
+--------------------------------------------------------------------------------
+  [10] PERMISSION SYSTEM
+--------------------------------------------------------------------------------
+
+  Admin Permissions (default: OP):
+    factorycore.admin           - All admin commands
+    factorycore.admin.create    - Create factories
+    factorycore.admin.remove    - Remove factories
+    factorycore.admin.list      - List factories
+    factorycore.admin.info      - View factory info
+    factorycore.admin.reload    - Reload plugin
+    factorycore.admin.setowner  - Set factory owner
+    factorycore.admin.teleport  - Teleport to factory
+    factorycore.admin.give      - Give resources
+    factorycore.admin.npc       - Manage NPCs
+    factorycore.admin.tax       - Manage tax system
+    factorycore.admin.market    - Manage marketplace
+
+  User Permissions (default: true):
+    factorycore.use             - Basic usage
+    factorycore.buy             - Buy factories
+    factorycore.sell            - Sell factories
+    factorycore.info            - View factory info
+    factorycore.gui             - Open factory GUI
+    factorycore.hub             - Open main hub
+    factorycore.browse          - Browse factories
+    factorycore.myfactories     - View owned factories
+    factorycore.invoices        - Access invoice center
+    factorycore.taxes           - Access tax center
+    factorycore.employees       - Access employees center
+    factorycore.marketplace     - Access marketplace
+    factorycore.teleport        - Teleport to factories
+    factorycore.help            - View help
+    factorycore.version         - View version
+
+--------------------------------------------------------------------------------
+  [11] PLACEHOLDERAPI SUPPORT
+--------------------------------------------------------------------------------
+
+  + 20+ Placeholders:
+
+  General:
+    %factorycore_factories_owned%          - Number of owned factories
+    %factorycore_factories_running%        - Number of running factories
+    %factorycore_total_value%              - Total value of all factories
+    %factorycore_highest_level%            - Highest factory level
+
+  Invoice:
+    %factorycore_invoices_pending%         - Pending invoice count
+    %factorycore_invoices_overdue%         - Overdue invoice count
+    %factorycore_total_invoice_amount%     - Total invoice amount
+
+  Factory Type:
+    %factorycore_steel_mills_owned%        - Steel Mills owned
+    %factorycore_refineries_owned%         - Refineries owned
+    %factorycore_workshops_owned%          - Workshops owned
+    %factorycore_advanced_factories_owned% - Advanced Factories owned
+
+  Per-Factory:
+    %factorycore_factory_<id>_status%      - Factory status
+    %factorycore_factory_<id>_level%       - Factory level
+    %factorycore_factory_<id>_type%        - Factory type
+    %factorycore_factory_<id>_production%  - Current production
+    %factorycore_factory_<id>_progress%    - Production progress (%)
+
+--------------------------------------------------------------------------------
+  [12] CONFIGURATION FILES
+--------------------------------------------------------------------------------
+
+  + config.yml     - Main configuration (database, tax, salary, factory,
+                     marketplace, notifications, GUI, debug, logging,
+                     production, economy, placeholder settings)
+  + resources.yml  - All 21 resource definitions with custom model data
+  + recipes.yml    - 16 production recipes for all factory types
+  + language.yml   - 80+ customizable messages, GUI titles, notifications
+  + npc.yml        - NPC templates, employee shop, global behavior settings
+  + plugin.yml     - Plugin metadata, commands, and permissions
+
+--------------------------------------------------------------------------------
+  [13] NOTIFICATION SYSTEM
+--------------------------------------------------------------------------------
+
+  + Title notifications (configurable fade-in/stay/fade-out)
+  + Sound effects:
+    - Production complete: ENTITY_PLAYER_LEVELUP
+    - Invoice created: BLOCK_NOTE_BLOCK_PLING
+    - Level up: ENTITY_PLAYER_LEVELUP
+    - Tax due: BLOCK_NOTE_BLOCK_BASS
+    - Marketplace sale: ENTITY_EXPERIENCE_ORB_PICKUP
+  + BossBar production progress display
+
+--------------------------------------------------------------------------------
+  [14] LOGGING SYSTEM
+--------------------------------------------------------------------------------
+
+  + Comprehensive activity logging to file
+  + Log categories: Admin commands, Transactions, Production,
+    Invoices, Marketplace, Taxes
+  + Configurable max log file size (10MB default)
+  + Log rotation support
+
+--------------------------------------------------------------------------------
+  [15] DEVELOPER API
+--------------------------------------------------------------------------------
+
+  + Complete Java API (FactoryCoreAPI class) with methods for:
+    - Factory management (get, create, remove, ownership, status, upgrade)
+    - Resource management (get, create, give resources)
+    - Storage management (add, remove, get amounts, get all storage)
+    - Production management (start production)
+    - Invoice management
+    - NPC management (spawn NPCs)
+
+--------------------------------------------------------------------------------
+  [16] TECHNICAL DETAILS
+--------------------------------------------------------------------------------
+
+  + Source Files: 54 Java classes
+    - 1 Main plugin class
+    - 1 PlaceholderAPI expansion class
+    - 1 API class
+    - 1 Command handler with tab completion
+    - 17 GUI classes
+    - 5 Event listener classes
+    - 9 Manager classes
+    - 9 Model/data classes
+    - 6 Utility classes
+    - 4 Additional support classes
+
+  + Package Structure:
+    com.aithor.factorycore
+    ├── api/          (Developer API)
+    ├── commands/     (Command handling)
+    ├── gui/          (GUI interfaces)
+    ├── listeners/    (Event listeners)
+    ├── managers/     (Business logic managers)
+    ├── models/       (Data models)
+    └── utils/        (Utility classes)
+
+  + Build System: Maven with Shade plugin
+  + Database: YAML-based file storage
+  + Data Directory: plugins/FactoryCore/data/
+
+
+================================================================================
+================================================================================
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                        VERSI BAHASA INDONESIA                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+================================================================================
+  v1.0.0 - Rilis Perdana
+  Tanggal Rilis: 19 Februari 2026
+================================================================================
+
+  RINGKASAN
+  ---------
+  FactoryCore adalah plugin ekonomi berbasis pabrik untuk server Minecraft
+  Spigot/Paper. Plugin ini menciptakan ekonomi berbasis manufaktur di mana
+  pemain mengumpulkan sumber daya mentah, memproses melalui berbagai jenis
+  pabrik, dan menjual produk jadi. Sistem Machine Parts menciptakan siklus
+  permintaan konstan yang mendorong spesialisasi dan perdagangan antar pemain.
+
+  DEPENDENSI WAJIB: Vault, WorldEdit, WorldGuard
+  DEPENDENSI OPSIONAL: PlaceholderAPI
+
+--------------------------------------------------------------------------------
+  [1] SISTEM PABRIK
+--------------------------------------------------------------------------------
+
+  + 4 Jenis Pabrik:
+    - Steel Mill      : Mengubah raw resources menjadi advanced resources
+                        Harga Dasar: $100.000 | Ikon: IRON_BLOCK
+    - Refinery        : Memproduksi bahan bakar untuk semua pabrik
+                        Harga Dasar: $150.000 | Ikon: FURNACE
+    - Workshop        : Memproduksi machine parts yang dikonsumsi SEMUA pabrik
+                        Harga Dasar: $200.000 | Ikon: ANVIL
+    - Advanced Factory: Memproduksi produk bernilai tinggi untuk dijual
+                        Harga Dasar: $250.000 | Ikon: NETHER_STAR
+
+  + Sistem Kepemilikan Pabrik
+    - Pemain dapat membeli dan memiliki pabrik
+    - Harga jual pabrik: 50% dari harga beli (dapat dikonfigurasi)
+    - Pabrik terikat pada region WorldGuard
+
+  + Sistem Level Pabrik (1-5 level):
+    - Pengurangan biaya produksi: 5% per level
+    - Pengurangan waktu produksi: 10% per level
+    - Tambahan slot storage: +9 per level
+    - Pajak tambahan: +2,5% per level
+    - Biaya upgrade berskala: Level 2 = 50% harga pabrik, dst.
+
+  + Pelacakan Status Pabrik:
+    - RUNNING, STOPPED, OUT OF MACHINE PARTS
+
+--------------------------------------------------------------------------------
+  [2] SISTEM PRODUKSI
+--------------------------------------------------------------------------------
+
+  + 16 Resep Produksi untuk semua jenis pabrik
+  + Indikator progres BossBar selama produksi
+  + Sistem antrian produksi (maksimal 5 slot antrian)
+  + Eksekusi perintah konsol saat produksi selesai
+  + Hadiah ekonomi saat produksi selesai
+
+  Resep Steel Mill:
+    - Produksi Steel Ingot     (300d) : Besi + Batu Bara + Fuel + Gear -> Steel
+    - Produksi Carbon Fiber    (450d) : Batu Bara + Besi + Ref Fuel + Adv Gear -> Carbon Fiber
+
+  Resep Refinery:
+    - Produksi Basic Fuel      (200d) : Batu Bara + Basic Gear -> Basic Fuel
+    - Produksi Refined Fuel    (350d) : Batu Bara + Besi + Adv Gear -> Refined Fuel
+    - Produksi Premium Fuel    (500d) : Batu Bara + Emas + Circuit Board -> Premium Fuel
+
+  Resep Workshop:
+    - Produksi Basic Gear      (250d) : Besi + Redstone + Fuel + Gear -> Basic Gear
+    - Produksi Advanced Gear   (400d) : Emas + Redstone + Ref Fuel + Adv Gear -> Adv Gear
+    - Produksi Engine Part     (350d) : Besi + Tembaga + Redstone + Fuel + Engine -> Engine Part
+    - Produksi Circuit Board   (450d) : Tembaga + Emas + Redstone + Ref Fuel + CB -> Circuit Board
+    - Produksi Hydraulic System(600d) : Besi + Berlian + Redstone + Prem Fuel + HS -> Hydraulic Sys
+
+  Resep Advanced Factory:
+    - Advanced Weapon          (600d) : Produk akhir bernilai tinggi
+    - Advanced Armor           (650d) : Produk akhir bernilai tinggi
+    - Electronic Component     (500d) : Produk akhir bernilai tinggi
+    - Luxury Item              (800d) : Produk akhir bernilai tertinggi
+    - Refined Copper           (300d) : Resource lanjutan
+    - Gold Alloy               (400d) : Resource lanjutan
+
+--------------------------------------------------------------------------------
+  [3] SISTEM RESOURCE
+--------------------------------------------------------------------------------
+
+  + 5 Kategori Resource dengan total 21 resource:
+
+    Raw Resources (6):
+    - Iron Ore, Coal Ore, Copper Ore, Gold Ore, Diamond Ore, Redstone Dust
+
+    Advanced Resources (4):
+    - Steel Ingot, Refined Copper, Gold Alloy, Carbon Fiber
+
+    Final Resources (4) - Produk Jual:
+    - Advanced Weapon ($5.000), Advanced Armor ($4.500)
+    - Electronic Component ($3.000), Luxury Item ($10.000)
+
+    Fuel (3):
+    - Basic Fuel, Refined Fuel, Premium Fuel
+
+    Machine Parts (5):
+    - Basic Gear, Advanced Gear, Engine Part, Circuit Board, Hydraulic System
+
+  + Dukungan Custom Model Data untuk semua resource
+  + Efek glow enchantment untuk item langka
+
+--------------------------------------------------------------------------------
+  [4] SISTEM EKONOMI & PAJAK
+--------------------------------------------------------------------------------
+
+  + Integrasi penuh dengan Vault
+  + Sistem Pajak:
+    - Rate pajak: 5% dari harga pabrik (dapat dikonfigurasi)
+    - Interval: Setiap 3 hari Minecraft (144.000 ticks)
+    - Multiplier level: +2,5% pajak tambahan per level
+    - Tenggat waktu: 7 hari sebelum jatuh tempo
+    - Denda keterlambatan: 5% saat jatuh tempo
+    - Notifikasi pemain saat pajak dinilai dan jatuh tempo
+
+  + Sistem Gaji:
+    - Rate: 1% dari harga pabrik | Interval: 1 hari Minecraft
+
+  + Manajemen Invoice:
+    - Pembuatan invoice otomatis untuk pajak dan gaji
+    - Bayar individual atau semua sekaligus
+    - Pelacakan jatuh tempo dengan penalti
+
+--------------------------------------------------------------------------------
+  [5] SISTEM NPC KARYAWAN
+--------------------------------------------------------------------------------
+
+  + 5 Tingkat Karyawan di Employee Shop:
+    - Apprentice Worker   ($500,   gaji $50)   : -5% waktu produksi
+    - Skilled Craftsman   ($1.500, gaji $120)  : -15% waktu produksi
+    - Steel Forger        ($2.500, gaji $200)  : -20% waktu produksi
+    - Refinery Operator   ($3.500, gaji $280)  : -25% waktu produksi
+    - Master Engineer     ($6.000, gaji $450)  : -35% waktu produksi
+
+  + Perilaku NPC Lanjutan:
+    - Pelacakan kepala: NPC melihat ke arah pemain terdekat (radius 6 blok)
+    - Animasi idle: Gerakan kepala acak dengan interpolasi halus
+    - Efek partikel unik per jenis pabrik
+    - Tampilan hologram di atas NPC
+    - Suara ambient dan interaksi
+    - Rotasi badan mengikuti arah kepala
+    - Invulnerable dan AI dinonaktifkan
+    - Sistem auto-respawn
+
+  + 4 Template NPC sesuai jenis pabrik
+
+--------------------------------------------------------------------------------
+  [6] SISTEM GUI
+--------------------------------------------------------------------------------
+
+  + 17 Layar GUI Interaktif:
+    - HubGUI, MainMenuGUI, FactoryBrowseGUI, MyFactoriesGUI
+    - RecipeSelectionGUI, RecipeConfirmationGUI
+    - StorageGUI, OutputStorageGUI
+    - InvoiceGUI, InvoiceCenterGUI, TaxCenterGUI
+    - UpgradeGUI, EmployeesCenterGUI, EmployeeShopGUI
+    - MarketplaceGUI, HelpInfoGUI, FactoryGUI
+
+  + Elemen GUI yang dapat dikonfigurasi
+  + Efek suara untuk interaksi GUI
+
+--------------------------------------------------------------------------------
+  [7] SISTEM MARKETPLACE
+--------------------------------------------------------------------------------
+
+  + Perdagangan resource antar pemain
+  + Pajak marketplace 5% (dapat dikonfigurasi)
+  + Maksimal 10 listing per pemain
+  + Kadaluarsa listing: 7 hari
+  + Batas harga min/max ($0,01 - $1.000.000)
+  + Sistem pengumpulan pendapatan
+
+--------------------------------------------------------------------------------
+  [8] SISTEM STORAGE
+--------------------------------------------------------------------------------
+
+  + Storage input dan output per pabrik
+  + Dasar 9 slot, dapat ditambah +9 per level (maks 54 di level 5)
+  + Penyimpanan persisten lintas restart server (berbasis YAML)
+  + Deposit dan penarikan item dengan validasi
+
+--------------------------------------------------------------------------------
+  [9] SISTEM COMMAND
+--------------------------------------------------------------------------------
+
+  + Command Utama: /factorycore (alias: /fc)
+
+  Command Pemain:
+    /fc hub, browse, my, invoices, taxes, employees, market
+    /fc buy/sell/info/gui/tp <id>, /fc help, /fc version
+
+  Command Admin:
+    /fc admin create/remove/list/info/reload/setowner/teleport/give
+    /fc admin npc spawn/remove, /fc admin tax, /fc admin market
+
+  + Dukungan tab completion penuh
+
+--------------------------------------------------------------------------------
+  [10] SISTEM PERMISSION
+--------------------------------------------------------------------------------
+
+  + 12 Permission admin (default: OP)
+  + 15 Permission pemain (default: true)
+  + Dukungan grup permission
+  + Permission wildcard: factorycore.*
+
+--------------------------------------------------------------------------------
+  [11] DUKUNGAN PLACEHOLDERAPI
+--------------------------------------------------------------------------------
+
+  + 20+ Placeholder tersedia
+  + Kategori: General, Invoice, Factory Type, Per-Factory
+  + Contoh: %factorycore_factories_owned%, %factorycore_factory_<id>_status%
+
+--------------------------------------------------------------------------------
+  [12] FILE KONFIGURASI
+--------------------------------------------------------------------------------
+
+  + config.yml     - Konfigurasi utama
+  + resources.yml  - 21 definisi resource
+  + recipes.yml    - 16 resep produksi
+  + language.yml   - 80+ pesan yang dapat dikustomisasi
+  + npc.yml        - Template NPC dan pengaturan perilaku
+  + plugin.yml     - Metadata plugin, command, dan permission
+
+--------------------------------------------------------------------------------
+  [13] SISTEM NOTIFIKASI
+--------------------------------------------------------------------------------
+
+  + Notifikasi title (fade-in/stay/fade-out dapat dikonfigurasi)
+  + 5 efek suara untuk berbagai event
+  + Tampilan progres BossBar untuk produksi
+
+--------------------------------------------------------------------------------
+  [14] SISTEM LOGGING
+--------------------------------------------------------------------------------
+
+  + Logging aktivitas komprehensif ke file
+  + Kategori: Admin, Transaksi, Produksi, Invoice, Marketplace, Pajak
+  + Ukuran file log maksimal 10MB (dapat dikonfigurasi)
+  + Dukungan rotasi log
+
+--------------------------------------------------------------------------------
+  [15] API PENGEMBANG
+--------------------------------------------------------------------------------
+
+  + API Java lengkap (kelas FactoryCoreAPI):
+    - Manajemen pabrik, resource, storage, produksi, invoice, NPC
+
+--------------------------------------------------------------------------------
+  [16] DETAIL TEKNIS
+--------------------------------------------------------------------------------
+
+  + 54 Kelas Java
+  + Struktur paket terorganisir (api, commands, gui, listeners,
+    managers, models, utils)
+  + Sistem build: Maven dengan Shade plugin
+  + Database: Penyimpanan file berbasis YAML
+  + Kompatibilitas: Minecraft 1.21.4, Java 17+
+
+================================================================================
+  CATATAN RILIS
+================================================================================
+
+  - Ini adalah rilis publik pertama / This is the first public release
+  - Semua fitur inti telah diimplementasikan / All core features implemented
+  - Siap untuk produksi / Production-ready
+  - Dokumentasi lengkap tersedia / Comprehensive documentation included
+  - Tidak ada bug yang diketahui / No known bugs at this time
+
+================================================================================
+  © 2026 aithor. All rights reserved.
+  FactoryCore v1.0.0 - Factory-Based Economy Plugin for Minecraft
+================================================================================

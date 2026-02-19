@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee System - FactoryCore Wiki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0c10 0%, #111316 50%, #1a1d23 100%);
+            color: #e4e6ea;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(4, 120, 87, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+
+
+        /* ── Page Header ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+            position: relative;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .page-header p {
+            color: #9ca3af;
+            font-size: 1.2rem;
+            margin-top: 30px;
+        }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb {
+            max-width: 1400px;
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            font-size: 13px;
+            position: relative;
+        }
+
+        .breadcrumb-inner {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(52, 211, 153, 0.18);
+            border-radius: 50px;
+            padding: 6px 6px 6px 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(52, 211, 153, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        .breadcrumb-icon {
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #10b981;
+            margin-right: 10px;
+            opacity: 0.8;
+        }
+
+        .breadcrumb-icon svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .breadcrumb a {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        .breadcrumb a:hover {
+            color: #10b981;
+            background: rgba(52, 211, 153, 0.08);
+        }
+
+        .breadcrumb-sep {
+            color: rgba(255, 255, 255, 0.12);
+            margin: 0 2px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb-sep svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .breadcrumb-current {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(4, 120, 87, 0.12) 100%);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: 50px;
+            padding: 5px 14px 5px 10px;
+            margin-left: 4px;
+            color: #34d399;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.12);
+        }
+
+        .breadcrumb-current-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(52, 211, 153, 0.8);
+            animation: bc-pulse 2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes bc-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 6px rgba(52, 211, 153, 0.8);
+                opacity: 1;
+            }
+
+            50% {
+                box-shadow: 0 0 14px rgba(52, 211, 153, 1);
+                opacity: 0.7;
+            }
+        }
+
+        /* ── Layout ── */
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* ── Side Nav ── */
+        .side-nav {
+            position: sticky;
+            top: 20px;
+            background: rgba(10, 14, 18, 0.92);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(52, 211, 153, 0.14);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(52, 211, 153, 0.05), 0 0 60px rgba(16, 185, 129, 0.04);
+        }
+
+        /* Header bar */
+        .nav-header {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.1);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, transparent 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #10b981 30%, #34d399 60%, transparent);
+        }
+
+        .nav-header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .nav-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e4e6ea;
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-title-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #10b981, #047857);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .nav-title-icon svg {
+            width: 11px;
+            height: 11px;
+            stroke: #fff;
+            fill: none;
+            stroke-width: 2.5;
+        }
+
+        .nav-section-count {
+            font-size: 11px;
+            color: #6b7280;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-weight: 500;
+        }
+
+        /* Progress bar */
+        .nav-progress-track {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .nav-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+            width: 16.6%;
+        }
+
+        /* Nav list */
+        .nav-list {
+            list-style: none;
+            padding: 10px 12px 12px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nav-list li {
+            margin: 0;
+        }
+
+        .nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            color: #6b7280;
+            text-decoration: none;
+            transition: all 0.22s ease;
+            font-size: 13.5px;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.1px;
+        }
+
+        .nav-list a::after {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%) scale(0);
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #10b981;
+            transition: transform 0.2s ease;
+            box-shadow: 0 0 8px rgba(52, 211, 153, 0.8);
+        }
+
+        .nav-list a:hover::after,
+        .nav-list a.active::after {
+            transform: translateY(-50%) scale(1);
+        }
+
+        .nav-list a:hover {
+            background: rgba(52, 211, 153, 0.07);
+            color: #d1fae5;
+        }
+
+        .nav-list a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(4, 120, 87, 0.1) 100%);
+            color: #34d399;
+            font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.2);
+        }
+
+        /* Nav icon chip */
+        .nav-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: all 0.22s ease;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-list a:hover .nav-icon {
+            background: rgba(52, 211, 153, 0.1);
+            border-color: rgba(52, 211, 153, 0.2);
+        }
+
+        .nav-list a.active .nav-icon {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(4, 120, 87, 0.2));
+            border-color: rgba(52, 211, 153, 0.3);
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.15);
+        }
+
+        .nav-label {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Footer inside nav */
+        .nav-footer {
+            margin: 0 12px 12px;
+            padding: 12px;
+            background: rgba(52, 211, 153, 0.04);
+            border: 1px solid rgba(52, 211, 153, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-footer-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .nav-footer-text {
+            font-size: 11.5px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .nav-footer-text strong {
+            color: #34d399;
+            display: block;
+            font-size: 12px;
+            margin-bottom: 1px;
+        }
+
+        /* ── Main Content ── */
+        .main-content {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(52, 211, 153, 0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 80px rgba(52, 211, 153, 0.05);
+        }
+
+        .content-section {
+            padding: 36px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.05);
+            scroll-margin-top: 20px;
+            position: relative;
+        }
+
+        .content-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.3), transparent);
+        }
+
+        .content-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .section-title h2 {
+            color: #10b981;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.2) 0%, rgba(4, 120, 87, 0.2) 100%);
+            color: #10b981;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            box-shadow: 0 4px 15px rgba(52, 211, 153, 0.1);
+        }
+
+        /* ── Typography ── */
+        h3 {
+            color: #34d399;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 1.2em;
+            background: linear-gradient(180deg, #10b981, #047857);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        h4 {
+            color: #10b981;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #d1d5db;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            color: #d1d5db;
+            margin-bottom: 20px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            line-height: 1.7;
+        }
+
+        li strong {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        /* ── Code ── */
+        pre {
+            background: #141618;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-left: 3px solid #10b981;
+            border-radius: 12px;
+            padding: 20px 24px;
+            overflow-x: auto;
+            margin: 20px 0;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 13px;
+            color: #9CDCFE;
+        }
+
+        p code,
+        li code {
+            background: rgba(52, 211, 153, 0.08);
+            padding: 3px 8px;
+            border-radius: 6px;
+            color: #34d399;
+            font-weight: 500;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        /* ── Info / Warning Boxes ── */
+        .info-box {
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.07) 0%, rgba(4, 120, 87, 0.07) 100%);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            border-left: 4px solid #10b981;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 24px 0;
+        }
+
+        .info-box-title {
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .info-box-content {
+            color: #d1d5db;
+            line-height: 1.7;
+        }
+
+        .warn-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.07) 0%, rgba(180, 83, 9, 0.07) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            border-left: 4px solid #f59e0b;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 24px 0;
+        }
+
+        .warn-box .info-box-title {
+            color: #f59e0b;
+        }
+
+        .warn-box .info-box-content {
+            color: #d1d5db;
+        }
+
+        /* ── MODERN TABLE ── */
+        .table-wrapper {
+            margin: 24px 0;
+            border-radius: 16px;
+            overflow-x: auto;
+            border: 1px solid rgba(52, 211, 153, 0.12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(52, 211, 153, 0.05);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(4, 120, 87, 0.15) 100%);
+        }
+
+        .data-table thead th {
+            padding: 14px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #34d399;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.2);
+            white-space: nowrap;
+        }
+
+        .data-table tbody tr {
+            transition: background 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .data-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.015);
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(52, 211, 153, 0.06);
+        }
+
+        .data-table tbody td {
+            padding: 14px 20px;
+            color: #c9cdd4;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        /* First column accent */
+        .data-table tbody td:first-child {
+            font-weight: 600;
+            color: #e4e6ea;
+        }
+
+        /* ── Tier Badges ── */
+        .tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .tier-apprentice {
+            background: rgba(156, 163, 175, 0.15);
+            color: #9ca3af;
+            border: 1px solid rgba(156, 163, 175, 0.3);
+        }
+
+        .tier-skilled {
+            background: rgba(251, 191, 36, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .tier-forger {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .tier-operator {
+            background: rgba(251, 191, 36, 0.12);
+            color: #fde68a;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .tier-master {
+            background: rgba(167, 139, 250, 0.12);
+            color: #c4b5fd;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        /* ── Stat Pill ── */
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .stat-pill.cost {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.2);
+        }
+
+        .stat-pill.salary {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        /* ── Feature Cards Grid ── */
+        .phases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin: 24px 0;
+        }
+
+        .phase-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(52, 211, 153, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phase-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.05), transparent);
+            transition: left 0.6s;
+        }
+
+        .phase-card:hover::before {
+            left: 100%;
+        }
+
+        .phase-card:hover {
+            background: rgba(52, 211, 153, 0.05);
+            border-color: rgba(52, 211, 153, 0.3);
+            box-shadow: 0 8px 25px rgba(52, 211, 153, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .phase-card .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .phase-card h4 {
+            color: #10b981;
+            margin: 0 0 10px 0;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .phase-card p {
+            color: #9ca3af;
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* ── Config Block (Code Block) ── */
+        .code-block-wrapper {
+            margin: 20px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(52, 211, 153, 0.14);
+            background: #0d1117;
+        }
+
+        .code-block-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+            background: #161b22;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .code-block-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Hide the old dots */
+        .code-block-dots {
+            display: none;
+        }
+
+        .code-block-filename {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: #10b981;
+            letter-spacing: 0.3px;
+            opacity: 0.85;
+        }
+
+        /* Copy button */
+        .copy-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(52, 211, 153, 0.18);
+            background: transparent;
+            color: #4b5563;
+            font-family: 'Outfit', sans-serif;
+            font-size: 11.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .copy-btn:hover {
+            border-color: rgba(52, 211, 153, 0.4);
+            background: rgba(52, 211, 153, 0.07);
+            color: #34d399;
+        }
+
+        .copy-btn svg {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Copied success state */
+        .copy-btn.copied {
+            border-color: rgba(52, 211, 153, 0.6);
+            background: rgba(52, 211, 153, 0.1);
+            color: #34d399;
+        }
+
+        @keyframes copy-bounce {
+            0% {
+                transform: scale(1);
+            }
+
+            30% {
+                transform: scale(1.08);
+            }
+
+            60% {
+                transform: scale(0.96);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .copy-btn::after {
+            display: none;
+        }
+
+        /* ── Copy Toast Notification ── */
+        .copy-toast {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #0d2e23 0%, #0a1f18 100%);
+            border: 1px solid rgba(52, 211, 153, 0.5);
+            border-radius: 14px;
+            color: #34d399;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(52, 211, 153, 0.1), 0 0 30px rgba(52, 211, 153, 0.15);
+            pointer-events: none;
+            animation: toast-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .copy-toast.toast-out {
+            animation: toast-out 0.3s ease forwards;
+        }
+
+        .copy-toast-icon {
+            width: 22px;
+            height: 22px;
+            background: rgba(52, 211, 153, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .copy-toast-icon svg {
+            width: 12px;
+            height: 12px;
+            stroke: #34d399;
+            stroke-width: 2.5;
+            fill: none;
+            stroke-dasharray: 20;
+            stroke-dashoffset: 20;
+            animation: check-draw 0.4s ease 0.15s forwards;
+        }
+
+        @keyframes check-draw {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes toast-in {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes toast-out {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(8px) scale(0.95);
+            }
+        }
+
+        /* Particle burst on copy */
+        .copy-particle {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #34d399;
+            pointer-events: none;
+            z-index: 9998;
+            animation: particle-fly var(--dur, 0.6s) ease forwards;
+        }
+
+        @keyframes particle-fly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx, 0px), var(--ty, -40px)) scale(0);
+            }
+        }
+
+        /* Code body */
+        .config-block {
+            background: #0d1117;
+            padding: 10px 0;
+            margin: 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.75;
+        }
+
+        .config-block table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: max-content;
+        }
+
+        .config-block tr {
+            transition: background 0.12s ease;
+        }
+
+        .config-block tr:hover {
+            background: rgba(52, 211, 153, 0.035);
+        }
+
+        /* Line number cell */
+        .cfg-ln {
+            width: 1px;
+            padding: 0 14px 0 20px;
+            text-align: right;
+            color: #3a4050;
+            font-size: 12.5px;
+            line-height: 1.75;
+            user-select: none;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
+            vertical-align: top;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Code content cell */
+        .cfg-code {
+            padding: 0 24px 0 14px;
+            white-space: pre;
+            vertical-align: top;
+            line-height: 1.75;
+            font-size: 13px;
+        }
+
+        .cfg-comment {
+            color: #6b7280;
+        }
+
+        .cfg-key {
+            color: #9CDCFE;
+        }
+
+        .cfg-val {
+            color: #34d399;
+        }
+
+        .cfg-str {
+            color: #ce9178;
+        }
+
+        .cfg-num {
+            color: #b5cea8;
+        }
+
+        .cfg-bool {
+            color: #569cd6;
+        }
+
+        /* ── Behavior Grid ── */
+        .behavior-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin: 20px 0;
+        }
+
+        .behavior-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(52, 211, 153, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .behavior-item .b-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .behavior-item .b-val {
+            font-size: 14px;
+            color: #34d399;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .behavior-item .b-desc {
+            font-size: 12px;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+
+            .side-nav {
+                position: static;
+                margin-bottom: 32px;
+            }
+
+            .nav-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 4px;
+            }
+
+            .nav-footer {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .content-section {
+                padding: 24px;
+            }
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            border-radius: 6px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="page-header">
+        <h1>Employee System</h1>
+        <p>Workforce Management for Maximum Factory Efficiency</p>
+    </div>
+
+    <div class="breadcrumb">
+        <div class="breadcrumb-inner">
+            <div class="breadcrumb-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+            </div>
+            <a href="wiki_index.html">Wiki Home</a>
+            <span class="breadcrumb-sep">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+            </span>
+            <a href="#">Systems</a>
+            <span class="breadcrumb-sep">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+            </span>
+        </div>
+        <div class="breadcrumb-current">
+            <span class="breadcrumb-current-dot"></span>
+            Employee System
+        </div>
+    </div>
+
+    <div class="content-container">
+        <nav class="side-nav">
+            <!-- Header -->
+            <div class="nav-header">
+                <div class="nav-header-top">
+                    <div class="nav-title">
+                        <div class="nav-title-icon">
+                            <svg viewBox="0 0 24 24">
+                                <polyline points="3 9 12 2 21 9" />
+                                <path d="M9 22V12h6v10" />
+                            </svg>
+                        </div>
+                        On This Page
+                    </div>
+                    <span class="nav-section-count">6 sections</span>
+                </div>
+                <div class="nav-progress-track">
+                    <div class="nav-progress-fill" id="navProgress"></div>
+                </div>
+            </div>
+
+            <!-- Links -->
+            <ul class="nav-list">
+                <li>
+                    <a href="#overview" class="active">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-label">Overview</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#features">
+                        <span class="nav-icon">⚡</span>
+                        <span class="nav-label">Key Features</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#tiers">
+                        <span class="nav-icon">🏆</span>
+                        <span class="nav-label">Employee Tiers</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#management">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-label">Management & Ops</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#behavior">
+                        <span class="nav-icon">🎭</span>
+                        <span class="nav-label">NPC Behavior</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#config">
+                        <span class="nav-icon">🗂️</span>
+                        <span class="nav-label">Configuration</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Footer hint -->
+            <div class="nav-footer">
+                <span class="nav-footer-icon">💡</span>
+                <div class="nav-footer-text">
+                    <strong>FactoryCore v2.x</strong>
+                    Employee System Module
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!--  OVERVIEW                                              -->
+            <!-- ══════════════════════════════════════════════════════ -->
+            <section class="content-section" id="overview">
+                <div class="section-title">
+                    <h2>Overview</h2>
+                    <span class="section-badge">Core System</span>
+                </div>
+
+                <p>The <strong>Employee System</strong> is a critical component of the FactoryCore plugin. Players hire
+                    NPC employees — each representing a real Villager entity in the world — to staff their factories.
+                    Without an employee, a factory cannot produce anything.</p>
+
+                <div class="info-box">
+                    <div class="info-box-title">💡 Why Hire Employees?</div>
+                    <div class="info-box-content">
+                        Factories <strong>require</strong> an assigned employee to start production. Without one, the
+                        factory remains completely idle. Employees also provide a <strong>Production Time
+                            Reduction</strong>
+                        buff and grant access to the factory's output storage.
+                    </div>
+                </div>
+
+                <p>Employees are purchased from the in-game <strong>Employee Shop</strong>, stored in the player's
+                    personal employee pool, and then assigned to individual factories. Each factory can hold exactly
+                    <strong>one employee</strong> at a time.
+                </p>
+            </section>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!--  KEY FEATURES                                          -->
+            <!-- ══════════════════════════════════════════════════════ -->
+            <section class="content-section" id="features">
+                <div class="section-title">
+                    <h2>Key Features</h2>
+                    <span class="section-badge">Mechanics</span>
+                </div>
+
+                <div class="phases-grid">
+                    <div class="phase-card">
+                        <span class="card-icon">⚡</span>
+                        <h4>Production Speed Boost</h4>
+                        <p>Every employee reduces production time by a fixed percentage. Higher-tier employees provide
+                            larger reductions, up to <strong>-35%</strong>.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🏭</span>
+                        <h4>Production Gate</h4>
+                        <p>An employee is the "key" to start a factory. Without one assigned, the factory is completely
+                            blocked from producing any items.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">💰</span>
+                        <h4>Periodic Salary</h4>
+                        <p>Employees charge a salary every <strong>1 in-game day</strong> (24,000 ticks). Unassigned
+                            employees still cost salary, so manage wisely.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">📦</span>
+                        <h4>Storage Access</h4>
+                        <p>Having an employee assigned allows you to interact with and collect items from the factory's
+                            output storage GUI.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🎭</span>
+                        <h4>Living NPC</h4>
+                        <p>Employees are real Villager entities with head-tracking, idle animations, particle effects,
+                            holograms, and ambient sounds.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🔄</span>
+                        <h4>Auto-Respawn</h4>
+                        <p>The system automatically checks for and respawns missing NPC entities every <strong>200
+                                ticks</strong> (~10 seconds).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!--  EMPLOYEE TIERS                                        -->
+            <!-- ══════════════════════════════════════════════════════ -->
+            <section class="content-section" id="tiers">
+                <div class="section-title">
+                    <h2>Employee Tiers</h2>
+                    <span class="section-badge">5 Types</span>
+                </div>
+
+                <p>There are <strong>5 employee tiers</strong> available in the shop, each with a unique name, cost,
+                    salary, and production buff. Higher tiers are more expensive but significantly more efficient.</p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Employee</th>
+                                <th>Buy Price</th>
+                                <th>Salary / Day</th>
+                                <th>Time Reduction</th>
+                                <th>Particle Effect</th>
+                                <th>Profession</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><span class="tier-badge tier-apprentice">⚒ Apprentice Worker</span></td>
+                                <td><span class="stat-pill cost">$500</span></td>
+                                <td><span class="stat-pill salary">$50</span></td>
+                                <td><span class="stat-pill">-5%</span></td>
+                                <td><code>VILLAGER_HAPPY</code></td>
+                                <td>Toolsmith</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><span class="tier-badge tier-skilled">⚒ Skilled Craftsman</span></td>
+                                <td><span class="stat-pill cost">$1,500</span></td>
+                                <td><span class="stat-pill salary">$120</span></td>
+                                <td><span class="stat-pill">-15%</span></td>
+                                <td><code>CRIT_MAGIC</code></td>
+                                <td>Weaponsmith</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><span class="tier-badge tier-forger">⚒ Steel Forger</span></td>
+                                <td><span class="stat-pill cost">$2,500</span></td>
+                                <td><span class="stat-pill salary">$200</span></td>
+                                <td><span class="stat-pill">-20%</span></td>
+                                <td><code>FLAME</code></td>
+                                <td>Armorer</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><span class="tier-badge tier-operator">⚒ Refinery Operator</span></td>
+                                <td><span class="stat-pill cost">$3,500</span></td>
+                                <td><span class="stat-pill salary">$280</span></td>
+                                <td><span class="stat-pill">-25%</span></td>
+                                <td><code>SMOKE_NORMAL</code></td>
+                                <td>Toolsmith</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><span class="tier-badge tier-master">⚒ Master Engineer</span></td>
+                                <td><span class="stat-pill cost">$6,000</span></td>
+                                <td><span class="stat-pill salary">$450</span></td>
+                                <td><span class="stat-pill">-35%</span></td>
+                                <td><code>ENCHANTMENT_TABLE</code></td>
+                                <td>Librarian</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Cost vs. Efficiency Analysis</h3>
+                <p>When choosing an employee, consider both the upfront cost and the ongoing salary. The table below
+                    shows the break-even point in days for each upgrade.</p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Total Daily Cost</th>
+                                <th>Speed Gain</th>
+                                <th>Best For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tier-badge tier-apprentice">Apprentice Worker</span></td>
+                                <td><span class="stat-pill salary">$50 / day</span></td>
+                                <td>Minimal</td>
+                                <td>New players, low-budget start</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tier-badge tier-skilled">Skilled Craftsman</span></td>
+                                <td><span class="stat-pill salary">$120 / day</span></td>
+                                <td>Moderate</td>
+                                <td>Mid-game, balanced cost/performance</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tier-badge tier-forger">Steel Forger</span></td>
+                                <td><span class="stat-pill salary">$200 / day</span></td>
+                                <td>Good</td>
+                                <td>Steel Mills, heavy industry</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tier-badge tier-operator">Refinery Operator</span></td>
+                                <td><span class="stat-pill salary">$280 / day</span></td>
+                                <td>High</td>
+                                <td>Refineries, high-throughput factories</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tier-badge tier-master">Master Engineer</span></td>
+                                <td><span class="stat-pill salary">$450 / day</span></td>
+                                <td>Maximum</td>
+                                <td>Advanced Factories, end-game optimization</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!--  MANAGEMENT & OPERATIONS                               -->
+            <!-- ══════════════════════════════════════════════════════ -->
+            <section class="content-section" id="management">
+                <div class="section-title">
+                    <h2>Management & Operations</h2>
+                    <span class="section-badge">Player Guide</span>
+                </div>
+
+                <h3>Employees Center</h3>
+                <p>The <strong>Employees Center</strong> is your main dashboard for workforce management. Open it from
+                    the main FactoryCore Hub. It shows all your factories and their current employee status.</p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Factory Status</th>
+                                <th>Indicator</th>
+                                <th>Available Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Has Employee (Purchased)</td>
+                                <td><span class="stat-pill">🟢 Lime Concrete</span></td>
+                                <td>Left Click: Teleport · Right Click: Unassign · Shift+Right: Dismiss</td>
+                            </tr>
+                            <tr>
+                                <td>Has Employee (Admin-Spawned)</td>
+                                <td><span class="stat-pill">🟢 Lime Concrete</span></td>
+                                <td>Left Click: Teleport · Right Click: Fire</td>
+                            </tr>
+                            <tr>
+                                <td>No Employee</td>
+                                <td><span class="stat-pill salary">🔴 Gray Concrete</span></td>
+                                <td>Click: Open Employee Shop</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Step-by-Step: Hiring an Employee</h3>
+                <ol>
+                    <li><strong>Open the Hub</strong> — Access the FactoryCore main menu.</li>
+                    <li><strong>Go to Employees Center</strong> — Click the Employees Center button.</li>
+                    <li><strong>Open Employee Shop</strong> — Click the gold ingot button (slot 46).</li>
+                    <li><strong>Browse & Confirm</strong> — Click an employee to open the purchase confirmation screen.
+                        Review the cost and click <strong>Confirm</strong>.</li>
+                    <li><strong>Assign to Factory</strong> — Go to "My Employees", click the newly purchased employee,
+                        then select which factory to assign them to.</li>
+                </ol>
+
+                <h3>Employee Actions Explained</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Effect</th>
+                                <th>Reversible?</th>
+                                <th>Refund?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Assign</td>
+                                <td>Places employee at a factory, enabling production.</td>
+                                <td>✅ Yes</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>Unassign</td>
+                                <td>Removes employee from factory, returns them to your unassigned pool. Production
+                                    stops.</td>
+                                <td>✅ Yes</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>Dismiss</td>
+                                <td>Permanently deletes a purchased employee from your pool.</td>
+                                <td>❌ No</td>
+                                <td>❌ No refund</td>
+                            </tr>
+                            <tr>
+                                <td>Fire (Admin NPC)</td>
+                                <td>Removes an admin-spawned NPC from the factory permanently.</td>
+                                <td>❌ No</td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="warn-box">
+                    <div class="info-box-title">⚠️ Salary Warning</div>
+                    <div class="info-box-content">
+                        Unassigned employees <strong>still charge salary</strong> every in-game day. If you are not
+                        using an employee, consider dismissing them to avoid unnecessary costs. The salary rate is
+                        configurable in <code>config.yml</code> under the <code>salary</code> section.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!--  NPC BEHAVIOR                                          -->
+            <!-- ══════════════════════════════════════════════════════ -->
+            <section class="content-section" id="behavior">
+                <div class="section-title">
+                    <h2>NPC Behavior</h2>
+                    <span class="section-badge">npc.yml</span>
+                </div>
+
+                <p>Each employee NPC is a living Villager entity with advanced, configurable behaviors to make them feel
+                    natural and immersive in the world.</p>
+
+                <h3>Global Behavior Settings</h3>
+                <div class="behavior-grid">
+                    <div class="behavior-item">
+                        <span class="b-label">Head Tracking Radius</span>
+                        <span class="b-val">6.0 blocks</span>
+                        <span class="b-desc">NPC turns its head toward any player within this range.</span>
+                    </div>
+                    <div class="behavior-item">
+                        <span class="b-label">Idle Animation Interval</span>
+                        <span class="b-val">60 ticks (3s)</span>
+                        <span class="b-desc">How often the NPC performs a random head movement.</span>
+                    </div>
+                    <div class="behavior-item">
+                        <span class="b-label">Particle Interval</span>
+                        <span class="b-val">40 ticks (2s)</span>
+                        <span class="b-desc">How often the NPC emits its particle effect.</span>
+                    </div>
+                    <div class="behavior-item">
+                        <span class="b-label">Respawn Check Interval</span>
+                        <span class="b-val">200 ticks (10s)</span>
+                        <span class="b-desc">How often the system checks for and respawns missing NPCs.</span>
+                    </div>
+                    <div class="behavior-item">
+                        <span class="b-label">Interact Sound</span>
+                        <span class="b-val">VILLAGER_YES</span>
+                        <span class="b-desc">Sound played when a player clicks on the NPC.</span>
+                    </div>
+                    <div class="behavior-item">
+                        <span class="b-label">Ambient Sound Interval</span>
+                        <span class="b-val">300 ticks (15s)</span>
+                        <span class="b-desc">Ambient villager sounds within 8 blocks radius.</span>
+                    </div>
+                </div>
+
+                <h3>NPC Properties</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Invulnerable</td>
+                                <td><span class="stat-pill">true</span></td>
+                                <td>NPCs cannot take damage from any source.</td>
+                            </tr>
+                            <tr>
+                                <td>AI Disabled</td>
+                                <td><span class="stat-pill">true</span></td>
+                                <td>NPCs do not wander or pathfind on their own.</td>
+                            </tr>
+                            <tr>
+                                <td>Glow Effect</td>
+                                <td><span class="stat-pill">true</span></td>
+                                <td>NPCs have a glowing outline visible through walls.</td>
+                            </tr>
+                            <tr>
+                                <td>Custom Name Visible</td>
+                                <td><span class="stat-pill">true</span></td>
+                                <td>The NPC's name tag is always visible above their head.</td>
+                            </tr>
+                            <tr>
+                                <td>Hologram</td>
+                                <td><span class="stat-pill">Enabled</span></td>
+                                <td>A floating hologram appears above the NPC with their name and a click prompt.</td>
+                            </tr>
+                            <tr>
+                                <td>Body Rotation</td>
+                                <td><span class="stat-pill">Enabled</span></td>
+                                <td>The NPC's body rotates to follow its head direction.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>NPC Templates per Tier</h3>
+                <p>Each employee tier uses a specific NPC template that defines its appearance and behavior. The
+                    template determines the Villager profession, biome type, and particle effect.</p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Template</th>
+                                <th>Profession</th>
+                                <th>Biome Type</th>
+                                <th>Particle</th>
+                                <th>Idle Yaw Range</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tier-badge tier-apprentice">Apprentice Worker</span></td>
+                                <td><code>default</code></td>
+                                <td>Toolsmith</td>
+                                <td>Plains</td>
+                                <td><code>VILLAGER_HAPPY</code></td>
+                                <td>±30°</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tier-badge tier-skilled">Skilled Craftsman</span></td>
+                                <td><code>workshop_employee</code></td>
+                                <td>Weaponsmith</td>
+                                <td>Snow</td>
+                                <td><code>CRIT_MAGIC</code></td>
+                                <td>±30°</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tier-badge tier-forger">Steel Forger</span></td>
+                                <td><code>steel_mill_employee</code></td>
+                                <td>Armorer</td>
+                                <td>Plains</td>
+                                <td><code>FLAME</code></td>
+                                <td>±25°</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tier-badge tier-operator">Refinery Operator</span></td>
+                                <td><code>refinery_employee</code></td>
+                                <td>Toolsmith</td>
+                                <td>Desert</td>
+                                <td><code>SMOKE_NORMAL</code></td>
+                                <td>±35°</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tier-badge tier-master">Master Engineer</span></td>
+                                <td><code>advanced_factory_employee</code></td>
+                                <td>Librarian</td>
+                                <td>Jungle</td>
+                                <td><code>ENCHANTMENT_TABLE</code></td>
+                                <td>±40°</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!--  CONFIGURATION                                         -->
+            <!-- ══════════════════════════════════════════════════════ -->
+            <section class="content-section" id="config">
+                <div class="section-title">
+                    <h2>Configuration</h2>
+                    <span class="section-badge">config.yml · npc.yml</span>
+                </div>
+
+                <h3>Salary Settings — <code>config.yml</code></h3>
+                <p>Controls how and when employee salaries are deducted from the factory owner's balance.</p>
+
+                <div class="code-block-wrapper">
+                    <div class="code-block-header">
+                        <div class="code-block-header-left">
+                            <div class="code-block-dots">
+                                <span class="dot-red"></span>
+                                <span class="dot-yellow"></span>
+                                <span class="dot-green"></span>
+                            </div>
+                            <span class="code-block-filename">config.yml</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="copy-label">Copy</span>
+                        </button>
+                    </div>
+                    <div class="config-block">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="cfg-ln">1</td>
+                                    <td class="cfg-code"><span class="cfg-comment"># Salary settings</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">2</td>
+                                    <td class="cfg-code"><span class="cfg-key">salary</span>:</td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">3</td>
+                                    <td class="cfg-code"> <span class="cfg-key">enabled</span>: <span
+                                            class="cfg-bool">true</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">4</td>
+                                    <td class="cfg-code"> <span class="cfg-key">rate</span>: <span
+                                            class="cfg-num">1.0</span> <span class="cfg-comment"># Percentage of factory
+                                            price charged as base salary</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">5</td>
+                                    <td class="cfg-code"> <span class="cfg-key">interval-ticks</span>: <span
+                                            class="cfg-num">24000</span> <span class="cfg-comment"># 1 in-game day (20
+                                            ticks = 1 second)</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>salary.enabled</code></td>
+                                <td><code>true</code></td>
+                                <td>Enables or disables the entire salary system.</td>
+                            </tr>
+                            <tr>
+                                <td><code>salary.rate</code></td>
+                                <td><code>1.0</code></td>
+                                <td>Base salary as a percentage of the factory's price. Each NPC type also has its own
+                                    fixed salary defined in <code>npc.yml</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>salary.interval-ticks</code></td>
+                                <td><code>24000</code></td>
+                                <td>How often salary is charged, in server ticks. 24,000 = 1 in-game day.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>NPC Global Settings — <code>npc.yml</code></h3>
+                <p>These settings apply to all NPC employees globally and control their interactive behaviors.</p>
+
+                <div class="code-block-wrapper">
+                    <div class="code-block-header">
+                        <div class="code-block-header-left">
+                            <div class="code-block-dots">
+                                <span class="dot-red"></span>
+                                <span class="dot-yellow"></span>
+                                <span class="dot-green"></span>
+                            </div>
+                            <span class="code-block-filename">npc.yml</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="copy-label">Copy</span>
+                        </button>
+                    </div>
+                    <div class="config-block">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="cfg-ln">1</td>
+                                    <td class="cfg-code"><span class="cfg-comment"># Global NPC behavior settings</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">2</td>
+                                    <td class="cfg-code"><span class="cfg-key">global</span>:</td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">3</td>
+                                    <td class="cfg-code"> <span class="cfg-key">look-at-player-radius</span>: <span
+                                            class="cfg-num">6.0</span> <span class="cfg-comment"># Blocks</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">4</td>
+                                    <td class="cfg-code"> <span class="cfg-key">idle-animation-interval</span>: <span
+                                            class="cfg-num">60</span> <span class="cfg-comment"># Ticks (~3s)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">5</td>
+                                    <td class="cfg-code"> <span class="cfg-key">particle-interval</span>: <span
+                                            class="cfg-num">40</span> <span class="cfg-comment"># Ticks (~2s)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">6</td>
+                                    <td class="cfg-code"> <span class="cfg-key">respawn-check-interval</span>: <span
+                                            class="cfg-num">200</span> <span class="cfg-comment"># Ticks (~10s)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">7</td>
+                                    <td class="cfg-code"> <span class="cfg-key">enable-look-at-player</span>: <span
+                                            class="cfg-bool">true</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">8</td>
+                                    <td class="cfg-code"> <span class="cfg-key">enable-idle-animation</span>: <span
+                                            class="cfg-bool">true</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">9</td>
+                                    <td class="cfg-code"> <span class="cfg-key">enable-particles</span>: <span
+                                            class="cfg-bool">true</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">10</td>
+                                    <td class="cfg-code"> <span class="cfg-key">enable-body-rotation</span>: <span
+                                            class="cfg-bool">true</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">11</td>
+                                    <td class="cfg-code"> <span class="cfg-key">interact-sound</span>: <span
+                                            class="cfg-str">"ENTITY_VILLAGER_YES"</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">12</td>
+                                    <td class="cfg-code"> <span class="cfg-key">ambient-sound-enabled</span>: <span
+                                            class="cfg-bool">true</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">13</td>
+                                    <td class="cfg-code"> <span class="cfg-key">ambient-sound</span>: <span
+                                            class="cfg-str">"ENTITY_VILLAGER_AMBIENT"</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">14</td>
+                                    <td class="cfg-code"> <span class="cfg-key">ambient-sound-interval</span>: <span
+                                            class="cfg-num">300</span> <span class="cfg-comment"># Ticks (~15s)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">15</td>
+                                    <td class="cfg-code"> <span class="cfg-key">ambient-sound-radius</span>: <span
+                                            class="cfg-num">8.0</span> <span class="cfg-comment"># Blocks</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h3>Adding a Custom Employee — <code>npc.yml</code></h3>
+                <p>You can add new employee types to the shop by adding a new entry under <code>shop.npcs</code> in
+                    <code>npc.yml</code>. Each entry must reference a valid template.
+                </p>
+
+                <div class="code-block-wrapper">
+                    <div class="code-block-header">
+                        <div class="code-block-header-left">
+                            <div class="code-block-dots">
+                                <span class="dot-red"></span>
+                                <span class="dot-yellow"></span>
+                                <span class="dot-green"></span>
+                            </div>
+                            <span class="code-block-filename">npc.yml — Custom Employee Example</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="copy-label">Copy</span>
+                        </button>
+                    </div>
+                    <div class="config-block">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="cfg-ln">1</td>
+                                    <td class="cfg-code"><span class="cfg-key">shop</span>:</td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">2</td>
+                                    <td class="cfg-code"> <span class="cfg-key">npcs</span>:</td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">3</td>
+                                    <td class="cfg-code"> <span class="cfg-key">my_custom_worker</span>: <span
+                                            class="cfg-comment"># Unique ID (no spaces)</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">4</td>
+                                    <td class="cfg-code"> <span class="cfg-key">display-name</span>: <span
+                                            class="cfg-str">"§a§lCustom Worker"</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">5</td>
+                                    <td class="cfg-code"> <span class="cfg-key">description</span>:</td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">6</td>
+                                    <td class="cfg-code"> - <span class="cfg-str">"§7A custom employee."</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">7</td>
+                                    <td class="cfg-code"> - <span class="cfg-str">"§eProduction Buff:"</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">8</td>
+                                    <td class="cfg-code"> - <span class="cfg-str">"§a⚡ Production Time: §f-10%"</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">9</td>
+                                    <td class="cfg-code"> <span class="cfg-key">buy-price</span>: <span
+                                            class="cfg-num">1000.0</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">10</td>
+                                    <td class="cfg-code"> <span class="cfg-key">salary</span>: <span
+                                            class="cfg-num">80.0</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">11</td>
+                                    <td class="cfg-code"> <span class="cfg-key">production-time-reduction</span>: <span
+                                            class="cfg-num">10.0</span> <span class="cfg-comment"># 0–100 percent</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">12</td>
+                                    <td class="cfg-code"> <span class="cfg-key">template</span>: <span
+                                            class="cfg-str">"default"</span> <span class="cfg-comment"># Must match a
+                                            key in templates:</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cfg-ln">13</td>
+                                    <td class="cfg-code"> <span class="cfg-key">shop-icon</span>: <span
+                                            class="cfg-str">"EMERALD"</span> <span class="cfg-comment"># Any valid
+                                            Bukkit Material name</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">📝 Available Templates</div>
+                    <div class="info-box-content">
+                        The following template keys are available out of the box:
+                        <code>default</code>, <code>workshop_employee</code>, <code>steel_mill_employee</code>,
+                        <code>refinery_employee</code>, <code>advanced_factory_employee</code>.
+                        You can also define your own templates under the <code>templates:</code> section in
+                        <code>npc.yml</code>.
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        /* ── Smooth scroll ── */
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        /* ── Active nav on scroll + progress bar (Optimized with RAF) ── */
+        const sections = document.querySelectorAll('.content-section');
+        const navLinks = document.querySelectorAll('.nav-list a');
+        const progressFill = document.getElementById('navProgress');
+        const totalSections = sections.length;
+
+        let isScrolling = false;
+
+        function updateNavigation() {
+            let currentIdx = 0;
+            const scrollPos = window.pageYOffset;
+
+            // Find current section
+            // Optimization: Iterate backwards or just check thresholds
+            sections.forEach((section, i) => {
+                if (scrollPos >= (section.offsetTop - 200)) {
+                    currentIdx = i;
+                }
+            });
+
+            // Update active link
+            navLinks.forEach((link, i) => {
+                if (i === currentIdx) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+
+            // Update progress bar
+            if (progressFill) {
+                const pct = ((currentIdx + 1) / totalSections) * 100;
+                progressFill.style.width = pct + '%';
+            }
+
+            isScrolling = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!isScrolling) {
+                window.requestAnimationFrame(updateNavigation);
+                isScrolling = true;
+            }
+        });
+
+        /* ── Copy to clipboard ── */
+        function copyCode(btn) {
+            const wrapper = btn.closest('.code-block-wrapper');
+            const rows = wrapper.querySelectorAll('.cfg-code');
+            // Use textContent for better performance (no reflow)
+            const text = Array.from(rows).map(r => r.textContent).join('\n');
+
+            const doAnimation = () => {
+                const label = btn.querySelector('.copy-label');
+                const svg = btn.querySelector('svg');
+
+                // Swap icon to checkmark
+                svg.innerHTML = '<polyline points="20 6 9 17 4 12" stroke="#34d399" stroke-width="2.5" fill="none"></polyline>';
+                label.textContent = 'Copied!';
+                btn.classList.add('copied');
+
+                // Particle burst
+                const rect = btn.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const colors = ['#34d399', '#10b981', '#6ee7b7', '#a7f3d0'];
+                for (let i = 0; i < 10; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'copy-particle';
+                    const angle = (i / 10) * Math.PI * 2;
+                    const dist = 40 + Math.random() * 30;
+                    p.style.cssText = `
+                        left: ${cx}px; top: ${cy}px;
+                        background: ${colors[i % colors.length]};
+                        --tx: ${Math.cos(angle) * dist}px;
+                        --ty: ${Math.sin(angle) * dist}px;
+                        --dur: ${0.5 + Math.random() * 0.3}s;
+                        width: ${4 + Math.random() * 5}px;
+                        height: ${4 + Math.random() * 5}px;
+                    `;
+                    document.body.appendChild(p);
+                    p.addEventListener('animationend', () => p.remove());
+                }
+
+                // Toast notification
+                showCopyToast();
+
+                setTimeout(() => {
+                    svg.innerHTML = '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>';
+                    label.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            };
+
+            navigator.clipboard.writeText(text).then(doAnimation).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;opacity:0;';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                doAnimation();
+            });
+        }
+
+        let toastTimer = null;
+        function showCopyToast() {
+            // Remove existing toast
+            const old = document.querySelector('.copy-toast');
+            if (old) old.remove();
+            clearTimeout(toastTimer);
+
+            const toast = document.createElement('div');
+            toast.className = 'copy-toast';
+            toast.innerHTML = `
+                <div class="copy-toast-icon">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <span>Code copied to clipboard!</span>
+            `;
+            document.body.appendChild(toast);
+
+            toastTimer = setTimeout(() => {
+                toast.classList.add('toast-out');
+                toast.addEventListener('animationend', () => toast.remove());
+            }, 2200);
+        }
+    </script>
+</body>
+
+</html>

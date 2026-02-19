@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FactoryCore Wiki — Home</title>
+    <meta name="description"
+        content="Official documentation and wiki for FactoryCore — a factory-based economy plugin for Minecraft servers running Spigot / Paper 1.21.4.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #0a0c10 0%, #111316 50%, #1a1d23 100%);
+            color: #e4e6ea;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.10) 0%, transparent 50%),
+                radial-gradient(circle at 85% 80%, rgba(4, 120, 87, 0.07) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ── Floating Particles ── */
+        .particle {
+            position: fixed;
+            background: rgba(52, 211, 153, 0.35);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 22s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-120px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ── Top Nav Bar ── */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 40px;
+            background: rgba(10, 12, 16, 0.88);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(52, 211, 153, 0.12);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #10b981, #047857);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+            flex-shrink: 0;
+        }
+
+        .nav-logo-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e4e6ea;
+            letter-spacing: 0.3px;
+        }
+
+        .nav-logo-text span {
+            color: #34d399;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.08);
+        }
+
+        .nav-badge {
+            font-size: 10px;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(4, 120, 87, 0.25));
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.35);
+            border-radius: 20px;
+            padding: 2px 8px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── Hero Section ── */
+        .hero {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 90px 40px 70px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #34d399;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        .hero-eyebrow-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(52, 211, 153, 0.9);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                box-shadow: 0 0 6px rgba(52, 211, 153, 0.8);
+                opacity: 1;
+            }
+
+            50% {
+                box-shadow: 0 0 14px rgba(52, 211, 153, 1);
+                opacity: 0.7;
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.6rem, 6vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #e4e6ea 0%, #10b981 60%, #047857 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .hero h1::after {
+            content: '';
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #10b981, transparent);
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            color: #9ca3af;
+            max-width: 640px;
+            margin: 36px auto 44px;
+            line-height: 1.8;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #10b981, #047857);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35), 0 0 0 1px rgba(52, 211, 153, 0.2);
+            transition: all 0.25s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5), 0 0 0 1px rgba(52, 211, 153, 0.35);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 14px 28px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #d1d5db;
+            text-decoration: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.25s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(52, 211, 153, 0.07);
+            border-color: rgba(52, 211, 153, 0.25);
+            color: #34d399;
+            transform: translateY(-2px);
+        }
+
+        /* ── Stats Strip ── */
+        .stats-strip {
+            max-width: 900px;
+            margin: 0 auto 80px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.12);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .stat-item {
+            padding: 28px 20px;
+            text-align: center;
+            background: rgba(10, 12, 16, 0.7);
+            backdrop-filter: blur(12px);
+            transition: background 0.2s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(16, 185, 129, 0.06);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #10b981, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        /* ── Section Wrapper ── */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px 80px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-eyebrow {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #10b981;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e4e6ea;
+            margin-bottom: 14px;
+        }
+
+        .section-header h2 span {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            color: #6b7280;
+            font-size: 1rem;
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ── Wiki Cards Grid ── */
+        .wiki-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .wiki-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(52, 211, 153, 0.1);
+            border-radius: 20px;
+            padding: 28px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .wiki-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.05), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .wiki-card:hover::before {
+            left: 100%;
+        }
+
+        .wiki-card:hover {
+            border-color: rgba(52, 211, 153, 0.3);
+            background: rgba(52, 211, 153, 0.04);
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(52, 211, 153, 0.15), 0 0 40px rgba(16, 185, 129, 0.08);
+        }
+
+        .wiki-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .wiki-card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .wiki-card:hover .wiki-card-icon {
+            background: rgba(16, 185, 129, 0.18);
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.2);
+        }
+
+        .wiki-card-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(52, 211, 153, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            white-space: nowrap;
+        }
+
+        .wiki-card-badge.core {
+            background: rgba(96, 165, 250, 0.1);
+            color: #93c5fd;
+            border-color: rgba(96, 165, 250, 0.2);
+        }
+
+        .wiki-card-badge.economy {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.2);
+        }
+
+        .wiki-card-badge.hr {
+            background: rgba(167, 139, 250, 0.1);
+            color: #c4b5fd;
+            border-color: rgba(167, 139, 250, 0.2);
+        }
+
+        .wiki-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #e4e6ea;
+            margin: 0;
+        }
+
+        .wiki-card h3::before {
+            display: none;
+        }
+
+        .wiki-card p {
+            font-size: 13.5px;
+            color: #6b7280;
+            line-height: 1.7;
+            margin: 0;
+            flex: 1;
+        }
+
+        .wiki-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .wiki-card-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .topic-tag {
+            font-size: 11px;
+            color: #4b5563;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-weight: 500;
+        }
+
+        .wiki-card-arrow {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #34d399;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .wiki-card:hover .wiki-card-arrow {
+            background: rgba(52, 211, 153, 0.18);
+            transform: translateX(3px);
+        }
+
+        /* ── Feature Highlights ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(52, 211, 153, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            transition: all 0.25s ease;
+        }
+
+        .feature-item:hover {
+            border-color: rgba(52, 211, 153, 0.2);
+            background: rgba(52, 211, 153, 0.03);
+        }
+
+        .feature-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(4, 120, 87, 0.15));
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .feature-text h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e4e6ea;
+            margin-bottom: 6px;
+        }
+
+        .feature-text p {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ── Dependencies Section ── */
+        .deps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .dep-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(52, 211, 153, 0.08);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .dep-card:hover {
+            border-color: rgba(52, 211, 153, 0.2);
+            background: rgba(52, 211, 153, 0.03);
+        }
+
+        .dep-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .dep-info h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e4e6ea;
+            margin-bottom: 2px;
+        }
+
+        .dep-info p {
+            font-size: 11.5px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .dep-required {
+            margin-left: auto;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+
+        .dep-required.req {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .dep-required.opt {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+        /* ── Quick Start ── */
+        .quickstart-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(52, 211, 153, 0.12);
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .quickstart-header {
+            padding: 28px 36px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.07) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(52, 211, 153, 0.08);
+            position: relative;
+        }
+
+        .quickstart-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #10b981 30%, #34d399 60%, transparent);
+        }
+
+        .quickstart-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #e4e6ea;
+            margin: 0 0 6px;
+        }
+
+        .quickstart-header h3::before {
+            display: none;
+        }
+
+        .quickstart-header p {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .quickstart-steps {
+            padding: 28px 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .qs-step {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .qs-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #047857);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+        }
+
+        .qs-content h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e4e6ea;
+            margin-bottom: 4px;
+        }
+
+        .qs-content p {
+            font-size: 13.5px;
+            color: #6b7280;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .qs-content code {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            background: rgba(52, 211, 153, 0.08);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            padding: 0 40px;
+        }
+
+        .divider hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.2), transparent);
+        }
+
+        /* ── Footer ── */
+        .page-footer {
+            border-top: 1px solid rgba(52, 211, 153, 0.08);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            text-decoration: none;
+        }
+
+        .footer-logo-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #10b981, #047857);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .footer-logo-text {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #e4e6ea;
+        }
+
+        .footer-logo-text span {
+            color: #34d399;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #4b5563;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: #34d399;
+        }
+
+        .footer-copy {
+            font-size: 12.5px;
+            color: #374151;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 12px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 60px 20px 50px;
+            }
+
+            .stats-strip {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .section {
+                padding: 0 20px 60px;
+            }
+
+            .quickstart-header,
+            .quickstart-steps {
+                padding: 20px;
+            }
+
+            .divider {
+                padding: 0 20px;
+            }
+
+            .page-footer {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-strip {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Floating Particles -->
+    <div class="particle" style="width:4px;height:4px;left:10%;animation-delay:0s;animation-duration:25s;"></div>
+    <div class="particle" style="width:6px;height:6px;left:25%;animation-delay:4s;animation-duration:20s;"></div>
+    <div class="particle" style="width:3px;height:3px;left:45%;animation-delay:8s;animation-duration:28s;"></div>
+    <div class="particle" style="width:5px;height:5px;left:65%;animation-delay:2s;animation-duration:22s;"></div>
+    <div class="particle" style="width:4px;height:4px;left:80%;animation-delay:12s;animation-duration:18s;"></div>
+    <div class="particle" style="width:7px;height:7px;left:90%;animation-delay:6s;animation-duration:30s;"></div>
+
+    <!-- ── Top Navigation ── -->
+    <nav class="top-nav">
+        <a href="index.html" class="nav-logo">
+            <div class="nav-logo-icon">🏭</div>
+            <span class="nav-logo-text">Factory<span>Core</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="wiki_factory_system.html">
+                <span>🏗️</span> Factory System
+            </a>
+            <a href="wiki_employee_system.html">
+                <span>👷</span> Employee System
+            </a>
+            <a href="wiki_tax_system.html">
+                <span>💰</span> Tax System
+            </a>
+            <span class="nav-badge">v1.0.0</span>
+        </div>
+    </nav>
+
+    <!-- ── Hero ── -->
+    <section class="hero">
+        <div class="hero-eyebrow">
+            <div class="hero-eyebrow-dot"></div>
+            Official Documentation
+        </div>
+        <h1>FactoryCore Plugin Wiki</h1>
+        <p class="hero-desc">
+            A comprehensive factory-based economy plugin for Minecraft servers. Build, manage, and grow your industrial
+            empire with production cycles, employees, taxes, and more.
+        </p>
+        <div class="hero-actions">
+            <a href="wiki_factory_system.html" class="btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 3l14 9-14 9V3z" />
+                </svg>
+                Get Started
+            </a>
+            <a href="#wiki-pages" class="btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="9" y1="9" x2="15" y2="9" />
+                    <line x1="9" y1="13" x2="15" y2="13" />
+                    <line x1="9" y1="17" x2="13" y2="17" />
+                </svg>
+                Browse Wiki
+            </a>
+        </div>
+    </section>
+
+    <!-- ── Stats Strip ── -->
+    <div style="max-width:1200px;margin:0 auto;padding:0 40px;">
+        <div class="stats-strip">
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Core Systems</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">1.21</div>
+                <div class="stat-label">MC Version</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">5+</div>
+                <div class="stat-label">Integrations</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">v1.0</div>
+                <div class="stat-label">Plugin Version</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Wiki Pages ── -->
+    <section class="section" id="wiki-pages" style="padding-top:80px;">
+        <div class="section-header">
+            <div class="section-eyebrow">Documentation</div>
+            <h2>Wiki <span>Pages</span></h2>
+            <p>Explore the full documentation for every system in the FactoryCore plugin.</p>
+        </div>
+
+        <div class="wiki-grid">
+
+            <!-- Factory System -->
+            <a href="wiki_factory_system.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">🏗️</div>
+                    <span class="wiki-card-badge core">Core</span>
+                </div>
+                <div>
+                    <h3>Factory System</h3>
+                    <p>The heart of FactoryCore. Learn how to own, operate, and upgrade physical factories in-game.
+                        Covers the production cycle, storage system, fast travel, and upgrade mechanics.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">Production</span>
+                        <span class="topic-tag">Storage</span>
+                        <span class="topic-tag">Upgrades</span>
+                        <span class="topic-tag">Recipes</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Employee System -->
+            <a href="wiki_employee_system.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">👷</div>
+                    <span class="wiki-card-badge hr">HR</span>
+                </div>
+                <div>
+                    <h3>Employee System</h3>
+                    <p>Manage your virtual workforce. Hire NPC employees with different tiers and specializations to
+                        boost production speed, unlock bonuses, and keep your factory running efficiently.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">NPC</span>
+                        <span class="topic-tag">Tiers</span>
+                        <span class="topic-tag">Buffs</span>
+                        <span class="topic-tag">Salary</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Tax System -->
+            <a href="wiki_tax_system.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">💰</div>
+                    <span class="wiki-card-badge economy">Economy</span>
+                </div>
+                <div>
+                    <h3>Tax System</h3>
+                    <p>Understand the periodic tax obligations tied to your factories. Learn how taxes are calculated
+                        based on factory level and price, how to pay through the Tax Center GUI, and how to avoid late
+                        fees.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">Taxes</span>
+                        <span class="topic-tag">Penalties</span>
+                        <span class="topic-tag">Tax Center</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+    <div class="divider">
+        <hr>
+    </div>
+
+    <!-- ── Key Features ── -->
+    <section class="section">
+        <div class="section-header">
+            <div class="section-eyebrow">Capabilities</div>
+            <h2>Key <span>Features</span></h2>
+            <p>Everything you need to run a thriving industrial economy on your server.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">⚙️</div>
+                <div class="feature-text">
+                    <h4>Production Cycles</h4>
+                    <p>Fully asynchronous production runs with BossBar progress tracking, recipe selection, and
+                        automatic output delivery.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📦</div>
+                <div class="feature-text">
+                    <h4>Dual Storage System</h4>
+                    <p>Separate Input and Output storage per factory. Deposit raw materials and withdraw finished goods
+                        at any time.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">👷</div>
+                <div class="feature-text">
+                    <h4>NPC Employees</h4>
+                    <p>Hire virtual workers with unique tiers and production buff percentages. No employees = no
+                        production.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📈</div>
+                <div class="feature-text">
+                    <h4>Factory Upgrades</h4>
+                    <p>Level up your factory to increase storage capacity and reduce production time. Costs scale
+                        progressively.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">💸</div>
+                <div class="feature-text">
+                    <h4>Tax Economy</h4>
+                    <p>Periodic tax assessments based on factory level and price act as a money sink and maintenance
+                        cost.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🗺️</div>
+                <div class="feature-text">
+                    <h4>Fast Travel</h4>
+                    <p>Each factory has a configurable teleport point so owners can instantly warp to their factory
+                        location.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🛡️</div>
+                <div class="feature-text">
+                    <h4>WorldGuard Integration</h4>
+                    <p>Factories are bound to WorldGuard regions for physical area protection and access control.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🖥️</div>
+                <div class="feature-text">
+                    <h4>Smart GUI</h4>
+                    <p>Interactive inventory GUIs for managing recipes, storage, employees, and tax payments — all
+                        in-game.</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">💹</div>
+                <div class="feature-text">
+                    <h4>Vault Economy</h4>
+                    <p>Full Vault API integration for purchases, upgrades, salaries, and tax payments using your
+                        server's economy.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider">
+        <hr>
+    </div>
+
+    <!-- ── Dependencies ── -->
+    <section class="section">
+        <div class="section-header">
+            <div class="section-eyebrow">Requirements</div>
+            <h2>Plugin <span>Dependencies</span></h2>
+            <p>Make sure these plugins are installed on your server before using FactoryCore.</p>
+        </div>
+
+        <div class="deps-grid">
+            <div class="dep-card">
+                <div class="dep-icon">🟠</div>
+                <div class="dep-info">
+                    <h5>Spigot / Paper</h5>
+                    <p>1.21.4 or newer</p>
+                </div>
+                <span class="dep-required req">Required</span>
+            </div>
+            <div class="dep-card">
+                <div class="dep-icon">💰</div>
+                <div class="dep-info">
+                    <h5>Vault</h5>
+                    <p>Economy API bridge</p>
+                </div>
+                <span class="dep-required req">Required</span>
+            </div>
+            <div class="dep-card">
+                <div class="dep-icon">🛡️</div>
+                <div class="dep-info">
+                    <h5>WorldGuard</h5>
+                    <p>Region protection</p>
+                </div>
+                <span class="dep-required req">Required</span>
+            </div>
+            <div class="dep-card">
+                <div class="dep-icon">🌍</div>
+                <div class="dep-info">
+                    <h5>WorldEdit</h5>
+                    <p>WorldGuard dependency</p>
+                </div>
+                <span class="dep-required req">Required</span>
+            </div>
+            <div class="dep-card">
+                <div class="dep-icon">📋</div>
+                <div class="dep-info">
+                    <h5>PlaceholderAPI</h5>
+                    <p>Placeholder support</p>
+                </div>
+                <span class="dep-required opt">Optional</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider">
+        <hr>
+    </div>
+
+    <!-- ── Quick Start ── -->
+    <section class="section">
+        <div class="section-header">
+            <div class="section-eyebrow">Installation</div>
+            <h2>Quick <span>Start</span></h2>
+            <p>Get FactoryCore up and running on your server in minutes.</p>
+        </div>
+
+        <div class="quickstart-box">
+            <div class="quickstart-header">
+                <h3>🚀 Installation Guide</h3>
+                <p>Follow these steps to install and configure FactoryCore on your Minecraft server.</p>
+            </div>
+            <div class="quickstart-steps">
+                <div class="qs-step">
+                    <div class="qs-num">1</div>
+                    <div class="qs-content">
+                        <h4>Install Dependencies</h4>
+                        <p>Make sure <code>Vault</code>, <code>WorldEdit</code>, and <code>WorldGuard</code> are
+                            installed and enabled on your server. An economy plugin (e.g. EssentialsX) is also required
+                            for Vault to function.</p>
+                    </div>
+                </div>
+                <div class="qs-step">
+                    <div class="qs-num">2</div>
+                    <div class="qs-content">
+                        <h4>Drop the JAR</h4>
+                        <p>Place the <code>FactoryCore.jar</code> file into your server's <code>/plugins/</code> folder.
+                        </p>
+                    </div>
+                </div>
+                <div class="qs-step">
+                    <div class="qs-num">3</div>
+                    <div class="qs-content">
+                        <h4>Start / Restart the Server</h4>
+                        <p>Start or restart your server. FactoryCore will generate its configuration files inside
+                            <code>plugins/FactoryCore/</code>.</p>
+                    </div>
+                </div>
+                <div class="qs-step">
+                    <div class="qs-num">4</div>
+                    <div class="qs-content">
+                        <h4>Configure & Define Factories</h4>
+                        <p>Edit <code>config.yml</code> to set tax rates, intervals, and other global settings. Define
+                            your factory types and recipes in the respective YAML files. Data is stored under
+                            <code>plugins/FactoryCore/data/</code>.</p>
+                    </div>
+                </div>
+                <div class="qs-step">
+                    <div class="qs-num">5</div>
+                    <div class="qs-content">
+                        <h4>Read the Wiki</h4>
+                        <p>Dive into the <a href="wiki_factory_system.html"
+                                style="color:#34d399;text-decoration:none;font-weight:600;">Factory System</a>, <a
+                                href="wiki_employee_system.html"
+                                style="color:#34d399;text-decoration:none;font-weight:600;">Employee System</a>, and <a
+                                href="wiki_tax_system.html"
+                                style="color:#34d399;text-decoration:none;font-weight:600;">Tax System</a> pages for
+                            detailed configuration and gameplay guides.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer class="page-footer">
+        <div class="footer-inner">
+            <a href="index.html" class="footer-logo">
+                <div class="footer-logo-icon">🏭</div>
+                <span class="footer-logo-text">Factory<span>Core</span></span>
+            </a>
+            <div class="footer-links">
+                <a href="wiki_factory_system.html">Factory System</a>
+                <a href="wiki_employee_system.html">Employee System</a>
+                <a href="wiki_tax_system.html">Tax System</a>
+            </div>
+            <p class="footer-copy">FactoryCore Plugin &copy; 2026. All rights reserved. Built for Minecraft 1.21.4
+                (Spigot / Paper).</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

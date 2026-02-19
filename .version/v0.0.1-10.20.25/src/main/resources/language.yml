@@ -1,0 +1,200 @@
+# Language Configuration
+# Placeholders: {player}, {factory}, {amount}, {price}, {level}, {time}, etc.
+
+messages:
+  prefix: "§8[§6FactoryCore§8]§r"
+  
+  # General messages
+  no-permission: "{prefix} §cYou don't have permission to do that!"
+  player-only: "{prefix} §cThis command can only be used by players!"
+  invalid-args: "{prefix} §cInvalid usage! Use: §e{usage}"
+  reload-success: "{prefix} §aPlugin reloaded successfully!"
+  plugin-version: "{prefix} §7FactoryCore v{version} by §eaithor"
+  
+  # Factory messages
+  factory-created: "{prefix} §aFactory §e{factory} §asuccessfully created with ID: §6{id}"
+  factory-removed: "{prefix} §aFactory §e{id} §asuccessfully removed!"
+  factory-not-found: "{prefix} §cFactory not found!"
+  factory-already-owned: "{prefix} §cThis factory is already owned!"
+  factory-not-owned: "{prefix} §cYou don't own this factory!"
+  factory-bought: "{prefix} §aYou bought the factory §e{factory} §afor §6${price}§a!"
+  factory-sold: "{prefix} §aYou sold the factory §e{factory} §afor §6${price}§a!"
+  factory-info: 
+    - "{prefix} §6=== Factory Info ==="
+    - "§7ID: §e{id}"
+    - "§7Type: §e{type}"
+    - "§7Owner: §e{owner}"
+    - "§7Level: §e{level}"
+    - "§7Region: §e{region}"
+    - "§7Price: §6${price}"
+    - "§7Status: {status}"
+  
+  # Economy messages
+  insufficient-funds: "{prefix} §cInsufficient funds! Required: §6${amount}"
+  transaction-success: "{prefix} §aTransaction successful! §6${amount}"
+
+  # Production messages
+  production-started: "{prefix} §aProduction of §e{recipe} §astarted!"
+  production-complete: "{prefix} §aProduction of §e{recipe} §acompleted!"
+  production-cancelled: "{prefix} §cProduction cancelled!"
+  production-running: "{prefix} §cFactory is currently producing!"
+  production-insufficient-materials: "{prefix} §cInsufficient materials!"
+  production-no-space: "{prefix} §cStorage is full!"
+  production-queue-full: "{prefix} §cProduction queue is full!"
+  invalid-recipe-item: "{prefix} §cInvalid recipe item."
+
+  # Invoice messages
+  invoice-created: "{prefix} §eNew invoice created: §6${amount}"
+  invoice-paid: "{prefix} §aInvoice paid successfully: §6${amount}"
+  invoice-overdue: "{prefix} §cInvoice is overdue! Pay immediately or factory will be disabled!"
+  invoice-not-found: "{prefix} §cInvoice not found!"
+  invoice-already-paid: "{prefix} §cThis invoice is already paid!"
+  
+  # Tax & Salary messages
+  tax-generated: "{prefix} §eFactory tax §6${amount} §ahas been generated!"
+  salary-generated: "{prefix} §eEmployee salary §6${amount} §ahas been generated!"
+
+  # Level messages
+  level-up: "{prefix} §aFactory successfully upgraded to level §6{level}§a!"
+  level-max: "{prefix} §cFactory has reached maximum level!"
+  level-upgrade-cost: "{prefix} §7Upgrade cost: §6${cost}"
+
+  # NPC messages
+  npc-spawned: "{prefix} §aNPC §e{id} §asuccessfully spawned!"
+  npc-removed: "{prefix} §aNPC §e{id} §asuccessfully removed!"
+  npc-not-found: "{prefix} §cNPC not found!"
+  npc-interact: "§6§l» §eRight-click to open factory panel!"
+
+  # Admin messages
+  admin-setowner: "{prefix} §aFactory §e{id} §aowner changed to §6{player}§a!"
+  admin-teleport: "{prefix} §aTeleported to factory §e{id}§a!"
+  admin-give: "{prefix} §aGave §e{amount}x {item} §ato §6{player}§a!"
+  admin-list: "{prefix} §6=== Factory List ({count}) ==="
+
+  # Storage messages
+  storage-full: "{prefix} §cStorage is full!"
+  storage-updated: "{prefix} §aStorage successfully updated!"
+  storage-inventory-full: "{prefix} §cYour inventory is full!"
+  storage-item-withdrawn: "{prefix} §aYou have withdrawn §e{amount}x {item}§a."
+  storage-invalid-item: "{prefix} §cThat item cannot be deposited into the factory storage."
+  storage-item-deposited: "{prefix} §aYou have deposited §e{amount}x {item}§a."
+
+  # Region messages
+  region-not-found: "{prefix} §cWorldGuard region §e{region} §cnot found!"
+  region-exists: "{prefix} §cFactory with this region already exists!"
+  
+  # Help messages
+  help:
+    header: "{prefix} §6=== FactoryCore Help ==="
+    admin: "§e/fc admin create <region_id> <factory_id> <factory_type> <price_value> §7- Create factory"
+    admin-remove: "§e/fc admin remove <id> §7- Remove factory"
+    admin-list: "§e/fc admin list §7- List all factories"
+    admin-info: "§e/fc admin info <id> §7- Factory information"
+    admin-reload: "§e/fc admin reload §7- Reload plugin"
+    admin-setowner: "§e/fc admin setowner <id> <player> §7- Set factory owner"
+    admin-tp: "§e/fc admin teleport <id> §7- Teleport to factory"
+    admin-give: "§e/fc admin give <resource> <amount> <player> §7- Give resources"
+    admin-npc-spawn: "§e/fc admin npc spawn <id> §7- Spawn NPC"
+    admin-npc-remove: "§e/fc admin npc remove <id> §7- Remove NPC"
+    buy: "§e/fc buy <id> §7- Buy factory"
+    sell: "§e/fc sell <id> §7- Sell factory"
+    info: "§e/fc info <id> §7- Factory information"
+    gui: "§e/fc gui <factory_id> §7- Open factory GUI"
+    version: "§e/fc version §7- View plugin version"
+    footer: "{prefix} §7Use §e/fc help §7for assistance"
+  
+  # GUI titles
+  gui:
+    main-factory: "§6§lFactory: §e{factory}"
+    recipes: "§6§lSelect Production Recipe"
+    recipe-confirm: "§6§lConfirm: §e{recipe}"
+    storage: "§6§lFactory Storage"
+    invoices: "§6§lInvoice Management"
+    upgrade: "§6§lUpgrade Factory"
+    
+  # GUI items
+  gui-items:
+    status-running: "§aRUNNING"
+    status-stopped: "§cSTOPPED"
+    status-no-parts: "§eOUT OF MACHINE PARTS"
+
+    start-production: "§a§lStart Production"
+    start-production-lore:
+      - "§7Click to start production"
+      - "§7and select recipe"
+
+    invoice-management: "§e§lManage Invoices"
+    invoice-management-lore:
+      - "§7View and pay pending"
+      - "§7invoices"
+
+    factory-storage: "§b§lFactory Storage"
+    factory-storage-lore:
+      - "§7Access factory storage"
+      - "§7Slots: §e{slots}"
+
+    upgrade-factory: "§d§lUpgrade Factory"
+    upgrade-factory-lore:
+      - "§7Current level: §e{level}"
+      - "§7Click to upgrade"
+
+    fast-travel: "§6§lFast Travel"
+    fast-travel-lore:
+      - "§7Teleport to factory"
+
+    confirm: "§a§lConfirm"
+    cancel: "§c§lCancel"
+    back: "§e§lBack"
+    close: "§c§lClose"
+    
+    production-info:
+      - "§7Production time: §e{time}s"
+      - "§7Required inputs:"
+      - "{inputs}"
+      - "§7Generated outputs:"
+      - "{outputs}"
+
+    invoice-item:
+      - "§7Type: §e{type}"
+      - "§7Amount: §6${amount}"
+      - "§7Due date: §c{due-date}"
+      - ""
+      - "§eClick to pay"
+
+    upgrade-info:
+      - "§7Current level: §e{current-level}"
+      - "§7Next level: §e{next-level}"
+      - "§7Upgrade cost: §6${cost}"
+      - ""
+      - "§7Next level bonuses:"
+      - "§a+ Cost reduction: {cost-reduction}%"
+      - "§a+ Time reduction: {time-reduction}%"
+      - "§c+ Additional tax: {tax-increase}%"
+      - ""
+      - "§eClick to upgrade"
+
+  # Notification titles
+  titles:
+    production-complete:
+      title: "§a§lPRODUCTION COMPLETE"
+      subtitle: "§e{recipe}"
+    invoice-created:
+      title: "§e§lNEW INVOICE"
+      subtitle: "§6${amount}"
+    level-up:
+      title: "§6§lLEVEL UP!"
+      subtitle: "§eFactory Level {level}"
+    factory-disabled:
+      title: "§c§lFACTORY DISABLED"
+      subtitle: "§7Pay overdue invoices!"
+
+  # Bossbar messages
+  bossbar:
+    production: "§6Producing §e{recipe} §6- §e{percent}%"
+    
+  # Logging messages
+  log:
+    admin-command: "[ADMIN] {player} executed: {command}"
+    transaction: "[TRANSACTION] {player} - {type} - ${amount}"
+    production: "[PRODUCTION] Factory {id} - {recipe} - Status: {status}"
+    invoice: "[INVOICE] {type} - Factory {id} - ${amount}"

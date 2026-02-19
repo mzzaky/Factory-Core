@@ -1,0 +1,34 @@
+# NPC Configuration
+# Konfigurasi untuk Factory Employee NPCs
+
+# Default NPC settings
+default:
+  name: "§6Factory Employee"
+  profession: TOOLSMITH
+  type: PLAINS
+  invulnerable: true
+  ai-disabled: true
+  glow: true
+  custom-name-visible: true
+
+# Custom NPC templates (dapat digunakan saat spawn)
+templates:
+  steel_mill_employee:
+    name: "§6Steel Mill Worker"
+    profession: ARMORER
+    type: PLAINS
+
+  refinery_employee:
+    name: "§eRefinery Operator"
+    profession: TOOLSMITH
+    type: DESERT
+
+  workshop_employee:
+    name: "§bWorkshop Engineer"
+    profession: WEAPONSMITH
+    type: SNOW
+
+  advanced_factory_employee:
+    name: "§5Advanced Factory Manager"
+    profession: LIBRARIAN
+    type: JUNGLE

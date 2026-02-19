@@ -1,0 +1,247 @@
+# Resources Configuration
+# All items used in FactoryCore plugin
+
+# Resource Types:
+# 1. RAW_RESOURCES - Bahan mentah
+# 2. ADVANCED_RESOURCES - Bahan olahan
+# 3. FINAL_RESOURCES - Produk jadi
+# 4. FUEL - Bahan bakar
+# 5. MACHINE_PARTS - Suku cadang mesin
+
+resources:
+  # ==================== RAW RESOURCES ====================
+  iron_ore:
+    type: RAW_RESOURCES
+    material: IRON_ORE
+    name: "§fIron Ore"
+    lore:
+      - "§7Bijih besi mentah"
+      - "§7Dapat diproses menjadi besi"
+    custom-model-data: 1001
+    glow: false
+    
+  coal_ore:
+    type: RAW_RESOURCES
+    material: COAL_ORE
+    name: "§8Coal Ore"
+    lore:
+      - "§7Bijih batubara"
+      - "§7Bahan baku bahan bakar"
+    custom-model-data: 1002
+    glow: false
+    
+  copper_ore:
+    type: RAW_RESOURCES
+    material: COPPER_ORE
+    name: "§6Copper Ore"
+    lore:
+      - "§7Bijih tembaga"
+      - "§7Material konduktif"
+    custom-model-data: 1003
+    glow: false
+    
+  gold_ore:
+    type: RAW_RESOURCES
+    material: GOLD_ORE
+    name: "§eGold Ore"
+    lore:
+      - "§7Bijih emas"
+      - "§7Material berharga"
+    custom-model-data: 1004
+    glow: false
+    
+  diamond_ore:
+    type: RAW_RESOURCES
+    material: DIAMOND_ORE
+    name: "§bDiamond Ore"
+    lore:
+      - "§7Bijih berlian"
+      - "§7Material sangat langka"
+    custom-model-data: 1005
+    glow: true
+    
+  redstone_dust:
+    type: RAW_RESOURCES
+    material: REDSTONE
+    name: "§cRedstone Dust"
+    lore:
+      - "§7Debu redstone"
+      - "§7Komponen elektronik"
+    custom-model-data: 1006
+    glow: false
+
+  # ==================== ADVANCED RESOURCES ====================
+  steel_ingot:
+    type: ADVANCED_RESOURCES
+    material: IRON_INGOT
+    name: "§7Steel Ingot"
+    lore:
+      - "§7Batangan baja berkualitas"
+      - "§7Hasil olahan dari Steel Mill"
+    custom-model-data: 2001
+    glow: false
+    
+  refined_copper:
+    type: ADVANCED_RESOURCES
+    material: COPPER_INGOT
+    name: "§6Refined Copper"
+    lore:
+      - "§7Tembaga murni"
+      - "§7Untuk komponen elektronik"
+    custom-model-data: 2002
+    glow: false
+    
+  gold_alloy:
+    type: ADVANCED_RESOURCES
+    material: GOLD_INGOT
+    name: "§eGold Alloy"
+    lore:
+      - "§7Campuran emas berkualitas"
+      - "§7Material premium"
+    custom-model-data: 2003
+    glow: true
+    
+  carbon_fiber:
+    type: ADVANCED_RESOURCES
+    material: STRING
+    name: "§8Carbon Fiber"
+    lore:
+      - "§7Serat karbon kuat"
+      - "§7Material ringan dan kuat"
+    custom-model-data: 2004
+    glow: false
+
+  # ==================== FINAL RESOURCES ====================
+  advanced_weapon:
+    type: FINAL_RESOURCES
+    material: DIAMOND_SWORD
+    name: "§5Advanced Weapon"
+    lore:
+      - "§7Senjata canggih"
+      - "§7Produk bernilai tinggi"
+      - ""
+      - "§eHarga Jual: §6$5,000"
+    custom-model-data: 3001
+    glow: true
+    sell-price: 5000.0
+    
+  advanced_armor:
+    type: FINAL_RESOURCES
+    material: DIAMOND_CHESTPLATE
+    name: "§5Advanced Armor"
+    lore:
+      - "§7Armor canggih"
+      - "§7Perlindungan maksimal"
+      - ""
+      - "§eHarga Jual: §6$4,500"
+    custom-model-data: 3002
+    glow: true
+    sell-price: 4500.0
+    
+  electronic_component:
+    type: FINAL_RESOURCES
+    material: REPEATER
+    name: "§bElectronic Component"
+    lore:
+      - "§7Komponen elektronik"
+      - "§7Teknologi tinggi"
+      - ""
+      - "§eHarga Jual: §6$3,000"
+    custom-model-data: 3003
+    glow: true
+    sell-price: 3000.0
+    
+  luxury_item:
+    type: FINAL_RESOURCES
+    material: NETHER_STAR
+    name: "§6Luxury Item"
+    lore:
+      - "§7Barang mewah"
+      - "§7Sangat berharga"
+      - ""
+      - "§eHarga Jual: §6$10,000"
+    custom-model-data: 3004
+    glow: true
+    sell-price: 10000.0
+
+  # ==================== FUEL ====================
+  basic_fuel:
+    type: FUEL
+    material: COAL
+    name: "§8Basic Fuel"
+    lore:
+      - "§7Bahan bakar dasar"
+      - "§7Dari Refinery"
+    custom-model-data: 4001
+    glow: false
+    
+  refined_fuel:
+    type: FUEL
+    material: LAVA_BUCKET
+    name: "§6Refined Fuel"
+    lore:
+      - "§7Bahan bakar berkualitas"
+      - "§7Efisiensi tinggi"
+    custom-model-data: 4002
+    glow: false
+    
+  premium_fuel:
+    type: FUEL
+    material: BLAZE_POWDER
+    name: "§ePremium Fuel"
+    lore:
+      - "§7Bahan bakar premium"
+      - "§7Efisiensi maksimal"
+    custom-model-data: 4003
+    glow: true
+
+  # ==================== MACHINE PARTS ====================
+  basic_gear:
+    type: MACHINE_PARTS
+    material: IRON_INGOT
+    name: "§7Basic Gear"
+    lore:
+      - "§7Roda gigi dasar"
+      - "§7Komponen mesin"
+    custom-model-data: 5001
+    glow: false
+    
+  advanced_gear:
+    type: MACHINE_PARTS
+    material: GOLD_INGOT
+    name: "§eAdvanced Gear"
+    lore:
+      - "§7Roda gigi canggih"
+      - "§7Komponen berkualitas"
+    custom-model-data: 5002
+    glow: false
+    
+  engine_part:
+    type: MACHINE_PARTS
+    material: PISTON
+    name: "§6Engine Part"
+    lore:
+      - "§7Komponen mesin"
+      - "§7Untuk produksi"
+    custom-model-data: 5003
+    glow: false
+    
+  circuit_board:
+    type: MACHINE_PARTS
+    material: COMPARATOR
+    name: "§bCircuit Board"
+    lore:
+      - "§7Papan sirkuit"
+      - "§7Komponen elektronik"
+    custom-model-data: 5004
+    glow: true
+    
+  hydraulic_system:
+    type: MACHINE_PARTS
+    material: HEAVY_WEIGHTED_PRESSURE_PLATE
+    name: "§9Hydraulic System"
+    lore:
+      - "§7Sistem hidrolik"
+      - "§7Komponen presisi tinggi"
+    custom-model-data: 5005
+    glow: true

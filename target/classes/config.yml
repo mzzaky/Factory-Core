@@ -1,0 +1,149 @@
+# FactoryCore Configuration
+# Version: 1.21.4
+# Author: aithor
+
+# Database settings
+database:
+  type: YAML # YAML or MySQL (MySQL support coming soon)
+  mysql:
+    host: localhost
+    port: 3306
+    database: factorycore
+    username: root
+    password: password
+
+# Tax settings
+tax:
+  enabled: true
+  rate: 5.0 # Percentage of factory price
+  interval-ticks: 144000 # 3 days in Minecraft (72000 ticks = 1 day)
+  level-multiplier: 2.5 # Additional tax per level (%)
+  # NEW: Tax Center settings
+  due-days: 7 # Days until tax is considered overdue
+  late-fee-rate: 5.0 # Late fee percentage when overdue
+  notify-on-assessment: true # Notify players when tax is assessed
+  notify-on-overdue: true # Notify players when tax becomes overdue
+
+# Salary settings
+salary:
+  enabled: true
+  rate: 1.0 # Percentage of factory price
+  interval-ticks: 24000 # 1 day in Minecraft
+
+# ==================== NEW: MARKETPLACE SETTINGS ====================
+marketplace:
+  enabled: true
+  # Tax rate on marketplace sales (deducted from seller)
+  tax-rate: 5.0
+  # Maximum listings per player
+  max-listings-per-player: 10
+  # Listing expiration time in hours (168 = 7 days)
+  listing-expiration-hours: 168
+  # Minimum price per unit
+  min-price: 0.01
+  # Maximum price per unit
+  max-price: 1000000.0
+
+# Factory settings
+factory:
+  max-level: 5
+  base-storage-slots: 9
+  slots-per-level: 9
+  sell-price-multiplier: 0.5 # 50% of buy price
+  
+  # Production bonuses per level
+  level-bonuses:
+    cost-reduction: 5.0 # % reduction per level
+    time-reduction: 10.0 # % reduction per level
+
+# Factory types configuration
+factory-types:
+  steel_mill:
+    name: "§6Steel Mill"
+    description: "§7Mengubah raw resources menjadi advanced resources"
+    base-price: 100000.0
+    icon: IRON_BLOCK
+    
+  refinery:
+    name: "§eRefinery"
+    description: "§7Memproduksi bahan bakar untuk pabrik"
+    base-price: 150000.0
+    icon: FURNACE
+    
+  workshop:
+    name: "§bWorkshop"
+    description: "§7Memproduksi machine parts"
+    base-price: 200000.0
+    icon: ANVIL
+    
+  advanced_factory:
+    name: "§5Advanced Factory"
+    description: "§7Memproduksi final resources bernilai tinggi"
+    base-price: 250000.0
+    icon: NETHER_STAR
+
+# Notification settings
+notifications:
+  enabled: true
+  sound:
+    enabled: true
+    production-complete: ENTITY_PLAYER_LEVELUP
+    invoice-created: BLOCK_NOTE_BLOCK_PLING
+    level-up: ENTITY_PLAYER_LEVELUP
+    # NEW: Additional sounds
+    tax-due: BLOCK_NOTE_BLOCK_BASS
+    marketplace-sale: ENTITY_EXPERIENCE_ORB_PICKUP
+  titles:
+    enabled: true
+    fade-in: 10
+    stay: 40
+    fade-out: 10
+
+# GUI settings
+gui:
+  update-interval: 20 # ticks
+  border-item: BLACK_STAINED_GLASS_PANE
+  back-item: ARROW
+  close-item: BARRIER
+  confirm-item: GREEN_WOOL
+  cancel-item: RED_WOOL
+  # NEW: Hub GUI settings
+  hub:
+    show-player-head: true
+    show-quick-stats: true
+    title: "§6§lFactoryCore §8- §eMain Hub"
+
+# Debug settings
+debug:
+  enabled: false
+  gui-debug: false # Enable detailed GUI click debugging
+
+# Logging settings
+logging:
+  enabled: true
+  log-admin-commands: true
+  log-transactions: true
+  log-production: true
+  log-invoices: true
+  file-name: "factorycore.log"
+  max-file-size: 10485760 # 10MB in bytes
+  # NEW: Additional logging
+  log-marketplace: true
+  log-taxes: true
+
+# Production settings
+production:
+  allow-offline-production: false
+  max-queue: 5
+  show-bossbar: true
+  bossbar-color: BLUE
+  bossbar-style: SOLID
+
+# Economy settings
+economy:
+  currency-symbol: "$"
+  decimal-places: 2
+
+# Placeholder settings
+placeholders:
+  update-interval: 100 # ticks

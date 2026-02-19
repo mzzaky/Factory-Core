@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog - Factory-Core-Plugin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0c10 0%, #111316 50%, #1a1d23 100%);
+            color: #e4e6ea;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Elegant Red background effects */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(4, 120, 87, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Floating particles effect */
+        .particle {
+            position: absolute;
+            background: rgba(16, 185, 129, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Header Utama */
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+            position: relative;
+        }
+
+        .page-header h1 {
+            color: #ffffff;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            position: relative;
+        }
+
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .page-header p {
+            color: #9ca3af;
+            font-size: 1.2rem;
+            margin-top: 30px;
+        }
+
+        .current-version {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(22, 163, 74, 0.2) 100%);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 30px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);
+        }
+
+        .current-version span {
+            color: #22c55e;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+        }
+
+        /* Navigation Breadcrumb */
+        .breadcrumb {
+            max-width: 1400px;
+            margin: 0 auto 40px;
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .breadcrumb a {
+            color: #10b981;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #047857;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .breadcrumb span {
+            color: #6b7280;
+        }
+
+        /* Content Container */
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* Side Navigation */
+        .side-nav {
+            position: sticky;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35), 0 0 50px rgba(16, 185, 129, 0.05);
+        }
+
+        .nav-title {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-list li {
+            margin-bottom: 8px;
+        }
+
+        .nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #e4e6ea;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-list a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-list a:hover::before {
+            left: 100%;
+        }
+
+        .nav-list a:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(4, 120, 87, 0.1) 100%);
+            color: #10b981;
+            transform: translateX(4px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .nav-list a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(4, 120, 87, 0.15) 100%);
+            color: #10b981;
+            border-left: 3px solid #10b981;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .version-badge {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 80px rgba(16, 185, 129, 0.05);
+        }
+
+        /* Version Section */
+        .version-section {
+            padding: 32px;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.05);
+            scroll-margin-top: 20px;
+            position: relative;
+        }
+
+        .version-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent);
+        }
+
+        .version-section:last-child {
+            border-bottom: none;
+        }
+
+        .version-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+            padding: 8px;
+            margin: -8px;
+            border-radius: 12px;
+        }
+
+        .version-header:hover {
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        /* Collapse/Expand Button */
+        .version-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(4, 120, 87, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            color: #10b981;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);
+        }
+
+        .version-toggle:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(4, 120, 87, 0.2) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.2);
+        }
+
+        .version-toggle-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .version-section.collapsed .version-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .version-toggle-text {
+            font-size: 11px;
+        }
+
+        /* Version Content */
+        .version-content {
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .version-section.collapsed .version-content {
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-20px);
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+
+        .version-section:not(.collapsed) .version-content {
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Collapsed state indicator */
+        .version-section.collapsed {
+            padding-bottom: 24px;
+        }
+
+        .version-section.collapsed .version-header {
+            margin-bottom: 0;
+        }
+
+        /* Header Left Side */
+        .version-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .version-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .version-title h2 {
+            color: #10b981;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .version-type {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .version-type.major {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
+        }
+
+        .version-type.feature {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.2) 100%);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .version-type.patch {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(22, 163, 74, 0.2) 100%);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1);
+        }
+
+        .version-type.update {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%);
+            color: #a855f7;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.1);
+        }
+
+        .release-date {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        /* Change Categories */
+        .change-category {
+            margin-bottom: 32px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 12px;
+            border-left: 3px solid;
+        }
+
+        .category-header.added {
+            border-color: #22c55e;
+        }
+
+        .category-header.fixed {
+            border-color: #ef4444;
+        }
+
+        .category-header.improved {
+            border-color: #3b82f6;
+        }
+
+        .category-header.enhanced {
+            border-color: #a855f7;
+        }
+
+        .category-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .category-icon.added {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .category-icon.fixed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .category-icon.improved {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .category-icon.enhanced {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+        }
+
+        .category-title {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Change Items */
+        .change-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 0 40px;
+        }
+
+        .change-item {
+            margin-bottom: 16px;
+            color: #d1d5db;
+            line-height: 1.7;
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .change-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        .change-item strong {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .sub-item {
+            margin-left: 24px;
+            margin-top: 8px;
+            color: #9ca3af;
+            font-size: 14px;
+            list-style: none;
+        }
+
+        .sub-item::before {
+            content: '→';
+            margin-right: 8px;
+            color: #6b7280;
+        }
+
+        /* Code Inline */
+        code {
+            background: rgba(16, 185, 129, 0.1);
+            padding: 3px 8px;
+            border-radius: 6px;
+            color: #10b981;
+            font-family: 'Outfit', monospace;
+            font-size: 13px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* Overview Box */
+        .overview-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(4, 120, 87, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.05);
+        }
+
+        .overview-title {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .overview-stat {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+        }
+
+        .stat-label {
+            color: #9ca3af;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            color: #10b981;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+
+            .side-nav {
+                position: static;
+                margin-bottom: 32px;
+            }
+
+            .nav-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .version-section {
+                padding: 24px;
+            }
+
+            .version-title h2 {
+                font-size: 1.5rem;
+            }
+
+            .version-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .version-header-left {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .change-list {
+                margin-left: 20px;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .version-section {
+                padding: 20px;
+            }
+
+            .change-list {
+                margin-left: 10px;
+            }
+
+            .change-item {
+                padding-left: 16px;
+            }
+        }
+
+        /* Scrollbar Customization */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            border-radius: 6px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating particles -->
+    <div class="particle" style="left: 10%; width: 3px; height: 3px; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; width: 2px; height: 2px; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 30%; width: 4px; height: 4px; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 40%; width: 2px; height: 2px; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 50%; width: 3px; height: 3px; animation-delay: 8s;"></div>
+    <div class="particle" style="left: 60%; width: 2px; height: 2px; animation-delay: 10s;"></div>
+    <div class="particle" style="left: 70%; width: 4px; height: 4px; animation-delay: 12s;"></div>
+    <div class="particle" style="left: 80%; width: 3px; height: 3px; animation-delay: 14s;"></div>
+    <div class="particle" style="left: 90%; width: 2px; height: 2px; animation-delay: 16s;"></div>
+
+    <div class="page-header">
+        <h1>Factory-Core-Plugin Changelog</h1>
+        <p>Track all updates, improvements, and bug fixes for Factory-Core-Plugin</p>
+        <div class="current-version">
+            <span>Latest Version: v1.0.0</span>
+        </div>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="#">Home</a>
+        <span>›</span>
+        <span style="color: #e4e6ea;">Changelog</span>
+    </div>
+
+    <div class="content-container">
+        <nav class="side-nav">
+            <div class="nav-title">Version History</div>
+            <ul class="nav-list">
+                <li><a href="#v1-0-0" class="active">v1.0.0 <span class="version-badge">Release</span></a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <!-- Version 1.0.0 (Initial Release) -->
+            <section class="version-section" id="v1-0-0">
+                <div class="version-header">
+                    <div class="version-header-left">
+                        <div class="version-title">
+                            <h2>Version 1.0.0</h2>
+                            <span class="version-type major">Initial Release</span>
+                        </div>
+                        <div class="release-date">February 19, 2026</div>
+                    </div>
+                    <div class="version-toggle">
+                        <span class="version-toggle-icon">▼</span>
+                        <span class="version-toggle-text">Minimize</span>
+                    </div>
+                </div>
+
+                <div class="version-content">
+                    <div class="overview-box">
+                        <div class="overview-title">Release Overview</div>
+                        <div class="overview-grid">
+                            <div class="overview-stat">
+                                <div class="stat-label">Java Classes</div>
+                                <div class="stat-value">54</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">GUI Screens</div>
+                                <div class="stat-value">17</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Recipes</div>
+                                <div class="stat-value">16</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Resources</div>
+                                <div class="stat-value">21</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Placeholders</div>
+                                <div class="stat-value">20+</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Config Files</div>
+                                <div class="stat-value">6</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Minecraft</div>
+                                <div class="stat-value">1.21.4</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Type</div>
+                                <div class="stat-value">Major</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1. Factory System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Factory System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>4 Factory Types:</strong> Steel Mill ($100,000), Refinery ($150,000), Workshop
+                                ($200,000), and Advanced Factory ($250,000) — each with unique input/output chains.
+                            </li>
+                            <li class="change-item">
+                                <strong>Factory Ownership System:</strong> Players can buy and sell factories. Sell
+                                price is 50% of the purchase price (configurable).
+                            </li>
+                            <li class="change-item">
+                                <strong>WorldGuard Region Binding:</strong> Each factory is tied to a defined WorldGuard
+                                region for area management.
+                            </li>
+                            <li class="change-item">
+                                <strong>Factory Level System (1–5):</strong> Upgradeable factories with per-level
+                                bonuses — 5% production cost reduction, 10% time reduction, +9 storage slots, and +2.5%
+                                tax per level.
+                            </li>
+                            <li class="change-item">
+                                <strong>Factory Status Tracking:</strong> Real-time status display:
+                                <code>RUNNING</code>, <code>STOPPED</code>, <code>OUT OF MACHINE PARTS</code>.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 2. Production System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Production System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>16 Predefined Recipes</strong> across all factory types: 2 for Steel Mill, 3 for
+                                Refinery, 5 for Workshop, and 6 for Advanced Factory.
+                            </li>
+                            <li class="change-item">
+                                <strong>BossBar Progress Indicator:</strong> Real-time production progress shown via
+                                configurable BossBar (color and style configurable).
+                            </li>
+                            <li class="change-item">
+                                <strong>Production Queue System:</strong> Up to 5 queued production tasks per factory.
+                            </li>
+                            <li class="change-item">
+                                <strong>Console Command Execution:</strong> Custom console commands triggered upon
+                                production completion (e.g., economy rewards).
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 3. Resource System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Resource System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>21 Resources in 5 Categories:</strong>
+                                <ul>
+                                    <li class="sub-item">Raw Resources (6): Iron Ore, Coal Ore, Copper Ore, Gold Ore,
+                                        Diamond Ore, Redstone Dust</li>
+                                    <li class="sub-item">Advanced Resources (4): Steel Ingot, Refined Copper, Gold
+                                        Alloy, Carbon Fiber</li>
+                                    <li class="sub-item">Final Resources (4): Advanced Weapon ($5,000), Advanced Armor
+                                        ($4,500), Electronic Component ($3,000), Luxury Item ($10,000)</li>
+                                    <li class="sub-item">Fuel (3): Basic Fuel, Refined Fuel, Premium Fuel</li>
+                                    <li class="sub-item">Machine Parts (5): Basic Gear, Advanced Gear, Engine Part,
+                                        Circuit Board, Hydraulic System</li>
+                                </ul>
+                            </li>
+                            <li class="change-item">
+                                <strong>Custom Model Data Support</strong> for all 21 resources (IDs 1001–5005).
+                            </li>
+                            <li class="change-item">
+                                <strong>Enchantment Glow Effect</strong> for rare items (Gold Alloy, Diamond Ore,
+                                Premium Fuel, Circuit Board, Hydraulic System, and all Final Resources).
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 4. Economy & Tax System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Economy &amp; Tax System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Full Vault Integration</strong> for all economic transactions (buy, sell, tax,
+                                salary, marketplace).
+                            </li>
+                            <li class="change-item">
+                                <strong>Tax System:</strong> 5% of factory price per 3 Minecraft days (144,000 ticks).
+                                +2.5% per factory level. 7-day grace period before overdue. 5% late fee on overdue
+                                taxes.
+                            </li>
+                            <li class="change-item">
+                                <strong>Salary System:</strong> 1% of factory price per 1 Minecraft day (24,000 ticks),
+                                automatically billed as invoices.
+                            </li>
+                            <li class="change-item">
+                                <strong>Invoice Management:</strong> Auto-generated invoices for tax and salary.
+                                Supports individual or bulk payment. Factory is disabled on unpaid overdue invoices.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 5. NPC Employee System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">NPC Employee System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>5 Employee Tiers</strong> available in the Employee Shop:
+                                <ul>
+                                    <li class="sub-item">Apprentice Worker — $500 (salary $50): −5% production time</li>
+                                    <li class="sub-item">Skilled Craftsman — $1,500 (salary $120): −15% production time
+                                    </li>
+                                    <li class="sub-item">Steel Forger — $2,500 (salary $200): −20% production time</li>
+                                    <li class="sub-item">Refinery Operator — $3,500 (salary $280): −25% production time
+                                    </li>
+                                    <li class="sub-item">Master Engineer — $6,000 (salary $450): −35% production time
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="change-item">
+                                <strong>Advanced NPC Behavior:</strong> Head tracking (6-block radius), idle animations
+                                with smooth interpolation, unique particle effects per factory type, hologram display,
+                                ambient/interaction sounds, body rotation, invulnerable &amp; AI-disabled.
+                            </li>
+                            <li class="change-item">
+                                <strong>4 NPC Templates</strong> matching factory types: Steel Mill Worker
+                                (ARMORER/PLAINS), Refinery Operator (TOOLSMITH/DESERT), Workshop Engineer
+                                (WEAPONSMITH/SNOW), Advanced Factory Manager (LIBRARIAN/JUNGLE).
+                            </li>
+                            <li class="change-item">
+                                <strong>Auto-Respawn System:</strong> Periodic check and re-spawn of missing NPCs to
+                                ensure persistence.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 6. GUI System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">GUI System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>17 Interactive GUI Screens:</strong> <code>HubGUI</code>,
+                                <code>MainMenuGUI</code>, <code>FactoryBrowseGUI</code>, <code>MyFactoriesGUI</code>,
+                                <code>RecipeSelectionGUI</code>, <code>RecipeConfirmationGUI</code>,
+                                <code>StorageGUI</code>, <code>OutputStorageGUI</code>, <code>InvoiceGUI</code>,
+                                <code>InvoiceCenterGUI</code>, <code>TaxCenterGUI</code>, <code>UpgradeGUI</code>,
+                                <code>EmployeesCenterGUI</code>, <code>EmployeeShopGUI</code>,
+                                <code>MarketplaceGUI</code>, <code>HelpInfoGUI</code>, <code>FactoryGUI</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Configurable GUI Elements:</strong> Border item, back button, close button,
+                                confirm/cancel items — all configurable in <code>config.yml</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Hub GUI</strong> serves as the central navigation point with player head display
+                                and quick stats.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 7. Marketplace System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Marketplace System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Player-to-Player Resource Trading</strong> via an in-game marketplace GUI.
+                            </li>
+                            <li class="change-item">
+                                <strong>Marketplace Tax:</strong> 5% deducted from the seller on each sale
+                                (configurable).
+                            </li>
+                            <li class="change-item">
+                                <strong>Listing Rules:</strong> Max 10 listings per player. Listings expire after 7 days
+                                (168 hours). Price range: $0.01 – $1,000,000.
+                            </li>
+                            <li class="change-item">
+                                <strong>Earnings Collection System:</strong> Sellers collect earnings from a dedicated
+                                earnings panel.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 8. Storage System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Storage System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Per-Factory Input &amp; Output Storage:</strong> Separate storage for depositing
+                                inputs and collecting outputs.
+                            </li>
+                            <li class="change-item">
+                                <strong>Expandable Slots:</strong> Base 9 slots, +9 per factory level (max 54 slots at
+                                level 5).
+                            </li>
+                            <li class="change-item">
+                                <strong>Persistent YAML Storage:</strong> All inventory data is saved and restored
+                                across server restarts.
+                            </li>
+                            <li class="change-item">
+                                <strong>Item Validation:</strong> Only valid FactoryCore resources can be deposited into
+                                factory storage.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 9. Command System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Command System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Main Command:</strong> <code>/factorycore</code> with alias <code>/fc</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>User Commands:</strong> <code>/fc hub</code>, <code>browse</code>,
+                                <code>my</code>, <code>invoices</code>, <code>taxes</code>, <code>employees</code>,
+                                <code>market</code>, <code>buy</code>, <code>sell</code>, <code>info</code>,
+                                <code>gui</code>, <code>tp</code>, <code>help</code>, <code>version</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Admin Commands:</strong>
+                                <code>/fc admin create/remove/list/info/reload/setowner/teleport/give</code>,
+                                <code>npc spawn/remove</code>, <code>tax</code>, <code>market</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Full Tab Completion</strong> support for all commands and subcommands.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 10. Permission System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Permission System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>12 Admin Permissions</strong> (default: OP): <code>factorycore.admin.*</code> —
+                                covering create, remove, list, info, reload, setowner, teleport, give, npc, tax, and
+                                market.
+                            </li>
+                            <li class="change-item">
+                                <strong>15 User Permissions</strong> (default: true): <code>factorycore.use</code>
+                                grants access to buy, sell, info, gui, hub, browse, myfactories, invoices, taxes,
+                                employees, marketplace, teleport, help, and version.
+                            </li>
+                            <li class="change-item">
+                                <strong>Wildcard Node:</strong> <code>factorycore.*</code> grants all permissions at
+                                once.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 11. PlaceholderAPI Support -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">PlaceholderAPI Support</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>20+ Placeholders</strong> for use in scoreboards, holograms, and other plugins.
+                            </li>
+                            <li class="change-item">
+                                <strong>General:</strong> <code>%factorycore_factories_owned%</code>,
+                                <code>_factories_running%</code>, <code>_total_value%</code>,
+                                <code>_highest_level%</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Invoice:</strong> <code>%factorycore_invoices_pending%</code>,
+                                <code>_invoices_overdue%</code>, <code>_total_invoice_amount%</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Factory Type:</strong> <code>%factorycore_steel_mills_owned%</code>,
+                                <code>_refineries_owned%</code>, <code>_workshops_owned%</code>,
+                                <code>_advanced_factories_owned%</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Per-Factory:</strong> <code>%factorycore_factory_&lt;id&gt;_status%</code>,
+                                <code>_level%</code>, <code>_type%</code>, <code>_production%</code>,
+                                <code>_progress%</code>.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 12. Configuration Files -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Configuration Files</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item"><strong><code>config.yml</code></strong> — Database, tax, salary,
+                                factory types, marketplace, notifications, GUI, debug, logging, production, economy, and
+                                placeholder settings.</li>
+                            <li class="change-item"><strong><code>resources.yml</code></strong> — Full definitions for
+                                all 21 resources with custom model data, material, name, lore, and glow.</li>
+                            <li class="change-item"><strong><code>recipes.yml</code></strong> — All 16 production
+                                recipes with inputs, outputs, timings, icons, and console commands.</li>
+                            <li class="change-item"><strong><code>language.yml</code></strong> — 80+ customizable
+                                messages, GUI titles, notification titles, bossbar text, and log formats.</li>
+                            <li class="change-item"><strong><code>npc.yml</code></strong> — NPC templates (4 types),
+                                employee shop listings (5 tiers), and global behavior settings (particles, sounds,
+                                holograms).</li>
+                            <li class="change-item"><strong><code>plugin.yml</code></strong> — Plugin metadata, full
+                                command definitions, and all permission node declarations.</li>
+                        </ul>
+                    </div>
+
+                    <!-- 13. Notification System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Notification System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Title Notifications</strong> with configurable fade-in, stay, and fade-out
+                                durations for: Production Complete, New Invoice, Level Up, Factory Disabled, Tax Due,
+                                Overdue Invoice, Factory Purchased, Marketplace Sale.
+                            </li>
+                            <li class="change-item">
+                                <strong>Sound Effects:</strong> Production complete
+                                (<code>ENTITY_PLAYER_LEVELUP</code>), invoice created
+                                (<code>BLOCK_NOTE_BLOCK_PLING</code>), level up, tax due
+                                (<code>BLOCK_NOTE_BLOCK_BASS</code>), and marketplace sale
+                                (<code>ENTITY_EXPERIENCE_ORB_PICKUP</code>).
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 14. Logging System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Logging System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>6 Log Categories:</strong> Admin commands, transactions, production, invoices,
+                                marketplace, and taxes — all individually togglable.
+                            </li>
+                            <li class="change-item">
+                                <strong>File-Based Logging</strong> to
+                                <code>plugins/FactoryCore/logs/factorycore.log</code> with 10MB max size and log
+                                rotation.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 15. Developer API -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Developer API</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>FactoryCoreAPI Class</strong> providing full Java integration for third-party
+                                plugins.
+                            </li>
+                            <li class="change-item">
+                                <strong>Factory Management:</strong> <code>getFactory()</code>,
+                                <code>getAllFactories()</code>, <code>createFactory()</code>,
+                                <code>removeFactory()</code>, <code>ownsFactory()</code>,
+                                <code>getFactoryStatus()</code>, <code>isProducing()</code>,
+                                <code>upgradeFactory()</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Resource Management:</strong> <code>getResource()</code>,
+                                <code>createResourceItem()</code>, <code>giveResource()</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Storage Management:</strong> <code>addToStorage()</code>,
+                                <code>removeFromStorage()</code>, <code>getStorageAmount()</code>,
+                                <code>getFactoryStorage()</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Production &amp; NPC:</strong> <code>startProduction()</code>,
+                                <code>spawnNPC()</code>.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 16. Technical Details -->
+                    <div class="change-category">
+                        <div class="category-header improved">
+                            <div class="category-icon improved">i</div>
+                            <div class="category-title">Technical Details</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>54 Java Classes</strong> organized into: <code>api/</code>,
+                                <code>commands/</code>, <code>gui/</code> (17 screens), <code>listeners/</code> (5),
+                                <code>managers/</code> (9), <code>models/</code> (9), <code>utils/</code> (6).
+                            </li>
+                            <li class="change-item">
+                                <strong>Build System:</strong> Maven with Shade plugin. Targets Minecraft 1.21.4,
+                                requires Java 17+.
+                            </li>
+                            <li class="change-item">
+                                <strong>Required Dependencies:</strong> Vault, WorldEdit 7.3.0, WorldGuard 7.0.9.
+                                Optional: PlaceholderAPI 2.11.5.
+                            </li>
+                            <li class="change-item">
+                                <strong>Database:</strong> YAML-based file storage in
+                                <code>plugins/FactoryCore/data/</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>API Version:</strong> Spigot/Paper 1.21.4. <strong>Author:</strong> aithor.
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Hardened interactivity for Google Sites embedding
+        (function () {
+            // Version collapse/expand functionality
+            function initVersionToggles() {
+                var versionSections = document.querySelectorAll('.version-section');
+
+                versionSections.forEach(function (section) {
+                    var header = section.querySelector('.version-header');
+                    var toggle = section.querySelector('.version-toggle');
+                    var toggleIcon = section.querySelector('.version-toggle-icon');
+                    var toggleText = section.querySelector('.version-toggle-text');
+
+                    function toggleSection(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        var isCollapsed = section.classList.contains('collapsed');
+
+                        if (isCollapsed) {
+                            section.classList.remove('collapsed');
+                            toggleText.textContent = 'Minimize';
+                            toggleIcon.textContent = '▼';
+                        } else {
+                            section.classList.add('collapsed');
+                            toggleText.textContent = 'Expand';
+                            toggleIcon.textContent = '▼';
+                        }
+
+                        // Update navigation active state if needed
+                        var sectionId = section.id;
+                        if (sectionId && !isCollapsed) {
+                            var navLink = document.querySelector('.nav-list a[href="#' + sectionId + '"]');
+                            if (navLink) {
+                                document.querySelectorAll('.nav-list a').forEach(function (a) {
+                                    a.classList.remove('active');
+                                });
+                                navLink.classList.add('active');
+                            }
+                        }
+                    }
+
+                    // Add click handler to both header and toggle button
+                    if (header) {
+                        header.addEventListener('click', toggleSection, true);
+                    }
+
+                    // Prevent navigation link clicks from toggling
+                    header.querySelectorAll('a').forEach(function (link) {
+                        link.addEventListener('click', function (e) {
+                            e.stopPropagation();
+                        });
+                    });
+                });
+            }
+
+            // Initialize toggles on page load
+            initVersionToggles();
+
+            // Prepare and harden side navigation behavior
+            var navContainer = document.querySelector('.nav-list');
+
+            if (navContainer) {
+                // Remove any target attributes that may cause new tab behavior
+                navContainer.querySelectorAll('a').forEach(function (a) {
+                    a.removeAttribute('target');
+                    a.setAttribute('rel', 'noopener');
+                    a.setAttribute('role', 'button');
+                });
+
+                // Delegated smooth scrolling to prevent default navigation/new tab
+                navContainer.addEventListener('click', function (e) {
+                    var link = e.target && e.target.closest ? e.target.closest('a') : null;
+                    if (!link) return;
+
+                    var href = link.getAttribute('href') || '';
+                    if (href.charAt(0) === '#') {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        var id = href.slice(1);
+                        var target = document.getElementById(id);
+                        if (target) {
+                            // Expand the section if it's collapsed
+                            if (target.classList.contains('collapsed')) {
+                                target.classList.remove('collapsed');
+                                var toggleText = target.querySelector('.version-toggle-text');
+                                var toggleIcon = target.querySelector('.version-toggle-icon');
+                                if (toggleText) toggleText.textContent = 'Minimize';
+                                if (toggleIcon) toggleIcon.textContent = '▼';
+                            }
+
+                            try {
+                                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            } catch (err) {
+                                // Fallback smooth scroll
+                                var start = window.pageYOffset || document.documentElement.scrollTop || 0;
+                                var end = target.getBoundingClientRect().top + start - 10;
+                                var duration = 400, startTime = null;
+                                function step(ts) {
+                                    if (!startTime) startTime = ts;
+                                    var p = Math.min((ts - startTime) / duration, 1);
+                                    var ease = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p;
+                                    window.scrollTo(0, start + (end - start) * ease);
+                                    if (p < 1) requestAnimationFrame(step);
+                                }
+                                requestAnimationFrame(step);
+                            }
+
+                            // Update active state
+                            navContainer.querySelectorAll('a').forEach(function (a) { a.classList.remove('active'); });
+                            link.classList.add('active');
+                        }
+                    }
+                }, true); // capture to cancel host default
+            }
+
+            // Active section highlight on scroll
+            var sections = Array.prototype.slice.call(document.querySelectorAll('.version-section'));
+            var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-list a'));
+
+            function highlightNav() {
+                var current = '';
+                var scrollPos = (window.scrollY || window.pageYOffset || 0) + 120; // Adjusted offset
+                for (var i = 0; i < sections.length; i++) {
+                    var s = sections[i];
+                    if (scrollPos >= s.offsetTop) {
+                        current = s.id;
+                    }
+                }
+                var hasActive = false;
+                navLinks.forEach(function (link) {
+                    var href = link.getAttribute('href') || '';
+                    var isActive = href.charAt(0) === '#' && href.slice(1) === current;
+                    if (isActive) {
+                        link.classList.add('active');
+                        hasActive = true;
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+                // If no section is active (e.g., at the very top), activate the first link
+                if (!hasActive && navLinks.length > 0) {
+                    navLinks[0].classList.add('active');
+                    navLinks.slice(1).forEach(function (link) { link.classList.remove('active'); });
+                }
+            }
+            window.addEventListener('scroll', highlightNav, { passive: true });
+            // Initial call to set state on page load
+            setTimeout(highlightNav, 100);
+        })();
+    </script>
+</body>
+
+</html>

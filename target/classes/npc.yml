@@ -1,0 +1,280 @@
+# ============================================================
+#   NPC Configuration - Factory Core Plugin
+#   Advanced & Natural Factory Employee NPC Configuration
+# ============================================================
+
+# ─────────────────────────────────────────────
+#  GLOBAL SETTINGS
+# ─────────────────────────────────────────────
+global:
+  # How far the NPC will "look" at the player (in blocks)
+  look-at-player-radius: 6.0
+
+  # Interval (in ticks) for NPC random head movement (20 ticks = 1 second)
+  idle-animation-interval: 60
+
+  # Interval (in ticks) for NPC to emit particles
+  particle-interval: 40
+
+  # Interval (in ticks) to check and respawn missing NPCs
+  respawn-check-interval: 200
+
+  # Should the NPC rotate its head towards the nearest player?
+  enable-look-at-player: true
+
+  # Should the NPC perform idle animation (random head movement)?
+  enable-idle-animation: true
+
+  # Should the NPC emit particles?
+  enable-particles: true
+
+  # Should the NPC rotate its body (body rotation) following its head?
+  enable-body-rotation: true
+
+  # Sound played when a player interacts with the NPC
+  interact-sound: "ENTITY_VILLAGER_YES"
+  interact-sound-volume: 0.8
+  interact-sound-pitch: 1.0
+
+  # NPC ambient sound (played periodically)
+  ambient-sound-enabled: true
+  ambient-sound: "ENTITY_VILLAGER_AMBIENT"
+  ambient-sound-interval: 300   # ticks (~15 seconds)
+  ambient-sound-volume: 0.3
+  ambient-sound-pitch: 1.0
+  ambient-sound-radius: 8.0     # Only players within this radius will hear it
+
+# ─────────────────────────────────────────────
+#  EMPLOYEE SHOP SETTINGS
+# ─────────────────────────────────────────────
+# List of NPCs available for purchase in the Employee Shop
+# Each NPC has a purchase price, salary cost, and unique buffs
+shop:
+  enabled: true
+
+  # List of NPCs sold in the shop (key = npc-type-id)
+  npcs:
+
+    apprentice_worker:
+      display-name: "§7§lApprentice Worker"
+      description:
+        - "§7A basic factory worker with"
+        - "§7minimal training."
+        - ""
+        - "§eProduction Buff:"
+        - "§a⚡ Production Time: §f-5%"
+      # Purchase price of this NPC
+      buy-price: 500.0
+      # Salary cost charged periodically (per salary interval)
+      salary: 50.0
+      # Buff: production time reduction in percent (0-100)
+      production-time-reduction: 5.0
+      # NPC template used (refers to the templates section below)
+      template: "default"
+      # Item displayed in the shop GUI
+      shop-icon: "LEATHER_CHESTPLATE"
+
+    skilled_craftsman:
+      display-name: "§e§lSkilled Craftsman"
+      description:
+        - "§7An experienced craftsman who"
+        - "§7speeds up production noticeably."
+        - ""
+        - "§eProduction Buff:"
+        - "§a⚡ Production Time: §f-15%"
+      buy-price: 1500.0
+      salary: 120.0
+      production-time-reduction: 15.0
+      template: "workshop_employee"
+      shop-icon: "IRON_CHESTPLATE"
+
+    steel_forger:
+      display-name: "§c§lSteel Forger"
+      description:
+        - "§7A hardened steel worker who"
+        - "§7excels in heavy industry."
+        - ""
+        - "§eProduction Buff:"
+        - "§a⚡ Production Time: §f-20%"
+      buy-price: 2500.0
+      salary: 200.0
+      production-time-reduction: 20.0
+      template: "steel_mill_employee"
+      shop-icon: "IRON_INGOT"
+
+    refinery_operator:
+      display-name: "§e§lRefinery Operator"
+      description:
+        - "§7A specialist in refinery"
+        - "§7operations and processing."
+        - ""
+        - "§eProduction Buff:"
+        - "§a⚡ Production Time: §f-25%"
+      buy-price: 3500.0
+      salary: 280.0
+      production-time-reduction: 25.0
+      template: "refinery_employee"
+      shop-icon: "BLAZE_POWDER"
+
+    master_engineer:
+      display-name: "§5§lMaster Engineer"
+      description:
+        - "§7A highly skilled engineer with"
+        - "§7mastery over all factory systems."
+        - ""
+        - "§eProduction Buff:"
+        - "§a⚡ Production Time: §f-35%"
+      buy-price: 6000.0
+      salary: 450.0
+      production-time-reduction: 35.0
+      template: "advanced_factory_employee"
+      shop-icon: "DIAMOND"
+
+# ─────────────────────────────────────────────
+#  DEFAULT NPC SETTINGS
+# ─────────────────────────────────────────────
+default:
+  name: "§6§lFactory Employee"
+  profession: TOOLSMITH
+  type: PLAINS
+  invulnerable: true
+  ai-disabled: true
+  glow: true
+  custom-name-visible: true
+
+  # Particle effect emitted by the NPC
+  particle:
+    type: "VILLAGER_HAPPY"       # Bukkit particle name (e.g. VILLAGER_HAPPY, FLAME, HEART)
+    count: 3
+    offset-x: 0.3
+    offset-y: 0.5
+    offset-z: 0.3
+    speed: 0.05
+
+  # Hologram lines appearing above the NPC (from bottom to top)
+  hologram:
+    enabled: true
+    lines:
+      - "§7[Click to open storage]"
+      - "§6§lFactory Employee"
+    line-spacing: 0.3           # Spacing between hologram lines (blocks)
+    height-offset: 2.3          # Hologram height above the NPC
+
+  # Idle animation: range of head angles moving randomly
+  idle-animation:
+    yaw-range: 30.0             # ±30 degrees from initial yaw
+    pitch-range: 15.0           # ±15 degrees from initial pitch
+    smooth-steps: 5             # Number of interpolation steps (smoother)
+
+# ─────────────────────────────────────────────
+#  NPC TEMPLATES
+# ─────────────────────────────────────────────
+templates:
+
+  steel_mill_employee:
+    name: "§c§lSteel Mill Worker"
+    profession: ARMORER
+    type: PLAINS
+    invulnerable: true
+    ai-disabled: true
+    glow: true
+    custom-name-visible: true
+    particle:
+      type: "FLAME"
+      count: 2
+      offset-x: 0.2
+      offset-y: 0.3
+      offset-z: 0.2
+      speed: 0.02
+    hologram:
+      enabled: true
+      lines:
+        - "§7[Click to open storage]"
+        - "§c§lSteel Mill Worker"
+      line-spacing: 0.3
+      height-offset: 2.3
+    idle-animation:
+      yaw-range: 25.0
+      pitch-range: 10.0
+      smooth-steps: 5
+
+  refinery_employee:
+    name: "§e§lRefinery Operator"
+    profession: TOOLSMITH
+    type: DESERT
+    invulnerable: true
+    ai-disabled: true
+    glow: true
+    custom-name-visible: true
+    particle:
+      type: "SMOKE_NORMAL"
+      count: 2
+      offset-x: 0.2
+      offset-y: 0.4
+      offset-z: 0.2
+      speed: 0.03
+    hologram:
+      enabled: true
+      lines:
+        - "§7[Click to open storage]"
+        - "§e§lRefinery Operator"
+      line-spacing: 0.3
+      height-offset: 2.3
+    idle-animation:
+      yaw-range: 35.0
+      pitch-range: 12.0
+      smooth-steps: 5
+
+  workshop_employee:
+    name: "§b§lWorkshop Engineer"
+    profession: WEAPONSMITH
+    type: SNOW
+    invulnerable: true
+    ai-disabled: true
+    glow: true
+    custom-name-visible: true
+    particle:
+      type: "CRIT_MAGIC"
+      count: 2
+      offset-x: 0.25
+      offset-y: 0.4
+      offset-z: 0.25
+      speed: 0.04
+    hologram:
+      enabled: true
+      lines:
+        - "§7[Click to open storage]"
+        - "§b§lWorkshop Engineer"
+      line-spacing: 0.3
+      height-offset: 2.3
+    idle-animation:
+      yaw-range: 30.0
+      pitch-range: 15.0
+      smooth-steps: 6
+
+  advanced_factory_employee:
+    name: "§5§lAdvanced Factory Manager"
+    profession: LIBRARIAN
+    type: JUNGLE
+    invulnerable: true
+    ai-disabled: true
+    glow: true
+    custom-name-visible: true
+    particle:
+      type: "ENCHANTMENT_TABLE"
+      count: 4
+      offset-x: 0.4
+      offset-y: 0.6
+      offset-z: 0.4
+      speed: 0.05
+    hologram:
+      enabled: true
+      lines:
+        - "§7[Click to open storage]"
+        - "§5§lAdvanced Factory Manager"
+      line-spacing: 0.3
+      height-offset: 2.3
+    idle-animation:
+      yaw-range: 40.0
+      pitch-range: 18.0
+      smooth-steps: 7

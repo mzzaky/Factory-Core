@@ -1,0 +1,22 @@
+{
+  // Exclude archived and versioned snapshots from Java analysis and project view
+  "java.project.excludedFolders": [
+    "**/.archived/**",
+    "**/.version/**",
+    "**/.target/**",
+    "**/.backup"
+  ],
+  "files.exclude": {
+    "**/.archived": true,
+    "**/.version": true,
+    "**/.target": true,
+    "**/.backup": true
+  },
+  "files.watcherExclude": {
+    "**/.archived/**": true,
+    "**/.version/**": true,
+    "**/.target/**": true,
+    "**/.backup": true
+  },
+  "java.configuration.updateBuildConfiguration": "disabled"
+}

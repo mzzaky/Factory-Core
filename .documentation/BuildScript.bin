@@ -1,0 +1,363 @@
+#!/bin/bash
+
+# =========================================
+# FactoryCore Build Script
+# Author: aithor
+# Version: 1.0
+# =========================================
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Project info
+PROJECT_NAME="FactoryCore"
+VERSION="1.21.4"
+BUILD_DIR="target"
+PLUGIN_JAR="${PROJECT_NAME}-${VERSION}.jar"
+
+# =========================================
+# Functions
+# =========================================
+
+print_header() {
+    echo -e "${BLUE}"
+    echo "========================================="
+    echo "  $1"
+    echo "========================================="
+    echo -e "${NC}"
+}
+
+print_success() {
+    echo -e "${GREEN}✓ $1${NC}"
+}
+
+print_error() {
+    echo -e "${RED}✗ $1${NC}"
+}
+
+print_warning() {
+    echo -e "${YELLOW}⚠ $1${NC}"
+}
+
+print_info() {
+    echo -e "${BLUE}ℹ $1${NC}"
+}
+
+check_requirements() {
+    print_header "Checking Requirements"
+    
+    # Check Java
+    if ! command -v java &> /dev/null; then
+        print_error "Java is not installed!"
+        exit 1
+    fi
+    
+    JAVA_VERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d'.' -f1)
+    if [ "$JAVA_VERSION" -lt 17 ]; then
+        print_error "Java 17 or higher is required! Current: Java $JAVA_VERSION"
+        exit 1
+    fi
+    print_success "Java version: $JAVA_VERSION"
+    
+    # Check Maven
+    if ! command -v mvn &> /dev/null; then
+        print_error "Maven is not installed!"
+        print_info "Install Maven: https://maven.apache.org/install.html"
+        exit 1
+    fi
+    print_success "Maven is installed"
+    
+    # Check pom.xml
+    if [ ! -f "pom.xml" ]; then
+        print_error "pom.xml not found! Are you in the project root?"
+        exit 1
+    fi
+    print_success "pom.xml found"
+    
+    echo ""
+}
+
+clean_build() {
+    print_header "Cleaning Previous Build"
+    
+    if [ -d "$BUILD_DIR" ]; then
+        rm -rf "$BUILD_DIR"
+        print_success "Cleaned $BUILD_DIR directory"
+    else
+        print_info "No previous build found"
+    fi
+    
+    echo ""
+}
+
+compile_plugin() {
+    print_header "Compiling Plugin"
+    
+    print_info "Running: mvn clean package"
+    echo ""
+    
+    mvn clean package
+    
+    if [ $? -eq 0 ]; then
+        print_success "Compilation successful!"
+    else
+        print_error "Compilation failed!"
+        exit 1
+    fi
+    
+    echo ""
+}
+
+verify_build() {
+    print_header "Verifying Build"
+    
+    if [ -f "${BUILD_DIR}/${PLUGIN_JAR}" ]; then
+        FILE_SIZE=$(ls -lh "${BUILD_DIR}/${PLUGIN_JAR}" | awk '{print $5}')
+        print_success "Plugin JAR created: ${PLUGIN_JAR}"
+        print_info "File size: ${FILE_SIZE}"
+    else
+        print_error "Plugin JAR not found!"
+        exit 1
+    fi
+    
+    echo ""
+}
+
+copy_to_server() {
+    print_header "Copy to Server (Optional)"
+    
+    read -p "Do you want to copy to server? (y/n): " -n 1 -r
+    echo
+    
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        read -p "Enter server plugins path: " SERVER_PATH
+        
+        if [ -d "$SERVER_PATH" ]; then
+            cp "${BUILD_DIR}/${PLUGIN_JAR}" "${SERVER_PATH}/"
+            print_success "Plugin copied to: ${SERVER_PATH}"
+        else
+            print_error "Server path not found: ${SERVER_PATH}"
+        fi
+    else
+        print_info "Skipping server copy"
+    fi
+    
+    echo ""
+}
+
+show_summary() {
+    print_header "Build Summary"
+    
+    echo -e "Project: ${GREEN}${PROJECT_NAME}${NC}"
+    echo -e "Version: ${GREEN}${VERSION}${NC}"
+    echo -e "Build Output: ${GREEN}${BUILD_DIR}/${PLUGIN_JAR}${NC}"
+    echo ""
+    print_success "Build completed successfully!"
+    echo ""
+    echo "Next steps:"
+    echo "1. Copy ${PLUGIN_JAR} to your server's plugins folder"
+    echo "2. Restart your server"
+    echo "3. Check console for any errors"
+    echo ""
+}
+
+# =========================================
+# Main Script
+# =========================================
+
+main() {
+    clear
+    print_header "FactoryCore Build Script v1.0"
+    
+    check_requirements
+    clean_build
+    compile_plugin
+    verify_build
+    copy_to_server
+    show_summary
+}
+
+# Run main function
+main
+
+# =========================================
+# Windows Build Script (build.bat)
+# Save this as build.bat for Windows users
+# =========================================
+
+: << 'WINDOWS_SCRIPT'
+@echo off
+setlocal enabledelayedexpansion
+
+:: Colors (Windows doesn't support colors in basic batch, but we can use echo)
+set "PROJECT_NAME=FactoryCore"
+set "VERSION=1.21.4"
+set "BUILD_DIR=target"
+set "PLUGIN_JAR=%PROJECT_NAME%-%VERSION%.jar"
+
+echo =========================================
+echo   FactoryCore Build Script v1.0
+echo =========================================
+echo.
+
+:: Check Java
+echo Checking Java...
+java -version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [ERROR] Java is not installed!
+    exit /b 1
+)
+echo [OK] Java is installed
+echo.
+
+:: Check Maven
+echo Checking Maven...
+mvn -version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [ERROR] Maven is not installed!
+    exit /b 1
+)
+echo [OK] Maven is installed
+echo.
+
+:: Check pom.xml
+if not exist pom.xml (
+    echo [ERROR] pom.xml not found!
+    exit /b 1
+)
+echo [OK] pom.xml found
+echo.
+
+:: Clean previous build
+echo Cleaning previous build...
+if exist %BUILD_DIR% (
+    rmdir /s /q %BUILD_DIR%
+    echo [OK] Cleaned %BUILD_DIR% directory
+) else (
+    echo [INFO] No previous build found
+)
+echo.
+
+:: Compile
+echo Compiling plugin...
+echo Running: mvn clean package
+echo.
+mvn clean package
+if %errorlevel% neq 0 (
+    echo [ERROR] Compilation failed!
+    exit /b 1
+)
+echo [OK] Compilation successful!
+echo.
+
+:: Verify
+echo Verifying build...
+if exist "%BUILD_DIR%\%PLUGIN_JAR%" (
+    echo [OK] Plugin JAR created: %PLUGIN_JAR%
+) else (
+    echo [ERROR] Plugin JAR not found!
+    exit /b 1
+)
+echo.
+
+:: Summary
+echo =========================================
+echo   Build Summary
+echo =========================================
+echo Project: %PROJECT_NAME%
+echo Version: %VERSION%
+echo Build Output: %BUILD_DIR%\%PLUGIN_JAR%
+echo.
+echo [OK] Build completed successfully!
+echo.
+echo Next steps:
+echo 1. Copy %PLUGIN_JAR% to your server's plugins folder
+echo 2. Restart your server
+echo 3. Check console for any errors
+echo.
+
+pause
+WINDOWS_SCRIPT
+
+# =========================================
+# Quick Build Script (quick-build.sh)
+# For fast rebuilds without checks
+# =========================================
+
+: << 'QUICK_BUILD'
+#!/bin/bash
+echo "Quick Build - FactoryCore"
+mvn clean package -DskipTests
+echo "Build complete! Check target/ folder"
+QUICK_BUILD
+
+# =========================================
+# Development Build Script (dev-build.sh)
+# For development with auto-restart
+# =========================================
+
+: << 'DEV_BUILD'
+#!/bin/bash
+
+SERVER_DIR="/path/to/your/test/server"
+PLUGIN_NAME="FactoryCore-1.21.4.jar"
+
+echo "Development Build & Deploy"
+echo "=========================="
+
+# Build
+mvn clean package -DskipTests
+
+if [ $? -eq 0 ]; then
+    echo "[OK] Build successful!"
+    
+    # Stop server
+    echo "Stopping server..."
+    screen -S minecraft -X stuff "stop^M"
+    sleep 5
+    
+    # Copy plugin
+    echo "Copying plugin..."
+    cp "target/${PLUGIN_NAME}" "${SERVER_DIR}/plugins/"
+    
+    # Start server
+    echo "Starting server..."
+    cd "$SERVER_DIR"
+    screen -dmS minecraft java -Xms2G -Xmx4G -jar paper.jar nogui
+    
+    echo "[OK] Server restarted with new plugin!"
+else
+    echo "[ERROR] Build failed!"
+    exit 1
+fi
+DEV_BUILD
+
+# =========================================
+# Install Dependencies Script
+# =========================================
+
+: << 'INSTALL_DEPS'
+#!/bin/bash
+
+echo "Installing FactoryCore Dependencies"
+echo "==================================="
+
+# Install to local Maven repository
+mvn install:install-file -Dfile=libs/Vault.jar \
+    -DgroupId=net.milkbowl.vault -DartifactId=VaultAPI \
+    -Dversion=1.7 -Dpackaging=jar
+
+mvn install:install-file -Dfile=libs/WorldEdit.jar \
+    -DgroupId=com.sk89q.worldedit -DartifactId=worldedit-bukkit \
+    -Dversion=7.3.0 -Dpackaging=jar
+
+mvn install:install-file -Dfile=libs/WorldGuard.jar \
+    -DgroupId=com.sk89q.worldguard -DartifactId=worldguard-bukkit \
+    -Dversion=7.0.9 -Dpackaging=jar
+
+echo "[OK] Dependencies installed!"
+INSTALL_DEPS

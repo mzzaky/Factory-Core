@@ -1,0 +1,109 @@
+name: FactoryCore
+version: 0.0.1
+main: com.aithor.factorycore.FactoryCore
+author: aithor
+api-version: 1.21
+depend: [Vault, WorldEdit, WorldGuard]
+softdepend: [PlaceholderAPI]
+
+description: Plugin ekonomi berbasis pabrik dengan sistem produksi dan perdagangan yang kompleks
+
+commands:
+  factorycore:
+    description: Main command for FactoryCore
+    usage: /<command> [args]
+    aliases: [fc]
+    permission: factorycore.use
+    permission-message: §cYou don't have permission to use this command!
+  
+permissions:
+  factorycore.*:
+    description: Gives access to all FactoryCore commands
+    children:
+      factorycore.admin: true
+      factorycore.use: true
+      
+  factorycore.admin:
+    description: Admin permissions
+    default: op
+    children:
+      factorycore.admin.create: true  
+      factorycore.admin.remove: true
+      factorycore.admin.list: true
+      factorycore.admin.info: true
+      factorycore.admin.reload: true
+      factorycore.admin.setowner: true
+      factorycore.admin.teleport: true
+      factorycore.admin.give: true
+      factorycore.admin.npc: true
+      
+  factorycore.admin.create:
+    description: Permission to create factories
+    default: op
+    
+  factorycore.admin.remove:
+    description: Permission to remove factories
+    default: op
+    
+  factorycore.admin.list:
+    description: Permission to list all factories
+    default: op
+    
+  factorycore.admin.info:
+    description: Permission to view factory info
+    default: op
+    
+  factorycore.admin.reload:
+    description: Permission to reload plugin
+    default: op
+    
+  factorycore.admin.setowner:
+    description: Permission to set factory owner
+    default: op
+    
+  factorycore.admin.teleport:
+    description: Permission to teleport to factory
+    default: op
+    
+  factorycore.admin.give:
+    description: Permission to give resources
+    default: op
+    
+  factorycore.admin.npc:
+    description: Permission to manage NPCs
+    default: op
+    
+  factorycore.use:
+    description: Basic user permissions
+    default: true
+    children:
+      factorycore.buy: true
+      factorycore.sell: true
+      factorycore.info: true
+      factorycore.gui: true
+      factorycore.help: true
+      factorycore.version: true
+      
+  factorycore.buy:
+    description: Permission to buy factories
+    default: true
+    
+  factorycore.sell:
+    description: Permission to sell factories
+    default: true
+    
+  factorycore.info:
+    description: Permission to view factory info
+    default: true
+
+  factorycore.gui:
+    description: Permission to open factory GUI
+    default: true
+
+  factorycore.help:
+    description: Permission to view help
+    default: true
+
+  factorycore.version:
+    description: Permission to view version
+    default: true

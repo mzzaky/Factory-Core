@@ -47,14 +47,36 @@ marketplace:
 # Factory settings
 factory:
   max-level: 5
-  base-storage-slots: 9
-  slots-per-level: 9
+  base-storage-slots: 9 # Fixed storage slots for input & output storage (no longer scales with level)
   sell-price-multiplier: 0.5 # 50% of buy price
-  
+  max-factories-per-player: 3 # Max factories a player can own (bypass: factorycore.bypass.factory-limit)
+
   # Production bonuses per level
   level-bonuses:
     cost-reduction: 5.0 # % reduction per level
     time-reduction: 10.0 # % reduction per level
+
+  # Resource requirements to upgrade to each level
+  # Keys are the target level (e.g. '2' = upgrading FROM level 1 TO level 2)
+  upgrade-requirements:
+    2:
+      basic_gear: 5
+    3:
+      basic_gear: 10
+      advanced_gear: 5
+    4:
+      basic_gear: 15
+      advanced_gear: 10
+    5:
+      basic_gear: 20
+      advanced_gear: 20
+
+  # Upgrade duration in seconds per target level
+  upgrade-time:
+    2: 60
+    3: 120
+    4: 300
+    5: 600
 
 # Factory types configuration
 factory-types:
@@ -90,6 +112,7 @@ notifications:
     production-complete: ENTITY_PLAYER_LEVELUP
     invoice-created: BLOCK_NOTE_BLOCK_PLING
     level-up: ENTITY_PLAYER_LEVELUP
+    factory-upgrade: ENTITY_PLAYER_LEVELUP
     # NEW: Additional sounds
     tax-due: BLOCK_NOTE_BLOCK_BASS
     marketplace-sale: ENTITY_EXPERIENCE_ORB_PICKUP

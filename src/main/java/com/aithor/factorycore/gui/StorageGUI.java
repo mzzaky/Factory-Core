@@ -41,8 +41,7 @@ public class StorageGUI {
         player.getPersistentDataContainer().set(new NamespacedKey(plugin, "current_factory_id"),
                 PersistentDataType.STRING, factoryId);
 
-        int slots = plugin.getConfig().getInt("factory.base-storage-slots", 9) +
-                (factory.getLevel() - 1) * plugin.getConfig().getInt("factory.slots-per-level", 9);
+        int slots = plugin.getConfig().getInt("factory.base-storage-slots", 9);
 
         // Ensure at least 2 rows: 1 for items + 1 for the action bar
         int size = ((slots + 8) / 9) * 9 + 9; // +9 reserves the bottom action row

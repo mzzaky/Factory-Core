@@ -136,12 +136,19 @@ public class FactoryGUI {
             }
             handleInvoiceClick(clicked);
         }
-        // Upgrade clicks
-        else if (title.contains("Upgrade")) {
+        // Upgrade Factory (info panel) clicks
+        else if (title.contains("Upgrade Factory")) {
             if (plugin.getConfig().getBoolean("debug.gui-debug", false)) {
-                plugin.getLogger().info("Handling upgrade click");
+                plugin.getLogger().info("Handling upgrade menu click");
             }
             handleUpgradeClick(clicked);
+        }
+        // Upgrade confirmation clicks
+        else if (title.contains("Confirm Upgrade")) {
+            if (plugin.getConfig().getBoolean("debug.gui-debug", false)) {
+                plugin.getLogger().info("Handling confirm upgrade click");
+            }
+            handleConfirmUpgradeClick(clicked);
         }
     }
 
@@ -311,6 +318,22 @@ public class FactoryGUI {
             return;
         }
 
+        // ── Check money cost (with research buff) ──────────────────────────────
+        double moneyCost = recipe.getMoneyCost();
+        if (moneyCost > 0 && plugin.getResearchManager() != null) {
+            double costReduction = plugin.getResearchManager().getProductionCostReduction(player.getUniqueId());
+            if (costReduction > 0) {
+                moneyCost *= (1 - (costReduction / 100.0));
+            }
+        }
+        if (moneyCost > 0 && !plugin.getEconomy().has(player, moneyCost)) {
+            player.getPersistentDataContainer().remove(new NamespacedKey(plugin, "current_recipe_id"));
+            player.sendMessage(plugin.getLanguageManager().getMessage("insufficient-funds")
+                    .replace("{amount}", String.format("%.2f", moneyCost)));
+            player.closeInventory();
+            return;
+        }
+
         // Check materials in input storage
         for (Map.Entry<String, Integer> input : recipe.getInputs().entrySet()) {
             int available = plugin.getStorageManager().getInputAmount(currentFactoryId, input.getKey());
@@ -328,6 +351,11 @@ public class FactoryGUI {
             plugin.getStorageManager().removeInputItem(currentFactoryId, input.getKey(), input.getValue());
         }
 
+        // ── Deduct money cost (with research buff applied) ─────────────────────
+        if (moneyCost > 0) {
+            plugin.getEconomy().withdrawPlayer(player, moneyCost);
+        }
+
         // Start production
         plugin.getFactoryManager().startProduction(factory, currentRecipeId);
 
@@ -341,6 +369,19 @@ public class FactoryGUI {
         player.sendMessage(msg);
         if (reduction > 0) {
             player.sendMessage("§a⚡ Employee Buff: §f-" + reduction + "% §aproduction time!");
+        }
+        // Show research buff info if applicable
+        if (plugin.getResearchManager() != null) {
+            double researchTimeReduction = plugin.getResearchManager().getProductionTimeReduction(player.getUniqueId());
+            double researchCostReduction = plugin.getResearchManager().getProductionCostReduction(player.getUniqueId());
+            if (researchTimeReduction > 0) {
+                player.sendMessage("§d🔬 Research Buff: §f-" + String.format("%.0f", researchTimeReduction)
+                        + "% §dproduction time!");
+            }
+            if (researchCostReduction > 0) {
+                player.sendMessage("§d🔬 Research Buff: §f-" + String.format("%.0f", researchCostReduction)
+                        + "% §dproduction cost!");
+            }
         }
         player.closeInventory();
     }
@@ -613,18 +654,32 @@ public class FactoryGUI {
             return;
         }
 
+        // Player clicked the next-level EMERALD → open confirmation GUI
         if (name.contains("Level") && clicked.getType() == Material.EMERALD) {
-            if (plugin.getFactoryManager().upgradeFactory(player, currentFactoryId)) {
-                player.sendMessage(plugin.getLanguageManager().getMessage("level-up")
-                        .replace("{level}", String.valueOf(
-                                plugin.getFactoryManager().getFactory(currentFactoryId).getLevel())));
-                openUpgradeMenu(); // Refresh
-            } else {
-                Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
-                double cost = factory.getPrice() * 0.5 * factory.getLevel();
-                player.sendMessage(plugin.getLanguageManager().getMessage("insufficient-funds")
-                        .replace("{amount}", String.format("%.2f", cost)));
+            Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+            if (factory != null && !factory.isUpgrading()) {
+                UpgradeGUI upgradeGUI = new UpgradeGUI(plugin, player, currentFactoryId);
+                upgradeGUI.openUpgradeConfirm();
+            } else if (factory != null && factory.isUpgrading()) {
+                player.sendMessage("§c⚠ Factory is already being upgraded!");
             }
+        }
+    }
+
+    private void handleConfirmUpgradeClick(ItemStack clicked) {
+        if (!clicked.hasItemMeta())
+            return;
+        String name = clicked.getItemMeta().getDisplayName();
+
+        if (name.contains("Confirm Upgrade")) {
+            // Attempt to start the timed upgrade
+            if (plugin.getFactoryManager().startUpgrade(player, currentFactoryId)) {
+                player.sendMessage("§a✔ §7Upgrade started! Your factory will reach the next level shortly.");
+                openUpgradeMenu(); // Show timer view
+            }
+            // If startUpgrade returned false, the reason was already messaged to player
+        } else if (name.contains("Cancel")) {
+            openUpgradeMenu();
         }
     }
 

@@ -2,6 +2,7 @@ package com.aithor.factorycore.listeners;
 
 import com.aithor.factorycore.FactoryCore;
 import com.aithor.factorycore.gui.*;
+import com.aithor.factorycore.managers.ResearchManager;
 import com.aithor.factorycore.managers.MarketplaceManager;
 import com.aithor.factorycore.managers.TaxManager;
 import com.aithor.factorycore.models.*;
@@ -36,6 +37,7 @@ public class HubClickListener implements Listener {
     private final Map<UUID, EmployeeShopGUI> employeeShopGUIs = new HashMap<>();
     private final Map<UUID, HelpInfoGUI> helpInfoGUIs = new HashMap<>();
     private final Map<UUID, MarketplaceGUI> marketplaceGUIs = new HashMap<>();
+    private final Map<UUID, ResearchGUI> researchGUIs = new HashMap<>();
 
     public HubClickListener(FactoryCore plugin) {
         this.plugin = plugin;
@@ -85,6 +87,10 @@ public class HubClickListener implements Listener {
             handleHelpInfoClick(player, clicked, meta, name);
         } else if (title.contains("Marketplace")) {
             handleMarketplaceClick(player, clicked, meta, name, event.getClick());
+        } else if (title.contains("Research Center")) {
+            handleResearchCenterClick(player, clicked, meta, name);
+        } else if (title.contains("Research:")) {
+            handleResearchDetailClick(player, clicked, meta, name);
         } else if (title.contains("Confirm Purchase") || title.contains("Confirm Sale") ||
                 title.contains("Confirm Fire") || title.contains("Confirm Unassign") ||
                 title.contains("Confirm Dismiss") || title.contains("Create Listing")) {
@@ -109,7 +115,9 @@ public class HubClickListener implements Listener {
                 title.contains("Confirm Fire") ||
                 title.contains("Confirm Unassign") ||
                 title.contains("Confirm Dismiss") ||
-                title.contains("Create Listing");
+                title.contains("Create Listing") ||
+                title.contains("Research Center") ||
+                title.contains("Research:");
     }
 
     // ==================== HUB MAIN MENU ====================
@@ -138,6 +146,10 @@ public class HubClickListener implements Listener {
             MarketplaceGUI gui = new MarketplaceGUI(plugin, player);
             marketplaceGUIs.put(player.getUniqueId(), gui);
             gui.openMarketplaceMenu();
+        } else if (name.contains("Research Center")) {
+            ResearchGUI gui = new ResearchGUI(plugin, player);
+            researchGUIs.put(player.getUniqueId(), gui);
+            gui.openResearchMenu();
         } else if (name.contains("Help & Info")) {
             HelpInfoGUI gui = new HelpInfoGUI(plugin, player);
             helpInfoGUIs.put(player.getUniqueId(), gui);
@@ -600,6 +612,54 @@ public class HubClickListener implements Listener {
         }
     }
 
+    // ==================== RESEARCH CENTER ====================
+    private void handleResearchCenterClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
+        // Check for research ID on clicked item
+        String researchId = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "research_id"), PersistentDataType.STRING);
+        if (researchId != null) {
+            ResearchGUI gui = researchGUIs.getOrDefault(player.getUniqueId(), new ResearchGUI(plugin, player));
+            researchGUIs.put(player.getUniqueId(), gui);
+            gui.openResearchDetail(researchId);
+            return;
+        }
+
+        // Back to hub
+        if (name.contains("Back to Hub")) {
+            openHub(player);
+            return;
+        }
+
+        // Close
+        if (name.contains("Close")) {
+            player.closeInventory();
+        }
+    }
+
+    // ==================== RESEARCH DETAIL ====================
+    private void handleResearchDetailClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
+        // Confirm research start
+        String confirmResearchId = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "confirm_research_id"), PersistentDataType.STRING);
+        if (confirmResearchId != null && name.contains("Start Research")) {
+            if (plugin.getResearchManager().startResearch(player, confirmResearchId)) {
+                // Reopen the detail view to show progress
+                ResearchGUI gui = researchGUIs.getOrDefault(player.getUniqueId(), new ResearchGUI(plugin, player));
+                researchGUIs.put(player.getUniqueId(), gui);
+                gui.openResearchDetail(confirmResearchId);
+            }
+            return;
+        }
+
+        // Back to research center
+        if (name.contains("Back to Research Center")) {
+            ResearchGUI gui = researchGUIs.getOrDefault(player.getUniqueId(), new ResearchGUI(plugin, player));
+            researchGUIs.put(player.getUniqueId(), gui);
+            gui.openResearchMenu();
+            return;
+        }
+    }
+
     // ==================== CONFIRMATION DIALOGS ====================
     private void handleConfirmationClick(Player player, ItemStack clicked, ItemMeta meta, String name, String title) {
         // Purchase confirmation
@@ -767,5 +827,6 @@ public class HubClickListener implements Listener {
         employeeShopGUIs.remove(playerId);
         helpInfoGUIs.remove(playerId);
         marketplaceGUIs.remove(playerId);
+        researchGUIs.remove(playerId);
     }
 }

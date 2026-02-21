@@ -35,7 +35,7 @@ public class MyFactoriesGUI {
 
     public void openMyFactoriesMenu(int page) {
         this.currentPage = page;
-        
+
         Inventory inv = Bukkit.createInventory(null, 54, "§6§lMy Factories §8- §ePage " + (page + 1));
 
         // Get player's factories
@@ -59,25 +59,38 @@ public class MyFactoriesGUI {
         }
 
         // Fill borders
-        Material borderMat = Material.matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
+        Material borderMat = Material
+                .matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
         ItemStack border = createItem(borderMat != null ? borderMat : Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 9; i++) inv.setItem(i, border);
-        for (int i = 45; i < 54; i++) inv.setItem(i, border);
+        for (int i = 0; i < 9; i++)
+            inv.setItem(i, border);
+        for (int i = 45; i < 54; i++)
+            inv.setItem(i, border);
 
         // Header info
         long runningCount = ownedFactories.stream().filter(f -> f.getStatus() == FactoryStatus.RUNNING).count();
         double totalValue = ownedFactories.stream().mapToDouble(Factory::getPrice).sum();
-        
-        inv.setItem(4, createItem(Material.SMITHING_TABLE, "§6§lMy Factories",
-                Arrays.asList(
-                        "§7Your factory overview",
-                        "",
-                        "§eTotal Factories: §6" + ownedFactories.size(),
-                        "§eRunning: §a" + runningCount,
-                        "§eStopped: §c" + (ownedFactories.size() - runningCount),
-                        "§eTotal Value: §6$" + String.format("%.2f", totalValue),
-                        "",
-                        "§7Filter: §e" + getFilterDisplayName())));
+
+        int baseLimit = plugin.getConfig().getInt("factory.max-ownership", 3);
+        int extraLimit = plugin.getResearchManager() != null
+                ? plugin.getResearchManager().getAdditionalFactoryLimit(player.getUniqueId())
+                : 0;
+        int maxFactories = baseLimit + extraLimit;
+
+        List<String> headerLore = new ArrayList<>();
+        headerLore.add("§7Your factory overview");
+        headerLore.add("");
+        headerLore.add("§eFactories Owned: §6" + ownedFactories.size() + "§7/§e" + maxFactories);
+        if (extraLimit > 0) {
+            headerLore.add("§d🔬 Research Buff: §f+" + extraLimit + " §dFactory Limit");
+        }
+        headerLore.add("§eRunning: §a" + runningCount);
+        headerLore.add("§eStopped: §c" + (ownedFactories.size() - runningCount));
+        headerLore.add("§eTotal Value: §6$" + String.format("%.2f", totalValue));
+        headerLore.add("");
+        headerLore.add("§7Filter: §e" + getFilterDisplayName());
+
+        inv.setItem(4, createItem(Material.SMITHING_TABLE, "§6§lMy Factories", headerLore));
 
         // Factory slots (slots 9-44, 36 slots total per page)
         int slotsPerPage = 36;
@@ -94,13 +107,11 @@ public class MyFactoriesGUI {
         if (filteredFactories.isEmpty()) {
             inv.setItem(22, createItem(Material.BARRIER, "§c§lNo Factories",
                     Arrays.asList(
-                            filterStatus.equals("all") ? 
-                                    "§7You don't own any factories yet!" :
-                                    "§7No factories match the current filter",
+                            filterStatus.equals("all") ? "§7You don't own any factories yet!"
+                                    : "§7No factories match the current filter",
                             "",
-                            filterStatus.equals("all") ? 
-                                    "§eVisit Factory Browse to purchase!" :
-                                    "§eChange filter to see other factories")));
+                            filterStatus.equals("all") ? "§eVisit Factory Browse to purchase!"
+                                    : "§eChange filter to see other factories")));
         }
 
         // Navigation and control buttons
@@ -172,7 +183,7 @@ public class MyFactoriesGUI {
             Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
             if (recipe != null) {
                 lore.add("§6Production: §e" + recipe.getName());
-                lore.add("§7Progress: §e" + (int)(task.getProgress() * 100) + "%");
+                lore.add("§7Progress: §e" + (int) (task.getProgress() * 100) + "%");
                 lore.add("§7Time Left: §e" + task.getRemainingTime() + "s");
                 lore.add("");
             }
@@ -218,9 +229,12 @@ public class MyFactoriesGUI {
 
     private String getFilterDisplayName() {
         switch (filterStatus) {
-            case "running": return "Running Only";
-            case "stopped": return "Stopped Only";
-            default: return "All Factories";
+            case "running":
+                return "Running Only";
+            case "stopped":
+                return "Stopped Only";
+            default:
+                return "All Factories";
         }
     }
 
@@ -262,9 +276,11 @@ public class MyFactoriesGUI {
         Inventory inv = Bukkit.createInventory(null, 27, "§c§lConfirm Sale");
 
         // Fill with border
-        Material borderMat = Material.matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
+        Material borderMat = Material
+                .matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
         ItemStack border = createItem(borderMat != null ? borderMat : Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 27; i++) inv.setItem(i, border);
+        for (int i = 0; i < 27; i++)
+            inv.setItem(i, border);
 
         // Factory info (slot 13)
         double sellValue = factory.getPrice() * plugin.getConfig().getDouble("factory.sell-price-multiplier", 0.5);
@@ -321,8 +337,10 @@ public class MyFactoriesGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            if (name != null) meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
+            if (name != null)
+                meta.setDisplayName(name);
+            if (lore != null)
+                meta.setLore(lore);
             item.setItemMeta(meta);
         }
 

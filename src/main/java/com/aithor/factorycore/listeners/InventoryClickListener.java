@@ -42,9 +42,10 @@ public class InventoryClickListener implements Listener {
         if (title.contains("Factory:") ||
                 title.toLowerCase().contains("select") ||
                 title.contains("Confirm:") ||
+                title.contains("Confirm Upgrade") ||
                 title.contains("Storage") ||
                 title.contains("Invoice") ||
-                title.contains("Upgrade") ||
+                title.contains("Upgrade Factory") ||
                 title.contains("Production Recipe") ||
                 title.contains("Output Storage")) {
 

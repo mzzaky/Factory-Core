@@ -26,6 +26,7 @@ public class FactoryCore extends JavaPlugin {
     private RecipeManager recipeManager;
     private TaxManager taxManager;
     private MarketplaceManager marketplaceManager;
+    private ResearchManager researchManager;
 
     // Listeners
     private HubClickListener hubClickListener;
@@ -51,6 +52,7 @@ public class FactoryCore extends JavaPlugin {
         // Load configurations
         saveDefaultConfig();
         createDefaultConfigs();
+        createResearchConfig();
 
         // Initialize logger
         com.aithor.factorycore.utils.Logger.init(this);
@@ -74,8 +76,7 @@ public class FactoryCore extends JavaPlugin {
         }
 
         com.aithor.factorycore.utils.Logger.log("FactoryCore v" + getDescription().getVersion() + " has been enabled!");
-        getLogger().info("Plugin by aithor - Successfully loaded!");
-        getLogger().info("New Hub System enabled! Use /fc hub to access.");
+        printStartupBanner();
     }
 
     @Override
@@ -100,6 +101,9 @@ public class FactoryCore extends JavaPlugin {
         }
         if (marketplaceManager != null) {
             marketplaceManager.saveAll();
+        }
+        if (researchManager != null) {
+            researchManager.saveAll();
         }
 
         Logger.log("FactoryCore has been disabled!");
@@ -146,6 +150,12 @@ public class FactoryCore extends JavaPlugin {
         }
     }
 
+    private void createResearchConfig() {
+        if (!new java.io.File(getDataFolder(), "research.yml").exists()) {
+            saveResource("research.yml", false);
+        }
+    }
+
     private void initializeManagers() {
         languageManager = new LanguageManager(this);
         resourceManager = new ResourceManager(this);
@@ -158,6 +168,7 @@ public class FactoryCore extends JavaPlugin {
         // New managers for hub system
         taxManager = new TaxManager(this);
         marketplaceManager = new MarketplaceManager(this);
+        researchManager = new ResearchManager(this);
     }
 
     private void registerCommands() {
@@ -195,9 +206,10 @@ public class FactoryCore extends JavaPlugin {
             invoiceManager.generateSalaryInvoices();
         }, salaryInterval, salaryInterval);
 
-        // Production checker
+        // Production + upgrade checker
         getServer().getScheduler().runTaskTimer(this, () -> {
             factoryManager.updateProduction();
+            factoryManager.updateUpgrades();
         }, 20L, 20L); // Every second
 
         // Tax overdue checker (every hour)
@@ -213,6 +225,55 @@ public class FactoryCore extends JavaPlugin {
                 marketplaceManager.cleanupExpiredListings();
             }
         }, 432000L, 432000L); // Every 6 hours
+
+        // Research completion checker (every 10 seconds)
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            if (researchManager != null) {
+                researchManager.updateResearch();
+            }
+        }, 200L, 200L); // Every 10 seconds
+    }
+
+    // ==================== STARTUP BANNER ====================
+    private void printStartupBanner() {
+        org.bukkit.command.ConsoleCommandSender console = getServer().getConsoleSender();
+        String version = getDescription().getVersion();
+
+        console.sendMessage("§8========================================================");
+        console.sendMessage("§b  ______         _                   §3____               ");
+        console.sendMessage("§b |  ____|       | |                 §3/ __ \\              ");
+        console.sendMessage("§b | |__ __ _  ___| |_ ___  _ __ _   §3| |  | | ___  _ __ ___ ");
+        console.sendMessage("§b |  __/ _` |/ __| __/ _ \\| '__| | | §3| |  | |/ _ \\| '__/ _ \\");
+        console.sendMessage("§b | | | (_| | (__| || (_) | |  | |_| §3| |__| | (_) | | |  __/");
+        console.sendMessage("§b |_|  \\__,_|\\___|\\__\\___/|_|   \\__, §3|\\____/ \\___/|_|  \\___|");
+        console.sendMessage("§b                                __/ |                   ");
+        console.sendMessage("§b                               |___/                    ");
+        console.sendMessage("§8========================================================");
+        console.sendMessage("§e  FactoryCore §7| §fVersion: §a" + version);
+        console.sendMessage("§e  Author: §baithor");
+        console.sendMessage("§8========================================================");
+        console.sendMessage("");
+        console.sendMessage("§6[Dependencies Status]");
+        console.sendMessage("§7- §aVault §8(Economy hook established)");
+        console.sendMessage("§7- §aWorldGuard §8(Region handling ready)");
+        console.sendMessage("§7- §aWorldEdit §8(Selection handling ready)");
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            console.sendMessage("§7- §aPlaceholderAPI §8(Placeholders registered)");
+        } else {
+            console.sendMessage("§7- §ePlaceholderAPI §8(Not found, placeholders disabled)");
+        }
+        console.sendMessage("");
+        console.sendMessage("§6[Systems Loaded]");
+        console.sendMessage("§7- §aFactory Management §8(" + factoryManager.getAllFactories().size() + " active)");
+        console.sendMessage("§7- §aEconomy & Taxation §8(Active)");
+        console.sendMessage("§7- §aGlobal Marketplace §8(Active)");
+        console.sendMessage("§7- §aResearch Center §8(Active)");
+        console.sendMessage("§7- §aNPC Workforce System §8(Active)");
+        console.sendMessage("§7- §aInvoice & Storage System §8(Active)");
+        console.sendMessage("");
+        console.sendMessage("§8========================================================");
+        console.sendMessage("§a✔ Plugin successfully initialized and ready for use!");
+        console.sendMessage("§8========================================================");
     }
 
     // ==================== STATIC & GETTERS ====================
@@ -260,6 +321,10 @@ public class FactoryCore extends JavaPlugin {
 
     public MarketplaceManager getMarketplaceManager() {
         return marketplaceManager;
+    }
+
+    public ResearchManager getResearchManager() {
+        return researchManager;
     }
 
     public HubClickListener getHubClickListener() {

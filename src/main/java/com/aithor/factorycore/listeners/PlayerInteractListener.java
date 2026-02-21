@@ -1,7 +1,7 @@
 package com.aithor.factorycore.listeners;
 
 import com.aithor.factorycore.FactoryCore;
-import com.aithor.factorycore.gui.OutputStorageGUI;
+import com.aithor.factorycore.gui.FactoryGUI;
 import com.aithor.factorycore.models.FactoryNPC;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -42,8 +42,8 @@ public class PlayerInteractListener implements Listener {
             plugin.getNPCManager().playInteractSound(player, npc);
         }
 
-        // Open output storage GUI
-        OutputStorageGUI gui = new OutputStorageGUI(plugin, player, factoryId);
-        gui.openOutputStorage();
+        // Right-click → Open main factory menu
+        FactoryGUI gui = new FactoryGUI(plugin, player, factoryId);
+        gui.openMainMenu();
     }
 }

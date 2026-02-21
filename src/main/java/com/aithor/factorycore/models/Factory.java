@@ -1,9 +1,10 @@
 package com.aithor.factorycore.models;
+
 import org.bukkit.Location;
 import java.util.*;
 
-// ==================== Factory.java ====================
 public class Factory {
+
     private String id;
     private String regionName;
     private FactoryType type;
@@ -14,8 +15,13 @@ public class Factory {
     private ProductionTask currentProduction;
     private Location fastTravelLocation;
     private Map<String, Integer> outputStorage;
-    
-    public Factory(String id, String regionName, FactoryType type, UUID owner, double price, int level) {
+
+    // ── Upgrade timer ─────────────────────────────────────────────────────────
+    private long upgradeStartTime = -1; // epoch ms, -1 = not upgrading
+    private int upgradeDurationSeconds = 0;
+
+    public Factory(String id, String regionName, FactoryType type,
+            UUID owner, double price, int level) {
         this.id = id;
         this.regionName = regionName;
         this.type = type;
@@ -26,24 +32,100 @@ public class Factory {
         this.currentProduction = null;
         this.outputStorage = new HashMap<>();
     }
-    
-    // Getters and Setters
-    public String getId() { return id; }
-    public String getRegionName() { return regionName; }
-    public FactoryType getType() { return type; }
-    public UUID getOwner() { return owner; }
-    public void setOwner(UUID owner) { this.owner = owner; }
-    public double getPrice() { return price; }
-    public int getLevel() { return level; }
-    public void setLevel(int level) { this.level = level; }
-    public FactoryStatus getStatus() { return status; }
-    public void setStatus(FactoryStatus status) { this.status = status; }
-    public ProductionTask getCurrentProduction() { return currentProduction; }
-    public void setCurrentProduction(ProductionTask task) { this.currentProduction = task; }
-    public Location getFastTravelLocation() { return fastTravelLocation; }
-    public void setFastTravelLocation(Location location) { this.fastTravelLocation = location; }
 
-    // ==================== OUTPUT STORAGE METHODS ====================
+    // ── Basic getters / setters ───────────────────────────────────────────────
+    public String getId() {
+        return id;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public FactoryType getType() {
+        return type;
+    }
+
+    public UUID getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public FactoryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(FactoryStatus status) {
+        this.status = status;
+    }
+
+    public ProductionTask getCurrentProduction() {
+        return currentProduction;
+    }
+
+    public void setCurrentProduction(ProductionTask task) {
+        this.currentProduction = task;
+    }
+
+    public Location getFastTravelLocation() {
+        return fastTravelLocation;
+    }
+
+    public void setFastTravelLocation(Location location) {
+        this.fastTravelLocation = location;
+    }
+
+    // ── Upgrade timer getters / setters ───────────────────────────────────────
+    public long getUpgradeStartTime() {
+        return upgradeStartTime;
+    }
+
+    public void setUpgradeStartTime(long t) {
+        this.upgradeStartTime = t;
+    }
+
+    public int getUpgradeDurationSeconds() {
+        return upgradeDurationSeconds;
+    }
+
+    public void setUpgradeDurationSeconds(int s) {
+        this.upgradeDurationSeconds = s;
+    }
+
+    /** True if an upgrade is currently in progress. */
+    public boolean isUpgrading() {
+        return upgradeStartTime > 0;
+    }
+
+    /** Remaining upgrade time in seconds, 0 when done. */
+    public int getUpgradeRemainingSeconds() {
+        if (!isUpgrading())
+            return 0;
+        long elapsed = (System.currentTimeMillis() - upgradeStartTime) / 1000;
+        return (int) Math.max(0, upgradeDurationSeconds - elapsed);
+    }
+
+    /** True when the upgrade timer has expired. */
+    public boolean isUpgradeComplete() {
+        return isUpgrading() && getUpgradeRemainingSeconds() == 0;
+    }
+
+    // ── Output storage ────────────────────────────────────────────────────────
     public Map<String, Integer> getOutputStorage() {
         return new HashMap<>(outputStorage);
     }
@@ -58,11 +140,10 @@ public class Factory {
 
     public void removeFromOutputStorage(String resourceId, int amount) {
         int current = outputStorage.getOrDefault(resourceId, 0);
-        if (current <= amount) {
+        if (current <= amount)
             outputStorage.remove(resourceId);
-        } else {
+        else
             outputStorage.put(resourceId, current - amount);
-        }
     }
 
     public void clearOutputStorage() {
@@ -71,9 +152,5 @@ public class Factory {
 
     public int getOutputStorageSize() {
         return outputStorage.size();
-    }
-
-    public int getMaxOutputStorageSlots() {
-        return level * 9; // 9 slots per level
     }
 }

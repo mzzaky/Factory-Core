@@ -16,6 +16,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,6 +101,12 @@ public class FactoryManager {
                     }
                 }
 
+                // Load upgrade timer if present
+                if (config.contains(key + ".upgrade.start-time")) {
+                    factory.setUpgradeStartTime(config.getLong(key + ".upgrade.start-time"));
+                    factory.setUpgradeDurationSeconds(config.getInt(key + ".upgrade.duration"));
+                }
+
                 factories.put(factory.getId(), factory);
             } catch (Exception e) {
                 plugin.getLogger().warning("Failed to load factory: " + key);
@@ -134,14 +141,21 @@ public class FactoryManager {
             // Save fast travel location if exists
             if (factory.getFastTravelLocation() != null) {
                 Location loc = factory.getFastTravelLocation();
-                if (loc != null && loc.getWorld() != null) {
+                if (loc.getWorld() != null) {
                     config.set(path + ".fast-travel.world", loc.getWorld().getName());
+                    config.set(path + ".fast-travel.x", loc.getX());
+                    config.set(path + ".fast-travel.y", loc.getY());
+                    config.set(path + ".fast-travel.z", loc.getZ());
+                    config.set(path + ".fast-travel.yaw", (double) loc.getYaw());
+                    config.set(path + ".fast-travel.pitch", (double) loc.getPitch());
                 }
-                config.set(path + ".fast-travel.x", loc.getX());
-                config.set(path + ".fast-travel.y", loc.getY());
-                config.set(path + ".fast-travel.z", loc.getZ());
-                config.set(path + ".fast-travel.yaw", loc.getYaw());
-                config.set(path + ".fast-travel.pitch", loc.getPitch());
+            }
+            // Save upgrade timer if upgrading
+            if (factory.isUpgrading()) {
+                config.set(path + ".upgrade.start-time", factory.getUpgradeStartTime());
+                config.set(path + ".upgrade.duration", factory.getUpgradeDurationSeconds());
+            } else {
+                config.set(path + ".upgrade", null); // clear if not upgrading
             }
         }
 
@@ -212,12 +226,52 @@ public class FactoryManager {
         return owned;
     }
 
+    /** Returns how many factories the given player currently owns. */
+    public int getFactoryCountByOwner(UUID owner) {
+        return (int) factories.values().stream()
+                .filter(f -> owner.equals(f.getOwner()))
+                .count();
+    }
+
+    /**
+     * Returns true if the player has reached their factory ownership limit.
+     * Players with 'factorycore.bypass.factory-limit' are never limited.
+     */
+    public boolean hasReachedFactoryLimit(Player player) {
+        if (player.hasPermission("factorycore.bypass.factory-limit"))
+            return false;
+        int limit = plugin.getConfig().getInt("factory.max-factories-per-player", 3);
+
+        // Apply Industrial Mastery research buff
+        if (plugin.getResearchManager() != null) {
+            limit += plugin.getResearchManager().getAdditionalFactoryLimit(player.getUniqueId());
+        }
+
+        return getFactoryCountByOwner(player.getUniqueId()) >= limit;
+    }
+
     public boolean buyFactory(Player player, String id) {
         Factory factory = getFactory(id);
         if (factory == null)
             return false;
         if (factory.getOwner() != null)
             return false;
+
+        // ── Factory ownership limit ───────────────────────────────────────────
+        if (!player.hasPermission("factorycore.bypass.factory-limit")) {
+            int limit = plugin.getConfig().getInt("factory.max-factories-per-player", 3);
+
+            // Apply Industrial Mastery research buff
+            if (plugin.getResearchManager() != null) {
+                limit += plugin.getResearchManager().getAdditionalFactoryLimit(player.getUniqueId());
+            }
+
+            if (getFactoryCountByOwner(player.getUniqueId()) >= limit) {
+                player.sendMessage(plugin.getLanguageManager().getMessage("factory-limit-reached")
+                        .replace("{limit}", String.valueOf(limit)));
+                return false;
+            }
+        }
 
         double price = factory.getPrice();
         if (!plugin.getEconomy().has(player, price)) {
@@ -271,6 +325,14 @@ public class FactoryManager {
         double employeeReduction = plugin.getNPCManager().getProductionTimeReductionForFactory(factory.getId());
         if (employeeReduction > 0) {
             duration = (int) (duration * (1 - (employeeReduction / 100.0)));
+        }
+
+        // Apply Advanced Machine Technology research buff
+        if (plugin.getResearchManager() != null && factory.getOwner() != null) {
+            double researchReduction = plugin.getResearchManager().getProductionTimeReduction(factory.getOwner());
+            if (researchReduction > 0) {
+                duration = (int) (duration * (1 - (researchReduction / 100.0)));
+            }
         }
 
         // Ensure minimum duration of 1 second
@@ -349,10 +411,9 @@ public class FactoryManager {
         // Send completion message only once (prevent spam)
         Player owner = Bukkit.getPlayer(factory.getOwner());
         if (owner != null) {
-            String recipeName = recipe.getName();
-            if (recipeName == null) {
-                recipeName = "Unknown Recipe";
-            }
+            String recipeName = (recipe != null && recipe.getName() != null)
+                    ? recipe.getName()
+                    : "Unknown Recipe";
             String msg = plugin.getLanguageManager().getMessage("production-complete")
                     .replace("{recipe}", recipeName);
             owner.sendMessage(msg);
@@ -422,26 +483,158 @@ public class FactoryManager {
         bossBar.setProgress(progress);
     }
 
-    public boolean upgradeFactory(Player player, String id) {
+    /**
+     * Start a timed upgrade: consume money + resources, start the upgrade timer.
+     * Returns false (with a message to the player) on any failure.
+     */
+    public boolean startUpgrade(Player player, String id) {
         Factory factory = getFactory(id);
         if (factory == null)
             return false;
         if (!player.getUniqueId().equals(factory.getOwner()))
             return false;
 
+        if (factory.isUpgrading()) {
+            player.sendMessage("§c⚠ Factory is already being upgraded!");
+            return false;
+        }
+
         int maxLevel = plugin.getConfig().getInt("factory.max-level", 5);
         if (factory.getLevel() >= maxLevel)
             return false;
 
+        // ── Economy check ─────────────────────────────────────────────────────
         double upgradeCost = factory.getPrice() * 0.5 * factory.getLevel();
         if (!plugin.getEconomy().has(player, upgradeCost))
             return false;
 
+        // ── Resource requirement check ────────────────────────────────────────
+        int targetLevel = factory.getLevel() + 1;
+        String reqPath = "factory.upgrade-requirements." + targetLevel;
+
+        if (plugin.getConfig().isConfigurationSection(reqPath)) {
+            org.bukkit.configuration.ConfigurationSection reqSection = plugin.getConfig()
+                    .getConfigurationSection(reqPath);
+
+            for (String resourceId : reqSection.getKeys(false)) {
+                int required = reqSection.getInt(resourceId);
+                int found = countResourceInInventory(player, resourceId);
+
+                if (found < required) {
+                    com.aithor.factorycore.models.ResourceItem res = plugin.getResourceManager()
+                            .getResource(resourceId);
+                    String resName = (res != null) ? res.getName() : resourceId;
+                    player.sendMessage("§c✗ §7Not enough §f" + resName
+                            + "§7! Need §e" + required + "§7, have §c" + found + "§7.");
+                    return false;
+                }
+            }
+
+            // All resources confirmed — consume them
+            for (String resourceId : reqSection.getKeys(false)) {
+                consumeResourceFromInventory(player, resourceId, reqSection.getInt(resourceId));
+            }
+        }
+
+        // ── Deduct money ──────────────────────────────────────────────────────
         plugin.getEconomy().withdrawPlayer(player, upgradeCost);
-        factory.setLevel(factory.getLevel() + 1);
+
+        // ── Start upgrade timer ───────────────────────────────────────────────
+        int duration = plugin.getConfig().getInt("factory.upgrade-time." + targetLevel, 60);
+
+        // Apply Nano-Construction Framework research buff
+        if (plugin.getResearchManager() != null) {
+            double researchReduction = plugin.getResearchManager().getUpgradeTimeReduction(player.getUniqueId());
+            if (researchReduction > 0) {
+                duration = (int) (duration * (1 - (researchReduction / 100.0)));
+                duration = Math.max(duration, 1); // minimum 1 second
+            }
+        }
+
+        factory.setUpgradeStartTime(System.currentTimeMillis());
+        factory.setUpgradeDurationSeconds(duration);
         saveAll();
 
         return true;
+    }
+
+    /**
+     * Completes an in-progress upgrade: levels the factory up and resets the timer.
+     * Called automatically by updateUpgrades().
+     */
+    private void completeUpgrade(Factory factory) {
+        factory.setLevel(factory.getLevel() + 1);
+        factory.setUpgradeStartTime(-1);
+        factory.setUpgradeDurationSeconds(0);
+        saveAll();
+
+        Player owner = Bukkit.getPlayer(factory.getOwner());
+        if (owner != null) {
+            owner.sendMessage(plugin.getLanguageManager().getMessage("level-up")
+                    .replace("{level}", String.valueOf(factory.getLevel())));
+            if (plugin.getConfig().getBoolean("notifications.sound.enabled")) {
+                try {
+                    owner.playSound(owner.getLocation(),
+                            plugin.getConfig().getString(
+                                    "notifications.sound.factory-upgrade", "ENTITY_PLAYER_LEVELUP"),
+                            1.0f, 1.2f);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
+
+    /**
+     * Called each scheduler tick to check whether any upgrade timers have expired.
+     */
+    public void updateUpgrades() {
+        for (Factory factory : factories.values()) {
+            if (factory.isUpgradeComplete()) {
+                completeUpgrade(factory);
+            }
+        }
+    }
+
+    /**
+     * Counts how many of a plugin-registered resource the player holds.
+     */
+    private int countResourceInInventory(Player player, String resourceId) {
+        int total = 0;
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item == null || item.getType() == org.bukkit.Material.AIR)
+                continue;
+            String id = plugin.getResourceManager().getResourceId(item);
+            if (resourceId.equals(id))
+                total += item.getAmount();
+        }
+        return total;
+    }
+
+    /**
+     * Removes the specified amount of a plugin-registered resource from the
+     * player's
+     * inventory. Assumes availability was already confirmed by
+     * countResourceInInventory.
+     */
+    private void consumeResourceFromInventory(Player player, String resourceId, int amount) {
+        int remaining = amount;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length && remaining > 0; i++) {
+            ItemStack item = contents[i];
+            if (item == null || item.getType() == org.bukkit.Material.AIR)
+                continue;
+            String id = plugin.getResourceManager().getResourceId(item);
+            if (!resourceId.equals(id))
+                continue;
+
+            if (item.getAmount() <= remaining) {
+                remaining -= item.getAmount();
+                player.getInventory().setItem(i, null);
+            } else {
+                item.setAmount(item.getAmount() - remaining);
+                remaining = 0;
+            }
+        }
     }
 
     public boolean teleportPlayer(Player player, String factoryId) {

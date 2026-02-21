@@ -40,8 +40,7 @@ public class OutputStorageGUI {
         }
 
         // Calculate storage slots based on factory level from config
-        int slots = plugin.getConfig().getInt("factory.base-storage-slots", 9) +
-                (factory.getLevel() - 1) * plugin.getConfig().getInt("factory.slots-per-level", 9);
+        int slots = plugin.getConfig().getInt("factory.base-storage-slots", 9);
         int size = ((slots + 8) / 9) * 9;
         if (size > 54)
             size = 54; // Max 6 rows

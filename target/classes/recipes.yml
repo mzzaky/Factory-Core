@@ -1,5 +1,6 @@
 # Recipes Configuration
 # Format: recipe_id -> inputs & outputs
+# money-cost: uang yang dipotong dari player setiap kali produksi dimulai (0 = gratis)
 
 recipes:
   # ==================== STEEL MILL RECIPES ====================
@@ -7,6 +8,7 @@ recipes:
     name: "§7Steel Ingot Production"
     factory-type: steel_mill
     production-time: 300 # seconds
+    money-cost: 50.0
     inputs:
       iron_ore: 5
       coal_ore: 2
@@ -22,6 +24,7 @@ recipes:
     name: "§8Carbon Fiber Production"
     factory-type: steel_mill
     production-time: 450
+    money-cost: 80.0
     inputs:
       coal_ore: 10
       iron_ore: 3
@@ -38,6 +41,7 @@ recipes:
     name: "§8Basic Fuel Production"
     factory-type: refinery
     production-time: 200
+    money-cost: 30.0
     inputs:
       coal_ore: 8
       basic_gear: 1
@@ -51,6 +55,7 @@ recipes:
     name: "§6Refined Fuel Production"
     factory-type: refinery
     production-time: 350
+    money-cost: 60.0
     inputs:
       coal_ore: 12
       iron_ore: 4
@@ -65,6 +70,7 @@ recipes:
     name: "§ePremium Fuel Production"
     factory-type: refinery
     production-time: 500
+    money-cost: 100.0
     inputs:
       coal_ore: 20
       gold_ore: 5
@@ -80,6 +86,7 @@ recipes:
     name: "§7Basic Gear Production"
     factory-type: workshop
     production-time: 250
+    money-cost: 40.0
     inputs:
       iron_ore: 8
       redstone_dust: 4
@@ -95,6 +102,7 @@ recipes:
     name: "§eAdvanced Gear Production"
     factory-type: workshop
     production-time: 400
+    money-cost: 70.0
     inputs:
       gold_ore: 6
       redstone_dust: 8
@@ -110,6 +118,7 @@ recipes:
     name: "§6Engine Part Production"
     factory-type: workshop
     production-time: 350
+    money-cost: 60.0
     inputs:
       iron_ore: 10
       copper_ore: 5
@@ -126,6 +135,7 @@ recipes:
     name: "§bCircuit Board Production"
     factory-type: workshop
     production-time: 450
+    money-cost: 90.0
     inputs:
       copper_ore: 12
       gold_ore: 4
@@ -142,6 +152,7 @@ recipes:
     name: "§9Hydraulic System Production"
     factory-type: workshop
     production-time: 600
+    money-cost: 125.0
     inputs:
       iron_ore: 15
       diamond_ore: 2
@@ -159,6 +170,7 @@ recipes:
     name: "§5Advanced Weapon"
     factory-type: advanced_factory
     production-time: 600
+    money-cost: 250.0
     inputs:
       steel_ingot: 8
       carbon_fiber: 4
@@ -175,6 +187,7 @@ recipes:
     name: "§5Advanced Armor"
     factory-type: advanced_factory
     production-time: 650
+    money-cost: 240.0
     inputs:
       steel_ingot: 12
       carbon_fiber: 6
@@ -191,6 +204,7 @@ recipes:
     name: "§bElectronic Component"
     factory-type: advanced_factory
     production-time: 500
+    money-cost: 175.0
     inputs:
       refined_copper: 10
       gold_alloy: 5
@@ -207,6 +221,7 @@ recipes:
     name: "§6Luxury Item"
     factory-type: advanced_factory
     production-time: 800
+    money-cost: 500.0
     inputs:
       gold_alloy: 15
       steel_ingot: 10
@@ -225,6 +240,7 @@ recipes:
     name: "§6Refined Copper"
     factory-type: advanced_factory
     production-time: 300
+    money-cost: 55.0
     inputs:
       copper_ore: 10
       basic_fuel: 2
@@ -239,6 +255,7 @@ recipes:
     name: "§eGold Alloy"
     factory-type: advanced_factory
     production-time: 400
+    money-cost: 85.0
     inputs:
       gold_ore: 8
       iron_ore: 4

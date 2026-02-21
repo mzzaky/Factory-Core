@@ -19,6 +19,7 @@ messages:
   factory-not-owned: "{prefix} §cYou don't own this factory!"
   factory-bought: "{prefix} §aYou bought the factory §e{factory} §afor §6${price}§a!"
   factory-sold: "{prefix} §aYou sold the factory §e{factory} §afor §6${price}§a!"
+  factory-limit-reached: "{prefix} §cYou have reached the factory ownership limit! §7(Max: §e{limit}§7)"
   factory-info: 
     - "{prefix} §6=== Factory Info ==="
     - "§7ID: §e{id}"
@@ -111,6 +112,13 @@ messages:
   employee-fired: "{prefix} §cEmployee has been fired."
   employee-spawn-request: "{prefix} §7To spawn an employee, ask an admin to use:"
   
+  # ==================== NEW: RESEARCH MESSAGES ====================
+  research-started: "{prefix} §aResearch started: §e{research}§a! Time: §b{time}"
+  research-completed: "{prefix} §a§lResearch Complete! §e{research} §7is now Level §6{level}§7!"
+  research-max-level: "{prefix} §cThis research has already reached maximum level!"
+  research-in-progress: "{prefix} §cThis research is already in progress!"
+  research-insufficient-funds: "{prefix} §cInsufficient funds to start this research!"
+  
   # ==================== NEW: FACTORY BROWSE MESSAGES ====================
   factory-purchase-confirm: "{prefix} §7Please confirm your purchase."
   factory-purchase-success: "{prefix} §aCongratulations! You now own this factory!"
@@ -126,6 +134,7 @@ messages:
     taxes: "§e/fc taxes §7- View tax center"
     employees: "§e/fc employees §7- Manage employees"
     market: "§e/fc market §7- Open marketplace"
+    research: "§e/fc research §7- Open research center"
     # Existing commands
     admin: "§e/fc admin create <region_id> <factory_id> <factory_type> <price_value> §7- Create factory"
     admin-remove: "§e/fc admin remove <id> §7- Remove factory"
@@ -165,6 +174,7 @@ messages:
     employees-center: "§6§lEmployees Center"
     marketplace: "§6§lMarketplace"
     help-info: "§6§lHelp & Info"
+    research-center: "§6§lResearch Center"
     
   # GUI items
   gui-items:
@@ -269,6 +279,13 @@ messages:
       - "§7Trade with other players"
       - ""
       - "§eClick to open"
+
+    hub-research-center: "§5§lResearch Center"
+    hub-research-center-lore:
+      - "§7Unlock powerful buffs through"
+      - "§7research and development"
+      - ""
+      - "§eClick to research"
       
     hub-help-info: "§7§lHelp & Info"
     hub-help-info-lore:
@@ -304,6 +321,9 @@ messages:
     marketplace-sale:
       title: "§a§lItem Sold!"
       subtitle: "§7Check your marketplace earnings"
+    research-complete:
+      title: "§a§lRESEARCH COMPLETE!"
+      subtitle: "§e{research} §7Level §6{level}"
 
   # Bossbar messages
   bossbar:
@@ -318,3 +338,4 @@ messages:
     # NEW: Additional logging
     marketplace: "[MARKETPLACE] {player} - {action} - {item} x{amount} - ${price}"
     tax: "[TAX] {player} - Factory {id} - ${amount} - {status}"
+    research: "[RESEARCH] {player} - {research} - Level {level} - {status}"

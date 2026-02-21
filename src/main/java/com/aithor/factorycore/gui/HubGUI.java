@@ -126,11 +126,11 @@ public class HubGUI {
                         "",
                         "§7Click to manage!")));
 
-        // Marketplace (slot 30) - Buy/Sell resources
+        // Marketplace (slot 29) - Buy/Sell resources
         int activeListings = plugin.getMarketplaceManager() != null
                 ? plugin.getMarketplaceManager().getPlayerListings(player.getUniqueId()).size()
                 : 0;
-        inv.setItem(30, createItem(Material.EMERALD,
+        inv.setItem(29, createItem(Material.EMERALD,
                 "§2§lMarketplace",
                 Arrays.asList(
                         "§7Buy and sell resources",
@@ -139,8 +139,30 @@ public class HubGUI {
                         "",
                         "§7Click to browse!")));
 
-        // Help & Info (slot 32) - Plugin information
-        inv.setItem(32, createItem(Material.BOOK,
+        // Research Center (slot 31) - Research technologies
+        long activeResearch = 0;
+        int totalCompleted = 0;
+        if (plugin.getResearchManager() != null) {
+            for (String rId : plugin.getResearchManager().getResearchIds()) {
+                if (plugin.getResearchManager().isResearching(player.getUniqueId(), rId)) {
+                    activeResearch++;
+                }
+                totalCompleted += plugin.getResearchManager().getPlayerResearchLevel(player.getUniqueId(), rId);
+            }
+        }
+        inv.setItem(31, createItem(Material.ENCHANTING_TABLE,
+                "§5§lResearch Center",
+                Arrays.asList(
+                        "§7Unlock powerful buffs",
+                        "§7through R&D technology",
+                        "",
+                        "§eActive Research: §d" + activeResearch,
+                        "§eCompleted Levels: §a" + totalCompleted,
+                        "",
+                        "§7Click to research!")));
+
+        // Help & Info (slot 33) - Plugin information
+        inv.setItem(33, createItem(Material.BOOK,
                 "§d§lHelp & Info",
                 Arrays.asList(
                         "§7Learn about FactoryCore",

@@ -108,6 +108,14 @@ public class InvoiceManager {
             double salaryRate = plugin.getConfig().getDouble("salary.rate", 1.0) / 100.0;
             double amount = factory.getPrice() * salaryRate;
 
+            // Apply AI Workforce Integration research buff
+            if (plugin.getResearchManager() != null) {
+                double reduction = plugin.getResearchManager().getSalaryReduction(factory.getOwner());
+                if (reduction > 0) {
+                    amount *= (1 - (reduction / 100.0));
+                }
+            }
+
             long dueDate = System.currentTimeMillis() + (3 * 24 * 60 * 60 * 1000); // 3 days
 
             String invoiceId = "salary_" + factory.getId() + "_" + System.currentTimeMillis();

@@ -1,1 +1,25 @@
-default height-offset: 2.3 > 1.3
+1. default height-offset: 2.3 > 1.3
+2. menambahkan sound effect saat factory berhasil di upgrade
+3. menghapus peningkatan jumlah input dan output storage saat factory di upgrade.
+4. mengganti behaviour NPC, sekarang left click akan membuka output storage, dan right click akan membuka main factory gui.
+5. menambahkan gui confirmation sebelum factory benar benar di upgrade.
+6. menambahkan data requirement "time_upgrade" (dalam detik) saat meningkatkan factory, sekarang factory tidak dapat di upgrade secara instant (dapat di custom pada config.yml)
+7. menambahkan batasan kepemilikan factory per player (3 factory secara default, dapat di custom pada config.yml)
+8. menambahkan requirement money-cost pada setiap recipe yang tersedia.
+9. menambahkan sistem "Factory Research" dengan 6 teknologi riset:
+   - Fiscal Optimization: mengurangi biaya pajak.
+   - AI Workforce Integration: mengurangi biaya gaji karyawan.
+   - Nano-Construction Framework: mengurangi waktu upgrade factory.
+   - Advanced Machine Technology: mengurangi waktu produksi barang.
+   - Operational Cost Efficiency: mengurangi biaya produksi item.
+   - Industrial Mastery: menambahkan +1 batas kepemilikan factory per level.
+   - setiap research membutuhkan biaya uang besar dan waktu penyelesaian (default 1 hari).
+   - custom GUI "Research Center" yang terhubung dengan Hub GUI.
+   - file konfigurasi research.yml untuk kontrol penuh pada fitur ini.
+   - menampilkan waktu/cost production secara dinamis pada "Recipe Selection GUI" dengan buff "advanced_machine_technology" dan "operational_cost_efficiency".
+   - menampilkan kalkulasi real-time pengurangan waktu upgrade factory pada "Upgrade GUI" akibat buff "nano_construction_framework".
+   - menampilkan informasi penambahan limit jumlah factory akibat buff "industrial_mastery" pada "My Factories GUI".
+   - menampilkan total kalkulasi real-time potongan pajak pada tiap hitungan di "Tax Center GUI" akibat buff "fiscal_optimization".
+   - menampilkan total kalkulasi real-time potongan biaya gaji karyawan pada "Invoice GUI" akibat buff "ai_workforce_integration".
+10. menambahkan command admin "/fc admin research upgrade <factory_id> <research_id>" untuk meningkatkan research secara manual.
+11. menambahkan command admin "/fc admin research set <factory_id> <research_id> <level>" untuk mengatur level research secara manual.

@@ -47,14 +47,17 @@ public class RecipeConfirmationGUI {
         }
 
         // Store recipe ID and factory ID in player's persistent data for click handling
-        player.getPersistentDataContainer().set(new NamespacedKey(plugin, "current_recipe_id"), PersistentDataType.STRING, recipeId);
-        player.getPersistentDataContainer().set(new NamespacedKey(plugin, "current_factory_id"), PersistentDataType.STRING, factoryId);
+        player.getPersistentDataContainer().set(new NamespacedKey(plugin, "current_recipe_id"),
+                PersistentDataType.STRING, recipeId);
+        player.getPersistentDataContainer().set(new NamespacedKey(plugin, "current_factory_id"),
+                PersistentDataType.STRING, factoryId);
 
         Inventory inv = Bukkit.createInventory(null, 27,
-            "§6§lConfirm: §e" + recipe.getName());
+                "§6§lConfirm: §e" + recipe.getName());
 
         // Fill with border
-        Material borderMat = Material.matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
+        Material borderMat = Material
+                .matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
         ItemStack border = createItem(borderMat != null ? borderMat : Material.BLACK_STAINED_GLASS_PANE, " ", null);
         for (int i = 0; i < 27; i++) {
             inv.setItem(i, border);
@@ -63,6 +66,14 @@ public class RecipeConfirmationGUI {
         // Recipe info
         List<String> lore = new ArrayList<>();
         lore.add("§7Production time: §e" + recipe.getProductionTime() + "s");
+
+        // Money cost line
+        if (recipe.getMoneyCost() > 0) {
+            double balance = plugin.getEconomy().getBalance(player);
+            String costColor = balance >= recipe.getMoneyCost() ? "§a" : "§c";
+            lore.add("§7Money cost: " + costColor + "$" + String.format("%.2f", recipe.getMoneyCost()));
+        }
+
         lore.add("");
         lore.add("§7Input:");
         for (Map.Entry<String, Integer> input : recipe.getInputs().entrySet()) {
@@ -78,21 +89,21 @@ public class RecipeConfirmationGUI {
         try {
             confirmMaterial = Material.valueOf(recipe.getIcon());
         } catch (IllegalArgumentException e) {
-            // Fallback to a default material if the icon is invalid
             confirmMaterial = Material.STONE;
-            plugin.getLogger().warning("Invalid material for recipe confirmation " + recipe.getId() + ": " + recipe.getIcon() + ". Using STONE as fallback.");
+            plugin.getLogger().warning("Invalid material for recipe confirmation " + recipe.getId() + ": "
+                    + recipe.getIcon() + ". Using STONE as fallback.");
         }
         inv.setItem(13, createItem(confirmMaterial, recipe.getName(), lore));
 
         // Confirm button
         Material confirmMat = Material.matchMaterial(plugin.getConfig().getString("gui.confirm-item", "GREEN_WOOL"));
         inv.setItem(11, createItem(confirmMat != null ? confirmMat : Material.GREEN_WOOL, "§a§lConfirm",
-            Arrays.asList("§7Start production")));
+                Arrays.asList("§7Start production")));
 
         // Cancel button
         Material cancelMat = Material.matchMaterial(plugin.getConfig().getString("gui.cancel-item", "RED_WOOL"));
         inv.setItem(15, createItem(cancelMat != null ? cancelMat : Material.RED_WOOL, "§c§lCancel",
-            Arrays.asList("§7Back to recipe menu")));
+                Arrays.asList("§7Back to recipe menu")));
 
         player.openInventory(inv);
     }
@@ -102,8 +113,10 @@ public class RecipeConfirmationGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            if (name != null) meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
+            if (name != null)
+                meta.setDisplayName(name);
+            if (lore != null)
+                meta.setLore(lore);
             item.setItemMeta(meta);
         }
 

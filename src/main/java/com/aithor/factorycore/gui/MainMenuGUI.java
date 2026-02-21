@@ -80,8 +80,7 @@ public class MainMenuGUI {
                         "§eActive Invoices: §6" + invoiceCount)));
 
         // Factory Storage (Slot 14)
-        int slots = plugin.getConfig().getInt("factory.base-storage-slots", 9) +
-                (factory.getLevel() - 1) * plugin.getConfig().getInt("factory.slots-per-level", 9);
+        int slots = plugin.getConfig().getInt("factory.base-storage-slots", 9);
         inv.setItem(14, createItem(Material.CHEST,
                 "§b§lFactory Storage",
                 Arrays.asList(

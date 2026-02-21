@@ -60,7 +60,51 @@ public class RecipeSelectionGUI {
                 break;
 
             List<String> lore = new ArrayList<>();
-            lore.add("§7Production time: §e" + recipe.getProductionTime() + "s");
+
+            // ── Production Time Calculation ─────────────────────────────────────
+            int originalTime = recipe.getProductionTime();
+            int finalTime = originalTime;
+            double timeReduction = 0;
+
+            if (plugin.getResearchManager() != null) {
+                timeReduction = plugin.getResearchManager().getProductionTimeReduction(player.getUniqueId());
+                if (timeReduction > 0) {
+                    finalTime = (int) (finalTime * (1 - (timeReduction / 100.0)));
+                }
+            }
+
+            if (timeReduction > 0) {
+                lore.add("§7Production time: §c§m" + originalTime + "s§r §a" + finalTime + "s §d(-"
+                        + String.format("%.0f", timeReduction) + "%)");
+            } else {
+                lore.add("§7Production time: §e" + originalTime + "s");
+            }
+
+            // ── Money Cost Calculation ──────────────────────────────────────────
+            if (recipe.getMoneyCost() > 0) {
+                double originalCost = recipe.getMoneyCost();
+                double finalCost = originalCost;
+                double costReduction = 0;
+
+                // Apply research cost reduction if available
+                if (plugin.getResearchManager() != null) {
+                    costReduction = plugin.getResearchManager().getProductionCostReduction(player.getUniqueId());
+                    if (costReduction > 0) {
+                        finalCost *= (1 - (costReduction / 100.0));
+                    }
+                }
+
+                double balance = plugin.getEconomy().getBalance(player);
+                String costColor = balance >= finalCost ? "§a" : "§c";
+
+                if (costReduction > 0) {
+                    lore.add("§7Cost: §c§m$" + String.format("%.2f", originalCost) + "§r " + costColor + "$"
+                            + String.format("%.2f", finalCost) + " §d(-" + String.format("%.0f", costReduction) + "%)");
+                } else {
+                    lore.add("§7Cost: " + costColor + "$" + String.format("%.2f", finalCost));
+                }
+            }
+
             lore.add("");
             lore.add("§7Required Inputs:");
 

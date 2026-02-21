@@ -129,7 +129,17 @@ public class TaxManager {
         // Total rate = base rate + (level - 1) * level multiplier
         double totalRate = baseRate + (levelMultiplier * (factory.getLevel() - 1));
 
-        return factory.getPrice() * totalRate;
+        double taxAmount = factory.getPrice() * totalRate;
+
+        // Apply Fiscal Optimization research buff
+        if (plugin.getResearchManager() != null) {
+            double reduction = plugin.getResearchManager().getTaxReduction(factory.getOwner());
+            if (reduction > 0) {
+                taxAmount *= (1 - (reduction / 100.0));
+            }
+        }
+
+        return taxAmount;
     }
 
     /**

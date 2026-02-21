@@ -20,14 +20,14 @@ public class RecipeManager {
     private final Map<String, Recipe> recipes;
     private FileConfiguration recipeConfig;
     private final File recipeFile;
-    
+
     public RecipeManager(FactoryCore plugin) {
         this.plugin = plugin;
         this.recipes = new HashMap<>();
         this.recipeFile = new File(plugin.getDataFolder(), "recipes.yml");
         reload();
     }
-    
+
     public void reload() {
         plugin.getLogger().info("=== RECIPE MANAGER RELOAD DEBUG ===");
         plugin.getLogger().info("Recipe file exists: " + recipeFile.exists());
@@ -53,7 +53,7 @@ public class RecipeManager {
 
         for (String key : recipeKeys) {
             String path = "recipes." + key;
-            
+
             String name = recipeConfig.getString(path + ".name", key);
             String factoryType = recipeConfig.getString(path + ".factory-type");
             int productionTime = recipeConfig.getInt(path + ".production-time", 60);
@@ -65,7 +65,7 @@ public class RecipeManager {
             }
 
             Recipe recipe = new Recipe(key, name, factoryType, productionTime);
-            
+
             // Load inputs
             if (recipeConfig.contains(path + ".inputs")) {
                 for (String inputKey : recipeConfig.getConfigurationSection(path + ".inputs").getKeys(false)) {
@@ -73,7 +73,7 @@ public class RecipeManager {
                     recipe.addInput(inputKey, amount);
                 }
             }
-            
+
             // Load outputs
             if (recipeConfig.contains(path + ".outputs")) {
                 for (String outputKey : recipeConfig.getConfigurationSection(path + ".outputs").getKeys(false)) {
@@ -81,17 +81,20 @@ public class RecipeManager {
                     recipe.addOutput(outputKey, amount);
                 }
             }
-            
+
             // Load console commands
             List<String> commands = recipeConfig.getStringList(path + ".console-commands");
             commands.forEach(recipe::addConsoleCommand);
-            
+
+            // Load money cost
+            recipe.setMoneyCost(recipeConfig.getDouble(path + ".money-cost", 0.0));
+
             // Load icon
             recipe.setIcon(recipeConfig.getString(path + ".icon", "STONE"));
-            
+
             recipes.put(key, recipe);
         }
-        
+
         plugin.getLogger().info("Loaded " + recipes.size() + " recipes!");
         if (recipes.isEmpty()) {
             plugin.getLogger().warning("No recipes were loaded! Check recipes.yml configuration.");
@@ -99,15 +102,16 @@ public class RecipeManager {
             plugin.getLogger().info("Loaded recipes: " + recipes.keySet());
             plugin.getLogger().info("=== RECIPE RELOAD SUMMARY ===");
             for (Recipe recipe : recipes.values()) {
-                plugin.getLogger().info("Recipe: " + recipe.getName() + " | Type: " + recipe.getFactoryType() + " | Time: " + recipe.getProductionTime());
+                plugin.getLogger().info("Recipe: " + recipe.getName() + " | Type: " + recipe.getFactoryType()
+                        + " | Time: " + recipe.getProductionTime());
             }
         }
     }
-    
+
     public Recipe getRecipe(String id) {
         return recipes.get(id);
     }
-    
+
     public List<Recipe> getRecipesByFactoryType(String factoryType) {
         List<Recipe> result = new ArrayList<>();
         for (Recipe recipe : recipes.values()) {
@@ -120,12 +124,12 @@ public class RecipeManager {
         plugin.getLogger().info("Found " + result.size() + " recipes for factory type: " + factoryType);
         if (result.isEmpty()) {
             plugin.getLogger().warning("No recipes found for factory type: " + factoryType + ". Available types: " +
-                recipes.values().stream().map(Recipe::getFactoryType).distinct().toList());
+                    recipes.values().stream().map(Recipe::getFactoryType).distinct().toList());
         }
 
         return result;
     }
-    
+
     public Map<String, Recipe> getAllRecipes() {
         return new HashMap<>(recipes);
     }

@@ -28,14 +28,17 @@ public class InvoiceGUI {
 
     public void openInvoiceMenu() {
         // Store factory ID in player's persistent data for click handling
-        player.getPersistentDataContainer().set(new NamespacedKey(plugin, "current_factory_id"), PersistentDataType.STRING, factoryId);
+        player.getPersistentDataContainer().set(new NamespacedKey(plugin, "current_factory_id"),
+                PersistentDataType.STRING, factoryId);
 
         List<Invoice> invoices = plugin.getInvoiceManager()
-            .getInvoicesByOwner(player.getUniqueId());
+                .getInvoicesByOwner(player.getUniqueId());
 
         int size = ((invoices.size() + 8) / 9) * 9;
-        if (size > 54) size = 54;
-        if (size < 27) size = 27;
+        if (size > 54)
+            size = 54;
+        if (size < 27)
+            size = 27;
 
         Inventory inv = Bukkit.createInventory(null, size, "§6§lInvoice Management");
 
@@ -43,11 +46,26 @@ public class InvoiceGUI {
         int slot = 0;
 
         for (Invoice invoice : invoices) {
-            if (slot >= size - 9) break;
+            if (slot >= size - 9)
+                break;
 
             List<String> lore = new ArrayList<>();
             lore.add("§7Type: " + invoice.getType().getDisplay());
-            lore.add("§7Amount: §6$" + String.format("%.2f", invoice.getAmount()));
+
+            double finalAmount = invoice.getAmount();
+            double reduction = 0;
+
+            if (invoice.getType() == InvoiceType.SALARY && plugin.getResearchManager() != null) {
+                reduction = plugin.getResearchManager().getSalaryReduction(player.getUniqueId());
+            }
+
+            if (reduction > 0) {
+                double originalAmount = finalAmount / (1 - (reduction / 100.0));
+                lore.add("§7Amount: §c§m$" + String.format("%.2f", originalAmount) + "§r §a$"
+                        + String.format("%.2f", finalAmount) + " §d(-" + String.format("%.0f", reduction) + "%)");
+            } else {
+                lore.add("§7Amount: §6$" + String.format("%.2f", finalAmount));
+            }
             lore.add("§7Due date: §c" + sdf.format(new Date(invoice.getDueDate())));
             lore.add("");
 
@@ -60,11 +78,12 @@ public class InvoiceGUI {
             Material material = invoice.isOverdue() ? Material.RED_STAINED_GLASS_PANE : Material.PAPER;
 
             ItemStack item = createItem(material,
-                "§eInvoice #" + invoice.getId().substring(0, 8), lore);
+                    "§eInvoice #" + invoice.getId().substring(0, 8), lore);
 
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
-                meta.getPersistentDataContainer().set(new NamespacedKey(plugin, "invoice_id"), PersistentDataType.STRING, invoice.getId());
+                meta.getPersistentDataContainer().set(new NamespacedKey(plugin, "invoice_id"),
+                        PersistentDataType.STRING, invoice.getId());
                 item.setItemMeta(meta);
             }
 
@@ -82,8 +101,10 @@ public class InvoiceGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            if (name != null) meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
+            if (name != null)
+                meta.setDisplayName(name);
+            if (lore != null)
+                meta.setLore(lore);
             item.setItemMeta(meta);
         }
 

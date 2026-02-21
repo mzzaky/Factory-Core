@@ -195,7 +195,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
         if (args.length < 2) {
             sender.sendMessage(
-                    "§cUsage: /fc admin <create|remove|list|info|reload|checkrecipes|setowner|teleport|give|npc|tax|market>");
+                    "§cUsage: /fc admin <create|remove|list|info|reload|checkrecipes|setowner|teleport|give|npc|tax|market|research>");
             sender.sendMessage("§cFor create: /fc admin create <region_id> <factory_id> <factory_type> <price_value>");
             return true;
         }
@@ -238,6 +238,9 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
             case "market":
                 return adminMarket(sender, args);
+
+            case "research":
+                return adminResearch(sender, args);
 
             default:
                 sender.sendMessage("§cInvalid admin command!");
@@ -694,6 +697,75 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    private boolean adminResearch(CommandSender sender, String[] args) {
+        if (args.length < 5) {
+            sender.sendMessage("§cUsage:");
+            sender.sendMessage("§c/fc admin research upgrade <factory_id> <factory_research_id>");
+            sender.sendMessage("§c/fc admin research set <factory_id> <factory_research_id> <level>");
+            return true;
+        }
+
+        String action = args[2].toLowerCase();
+        String factoryId = args[3];
+        String researchId = args[4];
+
+        Factory factory = plugin.getFactoryManager().getFactory(factoryId);
+        if (factory == null) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
+            return true;
+        }
+
+        UUID ownerId = factory.getOwner();
+        if (ownerId == null) {
+            sender.sendMessage("§cThis factory has no owner to apply research to!");
+            return true;
+        }
+
+        if (plugin.getResearchManager() == null) {
+            sender.sendMessage("§cResearch system is currently disabled or unavailable!");
+            return true;
+        }
+
+        if (!plugin.getResearchManager().getResearchIds().contains(researchId)) {
+            sender.sendMessage("§cInvalid research ID: §e" + researchId);
+            return true;
+        }
+
+        if (action.equals("upgrade")) {
+            if (plugin.getResearchManager().forceUpgradeResearch(ownerId, researchId)) {
+                sender.sendMessage(
+                        "§a✔ Force upgraded §e" + researchId + " §afor factory owner §e" + factoryId + "§a!");
+                Logger.logAdminCommand(sender.getName(), "research upgrade " + factoryId + " " + researchId);
+            } else {
+                sender.sendMessage("§cFailed to upgrade research! Typically this means it is already at max level.");
+            }
+        } else if (action.equals("set")) {
+            if (args.length < 6) {
+                sender.sendMessage("§cUsage: /fc admin research set <factory_id> <factory_research_id> <level>");
+                return true;
+            }
+            int level;
+            try {
+                level = Integer.parseInt(args[5]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage("§cInvalid level. Must be a number.");
+                return true;
+            }
+
+            if (plugin.getResearchManager().forceSetResearchLevel(ownerId, researchId, level)) {
+                sender.sendMessage("§a✔ Force set §e" + researchId + " §ato level §e" + level
+                        + " §afor factory owner §e" + factoryId + "§a!");
+                Logger.logAdminCommand(sender.getName(), "research set " + factoryId + " " + researchId + " " + level);
+            } else {
+                sender.sendMessage("§cFailed to set research level! Make sure the level is valid (0 - max levels).");
+            }
+        } else {
+            sender.sendMessage("§cUnknown action: §e" + action);
+        }
+
+        return true;
+    }
+
     // ==================== PLAYER COMMANDS ====================
 
     private boolean handleBuy(CommandSender sender, String[] args) {
@@ -903,6 +975,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage("§6/fc admin npc §7- Manage NPCs");
             sender.sendMessage("§6/fc admin tax §7- Manage taxes");
             sender.sendMessage("§6/fc admin market §7- Manage marketplace");
+            sender.sendMessage("§6/fc admin research §7- Manage factory research");
         }
 
         sender.sendMessage("");
@@ -921,7 +994,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length == 2 && args[0].equalsIgnoreCase("admin")) {
             completions.addAll(Arrays.asList("create", "remove", "list", "info", "reload", "checkrecipes",
-                    "setowner", "teleport", "give", "npc", "tax", "market"));
+                    "setowner", "teleport", "give", "npc", "tax", "market", "research"));
         } else if (args.length == 3 && args[0].equalsIgnoreCase("admin")) {
             if (args[1].equalsIgnoreCase("npc")) {
                 completions.addAll(Arrays.asList("spawn", "remove", "list", "respawn"));
@@ -929,6 +1002,8 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                 completions.addAll(Arrays.asList("assess", "check"));
             } else if (args[1].equalsIgnoreCase("market")) {
                 completions.addAll(Arrays.asList("cleanup", "stats"));
+            } else if (args[1].equalsIgnoreCase("research")) {
+                completions.addAll(Arrays.asList("upgrade", "set"));
             } else if (args[1].equalsIgnoreCase("create")) {
                 completions.addAll(WorldGuardUtils.getAllRegionNames());
             } else if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("info")) {
@@ -950,6 +1025,14 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                 plugin.getNPCManager().getAllNPCs()
                         .forEach(n -> completions.add(n.getId()));
             }
+        } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("research")) {
+            // /fc admin research <upgrade|set> <factory_id>
+            String researchAction = args[2].toLowerCase();
+            if (researchAction.equals("upgrade") || researchAction.equals("set")) {
+                plugin.getFactoryManager().getAllFactories().stream()
+                        .filter(f -> f.getOwner() != null)
+                        .forEach(f -> completions.add(f.getId()));
+            }
         } else if (args.length == 5 && args[0].equalsIgnoreCase("admin")) {
             if (args[1].equalsIgnoreCase("npc") && args[2].equalsIgnoreCase("spawn")) {
                 // Suggest npc_id — hint with factory_id prefix
@@ -959,6 +1042,11 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             } else if (args[1].equalsIgnoreCase("create")) {
                 for (FactoryType type : FactoryType.values()) {
                     completions.add(type.getId());
+                }
+            } else if (args[1].equalsIgnoreCase("research")) {
+                // /fc admin research <upgrade|set> <factory_id> <research_id>
+                if (plugin.getResearchManager() != null) {
+                    completions.addAll(plugin.getResearchManager().getResearchIds());
                 }
             }
         } else if (args.length == 6 && args[0].equalsIgnoreCase("admin")) {
@@ -972,6 +1060,9 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                         "advanced_factory_employee"));
             } else if (args[1].equalsIgnoreCase("create")) {
                 completions.addAll(Arrays.asList("1000", "5000", "10000", "50000", "100000"));
+            } else if (args[1].equalsIgnoreCase("research") && args[2].equalsIgnoreCase("set")) {
+                // /fc admin research set <factory_id> <research_id> <level>
+                completions.addAll(Arrays.asList("0", "1", "2", "3", "4", "5"));
             }
         } else if (args.length == 2) {
             String subCmd = args[0].toLowerCase();

@@ -90,6 +90,12 @@
             <id>phoenixdevt</id>
             <url>https://nexus.phoenixdevt.fr/repository/maven-public/</url>
         </repository>
+
+        <!-- SCore Repository (ExecutableItems) -->
+        <repository>
+            <id>score-repo</id>
+            <url>https://raw.githubusercontent.com/Ssomar-Developper/SCore/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -162,6 +168,14 @@
             <groupId>io.lumine</groupId>
             <artifactId>MythicLib-dist</artifactId>
             <version>1.6.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- SCore (ExecutableItems API) -->
+        <dependency>
+            <groupId>com.ssomar.score</groupId>
+            <artifactId>SCore</artifactId>
+            <version>4.24.6.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

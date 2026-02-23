@@ -1,6 +1,7 @@
 package com.aithor.factorycore.managers;
 
 import com.aithor.factorycore.FactoryCore;
+import com.aithor.factorycore.hooks.ExecutableItemsHook;
 import com.aithor.factorycore.hooks.MMOItemsHook;
 import com.aithor.factorycore.models.*;
 import org.bukkit.Bukkit;
@@ -37,6 +38,7 @@ public class ResourceManager {
             return;
 
         int mmoItemCount = 0;
+        int eiItemCount = 0;
 
         for (String key : resourceConfig.getConfigurationSection("resources").getKeys(false)) {
             String path = "resources." + key;
@@ -63,11 +65,21 @@ public class ResourceManager {
                 mmoItemCount++;
             }
 
+            // ExecutableItems integration
+            if (resourceConfig.contains(path + ".executable-items-id")) {
+                item.setExecutableItem(true);
+                item.setExecutableItemsId(resourceConfig.getString(path + ".executable-items-id"));
+                eiItemCount++;
+            }
+
             resources.put(key, item);
         }
 
-        plugin.getLogger().info("Loaded " + resources.size() + " resources!" +
-                (mmoItemCount > 0 ? " (" + mmoItemCount + " MMOItems linked)" : ""));
+        // Build info message
+        StringBuilder info = new StringBuilder("Loaded " + resources.size() + " resources!");
+        if (mmoItemCount > 0) info.append(" (").append(mmoItemCount).append(" MMOItems linked)");
+        if (eiItemCount > 0) info.append(" (").append(eiItemCount).append(" ExecutableItems linked)");
+        plugin.getLogger().info(info.toString());
     }
 
     public ResourceItem getResource(String id) {
@@ -78,6 +90,25 @@ public class ResourceManager {
         ResourceItem resource = resources.get(resourceId);
         if (resource == null)
             return null;
+
+        // If this resource is linked to an ExecutableItems item, use ExecutableItems API
+        if (resource.isExecutableItem()) {
+            ExecutableItemsHook eiHook = plugin.getExecutableItemsHook();
+            if (eiHook != null && eiHook.isEnabled()) {
+                ItemStack eiItem = eiHook.getExecutableItem(
+                        resource.getExecutableItemsId(),
+                        amount
+                );
+                if (eiItem != null) {
+                    return eiItem;
+                }
+                plugin.getLogger().warning("ExecutableItems item not found for resource '" + resourceId
+                        + "', falling back to vanilla item.");
+            } else {
+                plugin.getLogger().warning("ExecutableItems not available for resource '" + resourceId
+                        + "', falling back to vanilla item.");
+            }
+        }
 
         // If this resource is linked to an MMOItems item, use MMOItems API
         if (resource.isMMOItem()) {
@@ -91,7 +122,6 @@ public class ResourceManager {
                 if (mmoItem != null) {
                     return mmoItem;
                 }
-                // Fallback to vanilla item if MMOItems item not found
                 plugin.getLogger().warning("MMOItems item not found for resource '" + resourceId
                         + "', falling back to vanilla item.");
             } else {
@@ -136,7 +166,20 @@ public class ResourceManager {
         if (item == null || !item.hasItemMeta())
             return null;
 
-        // Check MMOItems resources first
+        // Check ExecutableItems resources first
+        ExecutableItemsHook eiHook = plugin.getExecutableItemsHook();
+        if (eiHook != null && eiHook.isEnabled()) {
+            for (Map.Entry<String, ResourceItem> entry : resources.entrySet()) {
+                ResourceItem resource = entry.getValue();
+                if (resource.isExecutableItem()) {
+                    if (eiHook.isExecutableItem(item, resource.getExecutableItemsId())) {
+                        return entry.getKey();
+                    }
+                }
+            }
+        }
+
+        // Check MMOItems resources
         MMOItemsHook mmoHook = plugin.getMMOItemsHook();
         if (mmoHook != null && mmoHook.isEnabled()) {
             for (Map.Entry<String, ResourceItem> entry : resources.entrySet()) {
@@ -157,8 +200,8 @@ public class ResourceManager {
         for (Map.Entry<String, ResourceItem> entry : resources.entrySet()) {
             ResourceItem resource = entry.getValue();
 
-            // Skip MMOItems resources (already checked above)
-            if (resource.isMMOItem()) continue;
+            // Skip external plugin resources (already checked above)
+            if (resource.isMMOItem() || resource.isExecutableItem()) continue;
 
             // Compare critical properties
             if (resource.getMaterial().equals(item.getType().name()) &&

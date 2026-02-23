@@ -3,6 +3,7 @@ package com.aithor.factorycore;
 import com.aithor.factorycore.commands.FactoryCoreCommand;
 import com.aithor.factorycore.gui.HubGUI;
 import com.aithor.factorycore.gui.OutputStorageGUI;
+import com.aithor.factorycore.hooks.ExecutableItemsHook;
 import com.aithor.factorycore.hooks.MMOItemsHook;
 import com.aithor.factorycore.listeners.*;
 import com.aithor.factorycore.managers.*;
@@ -31,6 +32,7 @@ public class FactoryCore extends JavaPlugin {
 
     // Hooks
     private MMOItemsHook mmoItemsHook;
+    private ExecutableItemsHook executableItemsHook;
 
     // Listeners
     private HubClickListener hubClickListener;
@@ -166,6 +168,8 @@ public class FactoryCore extends JavaPlugin {
     private void initializeHooks() {
         // MMOItems integration
         mmoItemsHook = new MMOItemsHook(this);
+        // ExecutableItems integration
+        executableItemsHook = new ExecutableItemsHook(this);
     }
 
     private void initializeManagers() {
@@ -279,6 +283,11 @@ public class FactoryCore extends JavaPlugin {
         } else {
             console.sendMessage("§7- §eMMOItems §8(Not found, MMOItems integration disabled)");
         }
+        if (executableItemsHook != null && executableItemsHook.isEnabled()) {
+            console.sendMessage("§7- §aExecutableItems §8(Item integration active)");
+        } else {
+            console.sendMessage("§7- §eExecutableItems §8(Not found, ExecutableItems integration disabled)");
+        }
         console.sendMessage("");
         console.sendMessage("§6[Systems Loaded]");
         console.sendMessage("§7- §aFactory Management §8(" + factoryManager.getAllFactories().size() + " active)");
@@ -346,6 +355,10 @@ public class FactoryCore extends JavaPlugin {
 
     public MMOItemsHook getMMOItemsHook() {
         return mmoItemsHook;
+    }
+
+    public ExecutableItemsHook getExecutableItemsHook() {
+        return executableItemsHook;
     }
 
     public HubClickListener getHubClickListener() {

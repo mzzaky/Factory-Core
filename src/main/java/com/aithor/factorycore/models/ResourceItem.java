@@ -17,6 +17,10 @@ public class ResourceItem {
     private String mmoItemsType;
     private String mmoItemsId;
 
+    // ExecutableItems integration fields
+    private boolean executableItem;
+    private String executableItemsId;
+
     public ResourceItem(String id, ResourceType type, String material) {
         this.id = id;
         this.type = type;
@@ -28,6 +32,8 @@ public class ResourceItem {
         this.mmoItem = false;
         this.mmoItemsType = null;
         this.mmoItemsId = null;
+        this.executableItem = false;
+        this.executableItemsId = null;
     }
 
     public String getId() { return id; }
@@ -51,4 +57,10 @@ public class ResourceItem {
     public void setMMOItemsType(String mmoItemsType) { this.mmoItemsType = mmoItemsType; }
     public String getMMOItemsId() { return mmoItemsId; }
     public void setMMOItemsId(String mmoItemsId) { this.mmoItemsId = mmoItemsId; }
+
+    // ExecutableItems getters & setters
+    public boolean isExecutableItem() { return executableItem; }
+    public void setExecutableItem(boolean executableItem) { this.executableItem = executableItem; }
+    public String getExecutableItemsId() { return executableItemsId; }
+    public void setExecutableItemsId(String executableItemsId) { this.executableItemsId = executableItemsId; }
 }

@@ -4,7 +4,7 @@ main: com.aithor.factorycore.FactoryCore
 author: aithor
 api-version: 1.21
 depend: [Vault, WorldEdit, WorldGuard]
-softdepend: [PlaceholderAPI, MMOItems]
+softdepend: [PlaceholderAPI, MMOItems, ExecutableItems]
 
 description: Plugin ekonomi berbasis pabrik dengan sistem produksi dan perdagangan yang kompleks
 

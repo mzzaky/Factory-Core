@@ -2,9 +2,13 @@ v1.2.0 Update Log
 
 - [New] Integrasi plugin MMOItems: resource di resources.yml kini dapat dihubungkan dengan item dari plugin MMOItems menggunakan field `mmoitems-type` dan `mmoitems-id`.
 - [New] Menambahkan class MMOItemsHook sebagai handler integrasi MMOItems, mendukung pembuatan item, identifikasi item, dan pengecekan tipe item secara otomatis.
-- [Update] ResourceManager kini mendukung pembuatan ItemStack dari MMOItems API. Jika MMOItems tidak tersedia atau item tidak ditemukan, sistem akan otomatis fallback ke item vanilla.
-- [Update] Identifikasi resource (getResourceId) kini dapat mengenali item MMOItems berdasarkan NBT data (MMOITEMS_ITEM_ID) selain pencocokan item vanilla.
-- [Update] Menambahkan MMOItems sebagai softdepend di plugin.yml, plugin tetap berjalan normal tanpa MMOItems.
-- [Update] Startup banner kini menampilkan status integrasi MMOItems (aktif/tidak tersedia).
-- [Update] Menambahkan contoh konfigurasi resource MMOItems di resources.yml (dalam keadaan commented) sebagai referensi pengguna.
+- [New] Integrasi plugin ExecutableItems: resource di resources.yml kini dapat dihubungkan dengan item dari plugin ExecutableItems menggunakan field `executable-items-id`.
+- [New] Menambahkan class ExecutableItemsHook sebagai handler integrasi ExecutableItems, mendukung pembuatan item dan identifikasi item melalui ExecutableItems API (SCore).
+- [Update] ResourceManager kini mendukung pembuatan ItemStack dari MMOItems API dan ExecutableItems API. Jika plugin tidak tersedia atau item tidak ditemukan, sistem akan otomatis fallback ke item vanilla.
+- [Update] ResourceItem model kini mendukung field `executableItem` dan `executableItemsId` untuk integrasi ExecutableItems.
+- [Update] Identifikasi resource (getResourceId) kini dapat mengenali item ExecutableItems dan MMOItems selain pencocokan item vanilla. Prioritas pengecekan: ExecutableItems → MMOItems → Vanilla.
+- [Update] Menambahkan MMOItems dan ExecutableItems sebagai softdepend di plugin.yml, plugin tetap berjalan normal tanpa kedua plugin tersebut.
+- [Update] Startup banner kini menampilkan status integrasi MMOItems dan ExecutableItems (aktif/tidak tersedia).
+- [Update] Menambahkan contoh konfigurasi resource MMOItems dan ExecutableItems di resources.yml (dalam keadaan commented) sebagai referensi pengguna.
+- [Update] Menambahkan dependency SCore (ExecutableItems API) di pom.xml.
 - [Info] Versi plugin diperbarui dari 1.1.5 ke 1.2.0.

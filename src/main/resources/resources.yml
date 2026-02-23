@@ -27,6 +27,24 @@
 #     mmoitems-type: "<MMOItems Type>"    # Contoh: SWORD, ARMOR, MATERIAL, CONSUMABLE, dll.
 #     mmoitems-id: "<MMOItems Item ID>"   # ID item yang terdaftar di MMOItems
 #
+# ==================== ExecutableItems Integration ====================
+# Anda dapat menghubungkan resource dengan item dari plugin ExecutableItems.
+# Cukup tambahkan field 'executable-items-id' pada resource.
+# Jika ExecutableItems tersedia, plugin akan menggunakan item dari ExecutableItems.
+# Jika ExecutableItems tidak tersedia, plugin akan fallback ke item vanilla (material/name/lore).
+#
+# Format:
+#   resource_id:
+#     type: <RESOURCE_TYPE>
+#     material: <VANILLA_MATERIAL>        # Digunakan sebagai fallback
+#     name: "<Display Name>"              # Digunakan sebagai fallback
+#     lore:                               # Digunakan sebagai fallback
+#       - "<lore line>"
+#     custom-model-data: <number>         # Digunakan sebagai fallback
+#     glow: <true/false>                  # Digunakan sebagai fallback
+#     suggested_price: <price>
+#     executable-items-id: "<EI Item ID>" # ID item yang terdaftar di ExecutableItems
+#
 
 resources:
   # ==================== RAW RESOURCES ====================
@@ -363,3 +381,74 @@ resources:
   #  suggested_price: 2000.0
   #  mmoitems-type: "CONSUMABLE"
   #  mmoitems-id: "SUPER_HEALING_POTION"
+
+  # ==================== ExecutableItems RESOURCES (CONTOH) ====================
+  # Uncomment dan sesuaikan dengan item ExecutableItems yang ada di server Anda.
+  # Pastikan plugin ExecutableItems sudah terinstall dan item-item berikut sudah terdaftar.
+
+  # Contoh: Raw material dari ExecutableItems
+  #ei_magic_dust:
+  #  type: RAW_RESOURCES
+  #  material: GLOWSTONE_DUST
+  #  name: "§dMagic Dust"
+  #  lore:
+  #    - "§7Debu sihir langka"
+  #    - "§7Item dari ExecutableItems"
+  #  custom-model-data: 1201
+  #  glow: true
+  #  suggested_price: 350.0
+  #  executable-items-id: "MAGIC_DUST"
+
+  # Contoh: Advanced resource dari ExecutableItems
+  #ei_enchanted_crystal:
+  #  type: ADVANCED_RESOURCES
+  #  material: AMETHYST_SHARD
+  #  name: "§5Enchanted Crystal"
+  #  lore:
+  #    - "§7Kristal yang telah di-enchant"
+  #    - "§7Item dari ExecutableItems"
+  #  custom-model-data: 2201
+  #  glow: true
+  #  suggested_price: 750.0
+  #  executable-items-id: "ENCHANTED_CRYSTAL"
+
+  # Contoh: Final product dari ExecutableItems
+  #ei_thunder_blade:
+  #  type: FINAL_RESOURCES
+  #  material: DIAMOND_SWORD
+  #  name: "§6Thunder Blade"
+  #  lore:
+  #    - "§7Pedang dengan kekuatan petir"
+  #    - "§7Senjata dari ExecutableItems"
+  #    - ""
+  #    - "§eSell Price: §6$12,000"
+  #  custom-model-data: 3201
+  #  glow: true
+  #  suggested_price: 12000.0
+  #  executable-items-id: "THUNDER_BLADE"
+
+  # Contoh: Fuel dari ExecutableItems
+  #ei_arcane_fuel:
+  #  type: FUEL
+  #  material: MAGMA_CREAM
+  #  name: "§cArcane Fuel"
+  #  lore:
+  #    - "§7Bahan bakar berenergi sihir"
+  #    - "§7Fuel dari ExecutableItems"
+  #  custom-model-data: 4201
+  #  glow: true
+  #  suggested_price: 200.0
+  #  executable-items-id: "ARCANE_FUEL"
+
+  # Contoh: Machine part dari ExecutableItems
+  #ei_magic_core:
+  #  type: MACHINE_PARTS
+  #  material: HEART_OF_THE_SEA
+  #  name: "§bMagic Core"
+  #  lore:
+  #    - "§7Inti sihir untuk mesin"
+  #    - "§7Komponen dari ExecutableItems"
+  #  custom-model-data: 5201
+  #  glow: true
+  #  suggested_price: 900.0
+  #  executable-items-id: "MAGIC_CORE"

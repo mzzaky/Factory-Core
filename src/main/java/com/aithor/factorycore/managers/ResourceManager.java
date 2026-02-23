@@ -1,6 +1,7 @@
 package com.aithor.factorycore.managers;
 
 import com.aithor.factorycore.FactoryCore;
+import com.aithor.factorycore.hooks.MMOItemsHook;
 import com.aithor.factorycore.models.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -35,6 +36,8 @@ public class ResourceManager {
         if (!resourceConfig.contains("resources"))
             return;
 
+        int mmoItemCount = 0;
+
         for (String key : resourceConfig.getConfigurationSection("resources").getKeys(false)) {
             String path = "resources." + key;
 
@@ -52,10 +55,19 @@ public class ResourceManager {
             item.setGlow(resourceConfig.getBoolean(path + ".glow", false));
             item.setSellPrice(resourceConfig.getDouble(path + ".suggested_price", 0.0));
 
+            // MMOItems integration
+            if (resourceConfig.contains(path + ".mmoitems-type") && resourceConfig.contains(path + ".mmoitems-id")) {
+                item.setMMOItem(true);
+                item.setMMOItemsType(resourceConfig.getString(path + ".mmoitems-type"));
+                item.setMMOItemsId(resourceConfig.getString(path + ".mmoitems-id"));
+                mmoItemCount++;
+            }
+
             resources.put(key, item);
         }
 
-        plugin.getLogger().info("Loaded " + resources.size() + " resources!");
+        plugin.getLogger().info("Loaded " + resources.size() + " resources!" +
+                (mmoItemCount > 0 ? " (" + mmoItemCount + " MMOItems linked)" : ""));
     }
 
     public ResourceItem getResource(String id) {
@@ -66,6 +78,27 @@ public class ResourceManager {
         ResourceItem resource = resources.get(resourceId);
         if (resource == null)
             return null;
+
+        // If this resource is linked to an MMOItems item, use MMOItems API
+        if (resource.isMMOItem()) {
+            MMOItemsHook mmoHook = plugin.getMMOItemsHook();
+            if (mmoHook != null && mmoHook.isEnabled()) {
+                ItemStack mmoItem = mmoHook.getMMOItem(
+                        resource.getMMOItemsType(),
+                        resource.getMMOItemsId(),
+                        amount
+                );
+                if (mmoItem != null) {
+                    return mmoItem;
+                }
+                // Fallback to vanilla item if MMOItems item not found
+                plugin.getLogger().warning("MMOItems item not found for resource '" + resourceId
+                        + "', falling back to vanilla item.");
+            } else {
+                plugin.getLogger().warning("MMOItems not available for resource '" + resourceId
+                        + "', falling back to vanilla item.");
+            }
+        }
 
         Material material = Material.valueOf(resource.getMaterial());
         ItemStack item = new ItemStack(material, amount);
@@ -103,12 +136,29 @@ public class ResourceManager {
         if (item == null || !item.hasItemMeta())
             return null;
 
+        // Check MMOItems resources first
+        MMOItemsHook mmoHook = plugin.getMMOItemsHook();
+        if (mmoHook != null && mmoHook.isEnabled()) {
+            for (Map.Entry<String, ResourceItem> entry : resources.entrySet()) {
+                ResourceItem resource = entry.getValue();
+                if (resource.isMMOItem()) {
+                    if (mmoHook.isMMOItem(item, resource.getMMOItemsType(), resource.getMMOItemsId())) {
+                        return entry.getKey();
+                    }
+                }
+            }
+        }
+
+        // Then check vanilla resources
         ItemMeta meta = item.getItemMeta();
         String displayName = meta.getDisplayName();
         int customModelData = meta.hasCustomModelData() ? meta.getCustomModelData() : 0;
 
         for (Map.Entry<String, ResourceItem> entry : resources.entrySet()) {
             ResourceItem resource = entry.getValue();
+
+            // Skip MMOItems resources (already checked above)
+            if (resource.isMMOItem()) continue;
 
             // Compare critical properties
             if (resource.getMaterial().equals(item.getType().name()) &&

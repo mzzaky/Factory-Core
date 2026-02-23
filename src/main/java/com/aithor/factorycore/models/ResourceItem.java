@@ -11,7 +11,12 @@ public class ResourceItem {
     private int customModelData;
     private boolean glow;
     private double sellPrice;
-    
+
+    // MMOItems integration fields
+    private boolean mmoItem;
+    private String mmoItemsType;
+    private String mmoItemsId;
+
     public ResourceItem(String id, ResourceType type, String material) {
         this.id = id;
         this.type = type;
@@ -20,8 +25,11 @@ public class ResourceItem {
         this.customModelData = 0;
         this.glow = false;
         this.sellPrice = 0.0;
+        this.mmoItem = false;
+        this.mmoItemsType = null;
+        this.mmoItemsId = null;
     }
-    
+
     public String getId() { return id; }
     public ResourceType getType() { return type; }
     public String getMaterial() { return material; }
@@ -35,4 +43,12 @@ public class ResourceItem {
     public void setGlow(boolean glow) { this.glow = glow; }
     public double getSellPrice() { return sellPrice; }
     public void setSellPrice(double sellPrice) { this.sellPrice = sellPrice; }
+
+    // MMOItems getters & setters
+    public boolean isMMOItem() { return mmoItem; }
+    public void setMMOItem(boolean mmoItem) { this.mmoItem = mmoItem; }
+    public String getMMOItemsType() { return mmoItemsType; }
+    public void setMMOItemsType(String mmoItemsType) { this.mmoItemsType = mmoItemsType; }
+    public String getMMOItemsId() { return mmoItemsId; }
+    public void setMMOItemsId(String mmoItemsId) { this.mmoItemsId = mmoItemsId; }
 }

@@ -3,6 +3,7 @@ package com.aithor.factorycore;
 import com.aithor.factorycore.commands.FactoryCoreCommand;
 import com.aithor.factorycore.gui.HubGUI;
 import com.aithor.factorycore.gui.OutputStorageGUI;
+import com.aithor.factorycore.hooks.MMOItemsHook;
 import com.aithor.factorycore.listeners.*;
 import com.aithor.factorycore.managers.*;
 import com.aithor.factorycore.utils.Logger;
@@ -27,6 +28,9 @@ public class FactoryCore extends JavaPlugin {
     private TaxManager taxManager;
     private MarketplaceManager marketplaceManager;
     private ResearchManager researchManager;
+
+    // Hooks
+    private MMOItemsHook mmoItemsHook;
 
     // Listeners
     private HubClickListener hubClickListener;
@@ -56,6 +60,9 @@ public class FactoryCore extends JavaPlugin {
 
         // Initialize logger
         com.aithor.factorycore.utils.Logger.init(this);
+
+        // Initialize hooks (before managers, since managers may depend on hooks)
+        initializeHooks();
 
         // Initialize managers
         initializeManagers();
@@ -154,6 +161,11 @@ public class FactoryCore extends JavaPlugin {
         if (!new java.io.File(getDataFolder(), "research.yml").exists()) {
             saveResource("research.yml", false);
         }
+    }
+
+    private void initializeHooks() {
+        // MMOItems integration
+        mmoItemsHook = new MMOItemsHook(this);
     }
 
     private void initializeManagers() {
@@ -262,6 +274,11 @@ public class FactoryCore extends JavaPlugin {
         } else {
             console.sendMessage("§7- §ePlaceholderAPI §8(Not found, placeholders disabled)");
         }
+        if (mmoItemsHook != null && mmoItemsHook.isEnabled()) {
+            console.sendMessage("§7- §aMMOItems §8(Item integration active)");
+        } else {
+            console.sendMessage("§7- §eMMOItems §8(Not found, MMOItems integration disabled)");
+        }
         console.sendMessage("");
         console.sendMessage("§6[Systems Loaded]");
         console.sendMessage("§7- §aFactory Management §8(" + factoryManager.getAllFactories().size() + " active)");
@@ -325,6 +342,10 @@ public class FactoryCore extends JavaPlugin {
 
     public ResearchManager getResearchManager() {
         return researchManager;
+    }
+
+    public MMOItemsHook getMMOItemsHook() {
+        return mmoItemsHook;
     }
 
     public HubClickListener getHubClickListener() {

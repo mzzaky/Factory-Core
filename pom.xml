@@ -7,7 +7,7 @@
 
     <groupId>com.aithor</groupId>
     <artifactId>FactoryCore</artifactId>
-    <version>1.1.5</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>FactoryCore</name>
@@ -84,6 +84,12 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+
+        <!-- Phoenix Dev Team Repository (MMOItems & MythicLib) -->
+        <repository>
+            <id>phoenixdevt</id>
+            <url>https://nexus.phoenixdevt.fr/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -140,6 +146,22 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- MMOItems API -->
+        <dependency>
+            <groupId>net.Indyuce</groupId>
+            <artifactId>MMOItems-API</artifactId>
+            <version>6.10</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- MythicLib (required by MMOItems) -->
+        <dependency>
+            <groupId>io.lumine</groupId>
+            <artifactId>MythicLib-dist</artifactId>
+            <version>1.6.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

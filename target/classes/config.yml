@@ -36,9 +36,9 @@ marketplace:
   # Tax rate on marketplace sales (deducted from seller)
   tax-rate: 5.0
   # Maximum listings per player
-  max-listings-per-player: 10
-  # Listing expiration time in hours (168 = 7 days)
-  listing-expiration-hours: 168
+  max-listings-per-player: 3
+  # Listing expiration time in hours
+  listing-expiration-hours: 8
   # Minimum price per unit
   min-price: 0.01
   # Maximum price per unit

@@ -57,8 +57,8 @@ public class ResearchGUI {
 
         // Research items in the center area
         // Slots: 20, 21, 22, 23, 24 (row 3) -> first 5 research items
-        // 31 (row 4) -> 6th research item (centered)
-        int[] researchSlots = { 20, 21, 22, 23, 24, 31 };
+        // 29, 30, 31, 32, 33 (row 4) -> next 5 research items
+        int[] researchSlots = { 20, 21, 22, 23, 24, 29, 30, 31, 32, 33 };
         List<String> researchIds = new ArrayList<>(rm.getResearchIds());
 
         for (int i = 0; i < researchIds.size() && i < researchSlots.length; i++) {

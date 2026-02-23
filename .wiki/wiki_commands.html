@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commands & Permissions - FactoryCore Wiki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #0a0c10;
+            color: #e4e6ea;
+            min-height: 100vh;
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #10b981;
+        }
+
+        .page-header p {
+            color: #9ca3af;
+            font-size: 1.15rem;
+            margin-top: 10px;
+        }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #10b981;
+        }
+
+        .breadcrumb-sep {
+            color: #4b5563;
+        }
+
+        .breadcrumb-current {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        /* ── Layout ── */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* ── Side Nav ── */
+        .side-nav {
+            position: sticky;
+            top: 20px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .nav-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.1);
+            font-weight: 700;
+            color: #e4e6ea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 15px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-list a:hover {
+            background: rgba(52, 211, 153, 0.05);
+            color: #d1fae5;
+        }
+
+        .nav-list a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(4, 120, 87, 0.05) 100%);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            font-weight: 600;
+        }
+
+        /* ── Main Content ── */
+        .main-content {
+            background: #0d1117;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .content-section {
+            padding: 40px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.08);
+            scroll-margin-top: 20px;
+        }
+
+        .content-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            margin-bottom: 25px;
+        }
+
+        .section-title h2 {
+            color: #10b981;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        /* ── Typography ── */
+        h3 {
+            color: #34d399;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #d1d5db;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            color: #d1d5db;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        strong {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 3px 6px;
+            border-radius: 5px;
+            color: #34d399;
+            font-size: 13px;
+        }
+
+        /* ── Info / Warning Boxes ── */
+        .info-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .info-box-title {
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        /* ── Table ── */
+        .table-wrapper {
+            margin: 25px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .data-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #34d399;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #c9cdd4;
+            font-size: 14px;
+        }
+
+        .data-table td code {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            margin: 2px 0;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        /* ── Code Block ── */
+        .code-wrap {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #090d13;
+            border: 1px solid rgba(52, 211, 153, 0.18);
+            border-radius: 10px;
+            padding: 22px 24px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.75;
+            color: #abb2bf;
+        }
+
+        /* ── Dev Tip Box ── */
+        .dev-tip {
+            background: linear-gradient(135deg, rgba(97, 175, 239, 0.07) 0%, rgba(56, 139, 253, 0.03) 100%);
+            border: 1px solid rgba(97, 175, 239, 0.25);
+            border-left: 4px solid #61afef;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        .dev-tip .info-box-title {
+            color: #61afef;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+
+            .side-nav {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-header">
+        <h1>Commands & Permissions</h1>
+        <p>A comprehensive guide to all commands and permissions in FactoryCore</p>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="index.html">Wiki Home</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <span class="breadcrumb-current">Commands</span>
+    </div>
+
+    <div class="content-container">
+        <nav class="side-nav">
+            <div class="nav-header">On This Page</div>
+            <ul class="nav-list">
+                <li><a href="#overview" class="active">Overview</a></li>
+                <li><a href="#player-commands">Player Commands</a></li>
+                <li><a href="#admin-commands">Admin Commands</a></li>
+                <li><a href="#permissions">Permissions</a></li>
+                <li><a href="#developer-tips">Developer Tips</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+
+            <!-- ════ OVERVIEW ════ -->
+            <section class="content-section" id="overview">
+                <div class="section-title">
+                    <h2>Overview</h2>
+                </div>
+                <p>
+                    FactoryCore uses a centralized command structure prefixed by <code>/factorycore</code> or the simple
+                    alias <code>/fc</code>.
+                    From purchasing factories to managing NPCs and handling complex admin functions, every feature can
+                    be accessed or managed through these commands.
+                    Most interactions utilize a fully-featured GUI system directly accessible via these commands.
+                </p>
+            </section>
+
+            <!-- ════ PLAYER COMMANDS ════ -->
+            <section class="content-section" id="player-commands">
+                <div class="section-title">
+                    <h2>Player Commands</h2>
+                </div>
+                <p>Commands accessible to regular players to manage their factory empires, browse available listings,
+                    and check financial statuses.</p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>/fc hub</code>, <code>menu</code>, <code>main</code></td>
+                                <td>Opens the Main Hub menu, allowing you to access other systems in one click.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc browse</code></td>
+                                <td>Opens the factory browsing GUI to find available factories for purchase.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc my</code>, <code>myfactories</code></td>
+                                <td>View a GUI listing of all factories you currently own.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc invoices</code></td>
+                                <td>Opens the Invoice Center to review and settle due invoices.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc taxes</code>, <code>tax</code></td>
+                                <td>Opens the Tax Center to manage your pending factory taxes.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc employees</code>, <code>npcs</code></td>
+                                <td>Manage and view details regarding your factory NPCs/Employees.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc market</code>, <code>marketplace</code></td>
+                                <td>Opens the Marketplace GUI where you can buy and sell factory resources.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc buy &lt;id&gt;</code></td>
+                                <td>Purchases an available factory with the specified ID.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc sell &lt;id&gt;</code></td>
+                                <td>Sells one of your owned factories for 50% of its base price.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc info &lt;id&gt;</code></td>
+                                <td>Views detailed information (owner, level, price, status) of a specific factory.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc gui &lt;id&gt;</code></td>
+                                <td>Opens the management GUI for a specific factory you own.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc tp &lt;id&gt;</code>, <code>teleport</code></td>
+                                <td>Teleports you to the fast travel point of a specific factory.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc help</code></td>
+                                <td>Displays an in-game list of available commands.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc version</code></td>
+                                <td>Checks the FactoryCore plugin version currently installed on the server.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ════ ADMIN COMMANDS ════ -->
+            <section class="content-section" id="admin-commands">
+                <div class="section-title">
+                    <h2>Admin Commands</h2>
+                </div>
+                <p>Advanced commands configured for server administrators to setup factories, modify data, force system
+                    actions, and balance the economy. These require the <code>factorycore.admin</code> permission.</p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>/fc admin create &lt;region_id&gt; &lt;fac_id&gt; &lt;type&gt; &lt;price&gt;</code>
+                                </td>
+                                <td>Creates a new purchasable factory mapped to a WorldGuard region at your standing
+                                    location.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin remove &lt;id&gt;</code></td>
+                                <td>Deletes a factory entirely from the database and config.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin list</code></td>
+                                <td>Lists all factories registered on the server alongside their respective owners.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin info &lt;id&gt;</code></td>
+                                <td>Lists detailed administrative information about a chosen factory.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin reload</code></td>
+                                <td>Reloads configurations, messages, recipes, and resources across the plugin.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin checkrecipes</code></td>
+                                <td>Prints all currently loaded recipes in memory, useful for troubleshooting configs.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin setowner &lt;id&gt; &lt;player&gt;</code></td>
+                                <td>Forcefully transfers or sets the ownership of a factory to the specified player.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin give &lt;resource_id&gt; &lt;amount&gt; &lt;player&gt;</code></td>
+                                <td>Grants a specified amount of a defined resource directly to a player's inventory.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin teleport &lt;id&gt;</code></td>
+                                <td>Bypasses ownership restrictions and teleports the admin to any factory's fast travel
+                                    location.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin npc spawn &lt;fac_id&gt; [npc_id] [template]</code></td>
+                                <td>Spawns an administrative NPC corresponding to a specific factory and template.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin npc remove &lt;npc_id&gt;</code>, <code>list</code>,
+                                    <code>respawn</code>
+                                </td>
+                                <td>Manage, list, or force-respawn factory NPCs across the server.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin tax &lt;assess|check&gt;</code></td>
+                                <td>Force executes a server-wide assessment of tax bills or forces a checking phase for
+                                    overdue taxes.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin market &lt;cleanup|stats&gt;</code></td>
+                                <td>Clears expired listings from the marketplace database or views total outstanding
+                                    listings.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin research &lt;upgrade|set&gt; &lt;fac_id&gt; [args]</code></td>
+                                <td>Manipulate factory research levels via an administrative overwrite command.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ════ PERMISSIONS ════ -->
+            <section class="content-section" id="permissions">
+                <div class="section-title">
+                    <h2>Permissions List</h2>
+                </div>
+                <p>FactoryCore relies on hierarchical permission trees. Granting <code>factorycore.*</code> applies all
+                    admin subsets, while <code>factorycore.use</code> controls typical operations.</p>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Permission Node</th>
+                                <th>Access Level & Default Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>factorycore.*</code></td>
+                                <td>Root node giving access to all commands in FactoryCore.</td>
+                            </tr>
+                            <tr>
+                                <td><code>factorycore.admin</code></td>
+                                <td>Gives access to all <code>/fc admin</code> level commands. Default: <b>OP</b>. Child
+                                    modes include <code>factorycore.admin.create</code>,
+                                    <code>factorycore.admin.remove</code>, <code>factorycore.admin.tax</code>, etc.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>factorycore.use</code></td>
+                                <td>Base node for typical user functions. Includes permissions such as
+                                    <code>factorycore.buy</code>, <code>factorycore.hub</code>,
+                                    <code>factorycore.taxes</code>, etc. Default: <b>True</b>.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>factorycore.teleport</code></td>
+                                <td>Allows players to run the <code>/fc tp</code> shortcut to fast travel. Default:
+                                    <b>True</b>.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ════ DEVELOPER TIPS ════ -->
+            <section class="content-section" id="developer-tips">
+                <div class="section-title">
+                    <h2>Developer Tips</h2>
+                </div>
+                <p>If you're modifying or extending FactoryCore's command handling structure, here's a reference to how
+                    the sub-system is routed, implemented and tested.</p>
+
+                <div class="dev-tip">
+                    <div class="info-box-title">🛠️ Command Architecture</div>
+                    <p style="color: #abb2bf; margin-top: 8px;">
+                        The commands are centrally dispatched through <code>FactoryCoreCommand.java</code>. The default
+                        action when a player executes <code>/fc</code> is handling the Hub Menu (or printing help if
+                        running from console).
+                    </p>
+                    <p style="color: #abb2bf; margin-bottom: 0px;">
+                        Each argument translates to a nested method mapping (e.g., <code>handleMyFactories()</code> or
+                        <code>handleAdmin()</code>). Administrative commands are further filtered through a secondary
+                        switch checking sub-arguments like <code>adminCreate()</code> and <code>adminNPC()</code>.
+                    </p>
+                </div>
+
+                <div class="dev-tip">
+                    <div class="info-box-title">✨ Intelligent Tab Completion</div>
+                    <p style="color: #abb2bf; margin-top: 8px;">
+                        Tab completions are implemented directly in <code>FactoryCoreCommand.java</code> via the
+                        <code>TabCompleter</code> interface natively. The logic correctly filters completion strings
+                        based on context. For example:
+                    </p>
+                    <ul style="color: #abb2bf;">
+                        <li>If calling <code>/fc admin create</code>, completion will hook into
+                            <code>WorldGuardUtils.getAllRegionNames()</code>.
+                        </li>
+                        <li>If calling <code>/fc admin npc spawn</code>, autocomplete dynamically fetches loaded Factory
+                            IDs and available templates.</li>
+                        <li>If executing <code>/fc tp</code>, completion checks ownership, and only displays factories
+                            that belong to the sender UUID.</li>
+                    </ul>
+                </div>
+
+                <div class="dev-tip">
+                    <div class="info-box-title">📝 Security & Logging Guidelines</div>
+                    <p style="color: #abb2bf; margin-top: 8px; margin-bottom: 0px;">
+                        Always check for <code>sender instanceof Player</code> if commands invoke GUI interactions or
+                        location checks. Moreover, any admin operations mutating data (creating instances, spawning
+                        NPCs, manipulating records) must pipe to <code>Logger.logAdminCommand()</code> to leave an audit
+                        trail across the server. Use `LanguageManager` for retrieving end-user strings.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Copy to clipboard functionality logic goes here if script gets extended.
+        function copyCode(btn) {
+            // Unused since there's no major copy segments here, added for wiki compatibility
+        }
+
+        // Setup scrolling behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-list a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add intersection observer for scroll spy
+        const sections = document.querySelectorAll('.content-section');
+        const navLinks = document.querySelectorAll('.nav-list a');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + entry.target.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+    </script>
+</body>
+
+</html>

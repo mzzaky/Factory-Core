@@ -5,15 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Changelog - Factory-Core-Plugin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
         * {
             box-sizing: border-box;
         }
 
         body {
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 20px;
@@ -24,7 +22,7 @@
             overflow-x: hidden;
         }
 
-        /* Elegant Red background effects */
+        /* Subtle background accent */
         body::before {
             content: '';
             position: fixed;
@@ -32,41 +30,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(4, 120, 87, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 40% 60%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            background: radial-gradient(ellipse at 20% 20%, rgba(16, 185, 129, 0.07) 0%, transparent 60%);
             pointer-events: none;
             z-index: -1;
-        }
-
-        /* Floating particles effect */
-        .particle {
-            position: absolute;
-            background: rgba(16, 185, 129, 0.4);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: float 20s infinite linear;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            90% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
         }
 
         /* Header Utama */
@@ -132,15 +98,14 @@
             max-width: 1400px;
             margin: 0 auto 40px;
             padding: 16px 24px;
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(16, 185, 129, 0.1);
             border-radius: 16px;
             display: flex;
             align-items: center;
             gap: 12px;
             font-size: 14px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
         .breadcrumb a {
@@ -172,12 +137,11 @@
         .side-nav {
             position: sticky;
             top: 20px;
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(16, 185, 129, 0.1);
             border-radius: 20px;
             padding: 24px;
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35), 0 0 50px rgba(16, 185, 129, 0.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
         .nav-title {
@@ -212,26 +176,10 @@
             overflow: hidden;
         }
 
-        .nav-list a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .nav-list a:hover::before {
-            left: 100%;
-        }
-
         .nav-list a:hover {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(4, 120, 87, 0.1) 100%);
             color: #10b981;
             transform: translateX(4px);
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
         }
 
         .nav-list a.active {
@@ -253,11 +201,10 @@
         /* Main Content */
         .main-content {
             background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
             border: 1px solid rgba(16, 185, 129, 0.1);
             border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 80px rgba(16, 185, 129, 0.05);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
         }
 
         /* Version Section */
@@ -717,22 +664,11 @@
 </head>
 
 <body>
-    <!-- Floating particles -->
-    <div class="particle" style="left: 10%; width: 3px; height: 3px; animation-delay: 0s;"></div>
-    <div class="particle" style="left: 20%; width: 2px; height: 2px; animation-delay: 2s;"></div>
-    <div class="particle" style="left: 30%; width: 4px; height: 4px; animation-delay: 4s;"></div>
-    <div class="particle" style="left: 40%; width: 2px; height: 2px; animation-delay: 6s;"></div>
-    <div class="particle" style="left: 50%; width: 3px; height: 3px; animation-delay: 8s;"></div>
-    <div class="particle" style="left: 60%; width: 2px; height: 2px; animation-delay: 10s;"></div>
-    <div class="particle" style="left: 70%; width: 4px; height: 4px; animation-delay: 12s;"></div>
-    <div class="particle" style="left: 80%; width: 3px; height: 3px; animation-delay: 14s;"></div>
-    <div class="particle" style="left: 90%; width: 2px; height: 2px; animation-delay: 16s;"></div>
-
     <div class="page-header">
         <h1>Factory-Core-Plugin Changelog</h1>
         <p>Track all updates, improvements, and bug fixes for Factory-Core-Plugin</p>
         <div class="current-version">
-            <span>Latest Version: v1.0.0</span>
+            <span>Latest Version: v1.1.5</span>
         </div>
     </div>
 
@@ -746,13 +682,298 @@
         <nav class="side-nav">
             <div class="nav-title">Version History</div>
             <ul class="nav-list">
+                <li><a href="#v1-1-5">v1.1.5 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-1-0">v1.1.0</a></li>
                 <li><a href="#v1-0-0" class="active">v1.0.0 <span class="version-badge">Release</span></a></li>
             </ul>
         </nav>
 
         <main class="main-content">
+            <!-- Version 1.1.5 -->
+            <section class="version-section" id="v1-1-5">
+                <div class="version-header">
+                    <div class="version-header-left">
+                        <div class="version-title">
+                            <h2>Version 1.1.5</h2>
+                            <span class="version-type update">Update</span>
+                        </div>
+                        <div class="release-date">February 23, 2026</div>
+                    </div>
+                    <div class="version-toggle">
+                        <span class="version-toggle-icon">▼</span>
+                        <span class="version-toggle-text">Minimize</span>
+                    </div>
+                </div>
+
+                <div class="version-content">
+                    <div class="overview-box">
+                        <div class="overview-title">Release Overview</div>
+                        <div class="overview-grid">
+                            <div class="overview-stat">
+                                <div class="stat-label">Total Changes</div>
+                                <div class="stat-value">10</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Bug Fixes</div>
+                                <div class="stat-value">3</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Improvements</div>
+                                <div class="stat-value">7</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Type</div>
+                                <div class="stat-value">Update</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Updates & Enhancements -->
+                    <div class="change-category">
+                        <div class="category-header improved">
+                            <div class="category-icon improved">~</div>
+                            <div class="category-title">Updates & Improvements</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Marketplace Item Registration:</strong> Simplified the item registration system
+                                in the Marketplace Sell Items menu, replacing the item list with a direct click
+                                mechanism from the player's inventory.
+                            </li>
+                            <li class="change-item">
+                                <strong>Suggested Price Attribute:</strong> Added <code>suggested_price</code> attribute
+                                to all resources in <code>resources.yml</code> as a dynamic reference for selling prices
+                                in the Marketplace.
+                            </li>
+                            <li class="change-item">
+                                <strong>Marketplace Listing Limit:</strong> Changed the maximum number of items a player
+                                can sell from 10 to 3 in the marketplace feature.
+                            </li>
+                            <li class="change-item">
+                                <strong>Business Expansion Research:</strong> Added new "business_expansion" research to
+                                increase the maximum marketplace listing capacity by +1 per level.
+                            </li>
+                            <li class="change-item">
+                                <strong>Real-time Expiration:</strong> Added real-time expiration time remaining
+                                information for items sold in the Marketplace My Listings menu.
+                            </li>
+                            <li class="change-item">
+                                <strong>Market Stability Research:</strong> Added new "market_stability_regulation"
+                                research to increase the expiration time of player sales in the marketplace by +8 hours
+                                per level.
+                            </li>
+                            <li class="change-item">
+                                <strong>New Employee NPCs:</strong> Added more NPC variants to the Employee shop along
+                                with their unique templates (Logistics Manager, Quality Inspector, Assembly Expert).
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Bug Fixes -->
+                    <div class="change-category">
+                        <div class="category-header fixed">
+                            <div class="category-icon fixed">-</div>
+                            <div class="category-title">Bug Fixes</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Invoice Center Tax Display:</strong> Fixed the Invoice Center GUI to correctly
+                                display factory tax details.
+                            </li>
+                            <li class="change-item">
+                                <strong>Invoice Center Processing:</strong> Fixed the filter, sort, Single Pay, and Pay
+                                All features in the Invoice Center to properly process the tax system.
+                            </li>
+                            <li class="change-item">
+                                <strong>Marketplace Duplication Exploit:</strong> Fixed an item duplication exploit in
+                                the Marketplace when canceling a sell queue. Items are now completely removed from the
+                                inventory upon registration.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Version 1.1.0 -->
+            <section class="version-section" id="v1-1-0">
+                <div class="version-header">
+                    <div class="version-header-left">
+                        <div class="version-title">
+                            <h2>Version 1.1.0</h2>
+                            <span class="version-type feature">Feature Update</span>
+                        </div>
+                        <div class="release-date">February 21, 2026</div>
+                    </div>
+                    <div class="version-toggle">
+                        <span class="version-toggle-icon">▼</span>
+                        <span class="version-toggle-text">Minimize</span>
+                    </div>
+                </div>
+
+                <div class="version-content">
+                    <div class="overview-box">
+                        <div class="overview-title">Release Overview</div>
+                        <div class="overview-grid">
+                            <div class="overview-stat">
+                                <div class="stat-label">New Features</div>
+                                <div class="stat-value">11</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Research Types</div>
+                                <div class="stat-value">6</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">New Config Files</div>
+                                <div class="stat-value">1</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">New Admin Commands</div>
+                                <div class="stat-value">2</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Type</div>
+                                <div class="stat-value">Feature</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gameplay Changes -->
+                    <div class="change-category">
+                        <div class="category-header improved">
+                            <div class="category-icon improved">~</div>
+                            <div class="category-title">Gameplay Changes</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>NPC Interaction Rework:</strong> Left-click now opens the Output Storage, and
+                                right-click opens the main Factory GUI.
+                            </li>
+                            <li class="change-item">
+                                <strong>Default Height Offset:</strong> Adjusted from <code>2.3</code> to
+                                <code>1.3</code> for improved NPC placement.
+                            </li>
+                            <li class="change-item">
+                                <strong>Storage on Upgrade:</strong> Removed the automatic increase of input/output
+                                storage slots when a factory is upgraded — storage scaling is no longer tied to upgrade
+                                level.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- New Mechanics -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">New Mechanics</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Upgrade Sound Effect:</strong> A sound effect now plays when a factory is
+                                successfully upgraded.
+                            </li>
+                            <li class="change-item">
+                                <strong>Upgrade Confirmation GUI:</strong> A confirmation dialog is now shown before a
+                                factory upgrade is executed, preventing accidental upgrades.
+                            </li>
+                            <li class="change-item">
+                                <strong>Timed Upgrades (<code>time_upgrade</code>):</strong> Factory upgrades now
+                                require a configurable duration (in seconds) to complete — instant upgrades are no
+                                longer possible. Adjustable via <code>config.yml</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Factory Ownership Limit:</strong> Each player can now own a maximum of 3
+                                factories by default. This limit is configurable in <code>config.yml</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Recipe Money Cost:</strong> A money cost requirement has been added to every
+                                available production recipe.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Factory Research System -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">Factory Research System</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>6 Research Technologies</strong> available for factories to unlock and level up:
+                                <ul>
+                                    <li class="sub-item"><strong>Fiscal Optimization</strong> — Reduces tax costs.</li>
+                                    <li class="sub-item"><strong>AI Workforce Integration</strong> — Reduces employee
+                                        salary costs.</li>
+                                    <li class="sub-item"><strong>Nano-Construction Framework</strong> — Reduces factory
+                                        upgrade time.</li>
+                                    <li class="sub-item"><strong>Advanced Machine Technology</strong> — Reduces item
+                                        production time.</li>
+                                    <li class="sub-item"><strong>Operational Cost Efficiency</strong> — Reduces item
+                                        production cost.</li>
+                                    <li class="sub-item"><strong>Industrial Mastery</strong> — Adds +1 to the factory
+                                        ownership limit per level.</li>
+                                </ul>
+                            </li>
+                            <li class="change-item">
+                                <strong>Research Costs &amp; Duration:</strong> Each research requires a significant
+                                money investment and a completion time (default: 1 day).
+                            </li>
+                            <li class="change-item">
+                                <strong>Research Center GUI:</strong> A dedicated custom GUI linked to the Hub GUI for
+                                managing all research activities.
+                            </li>
+                            <li class="change-item">
+                                <strong>research.yml Config:</strong> New configuration file for full control over all
+                                research parameters.
+                            </li>
+                            <li class="change-item">
+                                <strong>Dynamic GUI Buffs Display:</strong> Research buffs are reflected in real-time
+                                across multiple GUIs:
+                                <ul>
+                                    <li class="sub-item">Recipe Selection GUI shows updated production time/cost from
+                                        <code>advanced_machine_technology</code> and
+                                        <code>operational_cost_efficiency</code>.
+                                    </li>
+                                    <li class="sub-item">Upgrade GUI shows real-time upgrade time reduction from
+                                        <code>nano_construction_framework</code>.
+                                    </li>
+                                    <li class="sub-item">My Factories GUI shows adjusted factory ownership limit from
+                                        <code>industrial_mastery</code>.
+                                    </li>
+                                    <li class="sub-item">Tax Center GUI shows real-time tax deduction calculations from
+                                        <code>fiscal_optimization</code>.
+                                    </li>
+                                    <li class="sub-item">Invoice GUI shows real-time salary cost reductions from
+                                        <code>ai_workforce_integration</code>.
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Admin Commands -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">New Admin Commands</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <code>/fc admin research upgrade &lt;factory_id&gt; &lt;research_id&gt;</code> —
+                                Manually advance a factory's research by one level.
+                            </li>
+                            <li class="change-item">
+                                <code>/fc admin research set &lt;factory_id&gt; &lt;research_id&gt; &lt;level&gt;</code>
+                                — Manually set a factory's research to a specific level.
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+
             <!-- Version 1.0.0 (Initial Release) -->
-            <section class="version-section" id="v1-0-0">
+            <section class="version-section collapsed" id="v1-0-0">
                 <div class="version-header">
                     <div class="version-header-left">
                         <div class="version-title">
@@ -763,7 +984,7 @@
                     </div>
                     <div class="version-toggle">
                         <span class="version-toggle-icon">▼</span>
-                        <span class="version-toggle-text">Minimize</span>
+                        <span class="version-toggle-text">Expand</span>
                     </div>
                 </div>
 

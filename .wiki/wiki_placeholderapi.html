@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee System - FactoryCore Wiki</title>
+    <title>PlaceholderAPI - FactoryCore Wiki</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
 
@@ -494,16 +494,16 @@
 
 <body>
     <div class="page-header">
-        <h1>Employee System</h1>
-        <p>Hire Staff, Automate Workflow, and Bring Your Factories to Life</p>
+        <h1>PlaceholderAPI Integration</h1>
+        <p>Dynamic Data Placeholders for Your Factory Empire</p>
     </div>
 
     <div class="breadcrumb">
         <a href="wiki_index.html">Wiki Home</a>
         <span class="breadcrumb-sep">&raquo;</span>
-        <a href="#">Systems</a>
+        <a href="#">Integrations</a>
         <span class="breadcrumb-sep">&raquo;</span>
-        <span class="breadcrumb-current">Employee System</span>
+        <span class="breadcrumb-current">PlaceholderAPI</span>
     </div>
 
     <div class="content-container">
@@ -511,242 +511,255 @@
             <div class="nav-header">On This Page</div>
             <ul class="nav-list">
                 <li><a href="#overview" class="active">Overview</a></li>
-                <li><a href="#dynamic-behaviors">Dynamic Behaviors</a></li>
-                <li><a href="#hiring-assignment">Hiring &amp; Assignment</a></li>
-                <li><a href="#benefits">Impacts &amp; Benefits</a></li>
-                <li><a href="#config-reference">Config Reference</a></li>
-                <li><a href="#developer-tips">Developer API</a></li>
+                <li><a href="#player-stats">Player Statistics</a></li>
+                <li><a href="#factory-specific">Factory-Specific Data</a></li>
+                <li><a href="#finance-tax">Finance &amp; Taxes</a></li>
+                <li><a href="#specialized">Specialized Factories</a></li>
+                <li><a href="#developer-tips">Developer Tips</a></li>
             </ul>
         </nav>
 
         <main class="main-content">
-
             <!-- ════ OVERVIEW ════ -->
             <section class="content-section" id="overview">
                 <div class="section-title">
                     <h2>Overview</h2>
                 </div>
                 <p>
-                    The <strong>Employee System</strong> adds immersion and practical economic depth to your factory
-                    empire.
-                    Rather than operating as lifeless blocks, your factories can be staffed by highly dynamic structural
-                    NPCs.
-                    These NPC figures breathe life into the environment while physically representing your purchased
-                    structural upgrades.
+                    <strong>FactoryCore</strong> provides extensive hook-ins for <strong>PlaceholderAPI (PAPI)</strong>,
+                    allowing you
+                    to display real-time player data, factory statistics, and financial metrics on scoreboards,
+                    holograms, chat formats, or any plugins that support PAPI.
                 </p>
                 <div class="info-box">
-                    <div class="info-box-title">💡 Core Concept</div>
-                    <div>Employees aren't just decorative! Purchasing and assigning an employee to a factory provides a
-                        <strong>Production Time Reduction</strong> buff, helping your facility produce recipes
-                        significantly faster.
-                        However, you must manage their recurring salaries to avoid fiscal penalties!
-                    </div>
-                </div>
-
-                <div class="phases-grid">
-                    <div class="phase-card">
-                        <span class="card-icon">👥</span>
-                        <h4>Vibrant Hubs</h4>
-                        <p>Employees roam your factories providing ambient voice lines, floating holos, idle animations,
-                            and particle effects.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">⚡</span>
-                        <h4>Production Buffs</h4>
-                        <p>Specialized employees offer scalable buffs, significantly reducing recipe production timers.
-                        </p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">💼</span>
-                        <h4>Economic Balance</h4>
-                        <p>Hiring costs money upfront, and retaining them deducts a periodic salary from your balance
-                            during assess cycles.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">📍</span>
-                        <h4>Single Assignment</h4>
-                        <p>Each factory can house only <strong>ONE</strong> employee at a time, requiring you to
-                            carefully strategize your HR allocations.</p>
+                    <div class="info-box-title">💡 Installation Requirement</div>
+                    <div>
+                        To use these placeholders, you must have the <strong>PlaceholderAPI</strong> plugin installed on
+                        your server.
+                        Since our expansion is built internally, there is <strong>no need to download any eCloud
+                            expansion</strong>.
+                        It works straight out of the box!
                     </div>
                 </div>
             </section>
 
-            <!-- ════ DYNAMIC BEHAVIORS ════ -->
-            <section class="content-section" id="dynamic-behaviors">
+            <!-- ════ PLAYER STATISTICS ════ -->
+            <section class="content-section" id="player-stats">
                 <div class="section-title">
-                    <h2>Dynamic Behaviors</h2>
+                    <h2>Player Statistics</h2>
                 </div>
-                <p>
-                    FactoryCore avoids heavy plugin dependencies (like Citizens) by implementing its own
-                    highly-optimized custom NPC engine.
-                    NPCs look and feel like real players interacting with their environment.
-                </p>
-
-                <ul>
-                    <li><strong>Smart Head Tracking:</strong> NPCs actively track approaching players smoothly,
-                        establishing eye contact to make the factory feel responsive.</li>
-                    <li><strong>Idle Animations:</strong> When left alone, NPCs perform smooth, interpolated head
-                        rotations and gestures so they don't look like frozen statues.</li>
-                    <li><strong>Hovering Holograms:</strong> Utilizes invisible ArmorStands anchored to the NPC to
-                        provide clear, multi-line titles like "Foreman" or "Skilled Craftsman".</li>
-                    <li><strong>Particles &amp; Ambient Sounds:</strong> Periodic sensory elements (e.g. Villager
-                        murmurs and happy particles) ensure a lively atmosphere.</li>
-                    <li><strong>Self-Healing Engine:</strong> An automated <code>Respawn Task</code> constantly sweeps
-                        the realm. If an NPC entity goes missing due to WorldEdit overlaps, server reboots, or glitches,
-                        the plugin seamlessly re-summons them exact to their prior specs.</li>
-                </ul>
-
-            </section>
-
-            <!-- ════ HIRING & ASSIGNMENT ════ -->
-            <section class="content-section" id="hiring-assignment">
-                <div class="section-title">
-                    <h2>Hiring &amp; Assignment</h2>
-                </div>
-                <p>To populate your factory, you must purchase an employee contract from the <strong>Employee Shop
-                        GUI</strong> and physically deploy them.</p>
+                <p>These placeholders display general information regarding the player's overall factory empire.</p>
 
                 <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>GUI / Menu</th>
-                                <th>Functionality</th>
+                                <th>Placeholder</th>
+                                <th>Description</th>
+                                <th>Example Output</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Employee Shop</strong></td>
-                                <td>Displays all available NPC types configured in <code>npc.yml</code>. You pay an
-                                    upfront cash price to secure their contract.</td>
+                                <td><code>%factorycore_factories_owned%</code></td>
+                                <td>Total number of factories owned by the player.</td>
+                                <td><span class="badge badge-pct">5</span></td>
                             </tr>
                             <tr>
-                                <td><strong>My Employees</strong></td>
-                                <td>A storage roster of all purchased personnel not currently deployed. Since they are
-                                    under contract, they still charge a wage!</td>
+                                <td><code>%factorycore_factories_running%</code></td>
+                                <td>Number of player's factories currently running (producing items).</td>
+                                <td><span class="badge badge-pct">3</span></td>
                             </tr>
                             <tr>
-                                <td><strong>Assignment Board</strong></td>
-                                <td>Select an open NPC from 'My Employees' and click a valid, vacant factory to
-                                    instantly teleport and deploy them there.</td>
+                                <td><code>%factorycore_highest_level%</code></td>
+                                <td>The maximum level among all factories owned by the player.</td>
+                                <td><span class="badge badge-pct">4</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ════ FACTORY-SPECIFIC DATA ════ -->
+            <section class="content-section" id="factory-specific">
+                <div class="section-title">
+                    <h2>Factory-Specific Data</h2>
+                </div>
+                <p>You can retrieve data for a specific factory using its unique ID. Replace <code>&lt;id&gt;</code>
+                    with the factory's UUID.</p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Placeholder</th>
+                                <th>Description</th>
+                                <th>Example Output</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>%factorycore_factory_&lt;id&gt;_status%</code></td>
+                                <td>Current operational status of the factory (e.g., Running, Idle, Paused).</td>
+                                <td><span class="badge badge-pct">Running</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_factory_&lt;id&gt;_level%</code></td>
+                                <td>Current level/tier of the specific factory.</td>
+                                <td><span class="badge badge-flat">2</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_factory_&lt;id&gt;_type%</code></td>
+                                <td>The structural type of the factory.</td>
+                                <td><span class="badge badge-pct">Steel Mill</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_factory_&lt;id&gt;_production%</code></td>
+                                <td>The name of the recipe currently being produced by the factory.</td>
+                                <td><span class="badge badge-flat">Iron Ingot</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_factory_&lt;id&gt;_progress%</code></td>
+                                <td>Current production progress percentage (0% to 100%).</td>
+                                <td><span class="badge badge-pct">45%</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="warn-box">
-                    <div class="info-box-title">⚠️ Firing employees</div>
+                    <div class="info-box-title">⚠️ ID Validity</div>
                     <div>
-                        Currently, <code>FactoryCore</code> enforces permanent contracts. While you cannot outright
-                        "delete" an employee from existence once bought, you can leave them unassigned in the roster.
-                        Note that salaries apply to ALL owned employees, deployed or reserved.
+                        If the specified factory ID does not exist, or if the factory is not owned by the requesting
+                        player, the placeholders will return <code>N/A</code> or default zero values.
                     </div>
                 </div>
-
             </section>
 
-            <!-- ════ IMPACTS & BENEFITS ════ -->
-            <section class="content-section" id="benefits">
+            <!-- ════ FINANCE & TAXES ════ -->
+            <section class="content-section" id="finance-tax">
                 <div class="section-title">
-                    <h2>Impacts &amp; Benefits</h2>
+                    <h2>Finance &amp; Taxes</h2>
                 </div>
-                <p>Every employee class carries a distinct buff, specifically impacting standard production delays.</p>
+                <p>Track the economic scale and tax burden of the player's empire.</p>
 
-                <div class="code-wrap">
-                    <span class="code-lang-badge">Logic</span>
-                    <pre
-                        class="code-block"><span class="cs">New Production Time</span> = Base Recipe Time - (Base Recipe Time * Production Reduction %)</pre>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Placeholder</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>%factorycore_total_value%</code></td>
+                                <td>The sum of base prices of all factories owned by the player, formatted to 2
+                                    decimals.</td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_invoices_pending%</code></td>
+                                <td>The total number of unpaid tax invoices currently pending.</td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_invoices_overdue%</code></td>
+                                <td>The total number of invoices that have missed their due date.</td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_total_invoice_amount%</code></td>
+                                <td>The total combined amount owed across all pending invoices.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <p><strong>Example:</strong> If a recipe normally takes <span class="badge badge-flat">100
-                        seconds</span>, and you assign an employee with a <span class="badge badge-pct">15%</span> buff,
-                    the new cyclic duration for your factory drops to <strong>85 seconds</strong>.</p>
             </section>
 
-            <!-- ════ CONFIG REFERENCE ════ -->
-            <section class="content-section" id="config-reference">
+            <!-- ════ SPECIALIZED FACTORIES ════ -->
+            <section class="content-section" id="specialized">
                 <div class="section-title">
-                    <h2>Configuration (npc.yml)</h2>
+                    <h2>Specialized Factories</h2>
                 </div>
-                <p>
-                    Customize employee appearances, lore, buffs, costs, and the engine parameters inside
-                    <code>npc.yml</code>.
-                </p>
+                <p>Count the specifics of what types of factories make up the player's industrial infrastructure.</p>
 
-                <div class="code-wrap">
-                    <span class="code-lang-badge">YAML</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre class="code-block"><span class="ci">shop:</span>
-  <span class="ci">npcs:</span>
-    <span class="ck">skilled_craftsman:</span>
-      <span class="ck">display-name:</span> <span class="cn">"§fSkilled Craftsman"</span>
-      <span class="ck">shop-icon:</span> <span class="cn">"VILLAGER_SPAWN_EGG"</span>
-      <span class="ck">buy-price:</span> <span class="cn">5000.0</span>
-      <span class="ck">salary:</span> <span class="cn">50.0</span>
-      <span class="ck">production-time-reduction:</span> <span class="cn">15.0</span>
-      <span class="ck">template:</span> <span class="cn">"factory_employee"</span>
-
-<span class="ci">templates:</span>
-  <span class="ck">factory_employee:</span>
-    <span class="ck">name:</span> <span class="cn">"§bTechnician"</span>
-    <span class="ck">profession:</span> <span class="cn">"LIBRARIAN"</span>
-    <span class="ck">type:</span> <span class="cn">"SNOW"</span>
-    <span class="ci">hologram:</span>
-      <span class="ck">enabled:</span> <span class="cv">true</span>
-      <span class="ck">lines:</span>
-        <span class="cm">- "&amp;bTechnician"</span></pre>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Placeholder</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>%factorycore_steel_mills_owned%</code></td>
+                                <td>Number of Steel Mills owned.</td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_refineries_owned%</code></td>
+                                <td>Number of Refineries owned.</td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_workshops_owned%</code></td>
+                                <td>Number of Workshops owned.</td>
+                            </tr>
+                            <tr>
+                                <td><code>%factorycore_advanced_factories_owned%</code></td>
+                                <td>Number of Advanced Factories owned.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
             <!-- ════ DEVELOPER TIPS ════ -->
             <section class="content-section" id="developer-tips">
                 <div class="section-title">
-                    <h2>Developer Tips: The NPC Engine</h2>
+                    <h2>Developer Tips</h2>
                 </div>
-                <p>Developing add-ons? Here's an inside look at how FactoryCore's NPC engine optimizes behavior loops.
-                </p>
+                <p>Are you a developer hooking into FactoryCore? Here are some crucial tips for managing PlaceholderAPI
+                    optimally in your custom solutions.</p>
 
                 <div class="phases-grid">
                     <div class="phase-card">
-                        <span class="card-icon">🏎️</span>
-                        <h4>Tick Optimization</h4>
-                        <p>Instead of relying on NMS packets, we spawn actual <code>Villager</code> entities and cast a
-                            <code>runTaskTimer</code> using an <code>AtomicLong</code> to calculate localized behavioral
-                            frame rates safely.</p>
+                        <span class="card-icon">⚡</span>
+                        <h4>Async Resolution</h4>
+                        <p>Whenever you are parsing PlaceholderAPI strings (using
+                            <code>PlaceholderAPI.setPlaceholders()</code>), ensure you avoid doing it purely on the main
+                            Server thread if you are fetching thousands at once. Although FactoryCore caches logic
+                            efficiently, heavy operations should run async.</p>
                     </div>
                     <div class="phase-card">
-                        <span class="card-icon">📐</span>
-                        <h4>Trigonometric Alignment</h4>
-                        <p>A common bug when coding <code>lookAt(...)</code> logic is NPCs staring into space.
-                            FactoryCore avoids this by measuring the Delta from the NPC's <strong>eye height (1.62
-                                Y)</strong> specifically to the player's <strong>chest height (1.1 Y)</strong>.</p>
+                        <span class="card-icon">🔌</span>
+                        <h4>Direct API vs PAPI</h4>
+                        <p>If you are writing an add-on or plugin dedicated to FactoryCore, prefer using the
+                            <code>FactoryCore.getInstance().getFactoryManager()</code> methods directly rather than
+                            parsing strings via PAPI. Direct method calls are significantly faster and type-safe.</p>
                     </div>
                     <div class="phase-card">
-                        <span class="card-icon">🪑</span>
-                        <h4>Interpolation</h4>
-                        <p>Idle loops don't just snap. An idle variable maps a <code>targetPitchOffset</code>, divided
-                            into micro-steps across ticks, rendering a beautifully smooth visual gaze shift.</p>
+                        <span class="card-icon">🧠</span>
+                        <h4>Stream Mapping</h4>
+                        <p>Notice that placeholders like <code>%factorycore_total_value%</code> loop and map total
+                            stream values. If you are polling this frequently in scoreboards every tick, cache the
+                            string result temporarily instead of re-calculating on loop.</p>
                     </div>
                 </div>
 
                 <div class="dev-tip">
-                    <div class="info-box-title">👨‍💻 Code Snippet: Fetching Assigned personnel</div>
+                    <div class="info-box-title">👨‍💻 Code Snippet: Safe Parsing</div>
                     <div style="margin-top: 10px; color: #d1d5db;">
-                        You can safely retrieve an NPC's buff from external plugins via the Factory Manager context.
+                        Always check if the PlaceholderAPI plugin is installed before executing parsing logic in your
+                        dependent plugin to avoid <code>NoClassDefFoundError</code>.
                     </div>
                     <div class="code-wrap">
                         <span class="code-lang-badge">Java</span>
-                        <pre class="code-block"><span class="cm">// Given an active factory UUID</span>
-FactoryNPC employee = FactoryCore.getInstance().getNPCManager().getAssignedNPCForFactory(factory.getId());
-
-<span class="ck">if</span> (employee != <span class="cv">null</span>) {
-    <span class="ck">double</span> speedBuff = employee.getProductionTimeReduction();
-    System.out.println(<span class="cn">"This factory operates "</span> + speedBuff + <span class="cn">"% faster!"</span>);
+                        <pre class="code-block"><span class="ck">if</span> (Bukkit.getPluginManager().getPlugin(<span class="cn">"PlaceholderAPI"</span>) != <span class="cv">null</span>) {
+    String parsed = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, <span class="cn">"%factorycore_highest_level%"</span>);
+    <span class="cm">// Do something with the parsed value</span>
 }</pre>
                     </div>
                 </div>
-
             </section>
+
         </main>
     </div>
 

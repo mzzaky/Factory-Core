@@ -38,21 +38,24 @@ public class MarketplaceGUI {
 
     public void openMarketplaceMenu(int page) {
         this.currentPage = page;
-        
+
         Inventory inv = Bukkit.createInventory(null, 54, "§2§lMarketplace §8- §e" + getViewTitle());
 
         MarketplaceManager marketplace = plugin.getMarketplaceManager();
-        
+
         // Fill borders
-        Material borderMat = Material.matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
+        Material borderMat = Material
+                .matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
         ItemStack border = createItem(borderMat != null ? borderMat : Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 9; i++) inv.setItem(i, border);
-        for (int i = 45; i < 54; i++) inv.setItem(i, border);
+        for (int i = 0; i < 9; i++)
+            inv.setItem(i, border);
+        for (int i = 45; i < 54; i++)
+            inv.setItem(i, border);
 
         // Header with marketplace stats
         List<MarketplaceManager.MarketListing> allListings = marketplace.getAllListings();
         double totalVolume = allListings.stream().mapToDouble(MarketplaceManager.MarketListing::getTotalPrice).sum();
-        
+
         inv.setItem(4, createItem(Material.EMERALD, "§2§lMarketplace",
                 Arrays.asList(
                         "§7Player resource trading",
@@ -63,9 +66,9 @@ public class MarketplaceGUI {
 
         // View navigation buttons
         inv.setItem(0, createViewButton("browse", Material.COMPASS, "§a§lBrowse All", "View all listings"));
-        inv.setItem(1, createViewButton("my_listings", Material.BOOK, "§6§lMy Listings", "Manage your listings"));
-        inv.setItem(7, createViewButton("sell", Material.GOLD_INGOT, "§e§lSell Items", "Create a new listing"));
-        
+        inv.setItem(7, createViewButton("my_listings", Material.BOOK, "§6§lMy Listings", "Manage your listings"));
+        inv.setItem(8, createViewButton("sell", Material.GOLD_INGOT, "§e§lSell Items", "Create a new listing"));
+
         // Pending earnings button (slot 8)
         double pendingEarnings = marketplace.getPendingEarnings(player.getUniqueId());
         if (pendingEarnings > 0) {
@@ -93,10 +96,9 @@ public class MarketplaceGUI {
 
         // Navigation buttons (for browse and my_listings)
         if (!currentView.equals("sell")) {
-            List<?> items = currentView.equals("browse") ? 
-                    getFilteredListings() : 
-                    marketplace.getPlayerListings(player.getUniqueId());
-            
+            List<?> items = currentView.equals("browse") ? getFilteredListings()
+                    : marketplace.getPlayerListings(player.getUniqueId());
+
             int slotsPerPage = 36;
             int totalPages = (int) Math.ceil((double) items.size() / slotsPerPage);
 
@@ -131,7 +133,7 @@ public class MarketplaceGUI {
 
     private void displayBrowseView(Inventory inv, int page) {
         List<MarketplaceManager.MarketListing> listings = getFilteredListings();
-        
+
         int slotsPerPage = 36;
         int startIndex = page * slotsPerPage;
         int endIndex = Math.min(startIndex + slotsPerPage, listings.size());
@@ -145,18 +147,16 @@ public class MarketplaceGUI {
         if (listings.isEmpty()) {
             inv.setItem(22, createItem(Material.BARRIER, "§c§lNo Listings",
                     Arrays.asList(
-                            filterResource != null ?
-                                    "§7No listings for this resource." :
-                                    "§7The marketplace is empty!",
+                            filterResource != null ? "§7No listings for this resource." : "§7The marketplace is empty!",
                             "",
                             "§7Be the first to sell!")));
         }
     }
 
     private void displayMyListingsView(Inventory inv, int page) {
-        List<MarketplaceManager.MarketListing> myListings = 
-                plugin.getMarketplaceManager().getPlayerListings(player.getUniqueId());
-        
+        List<MarketplaceManager.MarketListing> myListings = plugin.getMarketplaceManager()
+                .getPlayerListings(player.getUniqueId());
+
         int slotsPerPage = 36;
         int startIndex = page * slotsPerPage;
         int endIndex = Math.min(startIndex + slotsPerPage, myListings.size());
@@ -177,7 +177,9 @@ public class MarketplaceGUI {
 
         // Stats for player (slot 48)
         double totalValue = myListings.stream().mapToDouble(MarketplaceManager.MarketListing::getTotalPrice).sum();
-        int maxListings = plugin.getConfig().getInt("marketplace.max-listings-per-player", 10);
+        int baseMaxListings = plugin.getConfig().getInt("marketplace.max-listings-per-player", 10);
+        int additionalListings = plugin.getResearchManager().getAdditionalListingLimit(player.getUniqueId());
+        int maxListings = baseMaxListings + additionalListings;
         inv.setItem(48, createItem(Material.BOOK, "§e§lYour Stats",
                 Arrays.asList(
                         "§7Active Listings: §e" + myListings.size() + "/" + maxListings,
@@ -198,54 +200,13 @@ public class MarketplaceGUI {
         lore.add("");
         lore.add("§7Tax Rate: §e" + plugin.getConfig().getDouble("marketplace.tax-rate", 5) + "%");
         lore.add("§7(Deducted when item sells)");
-        
-        inv.setItem(13, createItem(Material.ANVIL, "§e§lCreate Listing", lore));
 
-        // Quick sell buttons for common resources
-        int slot = 28;
-        Map<String, ResourceItem> resources = plugin.getResourceManager().getAllResources();
-        int count = 0;
-        
-        for (Map.Entry<String, ResourceItem> entry : resources.entrySet()) {
-            if (count >= 7) break;
-            
-            ResourceItem resource = entry.getValue();
-            double sellPrice = resource.getSellPrice();
-            
-            List<String> resourceLore = new ArrayList<>();
-            resourceLore.add("§7Resource ID: §e" + entry.getKey());
-            resourceLore.add("");
-            if (sellPrice > 0) {
-                resourceLore.add("§7Suggested Price: §6$" + String.format("%.2f", sellPrice));
-            }
-            resourceLore.add("");
-            resourceLore.add("§eClick to create listing!");
-            
-            Material material;
-            try {
-                material = Material.valueOf(resource.getMaterial());
-            } catch (IllegalArgumentException e) {
-                material = Material.STONE;
-            }
-            
-            ItemStack item = createItem(material, resource.getName(), resourceLore);
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                meta.getPersistentDataContainer().set(
-                        new NamespacedKey(plugin, "sell_resource_id"),
-                        PersistentDataType.STRING,
-                        entry.getKey());
-                item.setItemMeta(meta);
-            }
-            
-            inv.setItem(slot++, item);
-            count++;
-        }
+        inv.setItem(13, createItem(Material.ANVIL, "§e§lCreate Listing", lore));
     }
 
     private ItemStack createListingItem(MarketplaceManager.MarketListing listing, boolean isOwn) {
         ResourceItem resource = plugin.getResourceManager().getResource(listing.resourceId);
-        
+
         Material material;
         String resourceName;
         if (resource != null) {
@@ -267,12 +228,37 @@ public class MarketplaceGUI {
         lore.add("§7Price per Unit: §6$" + String.format("%.2f", listing.pricePerUnit));
         lore.add("§7Total Price: §6$" + String.format("%.2f", listing.getTotalPrice()));
         lore.add("");
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM HH:mm");
         lore.add("§7Listed: §e" + sdf.format(new Date(listing.listedTime)));
         lore.add("");
-        
+
         if (isOwn) {
+            long baseExpirationHours = plugin.getConfig().getLong("marketplace.listing-expiration-hours", 168);
+            long additionalHours = plugin.getResearchManager().getAdditionalListingHours(player.getUniqueId());
+            long expirationHours = baseExpirationHours + additionalHours;
+            long expireTime = listing.listedTime + (expirationHours * 3600000L);
+            long remainingMs = expireTime - System.currentTimeMillis();
+
+            if (remainingMs > 0) {
+                long remainingDays = remainingMs / 86400000L;
+                long remainingHours = (remainingMs % 86400000L) / 3600000L;
+                long remainingMinutes = (remainingMs % 3600000L) / 60000L;
+
+                String timeStr = "";
+                if (remainingDays > 0) {
+                    timeStr = remainingDays + "d " + remainingHours + "h";
+                } else if (remainingHours > 0) {
+                    timeStr = remainingHours + "h " + remainingMinutes + "m";
+                } else {
+                    timeStr = remainingMinutes + "m";
+                }
+                lore.add("§7Expires in: §c" + timeStr);
+            } else {
+                lore.add("§7Expires in: §cExpired");
+            }
+            lore.add("");
+
             lore.add("§c§lClick to cancel listing");
             lore.add("§7Items will be returned to you");
         } else {
@@ -287,7 +273,7 @@ public class MarketplaceGUI {
 
         ItemStack item = createItem(material, resourceName + " §7x" + listing.amount, lore);
         item.setAmount(Math.min(listing.amount, 64));
-        
+
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.getPersistentDataContainer().set(
@@ -306,14 +292,14 @@ public class MarketplaceGUI {
 
     private List<MarketplaceManager.MarketListing> getFilteredListings() {
         List<MarketplaceManager.MarketListing> all = plugin.getMarketplaceManager().getAllListings();
-        
+
         if (filterResource != null) {
             return all.stream()
                     .filter(l -> l.resourceId.equals(filterResource))
                     .sorted(Comparator.comparingDouble(l -> l.pricePerUnit))
                     .collect(Collectors.toList());
         }
-        
+
         return all.stream()
                 .sorted(Comparator.comparingLong(l -> -l.listedTime)) // Newest first
                 .collect(Collectors.toList());
@@ -330,7 +316,7 @@ public class MarketplaceGUI {
         }
 
         ItemStack item = createItem(material, name, lore);
-        
+
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.getPersistentDataContainer().set(
@@ -345,12 +331,13 @@ public class MarketplaceGUI {
 
     private ItemStack createFilterItem() {
         List<String> lore = new ArrayList<>();
-        lore.add("§7Current: §e" + (filterResource != null ? 
-                plugin.getResourceManager().getResource(filterResource).getName() : "All Resources"));
+        lore.add("§7Current: §e"
+                + (filterResource != null ? plugin.getResourceManager().getResource(filterResource).getName()
+                        : "All Resources"));
         lore.add("");
         lore.add("§7Available filters:");
         lore.add("§7• All Resources");
-        
+
         Set<String> available = plugin.getMarketplaceManager().getAvailableResources();
         for (String resourceId : available) {
             ResourceItem resource = plugin.getResourceManager().getResource(resourceId);
@@ -358,7 +345,7 @@ public class MarketplaceGUI {
                 lore.add("§7• " + resource.getName());
             }
         }
-        
+
         lore.add("");
         lore.add("§eClick to cycle filter!");
 
@@ -368,7 +355,7 @@ public class MarketplaceGUI {
     public void cycleFilter() {
         Set<String> available = plugin.getMarketplaceManager().getAvailableResources();
         List<String> resourceList = new ArrayList<>(available);
-        
+
         if (filterResource == null) {
             if (!resourceList.isEmpty()) {
                 filterResource = resourceList.get(0);
@@ -390,9 +377,12 @@ public class MarketplaceGUI {
 
     private String getViewTitle() {
         switch (currentView) {
-            case "my_listings": return "My Listings";
-            case "sell": return "Sell Items";
-            default: return "Browse";
+            case "my_listings":
+                return "My Listings";
+            case "sell":
+                return "Sell Items";
+            default:
+                return "Browse";
         }
     }
 
@@ -407,9 +397,11 @@ public class MarketplaceGUI {
         Inventory inv = Bukkit.createInventory(null, 27, "§e§lCreate Listing");
 
         // Fill with border
-        Material borderMat = Material.matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
+        Material borderMat = Material
+                .matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
         ItemStack border = createItem(borderMat != null ? borderMat : Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 27; i++) inv.setItem(i, border);
+        for (int i = 0; i < 27; i++)
+            inv.setItem(i, border);
 
         // Resource info (slot 13)
         double suggestedPrice = resource.getSellPrice();
@@ -428,9 +420,9 @@ public class MarketplaceGUI {
         inv.setItem(4, createItem(material, resource.getName(), infoLore));
 
         // Price options
-        double[] multipliers = {0.5, 0.75, 1.0, 1.25, 1.5};
-        String[] labels = {"§cCheap", "§eBelow Market", "§aMarket Price", "§6Above Market", "§cExpensive"};
-        int[] slots = {10, 11, 13, 15, 16};
+        double[] multipliers = { 0.5, 0.75, 1.0, 1.25, 1.5 };
+        String[] labels = { "§cCheap", "§eBelow Market", "§aMarket Price", "§6Above Market", "§cExpensive" };
+        int[] slots = { 10, 11, 13, 15, 16 };
 
         for (int i = 0; i < multipliers.length; i++) {
             double price = suggestedPrice * multipliers[i];
@@ -440,7 +432,8 @@ public class MarketplaceGUI {
             priceLore.add("");
             priceLore.add("§eClick to list at this price!");
 
-            ItemStack priceItem = createItem(Material.GOLD_NUGGET, labels[i] + " §7- §6$" + String.format("%.2f", price), priceLore);
+            ItemStack priceItem = createItem(Material.GOLD_NUGGET,
+                    labels[i] + " §7- §6$" + String.format("%.2f", price), priceLore);
             ItemMeta meta = priceItem.getItemMeta();
             if (meta != null) {
                 meta.getPersistentDataContainer().set(
@@ -476,13 +469,15 @@ public class MarketplaceGUI {
         }
 
         ResourceItem resource = plugin.getResourceManager().getResource(listing.resourceId);
-        
+
         Inventory inv = Bukkit.createInventory(null, 27, "§2§lConfirm Purchase");
 
         // Fill with border
-        Material borderMat = Material.matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
+        Material borderMat = Material
+                .matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
         ItemStack border = createItem(borderMat != null ? borderMat : Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 27; i++) inv.setItem(i, border);
+        for (int i = 0; i < 27; i++)
+            inv.setItem(i, border);
 
         // Item info (slot 13)
         double totalPrice = listing.pricePerUnit * amount;
@@ -556,8 +551,10 @@ public class MarketplaceGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            if (name != null) meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
+            if (name != null)
+                meta.setDisplayName(name);
+            if (lore != null)
+                meta.setLore(lore);
             item.setItemMeta(meta);
         }
 

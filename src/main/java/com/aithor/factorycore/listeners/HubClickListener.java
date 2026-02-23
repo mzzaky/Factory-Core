@@ -266,7 +266,18 @@ public class HubClickListener implements Listener {
         String invoiceId = meta.getPersistentDataContainer().get(
                 new NamespacedKey(plugin, "center_invoice_id"), PersistentDataType.STRING);
         if (invoiceId != null) {
-            if (plugin.getInvoiceManager().payInvoice(player, invoiceId)) {
+            boolean success = false;
+
+            if (invoiceId.startsWith("TM_")) {
+                String factoryId = invoiceId.substring(3);
+                if (plugin.getTaxManager() != null) {
+                    success = plugin.getTaxManager().payTax(player, factoryId);
+                }
+            } else {
+                success = plugin.getInvoiceManager().payInvoice(player, invoiceId);
+            }
+
+            if (success) {
                 player.sendMessage(plugin.getLanguageManager().getMessage("invoice-paid"));
             } else {
                 player.sendMessage(plugin.getLanguageManager().getMessage("insufficient-funds"));
@@ -299,14 +310,33 @@ public class HubClickListener implements Listener {
 
         // Pay All
         if (name.contains("Pay All")) {
-            double totalDue = plugin.getInvoiceManager().getInvoicesByOwner(player.getUniqueId())
+            double invoiceDue = plugin.getInvoiceManager().getInvoicesByOwner(player.getUniqueId())
                     .stream().mapToDouble(Invoice::getAmount).sum();
-            if (plugin.getEconomy().has(player, totalDue)) {
+            double taxDue;
+
+            if (plugin.getTaxManager() != null) {
+                taxDue = plugin.getTaxManager().getPlayerTaxRecords(player.getUniqueId()).stream()
+                        .mapToDouble(record -> record.amountDue).sum();
+            } else {
+                taxDue = 0.0;
+            }
+
+            double totalDue = invoiceDue + taxDue;
+
+            if (totalDue > 0 && plugin.getEconomy().has(player, totalDue)) {
                 for (Invoice invoice : plugin.getInvoiceManager().getInvoicesByOwner(player.getUniqueId())) {
                     plugin.getInvoiceManager().payInvoice(player, invoice.getId());
                 }
+                if (plugin.getTaxManager() != null) {
+                    for (TaxManager.TaxRecord record : plugin.getTaxManager()
+                            .getPlayerTaxRecords(player.getUniqueId())) {
+                        if (record.amountDue > 0) {
+                            plugin.getTaxManager().payTax(player, record.factoryId);
+                        }
+                    }
+                }
                 player.sendMessage("§aPaid all invoices! Total: §6$" + String.format("%.2f", totalDue));
-            } else {
+            } else if (totalDue > 0) {
                 player.sendMessage(plugin.getLanguageManager().getMessage("insufficient-funds"));
             }
             gui.openInvoiceCenterMenu();
@@ -568,6 +598,13 @@ public class HubClickListener implements Listener {
                     gui.openPurchaseConfirmation(listingId, amount);
                 }
             }
+            return;
+        }
+
+        // Check if player clicked a custom resource to sell in their inventory
+        String clickedResourceId = plugin.getResourceManager().getResourceId(clicked);
+        if (clickedResourceId != null && !meta.getPersistentDataContainer().has(new NamespacedKey(plugin, "market_listing_id"), PersistentDataType.STRING)) {
+            gui.openSellConfirmation(clickedResourceId, clicked.getAmount());
             return;
         }
 

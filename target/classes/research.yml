@@ -168,3 +168,63 @@ research:
     buff-per-level: 1
     buff-type: "flat"
     buff-description: "§a+{value} §7factory limit"
+
+  # ── 7. Business Expansion ───────────────────────────────────────────────
+  # Increases marketplace listing limit by +1 per level.
+  business_expansion:
+    name: "§a§lBusiness Expansion"
+    description:
+      - "§7Expand your business reach,"
+      - "§7increasing the maximum number of"
+      - "§7items you can sell in the marketplace."
+      - ""
+      - "§eBuff: §a+1 marketplace listing limit"
+    icon: CHEST
+    max-level: 7
+    cost:
+      1: 150000.0
+      2: 350000.0
+      3: 750000.0
+      4: 1500000.0
+      5: 3000000.0
+      6: 6000000.0
+      7: 12000000.0
+    duration:
+      1: 2880
+      2: 4320
+      3: 5760
+      4: 7200
+      5: 8640
+      6: 10080
+      7: 11520
+    buff-per-level: 1
+    buff-type: "flat"
+    buff-description: "§a+{value} §7listing limit"
+
+  # ── 8. Market Stability Regulation ──────────────────────────────────────
+  # Increases item listing expiration time in marketplace by +8 hours.
+  market_stability_regulation:
+    name: "§9§lMarket Stability Regulation"
+    description:
+      - "§7Implement advanced market"
+      - "§7regulations to keep your products"
+      - "§7listed on the marketplace longer."
+      - ""
+      - "§eBuff: §a+8 hours listing expiration time"
+    icon: CLOCK
+    max-level: 5
+    cost:
+      1: 100000.0
+      2: 250000.0
+      3: 500000.0
+      4: 1000000.0
+      5: 2000000.0
+    duration:
+      1: 1440
+      2: 2880
+      3: 4320
+      4: 5760
+      5: 7200
+    buff-per-level: 8
+    buff-type: "flat"
+    buff-description: "§a+{value}h §7listing expiration"

@@ -428,6 +428,21 @@ public class ResearchManager {
         return (int) getBuffValue(playerId, "industrial_mastery");
     }
 
+    /**
+     * Get the additional marketplace listing limit (from business_expansion)
+     */
+    public int getAdditionalListingLimit(UUID playerId) {
+        return (int) getBuffValue(playerId, "business_expansion");
+    }
+
+    /**
+     * Get the additional marketplace listing expiration hours (from
+     * market_stability_regulation)
+     */
+    public int getAdditionalListingHours(UUID playerId) {
+        return (int) getBuffValue(playerId, "market_stability_regulation");
+    }
+
     // ── Persistence ─────────────────────────────────────────────────────────
 
     private void loadPlayerData() {

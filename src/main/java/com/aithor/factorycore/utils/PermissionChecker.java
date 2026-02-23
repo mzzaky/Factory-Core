@@ -17,11 +17,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 class PermissionChecker {
-    
+
     public static boolean hasPermission(org.bukkit.entity.Player player, String permission) {
         return player.hasPermission(permission) || player.hasPermission("factorycore.*");
     }
-    
+
     public static boolean isAdmin(org.bukkit.entity.Player player) {
         return player.hasPermission("factorycore.admin") || player.hasPermission("factorycore.*");
     }

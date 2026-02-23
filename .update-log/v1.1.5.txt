@@ -1,0 +1,12 @@
+v1.1.5 Update Log
+
+- [Fix] Memperbaiki Invoice Center GUI agar dapat menampilkan dengan benar detail tagihan pajak pabrik (Factory Tax).
+- [Fix] Memperbaiki fitur filter, sortir, pembayaran tunggal (Single Pay), dan pembayaran semua (Pay All) di Invoice Center agar dapat memproses sistem pajak dengan baik.
+- [Update] Menyederhanakan sistem pendaftaran item di menu Marketplace Sell Items, mengganti daftar item dengan mekanisme klik item langsung dari inventory pemain.
+- [Update] Menambahkan atribut `suggested_price` pada seluruh resource di `resources.yml` sebagai referensi dinamis harga jual di Marketplace.
+- [Fix] Memperbaiki eksploitasi duplikasi item di Marketplace saat membatalkan antrean jual. Barang kini benar-benar terhapus dari inventory saat terdaftar.
+- [Update] mengganti limit item yang dapat di jual oleh pemain dari 10 menjadi 3 pada fitur marketplace.
+- [Update] Menambahkan research baru "business_expansion" untuk meningkatkan kapasitas maksimal listing item di marketplace sebesar +1 per level.
+- [Update] Menambahkan informasi sisa waktu kedaluwarsa (expire time) secara real-time pada item yang dijual di menu My Listings marketplace.
+- [Update] Menambahkan research baru "market_stability_regulation" untuk meningkatkan waktu expire penjualan item pemain di marketplace sebesar +8 jam per level.
+- [Update] Menambahkan lebih banyak varian NPC pada shop Employee beserta template uniknya (Logistics Manager, Quality Inspector, Assembly Expert).

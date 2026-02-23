@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee System - FactoryCore Wiki</title>
+    <title>Factory Types - FactoryCore Wiki</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
 
@@ -444,6 +444,12 @@
 
         .dev-tip .info-box-title {
             color: #61afef;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         /* ── Badge ── */
@@ -494,8 +500,8 @@
 
 <body>
     <div class="page-header">
-        <h1>Employee System</h1>
-        <p>Hire Staff, Automate Workflow, and Bring Your Factories to Life</p>
+        <h1>Factory Types</h1>
+        <p>The Foundations of Your Industrial Empire</p>
     </div>
 
     <div class="breadcrumb">
@@ -503,7 +509,7 @@
         <span class="breadcrumb-sep">&raquo;</span>
         <a href="#">Systems</a>
         <span class="breadcrumb-sep">&raquo;</span>
-        <span class="breadcrumb-current">Employee System</span>
+        <span class="breadcrumb-current">Factory Types</span>
     </div>
 
     <div class="content-container">
@@ -511,11 +517,11 @@
             <div class="nav-header">On This Page</div>
             <ul class="nav-list">
                 <li><a href="#overview" class="active">Overview</a></li>
-                <li><a href="#dynamic-behaviors">Dynamic Behaviors</a></li>
-                <li><a href="#hiring-assignment">Hiring &amp; Assignment</a></li>
-                <li><a href="#benefits">Impacts &amp; Benefits</a></li>
-                <li><a href="#config-reference">Config Reference</a></li>
-                <li><a href="#developer-tips">Developer API</a></li>
+                <li><a href="#steel-mill">Steel Mill</a></li>
+                <li><a href="#refinery">Refinery</a></li>
+                <li><a href="#workshop">Workshop</a></li>
+                <li><a href="#advanced-factory">Advanced Factory</a></li>
+                <li><a href="#developer-tips">Developer Tips</a></li>
             </ul>
         </nav>
 
@@ -527,265 +533,357 @@
                     <h2>Overview</h2>
                 </div>
                 <p>
-                    The <strong>Employee System</strong> adds immersion and practical economic depth to your factory
-                    empire.
-                    Rather than operating as lifeless blocks, your factories can be staffed by highly dynamic structural
-                    NPCs.
-                    These NPC figures breathe life into the environment while physically representing your purchased
-                    structural upgrades.
+                    <strong>Factory Types</strong> form the core progression system of FactoryCore. Rather than having a
+                    single building that does everything, the economy is divided into specialized factory types. Players
+                    must build and interlink different types of factories to create complex supply chains.
                 </p>
                 <div class="info-box">
-                    <div class="info-box-title">💡 Core Concept</div>
-                    <div>Employees aren't just decorative! Purchasing and assigning an employee to a factory provides a
-                        <strong>Production Time Reduction</strong> buff, helping your facility produce recipes
-                        significantly faster.
-                        However, you must manage their recurring salaries to avoid fiscal penalties!
+                    <div class="info-box-title">💡 Progression Concept</div>
+                    <div>
+                        Raw materials like Iron Ore and Coal are first processed in a <strong>Steel Mill</strong> or
+                        <strong>Refinery</strong>. The outputs are then used by a <strong>Workshop</strong> to create
+                        components, which are finally assembled into high-value items in an <strong>Advanced
+                            Factory</strong>.
                     </div>
                 </div>
 
                 <div class="phases-grid">
                     <div class="phase-card">
-                        <span class="card-icon">👥</span>
-                        <h4>Vibrant Hubs</h4>
-                        <p>Employees roam your factories providing ambient voice lines, floating holos, idle animations,
-                            and particle effects.</p>
+                        <span class="card-icon">🏭</span>
+                        <h4>Steel Mill</h4>
+                        <p>Processes raw ores into refined ingots and basic materials like Steel and Carbon Fiber.</p>
                     </div>
                     <div class="phase-card">
-                        <span class="card-icon">⚡</span>
-                        <h4>Production Buffs</h4>
-                        <p>Specialized employees offer scalable buffs, significantly reducing recipe production timers.
-                        </p>
+                        <span class="card-icon">🛢️</span>
+                        <h4>Refinery</h4>
+                        <p>Produces essential fuels required to power the more advanced production lines.</p>
                     </div>
                     <div class="phase-card">
-                        <span class="card-icon">💼</span>
-                        <h4>Economic Balance</h4>
-                        <p>Hiring costs money upfront, and retaining them deducts a periodic salary from your balance
-                            during assess cycles.</p>
+                        <span class="card-icon">🔧</span>
+                        <h4>Workshop</h4>
+                        <p>Manufactures mechanical components like Gears, Engine Parts, and Circuit Boards.</p>
                     </div>
                     <div class="phase-card">
-                        <span class="card-icon">📍</span>
-                        <h4>Single Assignment</h4>
-                        <p>Each factory can house only <strong>ONE</strong> employee at a time, requiring you to
-                            carefully strategize your HR allocations.</p>
+                        <span class="card-icon">💎</span>
+                        <h4>Advanced Factory</h4>
+                        <p>Assembles high-tier products like Weapons, Armor, and Luxury Items.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- ════ DYNAMIC BEHAVIORS ════ -->
-            <section class="content-section" id="dynamic-behaviors">
+            <!-- ════ STEEL MILL ════ -->
+            <section class="content-section" id="steel-mill">
                 <div class="section-title">
-                    <h2>Dynamic Behaviors</h2>
+                    <h2>Steel Mill</h2>
                 </div>
                 <p>
-                    FactoryCore avoids heavy plugin dependencies (like Citizens) by implementing its own
-                    highly-optimized custom NPC engine.
-                    NPCs look and feel like real players interacting with their environment.
+                    The <strong>Steel Mill</strong> is the foundation of your industrial operations. It takes basic raw
+                    resources like Iron Ore and Coal Ore and refines them into sturdy, advanced materials that are
+                    necessary for almost all mid-to-late game recipes.
                 </p>
-
-                <ul>
-                    <li><strong>Smart Head Tracking:</strong> NPCs actively track approaching players smoothly,
-                        establishing eye contact to make the factory feel responsive.</li>
-                    <li><strong>Idle Animations:</strong> When left alone, NPCs perform smooth, interpolated head
-                        rotations and gestures so they don't look like frozen statues.</li>
-                    <li><strong>Hovering Holograms:</strong> Utilizes invisible ArmorStands anchored to the NPC to
-                        provide clear, multi-line titles like "Foreman" or "Skilled Craftsman".</li>
-                    <li><strong>Particles &amp; Ambient Sounds:</strong> Periodic sensory elements (e.g. Villager
-                        murmurs and happy particles) ensure a lively atmosphere.</li>
-                    <li><strong>Self-Healing Engine:</strong> An automated <code>Respawn Task</code> constantly sweeps
-                        the realm. If an NPC entity goes missing due to WorldEdit overlaps, server reboots, or glitches,
-                        the plugin seamlessly re-summons them exact to their prior specs.</li>
-                </ul>
-
-            </section>
-
-            <!-- ════ HIRING & ASSIGNMENT ════ -->
-            <section class="content-section" id="hiring-assignment">
-                <div class="section-title">
-                    <h2>Hiring &amp; Assignment</h2>
-                </div>
-                <p>To populate your factory, you must purchase an employee contract from the <strong>Employee Shop
-                        GUI</strong> and physically deploy them.</p>
 
                 <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>GUI / Menu</th>
-                                <th>Functionality</th>
+                                <th>Property</th>
+                                <th>Value</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Employee Shop</strong></td>
-                                <td>Displays all available NPC types configured in <code>npc.yml</code>. You pay an
-                                    upfront cash price to secure their contract.</td>
+                                <td>Base Price</td>
+                                <td><strong>$100,000.0</strong></td>
                             </tr>
                             <tr>
-                                <td><strong>My Employees</strong></td>
-                                <td>A storage roster of all purchased personnel not currently deployed. Since they are
-                                    under contract, they still charge a wage!</td>
+                                <td>Icon Identity</td>
+                                <td><code>IRON_BLOCK</code></td>
                             </tr>
                             <tr>
-                                <td><strong>Assignment Board</strong></td>
-                                <td>Select an open NPC from 'My Employees' and click a valid, vacant factory to
-                                    instantly teleport and deploy them there.</td>
+                                <td>Main Purpose</td>
+                                <td>Raw Resource Refinement</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div class="warn-box">
-                    <div class="info-box-title">⚠️ Firing employees</div>
-                    <div>
-                        Currently, <code>FactoryCore</code> enforces permanent contracts. While you cannot outright
-                        "delete" an employee from existence once bought, you can leave them unassigned in the roster.
-                        Note that salaries apply to ALL owned employees, deployed or reserved.
-                    </div>
-                </div>
-
+                <h3>Key Productions</h3>
+                <ul>
+                    <li><strong>Steel Ingot:</strong> Combines Iron Ore, Coal Ore, and Fuel. A must-have for weapons and
+                        armor.</li>
+                    <li><strong>Carbon Fiber:</strong> High-end material demanding a mix of ores and refined fuel.</li>
+                </ul>
             </section>
 
-            <!-- ════ IMPACTS & BENEFITS ════ -->
-            <section class="content-section" id="benefits">
+            <!-- ════ REFINERY ════ -->
+            <section class="content-section" id="refinery">
                 <div class="section-title">
-                    <h2>Impacts &amp; Benefits</h2>
-                </div>
-                <p>Every employee class carries a distinct buff, specifically impacting standard production delays.</p>
-
-                <div class="code-wrap">
-                    <span class="code-lang-badge">Logic</span>
-                    <pre
-                        class="code-block"><span class="cs">New Production Time</span> = Base Recipe Time - (Base Recipe Time * Production Reduction %)</pre>
-                </div>
-
-                <p><strong>Example:</strong> If a recipe normally takes <span class="badge badge-flat">100
-                        seconds</span>, and you assign an employee with a <span class="badge badge-pct">15%</span> buff,
-                    the new cyclic duration for your factory drops to <strong>85 seconds</strong>.</p>
-            </section>
-
-            <!-- ════ CONFIG REFERENCE ════ -->
-            <section class="content-section" id="config-reference">
-                <div class="section-title">
-                    <h2>Configuration (npc.yml)</h2>
+                    <h2>Refinery</h2>
                 </div>
                 <p>
-                    Customize employee appearances, lore, buffs, costs, and the engine parameters inside
-                    <code>npc.yml</code>.
+                    Without power, production halts. The <strong>Refinery</strong> specializes in synthesizing basic
+                    ores into highly efficient fuels. This fuel is a required input for producing advanced components in
+                    the Workshop and Advanced Factory.
                 </p>
 
-                <div class="code-wrap">
-                    <span class="code-lang-badge">YAML</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre class="code-block"><span class="ci">shop:</span>
-  <span class="ci">npcs:</span>
-    <span class="ck">skilled_craftsman:</span>
-      <span class="ck">display-name:</span> <span class="cn">"§fSkilled Craftsman"</span>
-      <span class="ck">shop-icon:</span> <span class="cn">"VILLAGER_SPAWN_EGG"</span>
-      <span class="ck">buy-price:</span> <span class="cn">5000.0</span>
-      <span class="ck">salary:</span> <span class="cn">50.0</span>
-      <span class="ck">production-time-reduction:</span> <span class="cn">15.0</span>
-      <span class="ck">template:</span> <span class="cn">"factory_employee"</span>
-
-<span class="ci">templates:</span>
-  <span class="ck">factory_employee:</span>
-    <span class="ck">name:</span> <span class="cn">"§bTechnician"</span>
-    <span class="ck">profession:</span> <span class="cn">"LIBRARIAN"</span>
-    <span class="ck">type:</span> <span class="cn">"SNOW"</span>
-    <span class="ci">hologram:</span>
-      <span class="ck">enabled:</span> <span class="cv">true</span>
-      <span class="ck">lines:</span>
-        <span class="cm">- "&amp;bTechnician"</span></pre>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Base Price</td>
+                                <td><strong>$150,000.0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Icon Identity</td>
+                                <td><code>FURNACE</code></td>
+                            </tr>
+                            <tr>
+                                <td>Main Purpose</td>
+                                <td>Fuel Generation</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+
+                <h3>Key Productions</h3>
+                <ul>
+                    <li><strong>Basic Fuel:</strong> Essential to kickstart basic Workshop operations.</li>
+                    <li><strong>Refined Fuel &amp; Premium Fuel:</strong> Required for top-tier manufacturing and luxury
+                        items.</li>
+                </ul>
+            </section>
+
+            <!-- ════ WORKSHOP ════ -->
+            <section class="content-section" id="workshop">
+                <div class="section-title">
+                    <h2>Workshop</h2>
+                </div>
+                <p>
+                    The <strong>Workshop</strong> is where refined materials and fuels come together to create precision
+                    components. If players want to build complex machinery, they will need a steady supply of items
+                    manufactured here.
+                </p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Base Price</td>
+                                <td><strong>$200,000.0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Icon Identity</td>
+                                <td><code>ANVIL</code></td>
+                            </tr>
+                            <tr>
+                                <td>Main Purpose</td>
+                                <td>Component Manufacturing</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Key Productions</h3>
+                <ul>
+                    <li><strong>Basic &amp; Advanced Gears:</strong> Foundational mechanical parts.</li>
+                    <li><strong>Engine Parts &amp; Hydraulic Systems:</strong> Heavy-duty components used in late-game
+                        assembly.</li>
+                    <li><strong>Circuit Boards:</strong> The brain of any advanced electronic mechanism.</li>
+                </ul>
+            </section>
+
+            <!-- ════ ADVANCED FACTORY ════ -->
+            <section class="content-section" id="advanced-factory">
+                <div class="section-title">
+                    <h2>Advanced Factory</h2>
+                </div>
+                <p>
+                    The <strong>Advanced Factory</strong> is the pinnacle of the FactoryCore progression tree. It
+                    requires huge capital to purchase but allows players to assemble components from all other factories
+                    into incredibly valuable, highly sought-after final products.
+                </p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Base Price</td>
+                                <td><strong>$250,000.0</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Icon Identity</td>
+                                <td><code>NETHER_STAR</code></td>
+                            </tr>
+                            <tr>
+                                <td>Main Purpose</td>
+                                <td>Final Assembly &amp; High-Value Goods</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Key Productions</h3>
+                <ul>
+                    <li><strong>Advanced Weapons &amp; Armor:</strong> The ultimate combat gear crafted from Steel and
+                        Carbon Fiber.</li>
+                    <li><strong>Electronic Components:</strong> Essential for high-tech setups.</li>
+                    <li><strong>Luxury Items:</strong> Consume massive amounts of high-end parts yielding the highest
+                        economic return.</li>
+                </ul>
             </section>
 
             <!-- ════ DEVELOPER TIPS ════ -->
             <section class="content-section" id="developer-tips">
                 <div class="section-title">
-                    <h2>Developer Tips: The NPC Engine</h2>
+                    <h2>Developer Tips</h2>
                 </div>
-                <p>Developing add-ons? Here's an inside look at how FactoryCore's NPC engine optimizes behavior loops.
+                <p>
+                    As a developer or server administrator, FactoryCore gives you full control over how you define,
+                    price, and structure your factory types. Everything is highly flexible and data-driven via
+                    configuration files.
                 </p>
 
-                <div class="phases-grid">
-                    <div class="phase-card">
-                        <span class="card-icon">🏎️</span>
-                        <h4>Tick Optimization</h4>
-                        <p>Instead of relying on NMS packets, we spawn actual <code>Villager</code> entities and cast a
-                            <code>runTaskTimer</code> using an <code>AtomicLong</code> to calculate localized behavioral
-                            frame rates safely.</p>
+                <div class="dev-tip">
+                    <div class="info-box-title">⚙️ Factory Type Definition</div>
+                    <div>
+                        Factory Types are strictly enumerated within the Java plugin (<code>FactoryType.java</code>)
+                        right now, but their display attributes and pricing are completely managed in
+                        <code>config.yml</code>. Alter pricing here to instantly balance your server's economy.
                     </div>
-                    <div class="phase-card">
-                        <span class="card-icon">📐</span>
-                        <h4>Trigonometric Alignment</h4>
-                        <p>A common bug when coding <code>lookAt(...)</code> logic is NPCs staring into space.
-                            FactoryCore avoids this by measuring the Delta from the NPC's <strong>eye height (1.62
-                                Y)</strong> specifically to the player's <strong>chest height (1.1 Y)</strong>.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">🪑</span>
-                        <h4>Interpolation</h4>
-                        <p>Idle loops don't just snap. An idle variable maps a <code>targetPitchOffset</code>, divided
-                            into micro-steps across ticks, rendering a beautifully smooth visual gaze shift.</p>
-                    </div>
+                </div>
+
+                <div class="code-wrap">
+                    <span class="code-lang-badge">config.yml</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre class="code-block"><span class="cs">factory-types:</span>
+  <span class="ck">steel_mill:</span>
+    <span class="ck">name:</span> <span class="cn">"§6Steel Mill"</span>
+    <span class="ck">base-price:</span> <span class="cn">100000.0</span>
+    <span class="ck">icon:</span> <span class="cn">IRON_BLOCK</span></pre>
                 </div>
 
                 <div class="dev-tip">
-                    <div class="info-box-title">👨‍💻 Code Snippet: Fetching Assigned personnel</div>
-                    <div style="margin-top: 10px; color: #d1d5db;">
-                        You can safely retrieve an NPC's buff from external plugins via the Factory Manager context.
-                    </div>
-                    <div class="code-wrap">
-                        <span class="code-lang-badge">Java</span>
-                        <pre class="code-block"><span class="cm">// Given an active factory UUID</span>
-FactoryNPC employee = FactoryCore.getInstance().getNPCManager().getAssignedNPCForFactory(factory.getId());
-
-<span class="ck">if</span> (employee != <span class="cv">null</span>) {
-    <span class="ck">double</span> speedBuff = employee.getProductionTimeReduction();
-    System.out.println(<span class="cn">"This factory operates "</span> + speedBuff + <span class="cn">"% faster!"</span>);
-}</pre>
+                    <div class="info-box-title">👨‍💻 Linking Recipes to Types</div>
+                    <div>
+                        When writing your own custom recipes in <code>recipes.yml</code>, the <code>factory-type</code>
+                        field must exactly match the internal ID of the factory (e.g., <code>steel_mill</code>,
+                        <code>refinery</code>). A recipe with an invalid type will be ignored during loading.
                     </div>
                 </div>
 
+                <div class="code-wrap">
+                    <span class="code-lang-badge">recipes.yml</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre class="code-block"><span class="cs">recipes:</span>
+  <span class="ck">custom_plastic:</span>
+    <span class="ck">name:</span> <span class="cn">"§fPlastic Production"</span>
+    <span class="ck">factory-type:</span> <span class="cn">refinery</span>       <span class="cm"># Matches the enum / config key</span>
+    <span class="ck">production-time:</span> <span class="cn">150</span>
+    <span class="ck">money-cost:</span> <span class="cn">25.0</span>
+    <span class="ck">inputs:</span>
+      <span class="ck">coal:</span> <span class="cn">5</span>
+    <span class="ck">outputs:</span>
+      <span class="ck">plastic_sheet:</span> <span class="cn">2</span></pre>
+                </div>
+
+                <div class="warn-box">
+                    <div class="info-box-title">⚠️ Adding New Types</div>
+                    <div>
+                        If you want to add completely new factory types beyond the basic four (Steel Mill, Refinery,
+                        Workshop, Advanced Factory), you will currently need to add them to the
+                        <code>FactoryType.java</code> Enum and compile the plugin. Future updates may introduce 100%
+                        custom data-driven types.
+                    </div>
+                </div>
             </section>
+
         </main>
     </div>
 
     <script>
-        // Smooth scrolling for sidebar links
-        document.querySelectorAll('.nav-list a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
+        // Copy to clipboard functionality
+        function copyCode(button) {
+            const pre = button.nextElementSibling;
+            const code = pre.textContent;
 
-                targetElement.scrollIntoView({
-                    behavior: 'smooth'
-                });
-
-                // Update active state
-                document.querySelectorAll('.nav-list a').forEach(a => a.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // Copy Code Function
-        function copyCode(btn) {
-            const codeBlock = btn.nextElementSibling;
-            const textToCopy = codeBlock.innerText;
-
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = btn.innerText;
-                btn.innerText = 'Copied!';
-                btn.classList.add('copied');
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
 
                 setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.classList.remove('copied');
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
                 }, 2000);
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
+                button.textContent = 'Failed';
             });
         }
+
+        // Navigation click handler for Google Sites compatibility
+        document.querySelectorAll('.nav-list a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelectorAll('.nav-list a').forEach(link => link.classList.remove('active'));
+                this.classList.add('active');
+
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Active link switching based on scroll
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const id = entry.target.getAttribute('id');
+                            // Only update if not currently clicking a link (optional, but prevents jitter)
+                            document.querySelectorAll('.nav-list a').forEach(link => {
+                                link.classList.remove('active');
+                                if (link.getAttribute('href') === `#${id}`) {
+                                    link.classList.add('active');
+                                }
+                            });
+                        }
+                    });
+                }, { threshold: 0.2 });
+
+                document.querySelectorAll('.content-section').forEach(section => {
+                    observer.observe(section);
+                });
+            } catch (e) {
+                console.log("IntersectionObserver not supported or blocked");
+            }
+        });
     </script>
 </body>
 

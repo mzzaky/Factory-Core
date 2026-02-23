@@ -18,207 +18,67 @@
             line-height: 1.6;
             margin: 0;
             padding: 20px;
-            background: linear-gradient(135deg, #0a0c10 0%, #111316 50%, #1a1d23 100%);
+            background: #0a0c10;
             color: #e4e6ea;
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(4, 120, 87, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 40% 60%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .particle {
-            position: absolute;
-            background: rgba(52, 211, 153, 0.4);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: float 20s infinite linear;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            90% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
         }
 
         /* ── Page Header ── */
         .page-header {
             text-align: center;
-            margin-bottom: 50px;
-            padding: 40px 0;
-            position: relative;
+            margin-bottom: 40px;
+            padding: 30px 0;
         }
 
         .page-header h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
-        }
-
-        .page-header h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            border-radius: 2px;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+            margin-bottom: 10px;
+            color: #10b981;
         }
 
         .page-header p {
             color: #9ca3af;
-            font-size: 1.2rem;
-            margin-top: 30px;
+            font-size: 1.15rem;
+            margin-top: 10px;
         }
 
         /* ── Breadcrumb ── */
         .breadcrumb {
-            max-width: 1400px;
-            margin: 0 auto 40px;
+            max-width: 1200px;
+            margin: 0 auto 30px;
             display: flex;
             align-items: center;
-            gap: 0;
+            gap: 8px;
             font-size: 13px;
-            position: relative;
-        }
-
-        .breadcrumb-inner {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            background: rgba(13, 17, 23, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(52, 211, 153, 0.18);
-            border-radius: 50px;
-            padding: 6px 6px 6px 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(52, 211, 153, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-        }
-
-        .breadcrumb-icon {
-            width: 26px;
-            height: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #10b981;
-            margin-right: 10px;
-            opacity: 0.8;
-        }
-
-        .breadcrumb-icon svg {
-            width: 15px;
-            height: 15px;
         }
 
         .breadcrumb a {
             color: #6b7280;
             text-decoration: none;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            letter-spacing: 0.2px;
+            transition: color 0.2s ease;
         }
 
         .breadcrumb a:hover {
             color: #10b981;
-            background: rgba(52, 211, 153, 0.08);
         }
 
         .breadcrumb-sep {
-            color: rgba(255, 255, 255, 0.12);
-            margin: 0 2px;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-        }
-
-        .breadcrumb-sep svg {
-            width: 12px;
-            height: 12px;
+            color: #4b5563;
         }
 
         .breadcrumb-current {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(4, 120, 87, 0.12) 100%);
-            border: 1px solid rgba(52, 211, 153, 0.3);
-            border-radius: 50px;
-            padding: 5px 14px 5px 10px;
-            margin-left: 4px;
             color: #34d399;
             font-weight: 600;
-            letter-spacing: 0.2px;
-            box-shadow: 0 0 12px rgba(52, 211, 153, 0.12);
-        }
-
-        .breadcrumb-current-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #10b981;
-            box-shadow: 0 0 8px rgba(52, 211, 153, 0.8);
-            animation: bc-pulse 2s ease-in-out infinite;
-            flex-shrink: 0;
-        }
-
-        @keyframes bc-pulse {
-
-            0%,
-            100% {
-                box-shadow: 0 0 6px rgba(52, 211, 153, 0.8);
-                opacity: 1;
-            }
-
-            50% {
-                box-shadow: 0 0 14px rgba(52, 211, 153, 1);
-                opacity: 0.7;
-            }
         }
 
         /* ── Layout ── */
         .content-container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 32px;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
             align-items: start;
         }
 
@@ -226,240 +86,71 @@
         .side-nav {
             position: sticky;
             top: 20px;
-            background: rgba(10, 14, 18, 0.92);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(52, 211, 153, 0.14);
-            border-radius: 22px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(52, 211, 153, 0.05), 0 0 60px rgba(16, 185, 129, 0.04);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 10;
         }
 
         .nav-header {
-            padding: 18px 20px 14px;
+            padding: 20px;
             border-bottom: 1px solid rgba(52, 211, 153, 0.1);
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, transparent 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #10b981 30%, #34d399 60%, transparent);
-        }
-
-        .nav-header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .nav-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #e4e6ea;
             font-weight: 700;
-            font-size: 0.78rem;
+            color: #e4e6ea;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
-        .nav-title-icon {
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(135deg, #10b981, #047857);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
-        }
-
-        .nav-title-icon svg {
-            width: 11px;
-            height: 11px;
-            stroke: #fff;
-            fill: none;
-            stroke-width: 2.5;
-        }
-
-        .nav-section-count {
-            font-size: 11px;
-            color: #6b7280;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 20px;
-            padding: 2px 8px;
-            font-weight: 500;
-        }
-
-        .nav-progress-track {
-            height: 3px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .nav-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #34d399);
-            border-radius: 3px;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
-            width: 0%;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
         }
 
         .nav-list {
             list-style: none;
-            padding: 10px 12px 12px;
+            padding: 15px;
             margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 2px;
-        }
-
-        .nav-list li {
-            margin: 0;
+            gap: 5px;
         }
 
         .nav-list a {
             display: flex;
             align-items: center;
-            gap: 11px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            color: #6b7280;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            color: #9ca3af;
             text-decoration: none;
-            transition: all 0.22s ease;
-            font-size: 13.5px;
+            transition: all 0.2s ease;
+            font-size: 14px;
             font-weight: 500;
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 0.1px;
-        }
-
-        .nav-list a::after {
-            content: '';
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%) scale(0);
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: #10b981;
-            transition: transform 0.2s ease;
-            box-shadow: 0 0 8px rgba(52, 211, 153, 0.8);
-        }
-
-        .nav-list a:hover::after,
-        .nav-list a.active::after {
-            transform: translateY(-50%) scale(1);
+            cursor: pointer;
         }
 
         .nav-list a:hover {
-            background: rgba(52, 211, 153, 0.07);
+            background: rgba(52, 211, 153, 0.05);
             color: #d1fae5;
         }
 
         .nav-list a.active {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(4, 120, 87, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(4, 120, 87, 0.05) 100%);
             color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
             font-weight: 600;
-            box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.2);
-        }
-
-        .nav-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-            transition: all 0.22s ease;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .nav-list a:hover .nav-icon {
-            background: rgba(52, 211, 153, 0.1);
-            border-color: rgba(52, 211, 153, 0.2);
-        }
-
-        .nav-list a.active .nav-icon {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(4, 120, 87, 0.2));
-            border-color: rgba(52, 211, 153, 0.3);
-            box-shadow: 0 0 12px rgba(52, 211, 153, 0.15);
-        }
-
-        .nav-label {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .nav-footer {
-            margin: 0 12px 12px;
-            padding: 12px;
-            background: rgba(52, 211, 153, 0.04);
-            border: 1px solid rgba(52, 211, 153, 0.1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-footer-icon {
-            font-size: 16px;
-            flex-shrink: 0;
-        }
-
-        .nav-footer-text {
-            font-size: 11.5px;
-            color: #6b7280;
-            line-height: 1.4;
-        }
-
-        .nav-footer-text strong {
-            color: #34d399;
-            display: block;
-            font-size: 12px;
-            margin-bottom: 1px;
         }
 
         /* ── Main Content ── */
         .main-content {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(52, 211, 153, 0.1);
-            border-radius: 24px;
+            background: #0d1117;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 80px rgba(52, 211, 153, 0.05);
         }
 
         .content-section {
-            padding: 36px;
-            border-bottom: 1px solid rgba(52, 211, 153, 0.05);
+            padding: 40px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.08);
             scroll-margin-top: 20px;
-            position: relative;
-        }
-
-        .content-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.3), transparent);
         }
 
         .content-section:last-child {
@@ -467,34 +158,14 @@
         }
 
         .section-title {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
+            margin-bottom: 25px;
         }
 
         .section-title h2 {
             color: #10b981;
             font-size: 1.8rem;
             font-weight: 600;
-            margin: 0;
-            text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
-        }
-
-        .section-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            background: linear-gradient(135deg, rgba(52, 211, 153, 0.2) 0%, rgba(4, 120, 87, 0.2) 100%);
-            color: #10b981;
-            border: 1px solid rgba(52, 211, 153, 0.3);
-            box-shadow: 0 4px 15px rgba(52, 211, 153, 0.1);
+            margin: 0 0 8px 0;
         }
 
         /* ── Typography ── */
@@ -502,34 +173,13 @@
             color: #34d399;
             font-size: 1.25rem;
             font-weight: 600;
-            margin-top: 32px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        h3::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 1.2em;
-            background: linear-gradient(180deg, #10b981, #047857);
-            border-radius: 2px;
-            flex-shrink: 0;
-        }
-
-        h4 {
-            color: #10b981;
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-top: 20px;
-            margin-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
         }
 
         p {
             color: #d1d5db;
-            line-height: 1.8;
+            line-height: 1.7;
             margin-bottom: 16px;
         }
 
@@ -537,188 +187,104 @@
         ol {
             color: #d1d5db;
             margin-bottom: 20px;
-            padding-left: 24px;
+            padding-left: 20px;
         }
 
         li {
-            margin-bottom: 10px;
-            line-height: 1.7;
+            margin-bottom: 8px;
+            line-height: 1.6;
         }
 
-        li strong {
+        strong {
             color: #34d399;
             font-weight: 600;
         }
 
-        /* ── Code ── */
-        pre {
-            background: #141618;
-            border: 1px solid rgba(52, 211, 153, 0.15);
-            border-left: 3px solid #10b981;
-            border-radius: 12px;
-            padding: 20px 24px;
-            overflow-x: auto;
-            margin: 20px 0;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
-            font-family: 'Fira Code', 'Courier New', monospace;
-        }
-
         code {
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 13px;
-            color: #9CDCFE;
-        }
-
-        p code,
-        li code {
-            background: rgba(52, 211, 153, 0.08);
-            padding: 3px 8px;
-            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 3px 6px;
+            border-radius: 5px;
             color: #34d399;
-            font-weight: 500;
-            border: 1px solid rgba(52, 211, 153, 0.2);
+            font-size: 13px;
         }
 
         /* ── Info / Warning Boxes ── */
         .info-box {
-            background: linear-gradient(135deg, rgba(52, 211, 153, 0.07) 0%, rgba(4, 120, 87, 0.07) 100%);
-            border: 1px solid rgba(52, 211, 153, 0.25);
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
             border-left: 4px solid #10b981;
-            border-radius: 12px;
-            padding: 18px 20px;
-            margin: 24px 0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
         }
 
         .info-box-title {
             color: #10b981;
             font-weight: 600;
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.95rem;
-        }
-
-        .info-box-content {
-            color: #d1d5db;
-            line-height: 1.7;
+            font-size: 1.05rem;
         }
 
         .warn-box {
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.07) 0%, rgba(180, 83, 9, 0.07) 100%);
-            border: 1px solid rgba(251, 191, 36, 0.25);
-            border-left: 4px solid #f59e0b;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.03) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid #fbbf24;
             border-radius: 12px;
-            padding: 18px 20px;
+            padding: 20px;
             margin: 24px 0;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.05), inset 0 0 12px rgba(245, 158, 11, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warn-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.1), transparent 50%);
+            pointer-events: none;
         }
 
         .warn-box .info-box-title {
-            color: #f59e0b;
+            color: #fbbf24;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+            position: relative;
+            z-index: 1;
         }
 
-        .warn-box .info-box-content {
-            color: #d1d5db;
-        }
-
-        /* ── Table ── */
-        .table-wrapper {
-            margin: 24px 0;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(52, 211, 153, 0.12);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(52, 211, 153, 0.05);
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: transparent;
-        }
-
-        .data-table thead {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(4, 120, 87, 0.15) 100%);
-        }
-
-        .data-table thead th {
-            padding: 14px 20px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: #34d399;
-            border-bottom: 1px solid rgba(52, 211, 153, 0.2);
-            white-space: nowrap;
-        }
-
-        .data-table tbody tr {
-            transition: background 0.2s ease;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .data-table tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        .data-table tbody tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.015);
-        }
-
-        .data-table tbody tr:hover {
-            background: rgba(52, 211, 153, 0.06);
-        }
-
-        .data-table tbody td {
-            padding: 14px 20px;
-            color: #c9cdd4;
-            font-size: 14px;
-            vertical-align: middle;
-        }
-
-        .data-table tbody td:first-child {
-            font-weight: 600;
-            color: #e4e6ea;
+        .warn-box div:last-child {
+            color: #e5e7eb;
+            position: relative;
+            z-index: 1;
         }
 
         /* ── Feature Cards Grid ── */
         .phases-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 18px;
-            margin: 24px 0;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
         }
 
         .phase-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(52, 211, 153, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .phase-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.05), transparent);
-            transition: left 0.6s;
-        }
-
-        .phase-card:hover::before {
-            left: 100%;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
         .phase-card:hover {
-            background: rgba(52, 211, 153, 0.05);
             border-color: rgba(52, 211, 153, 0.3);
-            box-shadow: 0 8px 25px rgba(52, 211, 153, 0.12);
-            transform: translateY(-4px);
+            transform: translateY(-2px);
         }
 
         .phase-card .card-icon {
@@ -730,7 +296,7 @@
         .phase-card h4 {
             color: #10b981;
             margin: 0 0 10px 0;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: 600;
         }
 
@@ -738,373 +304,709 @@
             color: #9ca3af;
             font-size: 14px;
             margin: 0;
-            line-height: 1.6;
         }
 
-        /* ── Footer ── */
-        .page-footer {
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(52, 211, 153, 0.1);
-            text-align: center;
-            color: #6b7280;
-            font-size: 0.9rem;
+        /* ── Table ── */
+        .table-wrapper {
+            margin: 25px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(52, 211, 153, 0.15);
         }
 
-        /* ── Scrollbar ── */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        ::-webkit-scrollbar-track {
-            background: #0d1117;
+        .data-table thead {
+            background: rgba(16, 185, 129, 0.1);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #1f2937;
-            border-radius: 4px;
+        .data-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #34d399;
+            text-transform: uppercase;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #374151;
+        .data-table td {
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #c9cdd4;
+            font-size: 14px;
         }
 
-        @media (max-width: 1024px) {
+        .data-table td:first-child {
+            font-weight: 600;
+            color: #e4e6ea;
+        }
+
+        /* ── Code Block ── */
+        .code-wrap {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #090d13;
+            border: 1px solid rgba(52, 211, 153, 0.18);
+            border-radius: 10px;
+            padding: 22px 24px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.75;
+            color: #abb2bf;
+        }
+
+        .code-block .cm {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        /* comment */
+        .code-block .ck {
+            color: #e06c75;
+        }
+
+        /* key */
+        .code-block .cv {
+            color: #98c379;
+        }
+
+        /* string value */
+        .code-block .cn {
+            color: #d19a66;
+        }
+
+        /* number value */
+        .code-block .cs {
+            color: #56b6c2;
+        }
+
+        /* section heading */
+        .code-block .ci {
+            color: #61afef;
+        }
+
+        /* inline tag */
+
+        .code-lang-badge {
+            position: absolute;
+            top: 10px;
+            right: 48px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(52, 211, 153, 0.18);
+        }
+
+        .copy-btn.copied {
+            color: #10b981;
+            border-color: #10b981;
+        }
+
+        /* ── Dev Tip Box ── */
+        .dev-tip {
+            background: linear-gradient(135deg, rgba(97, 175, 239, 0.07) 0%, rgba(56, 139, 253, 0.03) 100%);
+            border: 1px solid rgba(97, 175, 239, 0.25);
+            border-left: 4px solid #61afef;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        .dev-tip .info-box-title {
+            color: #61afef;
+        }
+
+        /* ── Badge ── */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .badge-pct {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .badge-flat {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
             .content-container {
                 grid-template-columns: 1fr;
             }
 
             .side-nav {
-                display: none;
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .content-section {
+                padding: 24px;
             }
         }
     </style>
 </head>
 
 <body>
-
-    <div class="breadcrumb">
-        <div class="breadcrumb-inner">
-            <div class="breadcrumb-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-            </div>
-            <a href="index.html">Home</a>
-            <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg></span>
-            <a href="wiki.html">Wiki</a>
-            <span class="breadcrumb-sep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg></span>
-            <div class="breadcrumb-current">
-                <div class="breadcrumb-current-dot"></div>
-                Tax System
-            </div>
-        </div>
-    </div>
-
     <div class="page-header">
         <h1>Tax System</h1>
-        <p>Manage your factory taxes, understand rates, and avoid penalties.</p>
+        <p>Manage Your Factory Taxes &amp; Keep Your Empire Running</p>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="wiki_index.html">Wiki Home</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <a href="#">Systems</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <span class="breadcrumb-current">Tax System</span>
     </div>
 
     <div class="content-container">
-
-        <!-- Sidebar Navigation -->
-        <aside class="side-nav">
-            <div class="nav-header">
-                <div class="nav-header-top">
-                    <div class="nav-title">
-                        <div class="nav-title-icon">
-                            <svg viewBox="0 0 24 24">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="12" y1="8" x2="12" y2="16"></line>
-                                <line x1="8" y1="12" x2="16" y2="12"></line>
-                            </svg>
-                        </div>
-                        Contents
-                    </div>
-                    <div class="nav-section-count">5 Sections</div>
-                </div>
-                <div class="nav-progress-track">
-                    <div class="nav-progress-fill" id="scrollProgress"></div>
-                </div>
-            </div>
+        <nav class="side-nav">
+            <div class="nav-header">On This Page</div>
             <ul class="nav-list">
-                <li>
-                    <a href="#overview" class="active">
-                        <div class="nav-icon">📋</div>
-                        <span class="nav-label">Overview</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#calculation">
-                        <div class="nav-icon">🧮</div>
-                        <span class="nav-label">Tax Calculation</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#tax-center">
-                        <div class="nav-icon">🏛️</div>
-                        <span class="nav-label">Tax Center GUI</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#payments">
-                        <div class="nav-icon">💳</div>
-                        <span class="nav-label">Payments & Penalties</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#configuration">
-                        <div class="nav-icon">⚙️</div>
-                        <span class="nav-label">Configuration</span>
-                    </a>
-                </li>
+                <li><a href="#overview" class="active">Overview</a></li>
+                <li><a href="#calculation">Tax Calculation</a></li>
+                <li><a href="#assessment">Assessment &amp; Due Dates</a></li>
+                <li><a href="#commands">Commands &amp; GUI</a></li>
+                <li><a href="#config-reference">Config Reference</a></li>
+                <li><a href="#developer-api">Developer API</a></li>
             </ul>
-            <div class="nav-footer">
-                <div class="nav-footer-icon">💡</div>
-                <div class="nav-footer-text">
-                    <strong>Pro Tip</strong>
-                    Pay taxes early to avoid late fees!
-                </div>
-            </div>
-        </aside>
+        </nav>
 
-        <!-- Main Content -->
         <main class="main-content">
 
-            <!-- Overview Section -->
-            <section id="overview" class="content-section">
+            <!-- ════ OVERVIEW ════ -->
+            <section class="content-section" id="overview">
                 <div class="section-title">
-                    <span class="section-badge">System</span>
                     <h2>Overview</h2>
                 </div>
-                <p>The <strong>Tax System</strong> in FactoryCore adds an economic balance to factory ownership. Players
-                    are required to pay periodic taxes based on the value and level of their factories. This encourages
-                    active management and prevents players from hoarding unused factories.</p>
-
+                <p>
+                    The <strong>Tax System</strong> in FactoryCore adds a meaningful economic challenge by requiring
+                    factory owners to pay periodic taxes based on the value and level of their factories. Ignoring
+                    your taxes is not an option — unpaid bills accumulate late fees and are prominently flagged in
+                    the Tax Center GUI.
+                </p>
                 <div class="info-box">
-                    <div class="info-box-title">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                        Why Taxes?
+                    <div class="info-box-title">💡 Core Concept</div>
+                    <div>Taxes are assessed <em>per factory</em>, not per player. Every factory you own generates an
+                        independent tax bill calculated from its base price, current level, and your active research
+                        buffs. Staying on top of these payments is essential for long-term profitability.
                     </div>
-                    <div class="info-box-content">
-                        Taxes serve as a money sink in the economy and a maintenance cost for factory operations,
-                        ensuring that high-level factories require sustained profitability to maintain.
+                </div>
+
+                <div class="phases-grid">
+                    <div class="phase-card">
+                        <span class="card-icon">🧮</span>
+                        <h4>Dynamic Calculation</h4>
+                        <p>Tax rates scale with factory level using a configurable level multiplier, meaning high-tier
+                            factories generate significantly larger bills.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🔬</span>
+                        <h4>Research Deductions</h4>
+                        <p>Players who invest in the <strong>Fiscal Optimization</strong> research path receive a
+                            percentage reduction on their final tax amount each cycle.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">⚠️</span>
+                        <h4>Late Fees</h4>
+                        <p>Overdue taxes are flagged in the GUI and automatically incur a one-time penalty charge,
+                            making prompt payment the most economical choice.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">💻</span>
+                        <h4>Tax Center GUI</h4>
+                        <p>A comprehensive graphical interface lets you view all outstanding bills, preview upcoming
+                            taxes, and settle everything with a single click.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Calculation Section -->
-            <section id="calculation" class="content-section">
+            <!-- ════ TAX CALCULATION ════ -->
+            <section class="content-section" id="calculation">
                 <div class="section-title">
-                    <span class="section-badge">Mechanics</span>
                     <h2>Tax Calculation</h2>
                 </div>
-                <p>Taxes are calculated individually for each factory based on its base price and current level.
-                    Higher-level factories incur higher tax rates.</p>
+                <p>The amount owed per factory is determined dynamically during each assessment cycle based on
+                    three factors: the factory's <strong>base price</strong>, its <strong>current level</strong>,
+                    and any active <strong>research buffs</strong> the owner has unlocked.</p>
 
-                <h3>Formula</h3>
-                <pre><code>Tax = Factory Price × (Base Rate + (Level Multiplier × (Level - 1)))</code></pre>
+                <h3>The Tax Formula</h3>
+                <div class="code-wrap">
+                    <span class="code-lang-badge">Formula</span>
+                    <pre class="code-block"><span class="cs">Total Tax Rate</span>  = Base Rate + ((Factory Level - 1) × Level Multiplier)
+<span class="cs">Base Tax Amount</span> = Factory Price × Total Tax Rate
+<span class="cs">Final Tax Amount</span> = Base Tax Amount - Fiscal Optimization Research Reduction</pre>
+                </div>
 
-                <h3>Variables</h3>
+                <h3>Example Scenarios</h3>
+                <p>Assuming <code>rate</code> = <strong>5.0%</strong> and <code>level-multiplier</code> =
+                    <strong>2.5%</strong>:</p>
+
                 <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Variable</th>
-                                <th>Description</th>
-                                <th>Default Value</th>
+                                <th>Factory Level</th>
+                                <th>Effective Tax Rate</th>
+                                <th>Tax on a $10,000 Factory</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Base Rate</td>
-                                <td>The starting tax percentage for a Level 1 factory.</td>
-                                <td>5.0%</td>
+                                <td>Level 1</td>
+                                <td><span class="badge badge-pct">5.0%</span></td>
+                                <td><strong>$500</strong></td>
                             </tr>
                             <tr>
-                                <td>Level Multiplier</td>
-                                <td>Additional percentage added per factory level (above level 1).</td>
-                                <td>2.5%</td>
+                                <td>Level 2</td>
+                                <td><span class="badge badge-pct">7.5%</span></td>
+                                <td><strong>$750</strong></td>
                             </tr>
                             <tr>
-                                <td>Factory Price</td>
-                                <td>The purchase cost of the factory type.</td>
-                                <td>Varies</td>
+                                <td>Level 3</td>
+                                <td><span class="badge badge-pct">10.0%</span></td>
+                                <td><strong>$1,000</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Level 4</td>
+                                <td><span class="badge badge-pct">12.5%</span></td>
+                                <td><strong>$1,250</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Level 5</td>
+                                <td><span class="badge badge-pct">15.0%</span></td>
+                                <td><strong>$1,500</strong></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>Example Calculation</h3>
-                <p>Consider a factory with a base price of <strong>$10,000</strong> at <strong>Level 3</strong>.</p>
-                <ul>
-                    <li><strong>Base Rate:</strong> 5.0%</li>
-                    <li><strong>Additional Rate:</strong> 2.5% × (3 - 1) = 5.0%</li>
-                    <li><strong>Total Tax Rate:</strong> 5.0% + 5.0% = <strong>10.0%</strong></li>
-                    <li><strong>Tax Amount:</strong> $10,000 × 10% = <strong>$1,000</strong></li>
-                </ul>
+                <div class="warn-box">
+                    <div class="info-box-title">⚠️ Upgrading Increases Your Tax Burden</div>
+                    <div>
+                        Each level added to a factory increases its effective tax rate by <strong>+2.5%</strong>.
+                        Before upgrading a factory, factor in the ongoing tax liability — the extra throughput
+                        benefits must outweigh the increased recurring costs. See the
+                        <strong>Upgrade System</strong> wiki page for full level benefit details.
+                    </div>
+                </div>
+
+                <h3>🔬 Fiscal Optimization Research</h3>
+                <p>
+                    Players who invest in the <strong>Fiscal Optimization</strong> research path earn a permanent
+                    percentage deduction on their calculated tax bill. For example, a player with a
+                    <strong>10% tax reduction buff</strong> would reduce a $1,000 tax bill down to
+                    <strong>$900</strong>.
+                    This research benefit is applied after the base calculation and stacks well with owning multiple
+                    high-level factories.
+                </p>
             </section>
 
-            <!-- Tax Center GUI Section -->
-            <section id="tax-center" class="content-section">
+            <!-- ════ ASSESSMENT & DUE DATES ════ -->
+            <section class="content-section" id="assessment">
                 <div class="section-title">
-                    <span class="section-badge">Interface</span>
-                    <h2>Tax Center GUI</h2>
+                    <h2>Assessment &amp; Due Dates</h2>
                 </div>
-                <p>The <strong>Tax Center</strong> is the central hub for managing all your tax obligations. It provides
-                    a comprehensive overview of due taxes, payment history, and future assessments.</p>
+                <p>Taxes are not charged in real-time — they are assessed and billed in periodic cycles managed
+                    automatically by the server.</p>
 
-                <div class="phases-grid">
-                    <div class="phase-card">
-                        <span class="card-icon">📊</span>
-                        <h4>Dashboard</h4>
-                        <p>View total tax due, number of overdue taxes, and time remaining until the next tax assessment
-                            run.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">🏗️</span>
-                        <h4>Factory List</h4>
-                        <p>Each factory you own is listed with its specific tax status, amount due, and next assessment
-                            estimate.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">🔮</span>
-                        <h4>Tax Calculator</h4>
-                        <p>A built-in tool that forecasts your upcoming tax liabilities broken down by factory type.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">📜</span>
-                        <h4>History</h4>
-                        <p>Keep track of your financial responsibility with a log of your last 5 tax payments.</p>
-                    </div>
-                </div>
+                <h3>1. Assessment Cycle</h3>
+                <p>
+                    Taxes are automatically assessed and added to a factory's balance on a configurable interval
+                    defined by <code>tax.interval-ticks</code> in <code>config.yml</code>. The default value is
+                    <code>144,000 ticks</code>, equivalent to approximately 3 in-game days (or ~2 real-life hours
+                    at standard server TPS). When an assessment fires, each factory owner receives a chat
+                    notification (if <code>notify-on-assessment: true</code>).
+                </p>
 
-                <h3>Status Indicators</h3>
-                <p>Factories in the GUI are color-coded to indicate their status:</p>
+                <h3>2. Grace Period &amp; Due Date</h3>
+                <p>
+                    After each assessment, players are given a grace period to pay their bill. This period is
+                    controlled by the <code>tax.due-days</code> setting (default <strong>7 real-time days</strong>).
+                    The Tax Center GUI displays the exact due date for each factory's outstanding bill.
+                </p>
+
+                <h3>3. Overdue &amp; Late Fees</h3>
+                <p>
+                    If a tax is not paid before the due date, it is automatically marked as <strong>Overdue</strong>.
+                    The following consequences apply immediately:
+                </p>
                 <ul>
-                    <li><span style="color: #4ade80">● Lime (Green)</span>: <strong>Good Standing</strong> - No tax
-                        currently due.</li>
-                    <li><span style="color: #facc15">● Yellow</span>: <strong>Payment Due</strong> - A tax bill has been
-                        issued but is not yet late.</li>
-                    <li><span style="color: #f87171">● Red</span>: <strong>Overdue</strong> - The payment deadline has
-                        passed; penalties may apply.</li>
+                    <li>A one-time <strong>late fee penalty</strong> is added, calculated from the
+                        <code>tax.late-fee-rate</code> setting (default <strong>5.0%</strong> of the original
+                        bill).
+                    </li>
+                    <li>The factory's entry in the Tax Center GUI is highlighted in <strong>red</strong> to draw
+                        immediate attention.</li>
+                    <li>Continuous overdue warnings are dispatched to the player (if
+                        <code>notify-on-overdue: true</code>).
+                    </li>
                 </ul>
+
+                <div class="info-box">
+                    <div class="info-box-title">📋 Offline Tax Accumulation</div>
+                    <div>
+                        Taxes are assessed against <em>factories</em>, not players. This means your tax bills will
+                        continue to grow even while you are offline, as long as the server is running. Plan ahead
+                        and maintain a sufficient balance to avoid returning to a pile of overdue notices.
+                    </div>
+                </div>
             </section>
 
-            <!-- Payments & Penalties Section -->
-            <section id="payments" class="content-section">
+            <!-- ════ COMMANDS & GUI ════ -->
+            <section class="content-section" id="commands">
                 <div class="section-title">
-                    <span class="section-badge">Economy</span>
-                    <h2>Payments & Penalties</h2>
+                    <h2>Commands &amp; GUI</h2>
                 </div>
-                <p>Staying on top of your taxes is crucial for smooth factory operations.</p>
 
-                <h3>Making Payments</h3>
-                <p>You can pay taxes directly through the Tax Center GUI:</p>
-                <ol>
-                    <li>Click on an individual factory to pay its specific tax.</li>
-                    <li>Use the <strong>"Pay All Taxes"</strong> button (Gold Block) to settle all outstanding debts in
-                        one click.</li>
-                </ol>
+                <h3>Player Commands</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>/fc tax</code></td>
+                                <td>Opens the <strong>Tax Center GUI</strong>. Also accepts <code>/fc taxes</code>
+                                    as an alias.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Tax Center GUI Features</h3>
+                <p>The Tax Center is a comprehensive interface for managing all of your factory tax obligations
+                    in one place. It includes the following panels:</p>
+                <ul>
+                    <li><strong>Tax Overview</strong> — A summarized look at total tax due across all your factories,
+                        factory count, and the time remaining until the next assessment cycle.</li>
+                    <li><strong>Factory Breakdown</strong> — Individual entries for each factory, showing the specific
+                        tax amount owed, the due date, and a direct click-to-pay button.</li>
+                    <li><strong>Tax Calculator</strong> — A preview of your upcoming tax burden based on current
+                        factory levels and active research buffs — useful for financial planning.</li>
+                    <li><strong>Payment History</strong> — A scrollable log of your recent tax payment transactions.
+                    </li>
+                    <li><strong>Pay All</strong> — A convenience button to settle all outstanding taxes across every
+                        factory in a single action, provided you have a sufficient balance.</li>
+                </ul>
 
                 <div class="warn-box">
-                    <div class="info-box-title">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path
-                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
-                            </path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                        </svg>
-                        Late Fees
+                    <div class="info-box-title">⚠️ Overdue Factories are Highlighted</div>
+                    <div>
+                        Factories with an overdue tax bill are displayed in <strong>red</strong> inside the
+                        Factory Breakdown panel. The late fee is applied only once, but the outstanding amount
+                        will keep accumulating with each new assessment cycle until paid.
                     </div>
-                    <div class="info-box-content">
-                        If taxes are not paid within the configured due period (default <strong>7 days</strong>), the
-                        status becomes <strong>Overdue</strong>. An automatic <strong>Late Fee</strong> (default 5%) is
-                        added to the outstanding amount.
+                </div>
+
+                <h3>Admin Commands</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>/fc admin tax assess</code></td>
+                                <td>Forces an immediate tax assessment for all factories on the server, bypassing
+                                    the normal cycle timer.</td>
+                            </tr>
+                            <tr>
+                                <td><code>/fc admin tax check</code></td>
+                                <td>Forces a server-wide overdue check, applying late fees to any factories that
+                                    have crossed their due date.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ════ CONFIG REFERENCE ════ -->
+            <section class="content-section" id="config-reference">
+                <div class="section-title">
+                    <h2>Config Reference</h2>
+                </div>
+                <p>
+                    All tax-related settings are managed within the <code>tax:</code> section of
+                    <code>config.yml</code>. Notification sounds and logging flags relevant to the tax system
+                    are found in the <code>notifications:</code> and <code>logging:</code> sections respectively.
+                </p>
+
+                <div class="code-wrap">
+                    <span class="code-lang-badge">YAML</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre
+                        class="code-block"><span class="cs">tax:</span>
+  <span class="ck">enabled:</span> <span class="cv">true</span>
+  <span class="ck">rate:</span> <span class="cn">5.0</span>              <span class="cm"># Base tax rate (%) applied to Level 1 factories</span>
+  <span class="ck">interval-ticks:</span> <span class="cn">144000</span>    <span class="cm"># Ticks between assessments (20 ticks = 1 second)</span>
+  <span class="ck">level-multiplier:</span> <span class="cn">2.5</span>       <span class="cm"># Additional tax (%) added per factory level</span>
+  <span class="ck">due-days:</span> <span class="cn">7</span>              <span class="cm"># Real-time days players have to pay before overdue</span>
+  <span class="ck">late-fee-rate:</span> <span class="cn">5.0</span>        <span class="cm"># One-time penalty (%) when a tax becomes overdue</span>
+  <span class="ck">notify-on-assessment:</span> <span class="cv">true</span>  <span class="cm"># Chat notification when tax is assigned</span>
+  <span class="ck">notify-on-overdue:</span> <span class="cv">true</span>     <span class="cm"># Chat notification when a tax misses its due date</span>
+
+<span class="cs">notifications:</span>
+  <span class="cs">sound:</span>
+    <span class="ck">tax-due:</span> <span class="cv">BLOCK_NOTE_BLOCK_BASS</span>  <span class="cm"># Sound played when a tax becomes overdue</span>
+
+<span class="cs">logging:</span>
+  <span class="ck">log-taxes:</span> <span class="cv">true</span>  <span class="cm"># Output tax-related events to the server log file</span></pre>
+                </div>
+
+                <h3>Key Configuration Options</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>rate</code></td>
+                                <td><span class="badge badge-pct">5.0%</span></td>
+                                <td>Base tax percentage applied to all Level 1 factories.</td>
+                            </tr>
+                            <tr>
+                                <td><code>level-multiplier</code></td>
+                                <td><span class="badge badge-pct">+2.5%</span></td>
+                                <td>Additional tax rate added per factory level beyond Level 1.</td>
+                            </tr>
+                            <tr>
+                                <td><code>interval-ticks</code></td>
+                                <td><span class="badge badge-flat">144,000</span></td>
+                                <td>Ticks between each automatic tax assessment (144,000 = ~2 hours real-time).</td>
+                            </tr>
+                            <tr>
+                                <td><code>due-days</code></td>
+                                <td><span class="badge badge-flat">7 days</span></td>
+                                <td>Real-time days a player has to pay before a tax is marked overdue.</td>
+                            </tr>
+                            <tr>
+                                <td><code>late-fee-rate</code></td>
+                                <td><span class="badge badge-pct">5.0%</span></td>
+                                <td>One-time late fee percentage added to the original bill when overdue.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="dev-tip">
+                    <div class="info-box-title">🔧 Balancing the Tax Economy</div>
+                    <div>
+                        Setting <code>interval-ticks</code> too low can make the economy feel punishing, while
+                        setting it too high reduces the tax system's strategic impact. A good starting point is
+                        to align the assessment interval with your server's salary interval — the default
+                        <code>salary.interval-ticks</code> of <code>24,000</code> (1 in-game day) means taxes
+                        are billed roughly every 6 salary cycles.
                     </div>
                 </div>
             </section>
 
-            <!-- Configuration Section -->
-            <section id="configuration" class="content-section">
+            <!-- ════ DEVELOPER API ════ -->
+            <section class="content-section" id="developer-api">
                 <div class="section-title">
-                    <span class="section-badge">Admin</span>
-                    <h2>Configuration</h2>
+                    <h2>Developer API</h2>
                 </div>
-                <p>Server administrators can tweak the tax system to fit their economy balance in
-                    <code>config.yml</code>.</p>
+                <p>
+                    If you are building add-ons or extending FactoryCore, the Tax System is managed by the
+                    <code>TaxManager</code> class. The key patterns below will help you integrate cleanly.
+                </p>
 
-                <pre><code>tax:
-  enabled: true
-  rate: 5.0            # Base tax rate (%)
-  level-multiplier: 2.5 # Extra rate per level (%)
-  interval-ticks: 144000 # Assessment frequency (in ticks)
-  due-days: 7          # Days before tax becomes overdue
-  late-fee-rate: 5.0   # Penalty percentage for late payments</code></pre>
+                <h3>Accessing TaxManager</h3>
+                <div class="code-wrap">
+                    <span class="code-lang-badge">Java</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre class="code-block">TaxManager taxManager = plugin.getTaxManager();</pre>
+                </div>
+
+                <h3>Useful API Methods</h3>
+                <div class="code-wrap">
+                    <span class="code-lang-badge">Java</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre class="code-block"><span class="cm">// Calculate what a factory's next tax WOULD be (includes research buffs)</span>
+double predictedTax = taxManager.calculateTax(factory);
+
+<span class="cm">// Get the total unpaid tax amount for a specific player</span>
+double totalDue = taxManager.getTotalTaxDue(player.getUniqueId());
+
+<span class="cm">// Allow a player to forcefully pay a specific factory's tax</span>
+boolean success = taxManager.payTax(player, factoryId);
+
+<span class="cm">// Fetch a specific factory's current tax record (null if none)</span>
+TaxManager.TaxRecord record = taxManager.getTaxRecord(factoryId);
+
+<span class="cm">// Check if a factory is overdue</span>
+boolean isOverdue = record != null &amp;&amp; record.overdue;</pre>
+                </div>
+
+                <h3>Developer Tips &amp; Best Practices</h3>
+                <div class="dev-tip">
+                    <div class="info-box-title">💡 Never Cache TaxRecord Objects</div>
+                    <div>
+                        Tax records are highly mutable. Always fetch the latest version directly from
+                        <code>TaxManager</code> using <code>getTaxRecord(String factoryId)</code> before
+                        reading <code>amountDue</code> or <code>overdue</code> states — a cached object
+                        may reflect stale data from a previous assessment cycle.
+                    </div>
+                </div>
+                <div class="dev-tip">
+                    <div class="info-box-title">💡 Economy Checks Are Handled Automatically</div>
+                    <div>
+                        When calling <code>.payTax()</code>, <code>TaxManager</code> automatically verifies the
+                        player's balance via Vault. You do not need to pre-check with
+                        <code>plugin.getEconomy().has()</code>; the method will safely return <code>false</code>
+                        if funds are insufficient.
+                    </div>
+                </div>
+                <div class="dev-tip">
+                    <div class="info-box-title">💡 PersistentDataContainer Integration</div>
+                    <div>
+                        <code>TaxCenterGUI</code> stores <code>tax_factory_id</code> inside each item's
+                        <code>ItemMeta</code> via PDC. If you need to intercept tax-item click events in your
+                        own Listener, access the PDC key <code>"tax_factory_id"</code> using the plugin's
+                        namespace key.
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tip</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Data Storage</td>
+                                <td>Tax data lives in <code>data/taxes.yml</code>, separate from factory data files.
+                                    This allows the tax ledger to be backed up or wiped independently without
+                                    affecting player property.</td>
+                            </tr>
+                            <tr>
+                                <td>Offline Assessments</td>
+                                <td>Taxes accrue on factories, not players. To implement activity-based immunity,
+                                    intercept or extend the <code>assessTaxes()</code> method.</td>
+                            </tr>
+                            <tr>
+                                <td>GUI Customization</td>
+                                <td>Listen for player click events and read the <code>tax_factory_id</code> PDC
+                                    key from the clicked item to identify which factory the action relates to.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
         </main>
     </div>
 
-    <footer class="page-footer">
-        <p>FactoryCore Plugin &copy; 2026. All rights reserved.</p>
-    </footer>
-
     <script>
-        // Simple scroll spy for navigation
-        const navLinks = document.querySelectorAll('.nav-list a');
-        const sections = document.querySelectorAll('section');
-        const scrollProgress = document.getElementById('scrollProgress');
-
-        function onScroll() {
-            let current = '';
-
-            // Highlight active link
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (pageYOffset >= (sectionTop - 200)) {
-                    current = section.getAttribute('id');
-                }
+        // Copy-to-clipboard for code blocks
+        function copyCode(btn) {
+            const pre = btn.closest('.code-wrap').querySelector('pre');
+            navigator.clipboard.writeText(pre.innerText).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
             });
-
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').includes(current)) {
-                    link.classList.add('active');
-                }
-            });
-
-            // Update progress bar
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            scrollProgress.style.width = scrolled + "%";
         }
 
-        window.addEventListener('scroll', onScroll);
+        const sections = document.querySelectorAll('.content-section');
+        const navLinks = document.querySelectorAll('.nav-list a');
 
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+        navLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             });
+        });
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.3
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
         });
     </script>
 </body>

@@ -123,11 +123,20 @@ public class MarketplaceManager {
             return null;
         }
 
-        // Check listing limit
-        int maxListings = plugin.getConfig().getInt("marketplace.max-listings-per-player", 10);
+        // Check listing limit from config + research buffs
+        int baseMaxListings = plugin.getConfig().getInt("marketplace.max-listings-per-player", 10);
+        int additionalListings = plugin.getResearchManager().getAdditionalListingLimit(seller.getUniqueId());
+        int maxListings = baseMaxListings + additionalListings;
+
         List<String> existing = playerListings.getOrDefault(seller.getUniqueId(), new ArrayList<>());
         if (existing.size() >= maxListings) {
             return null;
+        }
+
+        // Take items from player inventory
+        boolean hasItems = plugin.getResourceManager().takeResource(seller, resourceId, amount);
+        if (!hasItems) {
+            return null; // Player doesn't have enough items
         }
 
         // Create listing
@@ -303,11 +312,15 @@ public class MarketplaceManager {
      * Clean up expired listings
      */
     public void cleanupExpiredListings() {
-        long expirationTime = plugin.getConfig().getLong("marketplace.listing-expiration-hours", 168) * 60 * 60 * 1000;
+        long baseExpirationTime = plugin.getConfig().getLong("marketplace.listing-expiration-hours", 168) * 60 * 60
+                * 1000;
         long currentTime = System.currentTimeMillis();
 
         List<String> toRemove = new ArrayList<>();
         for (MarketListing listing : listings.values()) {
+            long additionalHours = plugin.getResearchManager().getAdditionalListingHours(listing.seller);
+            long expirationTime = baseExpirationTime + (additionalHours * 60 * 60 * 1000);
+
             if (currentTime - listing.listedTime > expirationTime) {
                 toRemove.add(listing.id);
 

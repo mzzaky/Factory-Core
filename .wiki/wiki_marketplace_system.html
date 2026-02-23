@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee System - FactoryCore Wiki</title>
+    <title>Marketplace System - FactoryCore Wiki</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
 
@@ -444,6 +444,9 @@
 
         .dev-tip .info-box-title {
             color: #61afef;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         /* ── Badge ── */
@@ -494,8 +497,8 @@
 
 <body>
     <div class="page-header">
-        <h1>Employee System</h1>
-        <p>Hire Staff, Automate Workflow, and Bring Your Factories to Life</p>
+        <h1>Marketplace System</h1>
+        <p>Trade Global Resources &amp; Build Your Economic Empire</p>
     </div>
 
     <div class="breadcrumb">
@@ -503,7 +506,7 @@
         <span class="breadcrumb-sep">&raquo;</span>
         <a href="#">Systems</a>
         <span class="breadcrumb-sep">&raquo;</span>
-        <span class="breadcrumb-current">Employee System</span>
+        <span class="breadcrumb-current">Marketplace</span>
     </div>
 
     <div class="content-container">
@@ -511,11 +514,12 @@
             <div class="nav-header">On This Page</div>
             <ul class="nav-list">
                 <li><a href="#overview" class="active">Overview</a></li>
-                <li><a href="#dynamic-behaviors">Dynamic Behaviors</a></li>
-                <li><a href="#hiring-assignment">Hiring &amp; Assignment</a></li>
-                <li><a href="#benefits">Impacts &amp; Benefits</a></li>
-                <li><a href="#config-reference">Config Reference</a></li>
-                <li><a href="#developer-tips">Developer API</a></li>
+                <li><a href="#selling">Selling Items</a></li>
+                <li><a href="#buying">Browsing &amp; Buying</a></li>
+                <li><a href="#mechanics">Marketplace Mechanics</a></li>
+                <li><a href="#gui">Hub &amp; GUI Overview</a></li>
+                <li><a href="#config">Config Reference</a></li>
+                <li><a href="#dev-tips">Developer Tips</a></li>
             </ul>
         </nav>
 
@@ -527,263 +531,335 @@
                     <h2>Overview</h2>
                 </div>
                 <p>
-                    The <strong>Employee System</strong> adds immersion and practical economic depth to your factory
-                    empire.
-                    Rather than operating as lifeless blocks, your factories can be staffed by highly dynamic structural
-                    NPCs.
-                    These NPC figures breathe life into the environment while physically representing your purchased
-                    structural upgrades.
+                    The <strong>Marketplace System</strong> in FactoryCore is a fully-featured, GUI-based system for the
+                    player-driven economy. It allows factory owners to globally buy and sell raw materials, components,
+                    and finished products seamlessly directly from the Hub.
                 </p>
                 <div class="info-box">
                     <div class="info-box-title">💡 Core Concept</div>
-                    <div>Employees aren't just decorative! Purchasing and assigning an employee to a factory provides a
-                        <strong>Production Time Reduction</strong> buff, helping your facility produce recipes
-                        significantly faster.
-                        However, you must manage their recurring salaries to avoid fiscal penalties!
+                    <div>By taking advantage of the Marketplace, players can specialize their factory production
+                        workflows, outsourcing base materials or flipping finished goods to others for a profit!
                     </div>
                 </div>
 
                 <div class="phases-grid">
                     <div class="phase-card">
-                        <span class="card-icon">👥</span>
-                        <h4>Vibrant Hubs</h4>
-                        <p>Employees roam your factories providing ambient voice lines, floating holos, idle animations,
-                            and particle effects.</p>
+                        <span class="card-icon">📈</span>
+                        <h4>Dynamic Pricing</h4>
+                        <p>Set custom prices relative to an item's suggested value. Adapt your trades to be cheap or
+                            premium based on market supply and demand.</p>
                     </div>
                     <div class="phase-card">
-                        <span class="card-icon">⚡</span>
-                        <h4>Production Buffs</h4>
-                        <p>Specialized employees offer scalable buffs, significantly reducing recipe production timers.
-                        </p>
+                        <span class="card-icon">🏛️</span>
+                        <h4>Marketplace Tax</h4>
+                        <p>All sales are subject to a configurable marketplace transaction fee, acting as an economy
+                            sink to keep the server balanced.</p>
                     </div>
                     <div class="phase-card">
-                        <span class="card-icon">💼</span>
-                        <h4>Economic Balance</h4>
-                        <p>Hiring costs money upfront, and retaining them deducts a periodic salary from your balance
-                            during assess cycles.</p>
+                        <span class="card-icon">🔍</span>
+                        <h4>Item Filtering</h4>
+                        <p>Easily browse all open listings or filter for a specific FactoryCore resource to find exactly
+                            what you need quickly.</p>
                     </div>
                     <div class="phase-card">
-                        <span class="card-icon">📍</span>
-                        <h4>Single Assignment</h4>
-                        <p>Each factory can house only <strong>ONE</strong> employee at a time, requiring you to
-                            carefully strategize your HR allocations.</p>
+                        <span class="card-icon">⏳</span>
+                        <h4>Auto-Expiration</h4>
+                        <p>Marketplace listings automatically expire after a set time if they go unsold, returning your
+                            items straight to your inventory.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- ════ DYNAMIC BEHAVIORS ════ -->
-            <section class="content-section" id="dynamic-behaviors">
+            <!-- ════ SELLING ITEMS ════ -->
+            <section class="content-section" id="selling">
                 <div class="section-title">
-                    <h2>Dynamic Behaviors</h2>
+                    <h2>Selling Items</h2>
                 </div>
                 <p>
-                    FactoryCore avoids heavy plugin dependencies (like Citizens) by implementing its own
-                    highly-optimized custom NPC engine.
-                    NPCs look and feel like real players interacting with their environment.
+                    Becoming a marketplace seller is simple! Head to the <strong>Sell Items</strong> section in the
+                    Marketplace GUI to create a new offering for the server.
                 </p>
 
-                <ul>
-                    <li><strong>Smart Head Tracking:</strong> NPCs actively track approaching players smoothly,
-                        establishing eye contact to make the factory feel responsive.</li>
-                    <li><strong>Idle Animations:</strong> When left alone, NPCs perform smooth, interpolated head
-                        rotations and gestures so they don't look like frozen statues.</li>
-                    <li><strong>Hovering Holograms:</strong> Utilizes invisible ArmorStands anchored to the NPC to
-                        provide clear, multi-line titles like "Foreman" or "Skilled Craftsman".</li>
-                    <li><strong>Particles &amp; Ambient Sounds:</strong> Periodic sensory elements (e.g. Villager
-                        murmurs and happy particles) ensure a lively atmosphere.</li>
-                    <li><strong>Self-Healing Engine:</strong> An automated <code>Respawn Task</code> constantly sweeps
-                        the realm. If an NPC entity goes missing due to WorldEdit overlaps, server reboots, or glitches,
-                        the plugin seamlessly re-summons them exact to their prior specs.</li>
-                </ul>
-
-            </section>
-
-            <!-- ════ HIRING & ASSIGNMENT ════ -->
-            <section class="content-section" id="hiring-assignment">
-                <div class="section-title">
-                    <h2>Hiring &amp; Assignment</h2>
-                </div>
-                <p>To populate your factory, you must purchase an employee contract from the <strong>Employee Shop
-                        GUI</strong> and physically deploy them.</p>
+                <h3>Creating a Listing</h3>
+                <ol>
+                    <li>Ensure you have the FactoryCore resources you wish to sell in your personal inventory.</li>
+                    <li>Click on the specific resource in your inventory while inside the <strong>Create
+                            Listing</strong> view.</li>
+                    <li>Pick an amount to sell.</li>
+                    <li>Choose your <strong>Price Strategy</strong>! You will be presented with a tier of prices
+                        mathematically generated from the resource's <em>suggested price</em>.</li>
+                </ol>
 
                 <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>GUI / Menu</th>
-                                <th>Functionality</th>
+                                <th>Pricing Strategy</th>
+                                <th>Multiplier</th>
+                                <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Employee Shop</strong></td>
-                                <td>Displays all available NPC types configured in <code>npc.yml</code>. You pay an
-                                    upfront cash price to secure their contract.</td>
+                                <td><span style="color: #ef4444;">Cheap</span></td>
+                                <td><span class="badge badge-pct">0.5x</span></td>
+                                <td>Sell for half the suggested market rate. Perfect for rapid liquidations!</td>
                             </tr>
                             <tr>
-                                <td><strong>My Employees</strong></td>
-                                <td>A storage roster of all purchased personnel not currently deployed. Since they are
-                                    under contract, they still charge a wage!</td>
+                                <td><span style="color: #eab308;">Below Market</span></td>
+                                <td><span class="badge badge-pct">0.75x</span></td>
+                                <td>A slightly discounted offering to undercut competitors.</td>
                             </tr>
                             <tr>
-                                <td><strong>Assignment Board</strong></td>
-                                <td>Select an open NPC from 'My Employees' and click a valid, vacant factory to
-                                    instantly teleport and deploy them there.</td>
+                                <td><span style="color: #22c55e;">Market Price</span></td>
+                                <td><span class="badge badge-pct">1.0x</span></td>
+                                <td>The standard suggested price configured in <code>resources.yml</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><span style="color: #f59e0b;">Above Market</span></td>
+                                <td><span class="badge badge-pct">1.25x</span></td>
+                                <td>A premium markup for steady, high-demand items.</td>
+                            </tr>
+                            <tr>
+                                <td><span style="color: #ef4444;">Expensive</span></td>
+                                <td><span class="badge badge-pct">1.5x</span></td>
+                                <td>Maximum markup strategy for monopoly-held resources.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="warn-box">
-                    <div class="info-box-title">⚠️ Firing employees</div>
+                    <div class="info-box-title">⚠️ Listing Limits Apply</div>
                     <div>
-                        Currently, <code>FactoryCore</code> enforces permanent contracts. While you cannot outright
-                        "delete" an employee from existence once bought, you can leave them unassigned in the roster.
-                        Note that salaries apply to ALL owned employees, deployed or reserved.
+                        Every player is capped by default to a maximum number of active listings (configurable in
+                        config.yml). Researching <strong>Business Expansion</strong> provides permanent buffs that
+                        increase your total permitted listing slots!
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════ BROWSING AND BUYING ════ -->
+            <section class="content-section" id="buying">
+                <div class="section-title">
+                    <h2>Browsing &amp; Buying</h2>
+                </div>
+                <p>
+                    Use the <strong>Browse All</strong> view to buy items listed by other players. The interface
+                    automatically updates in real-time as listings are posted, bought, or cancelled.
+                </p>
+
+                <h3>Finding Items</h3>
+                <ul>
+                    <li><strong>Page Navigation:</strong> Navigate through endless global listings using page arrows on
+                        the bottom row.</li>
+                    <li><strong>Resource Filter:</strong> Click the Hopper icon (Filter) at the bottom left to filter
+                        the view for highly specific resources. It will only cycle through resources that actually have
+                        active listings on the market.</li>
+                    <li><strong>Sorting:</strong> By default, listings are conveniently sorted by the newest additions
+                        descending. When using a resource filter, listings are sorted by price-per-unit, finding you the
+                        cheapest deals intuitively!</li>
+                </ul>
+
+                <h3>Making a Purchase</h3>
+                <p>Clicking on any external listing opens the <strong>Confirm Purchase</strong> GUI securely indicating
+                    the unit price, total price, and your current balance. The money is automatically deposited directly
+                    into the original seller's pending earnings vault upon success.</p>
+
+                <div class="info-box">
+                    <div class="info-box-title">📋 Direct Inventory Drops</div>
+                    <div>
+                        Upon a successful purchase transaction, purchased items bypass standard mail systems and are
+                        instantly injected into your physical inventory! Ensure you have sufficient open slots before
+                        placing massive bulk orders!
                     </div>
                 </div>
 
             </section>
 
-            <!-- ════ IMPACTS & BENEFITS ════ -->
-            <section class="content-section" id="benefits">
+            <!-- ════ MECHANICS ════ -->
+            <section class="content-section" id="mechanics">
                 <div class="section-title">
-                    <h2>Impacts &amp; Benefits</h2>
-                </div>
-                <p>Every employee class carries a distinct buff, specifically impacting standard production delays.</p>
-
-                <div class="code-wrap">
-                    <span class="code-lang-badge">Logic</span>
-                    <pre
-                        class="code-block"><span class="cs">New Production Time</span> = Base Recipe Time - (Base Recipe Time * Production Reduction %)</pre>
+                    <h2>Marketplace Mechanics</h2>
                 </div>
 
-                <p><strong>Example:</strong> If a recipe normally takes <span class="badge badge-flat">100
-                        seconds</span>, and you assign an employee with a <span class="badge badge-pct">15%</span> buff,
-                    the new cyclic duration for your factory drops to <strong>85 seconds</strong>.</p>
+                <h3>Pending Earnings & Sales Tax</h3>
+                <p>
+                    Sellers do not receive their money instantly! When an item is bought, the resulting funds are placed
+                    inside the Marketplace's <strong>Pending Earnings</strong> vault. You must manually claim this vault
+                    by hitting the <strong>Collect Earnings</strong> button from the main Marketplace GUI.
+                    <br><br>
+                    Note that a flat percentage sales tax (default <strong>5.0%</strong>) is deducted strictly from the
+                    <em>seller's</em> earned total to act as an economic sink.
+                </p>
+
+                <h3>Expiration Timers</h3>
+                <p>
+                    All listings are subjected to a ticking expiration clock from the moment they are placed. If a
+                    listing is untouched by buyers after the timeout duration passes (default <strong>168 hours / 7
+                        days</strong>), it expires and the items are promptly returned to the seller. Similar to max
+                    active listings, investing in <strong>Business Expansion</strong> research can extend this timeout
+                    drastically for premium sellers!
+                </p>
+
+            </section>
+
+            <!-- ════ GUI OVERVIEW ════ -->
+            <section class="content-section" id="gui">
+                <div class="section-title">
+                    <h2>Hub &amp; GUI Overview</h2>
+                </div>
+
+                <p>There are no direct player text-commands mandatory to leverage the marketplace. The system is
+                    comprehensively integrated into the FactoryCore ecosystem.</p>
+
+                <h3>Accessing the Marketplace</h3>
+                <ul>
+                    <li>Open standard Hub via commands (e.g. <code>/fc hub</code>).</li>
+                    <li>Click on the Marketplace icon (default slot 29 in the Hub) to enter the system.</li>
+                </ul>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>GUI Nav Button</th>
+                                <th>Function</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Browse All</strong> (Compass)</td>
+                                <td>View to scroll through paginated global community listings. Includes filters.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>My Listings</strong> (Book)</td>
+                                <td>An exclusive view of your own active listings. Clicking these will
+                                    <strong>cancel</strong> them and refund the resources back to you securely.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sell Items</strong> (Gold Ingot)</td>
+                                <td>Opens the listing creation handler reading purely from your personal inventory.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Collect Earnings</strong> (Gold Block)</td>
+                                <td>Only visible if you have pending earnings. One-click deposit for all successful
+                                    unredeemed sales.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
             </section>
 
             <!-- ════ CONFIG REFERENCE ════ -->
-            <section class="content-section" id="config-reference">
+            <section class="content-section" id="config">
                 <div class="section-title">
-                    <h2>Configuration (npc.yml)</h2>
+                    <h2>Config Reference</h2>
                 </div>
                 <p>
-                    Customize employee appearances, lore, buffs, costs, and the engine parameters inside
-                    <code>npc.yml</code>.
+                    Marketplace settings are primarily managed inside the <code>config.yml</code> file under the
+                    <code>marketplace:</code> node! Keep your server's economy thriving by adapting these parameters!
                 </p>
 
                 <div class="code-wrap">
                     <span class="code-lang-badge">YAML</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre class="code-block"><span class="ci">shop:</span>
-  <span class="ci">npcs:</span>
-    <span class="ck">skilled_craftsman:</span>
-      <span class="ck">display-name:</span> <span class="cn">"§fSkilled Craftsman"</span>
-      <span class="ck">shop-icon:</span> <span class="cn">"VILLAGER_SPAWN_EGG"</span>
-      <span class="ck">buy-price:</span> <span class="cn">5000.0</span>
-      <span class="ck">salary:</span> <span class="cn">50.0</span>
-      <span class="ck">production-time-reduction:</span> <span class="cn">15.0</span>
-      <span class="ck">template:</span> <span class="cn">"factory_employee"</span>
-
-<span class="ci">templates:</span>
-  <span class="ck">factory_employee:</span>
-    <span class="ck">name:</span> <span class="cn">"§bTechnician"</span>
-    <span class="ck">profession:</span> <span class="cn">"LIBRARIAN"</span>
-    <span class="ck">type:</span> <span class="cn">"SNOW"</span>
-    <span class="ci">hologram:</span>
-      <span class="ck">enabled:</span> <span class="cv">true</span>
-      <span class="ck">lines:</span>
-        <span class="cm">- "&amp;bTechnician"</span></pre>
+                    <pre
+                        class="code-block"><span class="cs">marketplace:</span>
+  <span class="ck">tax-rate:</span> <span class="cn">5.0</span>                         <span class="cm"># The percentage of gross taken from the seller on completion</span>
+  <span class="ck">max-listings-per-player:</span> <span class="cn">10</span>           <span class="cm"># Default cap limit for active listings per user</span>
+  <span class="ck">listing-expiration-hours:</span> <span class="cn">168</span>         <span class="cm"># Duration in hours before listings naturally timeout (168 = 1 week)</span></pre>
                 </div>
             </section>
 
             <!-- ════ DEVELOPER TIPS ════ -->
-            <section class="content-section" id="developer-tips">
+            <section class="content-section" id="dev-tips">
                 <div class="section-title">
-                    <h2>Developer Tips: The NPC Engine</h2>
+                    <h2>Developer Tips</h2>
                 </div>
-                <p>Developing add-ons? Here's an inside look at how FactoryCore's NPC engine optimizes behavior loops.
-                </p>
 
-                <div class="phases-grid">
-                    <div class="phase-card">
-                        <span class="card-icon">🏎️</span>
-                        <h4>Tick Optimization</h4>
-                        <p>Instead of relying on NMS packets, we spawn actual <code>Villager</code> entities and cast a
-                            <code>runTaskTimer</code> using an <code>AtomicLong</code> to calculate localized behavioral
-                            frame rates safely.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">📐</span>
-                        <h4>Trigonometric Alignment</h4>
-                        <p>A common bug when coding <code>lookAt(...)</code> logic is NPCs staring into space.
-                            FactoryCore avoids this by measuring the Delta from the NPC's <strong>eye height (1.62
-                                Y)</strong> specifically to the player's <strong>chest height (1.1 Y)</strong>.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">🪑</span>
-                        <h4>Interpolation</h4>
-                        <p>Idle loops don't just snap. An idle variable maps a <code>targetPitchOffset</code>, divided
-                            into micro-steps across ticks, rendering a beautifully smooth visual gaze shift.</p>
+                <p>Interact programmatically with the Marketplace System through the
+                    <code>plugin.getMarketplaceManager()</code> hook!</p>
+
+                <div class="dev-tip">
+                    <div class="info-box-title">🔧 Fetching & Filtering Listings</div>
+                    <div>
+                        Want to generate external webboards or discord bots indicating current prices on the server? You
+                        can access the unified listings pipeline easily:
+                        <br><br>
+                        <code>List&lt;MarketListing&gt; globalListings = plugin.getMarketplaceManager().getAllListings();</code>
+                        <br>
+                        <code>List&lt;MarketListing&gt; copperListings = plugin.getMarketplaceManager().getListingsByResource("copper_ingot");</code>
+                        <br><br>
+                        The <code>MarketListing</code> object securely holds important metrics including
+                        <code>getTotalPrice()</code>, <code>getListedTime()</code>, and UUID metadata for the seller!
                     </div>
                 </div>
 
                 <div class="dev-tip">
-                    <div class="info-box-title">👨‍💻 Code Snippet: Fetching Assigned personnel</div>
-                    <div style="margin-top: 10px; color: #d1d5db;">
-                        You can safely retrieve an NPC's buff from external plugins via the Factory Manager context.
-                    </div>
-                    <div class="code-wrap">
-                        <span class="code-lang-badge">Java</span>
-                        <pre class="code-block"><span class="cm">// Given an active factory UUID</span>
-FactoryNPC employee = FactoryCore.getInstance().getNPCManager().getAssignedNPCForFactory(factory.getId());
-
-<span class="ck">if</span> (employee != <span class="cv">null</span>) {
-    <span class="ck">double</span> speedBuff = employee.getProductionTimeReduction();
-    System.out.println(<span class="cn">"This factory operates "</span> + speedBuff + <span class="cn">"% faster!"</span>);
-}</pre>
+                    <div class="info-box-title">🔧 Custom Suggestion Multipliers</div>
+                    <div>
+                        By default, the MarketplaceGUI provides a hardcoded array of multiplier configurations (0.5x,
+                        0.75x, 1.0x, 1.25x, 1.5x) calculating against the item's baseline <code>getSellPrice()</code>.
+                        If your server features hyper-inflation, these multipliers can be tweaked directly within
+                        <code>MarketplaceGUI.java</code>.
                     </div>
                 </div>
 
             </section>
+
         </main>
     </div>
 
+    <!-- ── Scripts ── -->
     <script>
         // Smooth scrolling for sidebar links
         document.querySelectorAll('.nav-list a').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
 
-                targetElement.scrollIntoView({
-                    behavior: 'smooth'
-                });
+                if (targetSection) {
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
 
-                // Update active state
-                document.querySelectorAll('.nav-list a').forEach(a => a.classList.remove('active'));
-                this.classList.add('active');
+                    // Update active state
+                    document.querySelectorAll('.nav-list a').forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                }
             });
         });
 
-        // Copy Code Function
-        function copyCode(btn) {
-            const codeBlock = btn.nextElementSibling;
-            const textToCopy = codeBlock.innerText;
+        // Copy Code Functionality
+        function copyCode(button) {
+            const block = button.nextElementSibling;
+            let codeText = '';
 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = btn.innerText;
-                btn.innerText = 'Copied!';
-                btn.classList.add('copied');
+            // Extract text handling the spans cleanly
+            for (let node of block.childNodes) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    codeText += node.textContent;
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    codeText += node.innerText;
+                }
+            }
+
+            navigator.clipboard.writeText(codeText.trim()).then(() => {
+                const originalText = button.innerText;
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
 
                 setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.classList.remove('copied');
+                    button.innerText = originalText;
+                    button.classList.remove('copied');
                 }, 2000);
             }).catch(err => {
-                console.error('Failed to copy text: ', err);
+                console.error('Failed to copy: ', err);
+                button.innerText = 'Failed';
             });
         }
     </script>

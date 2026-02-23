@@ -54,7 +54,6 @@ shop:
 
   # List of NPCs sold in the shop (key = npc-type-id)
   npcs:
-
     apprentice_worker:
       display-name: "§7§lApprentice Worker"
       description:
@@ -130,41 +129,47 @@ shop:
       template: "advanced_factory_employee"
       shop-icon: "DIAMOND"
 
-# ─────────────────────────────────────────────
-#  DEFAULT NPC SETTINGS
-# ─────────────────────────────────────────────
-default:
-  name: "§6§lFactory Employee"
-  profession: TOOLSMITH
-  type: PLAINS
-  invulnerable: true
-  ai-disabled: true
-  glow: true
-  custom-name-visible: true
+    logistics_manager:
+      display-name: "§9§lLogistics Manager"
+      description:
+        - "§7Optimizes item transport"
+        - "§7and warehouse operations."
+        - ""
+        - "§eProduction Buff:"
+        - "§a⚡ Production Time: §f-10%"
+      buy-price: 1000.0
+      salary: 80.0
+      production-time-reduction: 10.0
+      template: "logistics_employee"
+      shop-icon: "MINECART"
 
-  # Particle effect emitted by the NPC
-  particle:
-    type: "VILLAGER_HAPPY"       # Bukkit particle name (e.g. VILLAGER_HAPPY, FLAME, HEART)
-    count: 3
-    offset-x: 0.3
-    offset-y: 0.5
-    offset-z: 0.3
-    speed: 0.05
+    quality_inspector:
+      display-name: "§a§lQuality Inspector"
+      description:
+        - "§7Ensures high quality output"
+        - "§7by monitoring processes."
+        - ""
+        - "§eProduction Buff:"
+        - "§a⚡ Production Time: §f-12%"
+      buy-price: 1200.0
+      salary: 100.0
+      production-time-reduction: 12.0
+      template: "quality_inspector"
+      shop-icon: "CLOCK"
 
-  # Hologram lines appearing above the NPC (from bottom to top)
-  hologram:
-    enabled: true
-    lines:
-      - "§7[Click to open storage]"
-      - "§6§lFactory Employee"
-    line-spacing: 0.3           # Spacing between hologram lines (blocks)
-    height-offset: 2.3          # Hologram height above the NPC
-
-  # Idle animation: range of head angles moving randomly
-  idle-animation:
-    yaw-range: 30.0             # ±30 degrees from initial yaw
-    pitch-range: 15.0           # ±15 degrees from initial pitch
-    smooth-steps: 5             # Number of interpolation steps (smoother)
+    assembly_expert:
+      display-name: "§6§lAssembly Expert"
+      description:
+        - "§7Speeds up complex assembly"
+        - "§7lines with precision."
+        - ""
+        - "§eProduction Buff:"
+        - "§a⚡ Production Time: §f-30%"
+      buy-price: 4500.0
+      salary: 350.0
+      production-time-reduction: 30.0
+      template: "assembly_employee"
+      shop-icon: "ANVIL"
 
 # ─────────────────────────────────────────────
 #  NPC TEMPLATES
@@ -278,3 +283,122 @@ templates:
       yaw-range: 40.0
       pitch-range: 18.0
       smooth-steps: 7
+
+  logistics_employee:
+    name: "§9§lLogistics Manager"
+    profession: CARTOGRAPHER
+    type: TAIGA
+    invulnerable: true
+    ai-disabled: true
+    glow: true
+    custom-name-visible: true
+    particle:
+      type: "CLOUD"
+      count: 2
+      offset-x: 0.3
+      offset-y: 0.2
+      offset-z: 0.3
+      speed: 0.02
+    hologram:
+      enabled: true
+      lines:
+        - "§7[Click to open storage]"
+        - "§9§lLogistics Manager"
+      line-spacing: 0.3
+      height-offset: 2.3
+    idle-animation:
+      yaw-range: 45.0
+      pitch-range: 10.0
+      smooth-steps: 5
+
+  quality_inspector:
+    name: "§a§lQuality Inspector"
+    profession: CLERIC
+    type: SAVANNA
+    invulnerable: true
+    ai-disabled: true
+    glow: true
+    custom-name-visible: true
+    particle:
+      type: "VILLAGER_HAPPY"
+      count: 3
+      offset-x: 0.2
+      offset-y: 0.5
+      offset-z: 0.2
+      speed: 0.05
+    hologram:
+      enabled: true
+      lines:
+        - "§7[Click to open storage]"
+        - "§a§lQuality Inspector"
+      line-spacing: 0.3
+      height-offset: 2.3
+    idle-animation:
+      yaw-range: 20.0
+      pitch-range: 20.0
+      smooth-steps: 4
+
+  assembly_employee:
+    name: "§6§lAssembly Expert"
+    profession: MASON
+    type: SWAMP
+    invulnerable: true
+    ai-disabled: true
+    glow: true
+    custom-name-visible: true
+    particle:
+      type: "SPELL_WITCH"
+      count: 2
+      offset-x: 0.3
+      offset-y: 0.4
+      offset-z: 0.3
+      speed: 0.03
+    hologram:
+      enabled: true
+      lines:
+        - "§7[Click to open storage]"
+        - "§6§lAssembly Expert"
+      line-spacing: 0.3
+      height-offset: 2.3
+    idle-animation:
+      yaw-range: 35.0
+      pitch-range: 15.0
+      smooth-steps: 6
+
+
+
+# ─────────────────────────────────────────────
+#  DEFAULT NPC SETTINGS
+# ─────────────────────────────────────────────
+default:
+  name: "§6§lFactory Employee"
+  profession: TOOLSMITH
+  type: PLAINS
+  invulnerable: true
+  ai-disabled: true
+  glow: true
+  custom-name-visible: true
+
+  # Particle effect emitted by the NPC
+  particle:
+    type: "VILLAGER_HAPPY"       # Bukkit particle name (e.g. VILLAGER_HAPPY, FLAME, HEART)
+    count: 3
+    offset-x: 0.3
+    offset-y: 0.5
+    offset-z: 0.3
+    speed: 0.05
+
+  # Hologram lines appearing above the NPC (from bottom to top)
+  hologram:
+    enabled: true
+    lines:
+      - "§7[Click to open storage]"
+      - "§6§lFactory Employee"
+    line-spacing: 0.3           # Spacing between hologram lines (blocks)
+    height-offset: 2.3          # Hologram height above the NPC
+
+  # Idle animation: range of head angles moving randomly
+  idle-animation:
+    yaw-range: 30.0             # ±30 degrees from initial yaw
+    pitch-range: 15.0           # ±15 degrees from initial pitch
+    smooth-steps: 5             # Number of interpolation steps (smoother)

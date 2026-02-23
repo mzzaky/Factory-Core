@@ -14,6 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import com.aithor.factorycore.managers.TaxManager;
 
 /**
  * Invoice Center GUI - Centralized invoice management for all factories
@@ -37,11 +38,27 @@ public class InvoiceCenterGUI {
 
     public void openInvoiceCenterMenu(int page) {
         this.currentPage = page;
-        
+
         Inventory inv = Bukkit.createInventory(null, 54, "§e§lInvoice Center §8- §ePage " + (page + 1));
 
         // Get all invoices for player
-        List<Invoice> allInvoices = plugin.getInvoiceManager().getInvoicesByOwner(player.getUniqueId());
+        List<Invoice> allInvoices = new ArrayList<>(
+                plugin.getInvoiceManager().getInvoicesByOwner(player.getUniqueId()));
+
+        // Add TaxManager records
+        if (plugin.getTaxManager() != null) {
+            for (TaxManager.TaxRecord record : plugin.getTaxManager().getPlayerTaxRecords(player.getUniqueId())) {
+                if (record.amountDue > 0) {
+                    Invoice taxInvoice = new Invoice(
+                            "TM_" + record.factoryId,
+                            player.getUniqueId(),
+                            InvoiceType.TAX,
+                            record.amountDue,
+                            record.dueDate);
+                    allInvoices.add(taxInvoice);
+                }
+            }
+        }
 
         // Apply filter
         List<Invoice> filteredInvoices;
@@ -81,10 +98,13 @@ public class InvoiceCenterGUI {
         }
 
         // Fill borders
-        Material borderMat = Material.matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
+        Material borderMat = Material
+                .matchMaterial(plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
         ItemStack border = createItem(borderMat != null ? borderMat : Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 9; i++) inv.setItem(i, border);
-        for (int i = 45; i < 54; i++) inv.setItem(i, border);
+        for (int i = 0; i < 9; i++)
+            inv.setItem(i, border);
+        for (int i = 45; i < 54; i++)
+            inv.setItem(i, border);
 
         // Header info and statistics
         double totalDue = allInvoices.stream().mapToDouble(Invoice::getAmount).sum();
@@ -99,9 +119,10 @@ public class InvoiceCenterGUI {
                         "§ePending Invoices: §6" + allInvoices.size(),
                         "§eTotal Due: §6$" + String.format("%.2f", totalDue),
                         "",
-                        overdueCount > 0 ?
-                                "§c§lOverdue: " + overdueCount + " invoices ($" + String.format("%.2f", overdueDue) + ")" :
-                                "§a✓ No overdue invoices",
+                        overdueCount > 0
+                                ? "§c§lOverdue: " + overdueCount + " invoices ($" + String.format("%.2f", overdueDue)
+                                        + ")"
+                                : "§a✓ No overdue invoices",
                         "",
                         "§7Filter: §e" + getFilterDisplayName(),
                         "§7Sort: §e" + getSortDisplayName())));
@@ -121,9 +142,8 @@ public class InvoiceCenterGUI {
         if (filteredInvoices.isEmpty()) {
             inv.setItem(22, createItem(Material.EMERALD_BLOCK, "§a§lNo Invoices!",
                     Arrays.asList(
-                            filterType.equals("all") ?
-                                    "§7You have no pending invoices!" :
-                                    "§7No invoices match the current filter",
+                            filterType.equals("all") ? "§7You have no pending invoices!"
+                                    : "§7No invoices match the current filter",
                             "",
                             "§aGreat job keeping up with payments!")));
         }
@@ -184,7 +204,7 @@ public class InvoiceCenterGUI {
     private ItemStack createInvoiceItem(Invoice invoice) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         boolean isOverdue = invoice.isOverdue();
-        
+
         Material material;
         if (isOverdue) {
             material = Material.RED_STAINED_GLASS_PANE;
@@ -197,7 +217,7 @@ public class InvoiceCenterGUI {
         lore.add("§7Amount: §6$" + String.format("%.2f", invoice.getAmount()));
         lore.add("");
         lore.add("§7Due Date: §e" + sdf.format(new Date(invoice.getDueDate())));
-        
+
         // Time remaining or overdue
         long timeRemaining = invoice.getDueDate() - System.currentTimeMillis();
         if (timeRemaining > 0) {
@@ -208,26 +228,45 @@ public class InvoiceCenterGUI {
             long overdueDays = Math.abs(timeRemaining) / (24 * 60 * 60 * 1000);
             lore.add("§c§lOVERDUE by " + overdueDays + " days!");
         }
-        
+
         lore.add("");
-        
+
         // Get associated factory info
-        Factory factory = plugin.getFactoryManager().getFactory(invoice.getFactoryId().toString());
+        String invoiceId = invoice.getId();
+        Factory factory = null;
+        if (invoiceId.startsWith("TM_")) {
+            factory = plugin.getFactoryManager().getFactory(invoiceId.substring(3));
+        } else if (invoiceId.contains("_")) {
+            String[] parts = invoiceId.split("_");
+            if (parts.length >= 3) {
+                String factoryIdStr = String.join("_", Arrays.copyOfRange(parts, 1, parts.length - 1));
+                factory = plugin.getFactoryManager().getFactory(factoryIdStr);
+            }
+        }
+
+        if (factory == null) {
+            factory = plugin.getFactoryManager().getFactory(invoice.getFactoryId().toString());
+        }
+
         if (factory != null) {
             lore.add("§7Factory: §e" + factory.getId());
+        } else {
+            lore.add("§7Factory: §eUnknown");
         }
-        
+
         lore.add("");
-        
+
         boolean canPay = plugin.getEconomy().has(player, invoice.getAmount());
         if (canPay) {
             lore.add("§a§lClick to pay!");
         } else {
             lore.add("§c§lInsufficient funds!");
-            lore.add("§7Need: §6$" + String.format("%.2f", invoice.getAmount() - plugin.getEconomy().getBalance(player)) + " more");
+            lore.add("§7Need: §6$" + String.format("%.2f", invoice.getAmount() - plugin.getEconomy().getBalance(player))
+                    + " more");
         }
 
-        String title = (isOverdue ? "§c§l⚠ " : "") + invoice.getType().getDisplay() + " §7- §6$" + String.format("%.2f", invoice.getAmount());
+        String title = (isOverdue ? "§c§l⚠ " : "") + invoice.getType().getDisplay() + " §7- §6$"
+                + String.format("%.2f", invoice.getAmount());
         ItemStack item = createItem(material, title, lore);
 
         // Store invoice ID for click handling
@@ -285,7 +324,8 @@ public class InvoiceCenterGUI {
         for (InvoiceType type : InvoiceType.values()) {
             List<Invoice> typeInvoices = byType.getOrDefault(type, new ArrayList<>());
             double typeTotal = typeInvoices.stream().mapToDouble(Invoice::getAmount).sum();
-            lore.add(type.getDisplay() + "§7: §e" + typeInvoices.size() + " §7($" + String.format("%.2f", typeTotal) + ")");
+            lore.add(type.getDisplay() + "§7: §e" + typeInvoices.size() + " §7($" + String.format("%.2f", typeTotal)
+                    + ")");
         }
 
         return createItem(Material.BOOK, "§e§lSummary", lore);
@@ -293,19 +333,27 @@ public class InvoiceCenterGUI {
 
     private String getFilterDisplayName() {
         switch (filterType) {
-            case "tax": return "Tax Only";
-            case "salary": return "Salary Only";
-            case "overdue": return "Overdue Only";
-            default: return "All Invoices";
+            case "tax":
+                return "Tax Only";
+            case "salary":
+                return "Salary Only";
+            case "overdue":
+                return "Overdue Only";
+            default:
+                return "All Invoices";
         }
     }
 
     private String getSortDisplayName() {
         switch (sortBy) {
-            case "amount": return "Amount (Highest)";
-            case "amount_asc": return "Amount (Lowest)";
-            case "type": return "Type";
-            default: return "Due Date (Earliest)";
+            case "amount":
+                return "Amount (Highest)";
+            case "amount_asc":
+                return "Amount (Lowest)";
+            case "type":
+                return "Type";
+            default:
+                return "Due Date (Earliest)";
         }
     }
 
@@ -361,8 +409,10 @@ public class InvoiceCenterGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            if (name != null) meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
+            if (name != null)
+                meta.setDisplayName(name);
+            if (lore != null)
+                meta.setLore(lore);
             item.setItemMeta(meta);
         }
 

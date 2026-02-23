@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research System - FactoryCore Wiki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #0a0c10;
+            color: #e4e6ea;
+            min-height: 100vh;
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #10b981;
+        }
+
+        .page-header p {
+            color: #9ca3af;
+            font-size: 1.15rem;
+            margin-top: 10px;
+        }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #10b981;
+        }
+
+        .breadcrumb-sep {
+            color: #4b5563;
+        }
+
+        .breadcrumb-current {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        /* ── Layout ── */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* ── Side Nav ── */
+        .side-nav {
+            position: sticky;
+            top: 20px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .nav-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.1);
+            font-weight: 700;
+            color: #e4e6ea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 15px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-list a:hover {
+            background: rgba(52, 211, 153, 0.05);
+            color: #d1fae5;
+        }
+
+        .nav-list a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(4, 120, 87, 0.05) 100%);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            font-weight: 600;
+        }
+
+        /* ── Main Content ── */
+        .main-content {
+            background: #0d1117;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .content-section {
+            padding: 40px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.08);
+            scroll-margin-top: 20px;
+        }
+
+        .content-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            margin-bottom: 25px;
+        }
+
+        .section-title h2 {
+            color: #10b981;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        /* ── Typography ── */
+        h3 {
+            color: #34d399;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #d1d5db;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            color: #d1d5db;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        strong {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 3px 6px;
+            border-radius: 5px;
+            color: #34d399;
+            font-size: 13px;
+        }
+
+        /* ── Info / Warning Boxes ── */
+        .info-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .info-box-title {
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .warn-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.03) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid #fbbf24;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.05), inset 0 0 12px rgba(245, 158, 11, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warn-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.1), transparent 50%);
+            pointer-events: none;
+        }
+
+        .warn-box .info-box-title {
+            color: #fbbf24;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .warn-box div:last-child {
+            color: #e5e7eb;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .phases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .phase-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(52, 211, 153, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .phase-card:hover {
+            border-color: rgba(52, 211, 153, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .phase-card .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .phase-card h4 {
+            color: #10b981;
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .phase-card p {
+            color: #9ca3af;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* ── Table ── */
+        .table-wrapper {
+            margin: 25px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .data-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #34d399;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #c9cdd4;
+            font-size: 14px;
+        }
+
+        .data-table td:first-child {
+            font-weight: 600;
+            color: #e4e6ea;
+        }
+
+        /* ── Code Block ── */
+        .code-wrap {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #090d13;
+            border: 1px solid rgba(52, 211, 153, 0.18);
+            border-radius: 10px;
+            padding: 22px 24px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.75;
+            color: #abb2bf;
+        }
+
+        .code-block .cm {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        /* comment */
+        .code-block .ck {
+            color: #e06c75;
+        }
+
+        /* key */
+        .code-block .cv {
+            color: #98c379;
+        }
+
+        /* string value */
+        .code-block .cn {
+            color: #d19a66;
+        }
+
+        /* number value */
+        .code-block .cs {
+            color: #56b6c2;
+        }
+
+        /* section heading */
+        .code-block .ci {
+            color: #61afef;
+        }
+
+        /* inline tag / §code */
+
+        .code-lang-badge {
+            position: absolute;
+            top: 10px;
+            right: 48px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(52, 211, 153, 0.18);
+        }
+
+        .copy-btn.copied {
+            color: #10b981;
+            border-color: #10b981;
+        }
+
+        /* ── Dev Tip Box ── */
+        .dev-tip {
+            background: linear-gradient(135deg, rgba(97, 175, 239, 0.07) 0%, rgba(56, 139, 253, 0.03) 100%);
+            border: 1px solid rgba(97, 175, 239, 0.25);
+            border-left: 4px solid #61afef;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        .dev-tip .info-box-title {
+            color: #61afef;
+        }
+
+        /* ── Research Summary Table ── */
+        .data-table td code {
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .badge-pct {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .badge-flat {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+
+            .side-nav {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .content-section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-header">
+        <h1>Research System</h1>
+        <p>Unlock Permanent Technologies to Optimize Your Factory Empire</p>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="wiki_index.html">Wiki Home</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <a href="#">Systems</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <span class="breadcrumb-current">Research System</span>
+    </div>
+
+    <div class="content-container">
+        <nav class="side-nav">
+            <div class="nav-header">On This Page</div>
+            <ul class="nav-list">
+                <li><a href="#overview" class="active">Overview</a></li>
+                <li><a href="#mechanics">How It Works</a></li>
+                <li><a href="#technologies">Available Technologies</a></li>
+                <li><a href="#data">Configuration & Data</a></li>
+                <li><a href="#config-reference">Config Reference</a></li>
+                <li><a href="#developer-tips">Developer Tips</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <!-- ════ OVERVIEW ════ -->
+            <section class="content-section" id="overview">
+                <div class="section-title">
+                    <h2>Overview</h2>
+                </div>
+                <p>
+                    The <strong>Research System</strong> allows players to invest their hard-earned capital into deep,
+                    permanent technological upgrades. Rather than applying to a single factory, these researches grant
+                    passive buffs that affect you globally as an owner, directly improving your margins and operational
+                    efficiency across all your factories.
+                </p>
+                <div class="info-box">
+                    <div class="info-box-title">💡 Global Impact</div>
+                    <div>Once a research is completed, its buffs automatically apply to every operation and factory you
+                        control moving forward. It directly integrates with production time formulas, salary modifiers,
+                        and capacity limits.</div>
+                </div>
+            </section>
+
+            <!-- ════ HOW IT WORKS ════ -->
+            <section class="content-section" id="mechanics">
+                <div class="section-title">
+                    <h2>How It Works</h2>
+                </div>
+                <p>Investing in Research requires two essential elements: Capital (Money) and Time.</p>
+                <ul>
+                    <li><strong>Cost Investment:</strong> Starting a new tier of technology requires a large sum of
+                        money to be deducted upfront via Vault integration.</li>
+                    <li><strong>Time Process:</strong> Researches are not instantaneous. They take real-world time to
+                        compute and discover. Once initiated, a background timer calculates completion, and players can
+                        log off while the progress safely tracks asynchronously.</li>
+                    <li><strong>Level Progression:</strong> Researches contain multiple max levels (typically 3 to 5).
+                        Every time you level up a technology, its benefits accumulate and stack sequentially. However,
+                        the exact upgrade time and cost will heavily scale up.</li>
+                </ul>
+                <div class="warn-box">
+                    <div class="info-box-title">⚠️ One at a Time</div>
+                    <div>Each unique technology can only be researched one level at a time. Trying to initiate an
+                        already processing research will yield an ongoing progress message.</div>
+                </div>
+            </section>
+
+            <!-- ════ TECHNOLOGIES ════ -->
+            <section class="content-section" id="technologies">
+                <div class="section-title">
+                    <h2>Available Technologies</h2>
+                </div>
+                <p>Currently, there are 6 interconnected research fields that focus on optimizing very specific aspects
+                    of your industrial gameplay experience:</p>
+
+                <div class="phases-grid">
+                    <div class="phase-card">
+                        <span class="card-icon">💰</span>
+                        <h4>Fiscal Optimization</h4>
+                        <p>Advanced tax strategies. Reduces your overall tax burden during collection periods. Extends
+                            sequentially up to Level 5. Buff is heavily percentage-based.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🤖</span>
+                        <h4>AI Workforce Integration</h4>
+                        <p>Integrates advanced automation paradigms to reduce daily employee wage expenses globally
+                            without firing anyone.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🏗️</span>
+                        <h4>Nano-Construction Framework</h4>
+                        <p>Speeds up your growth scaling. Vastly reduces the time it requires to physically upgrade
+                            existing owned factories.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">⚙️</span>
+                        <h4>Advanced Machine Technology</h4>
+                        <p>Enhances machine operation RPM and heating modules. Specifically designed to slash the
+                            fundamental base production time for item recipes.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">📉</span>
+                        <h4>Operational Cost Efficiency</h4>
+                        <p>Streamlines the manufacturing methodology to ensure the flat monetary cost required to
+                            execute recipes is vastly sliced down.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">⭐</span>
+                        <h4>Industrial Mastery</h4>
+                        <p>Reserved for the elite. Expand your empire by raising your maximum factory property limit by
+                            an absolute flat +1 for each level secured.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">💼</span>
+                        <h4>Business Expansion</h4>
+                        <p>Expand your business reach, increasing the maximum number of items you can sell in the
+                            marketplace by an absolute flat +1 for each level.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🕒</span>
+                        <h4>Market Stability Regulation</h4>
+                        <p>Keep your products listed on the marketplace longer, providing more time for buyers to
+                            purchase your items by an absolute flat +8h for each level.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════ CONFIGURATION & DATA ════ -->
+            <section class="content-section" id="data">
+                <div class="section-title">
+                    <h2>Configuration & Data</h2>
+                </div>
+                <p>System configurations and player progress trackers use standard YML configuration syntax.</p>
+
+                <h3>Configuration (research.yml)</h3>
+                <p>Located in the base plugin folder, this configuration securely handles maximum levels, costs, buff
+                    percentages, and timers for every tier of the research branches.</p>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Definition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>max-level</code></td>
+                                <td>The hard limit cap integer for how many times players can invest into the branch.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>duration</code></td>
+                                <td>The actual raw time map for research processing calculations explicitly listed in
+                                    <strong>minutes</strong> per level.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>cost</code></td>
+                                <td>A hierarchical dictionary establishing Vault money withdrawal amounts per level
+                                    attempt.</td>
+                            </tr>
+                            <tr>
+                                <td><code>buff-type</code></td>
+                                <td>Indicates if the bonus is applied via raw <code>percentage</code> multiplier
+                                    reductions or as a permanent <code>flat</code> addition.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Player Save Data</h3>
+                <p>Actual progression metrics and dynamic Epoch timestamps for async research duration timers are safely
+                    encrypted into the secondary file <code>data/research.yml</code>. Level completions and pending
+                    targeted upgrades are stored per user UUID.</p>
+            </section>
+            <!-- ════ CONFIG REFERENCE ════ -->
+            <section class="content-section" id="config-reference">
+                <div class="section-title">
+                    <h2>Config Reference</h2>
+                </div>
+                <p>
+                    The table below summarises every research branch from <code>research.yml</code> — including its
+                    unlock cost range, duration range, buff rate per level, and buff type — so you can tune the
+                    balance at a glance without opening the file.
+                </p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Research</th>
+                                <th>Max Lvl</th>
+                                <th>Cost Range</th>
+                                <th>Duration Range</th>
+                                <th>Buff / Lvl</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>💰 Fiscal Optimization</td>
+                                <td>5</td>
+                                <td><code>$50k – $1M</code></td>
+                                <td><code>1d – 5d</code></td>
+                                <td><code>-5%</code> tax cost</td>
+                                <td><span class="badge badge-pct">percentage</span></td>
+                            </tr>
+                            <tr>
+                                <td>🤖 AI Workforce Integration</td>
+                                <td>5</td>
+                                <td><code>$60k – $1.1M</code></td>
+                                <td><code>1d – 5d</code></td>
+                                <td><code>-5%</code> salary</td>
+                                <td><span class="badge badge-pct">percentage</span></td>
+                            </tr>
+                            <tr>
+                                <td>🏗️ Nano-Construction Framework</td>
+                                <td>5</td>
+                                <td><code>$75k – $1.4M</code></td>
+                                <td><code>1d – 5d</code></td>
+                                <td><code>-8%</code> upgrade time</td>
+                                <td><span class="badge badge-pct">percentage</span></td>
+                            </tr>
+                            <tr>
+                                <td>⚙️ Advanced Machine Technology</td>
+                                <td>5</td>
+                                <td><code>$80k – $1.5M</code></td>
+                                <td><code>1d – 5d</code></td>
+                                <td><code>-6%</code> production time</td>
+                                <td><span class="badge badge-pct">percentage</span></td>
+                            </tr>
+                            <tr>
+                                <td>📉 Operational Cost Efficiency</td>
+                                <td>5</td>
+                                <td><code>$70k – $1.3M</code></td>
+                                <td><code>1d – 5d</code></td>
+                                <td><code>-5%</code> production cost</td>
+                                <td><span class="badge badge-pct">percentage</span></td>
+                            </tr>
+                            <tr>
+                                <td>⭐ Industrial Mastery</td>
+                                <td>3</td>
+                                <td><code>$200k – $1M</code></td>
+                                <td><code>2d – 6d</code></td>
+                                <td><code>+1</code> factory limit</td>
+                                <td><span class="badge badge-flat">flat</span></td>
+                            </tr>
+                            <tr>
+                                <td>💼 Business Expansion</td>
+                                <td>7</td>
+                                <td><code>$150k – $12M</code></td>
+                                <td><code>2d – 8d</code></td>
+                                <td><code>+1</code> listing limit</td>
+                                <td><span class="badge badge-flat">flat</span></td>
+                            </tr>
+                            <tr>
+                                <td>🕒 Market Stability Regulation</td>
+                                <td>5</td>
+                                <td><code>$100k – $2M</code></td>
+                                <td><code>1d – 5d</code></td>
+                                <td><code>+8h</code> listing expiration</td>
+                                <td><span class="badge badge-flat">flat</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Full research.yml</h3>
+                <p>This is the complete configuration file. Every research entry follows the same schema — only
+                    <code>buff-type: "flat"</code> entries (like Industrial Mastery) bypass multiplier arithmetic
+                    and add their value directly to the player's cap instead.
+                </p>
+
+                <div class="code-wrap">
+                    <span class="code-lang-badge">YAML</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre
+                        class="code-block"><span class="cm"># ==================== Factory Research Configuration ====================</span>
+<span class="cm"># Buff types:</span>
+<span class="cm">#   percentage  → reduces a value by X% (cumulative) per level</span>
+<span class="cm">#   flat        → adds a raw value per level (e.g. +1 factory slot)</span>
+<span class="cm"># Duration is in minutes (1440 = 1 real-life day).</span>
+
+<span class="cs">research:</span>
+
+  <span class="cm"># ── 1. Fiscal Optimization ─────────────────────────────────────────────</span>
+  <span class="ck">fiscal_optimization:</span>
+    <span class="ck">name:</span>        <span class="ci">"§6Fiscal Optimization"</span>
+    <span class="ck">icon:</span>        <span class="cv">GOLD_NUGGET</span>
+    <span class="ck">max-level:</span>   <span class="cn">5</span>
+    <span class="ck">buff-type:</span>   <span class="cv">"percentage"</span>
+    <span class="ck">buff-per-level:</span> <span class="cn">5.0</span>
+    <span class="ck">cost:</span>     <span class="cn">{ 1: 50000, 2: 120000, 3: 250000, 4: 500000, 5: 1000000 }</span>
+    <span class="ck">duration:</span> <span class="cn">{ 1: 1440,  2: 2880,  3: 4320,  4: 5760,  5: 7200 }</span>
+
+  <span class="cm"># ── 2. AI Workforce Integration ────────────────────────────────────────</span>
+  <span class="ck">ai_workforce_integration:</span>
+    <span class="ck">name:</span>        <span class="ci">"§bAI Workforce Integration"</span>
+    <span class="ck">icon:</span>        <span class="cv">REDSTONE_TORCH</span>
+    <span class="ck">max-level:</span>   <span class="cn">5</span>
+    <span class="ck">buff-type:</span>   <span class="cv">"percentage"</span>
+    <span class="ck">buff-per-level:</span> <span class="cn">5.0</span>
+    <span class="ck">cost:</span>     <span class="cn">{ 1: 60000, 2: 140000, 3: 280000, 4: 560000, 5: 1100000 }</span>
+    <span class="ck">duration:</span> <span class="cn">{ 1: 1440,  2: 2880,  3: 4320,  4: 5760,  5: 7200 }</span>
+
+  <span class="cm"># ── 3. Nano-Construction Framework ─────────────────────────────────────</span>
+  <span class="ck">nano_construction_framework:</span>
+    <span class="ck">name:</span>        <span class="ci">"§dNano-Construction Framework"</span>
+    <span class="ck">icon:</span>        <span class="cv">BEACON</span>
+    <span class="ck">max-level:</span>   <span class="cn">5</span>
+    <span class="ck">buff-type:</span>   <span class="cv">"percentage"</span>
+    <span class="ck">buff-per-level:</span> <span class="cn">8.0</span>    <span class="cm"># Higher rate — upgrade time is a greater friction point</span>
+    <span class="ck">cost:</span>     <span class="cn">{ 1: 75000, 2: 175000, 3: 350000, 4: 700000, 5: 1400000 }</span>
+    <span class="ck">duration:</span> <span class="cn">{ 1: 1440,  2: 2880,  3: 4320,  4: 5760,  5: 7200 }</span>
+
+  <span class="cm"># ── 4. Advanced Machine Technology ─────────────────────────────────────</span>
+  <span class="ck">advanced_machine_technology:</span>
+    <span class="ck">name:</span>        <span class="ci">"§5Advanced Machine Technology"</span>
+    <span class="ck">icon:</span>        <span class="cv">PISTON</span>
+    <span class="ck">max-level:</span>   <span class="cn">5</span>
+    <span class="ck">buff-type:</span>   <span class="cv">"percentage"</span>
+    <span class="ck">buff-per-level:</span> <span class="cn">6.0</span>
+    <span class="ck">cost:</span>     <span class="cn">{ 1: 80000, 2: 180000, 3: 360000, 4: 720000, 5: 1500000 }</span>
+    <span class="ck">duration:</span> <span class="cn">{ 1: 1440,  2: 2880,  3: 4320,  4: 5760,  5: 7200 }</span>
+
+  <span class="cm"># ── 5. Operational Cost Efficiency ─────────────────────────────────────</span>
+  <span class="ck">operational_cost_efficiency:</span>
+    <span class="ck">name:</span>        <span class="ci">"§eOperational Cost Efficiency"</span>
+    <span class="ck">icon:</span>        <span class="cv">EMERALD</span>
+    <span class="ck">max-level:</span>   <span class="cn">5</span>
+    <span class="ck">buff-type:</span>   <span class="cv">"percentage"</span>
+    <span class="ck">buff-per-level:</span> <span class="cn">5.0</span>
+    <span class="ck">cost:</span>     <span class="cn">{ 1: 70000, 2: 160000, 3: 320000, 4: 640000, 5: 1300000 }</span>
+    <span class="ck">duration:</span> <span class="cn">{ 1: 1440,  2: 2880,  3: 4320,  4: 5760,  5: 7200 }</span>
+
+  <span class="cm"># ── 6. Industrial Mastery ──────────────────────────────────────────────</span>
+  <span class="cm"># Uses buff-type: flat — bypasses percentage math entirely.</span>
+  <span class="cm"># The integer value is added directly to the player's factory cap.</span>
+  <span class="ck">industrial_mastery:</span>
+    <span class="ck">name:</span>        <span class="ci">"§c§lIndustrial Mastery"</span>
+    <span class="ck">icon:</span>        <span class="cv">NETHER_STAR</span>
+    <span class="ck">max-level:</span>   <span class="cn">3</span>
+    <span class="ck">buff-type:</span>   <span class="cv">"flat"</span>
+    <span class="ck">buff-per-level:</span> <span class="cn">1</span>
+    <span class="ck">cost:</span>     <span class="cn">{ 1: 200000, 2: 500000, 3: 1000000 }</span>
+    <span class="ck">duration:</span> <span class="cn">{ 1: 2880,   2: 5760,   3: 8640 }</span>
+
+  <span class="cm"># ── 7. Business Expansion ──────────────────────────────────────────────</span>
+  <span class="cm"># Increases marketplace listing limit by +1 per level.</span>
+  <span class="ck">business_expansion:</span>
+    <span class="ck">name:</span>        <span class="ci">"§a§lBusiness Expansion"</span>
+    <span class="ck">icon:</span>        <span class="cv">CHEST</span>
+    <span class="ck">max-level:</span>   <span class="cn">7</span>
+    <span class="ck">buff-type:</span>   <span class="cv">"flat"</span>
+    <span class="ck">buff-per-level:</span> <span class="cn">1</span>
+    <span class="ck">cost:</span>     <span class="cn">{ 1: 150000, 2: 350000, 3: 750000, 4: 1500000, 5: 3000000, 6: 6000000, 7: 12000000 }</span>
+    <span class="ck">duration:</span> <span class="cn">{ 1: 2880,   2: 4320,   3: 5760,   4: 7200,    5: 8640,    6: 10080,   7: 11520 }</span>
+
+  <span class="cm"># ── 8. Market Stability Regulation ─────────────────────────────────────</span>
+  <span class="cm"># Increases item listing expiration time in marketplace by +8 hours.</span>
+  <span class="ck">market_stability_regulation:</span>
+    <span class="ck">name:</span>        <span class="ci">"§9§lMarket Stability Regulation"</span>
+    <span class="ck">icon:</span>        <span class="cv">CLOCK</span>
+    <span class="ck">max-level:</span>   <span class="cn">5</span>
+    <span class="ck">buff-type:</span>   <span class="cv">"flat"</span>
+    <span class="ck">buff-per-level:</span> <span class="cn">8</span>
+    <span class="ck">cost:</span>     <span class="cn">{ 1: 100000, 2: 250000, 3: 500000, 4: 1000000, 5: 2000000 }</span>
+    <span class="ck">duration:</span> <span class="cn">{ 1: 1440,   2: 2880,   3: 4320,   4: 5760,    5: 7200 }</span></pre>
+                </div>
+            </section>
+
+            <!-- ════ DEVELOPER TIPS ════ -->
+            <section class="content-section" id="developer-tips">
+                <div class="section-title">
+                    <h2>Developer Tips</h2>
+                </div>
+                <p>Practical notes for server administrators and plugin developers who want to safely extend or
+                    balance the Research System.</p>
+
+                <h3>Adding a New Research Branch</h3>
+                <p>Copy any existing entry block and adjust the key name, <code>name</code>, <code>icon</code>,
+                    <code>max-level</code>, and buff values. The plugin auto-discovers all keys under
+                    <code>research:</code> at startup — no code changes are required.
+                </p>
+
+                <div class="code-wrap">
+                    <span class="code-lang-badge">YAML</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre class="code-block"><span class="cm"># Example: a new research that reduces machine maintenance downtime</span>
+<span class="ck">predictive_maintenance:</span>
+  <span class="ck">name:</span>        <span class="ci">"§3Predictive Maintenance"</span>
+  <span class="ck">icon:</span>        <span class="cv">IRON_PICKAXE</span>
+  <span class="ck">max-level:</span>   <span class="cn">5</span>
+  <span class="ck">buff-type:</span>   <span class="cv">"percentage"</span>
+  <span class="ck">buff-per-level:</span> <span class="cn">4.0</span>
+  <span class="ck">cost:</span>     <span class="cn">{ 1: 55000, 2: 130000, 3: 260000, 4: 520000, 5: 1050000 }</span>
+  <span class="ck">duration:</span> <span class="cn">{ 1: 1440,  2: 2880,  3: 4320,  4: 5760,  5: 7200 }</span>
+  <span class="ck">description:</span>
+    - <span class="cv">"§7IoT sensors that predict failures"</span>
+    - <span class="cv">"§7and cut downtime automatically."</span>
+    - <span class="cv">""</span>
+    - <span class="cv">"§eBuff: §aReduces downtime"</span>
+  <span class="ck">buff-description:</span> <span class="cv">"§a-{value}% §7machine downtime"</span></pre>
+                </div>
+
+                <h3>Balancing Costs & Durations</h3>
+                <div class="dev-tip">
+                    <div class="info-box-title">🔧 Recommended Scaling Formula</div>
+                    <div>For a smooth difficulty curve, multiply the Level 1 cost by roughly <strong>2 – 2.5×</strong>
+                        per tier and the Level 1 duration by <strong>1× per tier</strong> (add one full day each
+                        level). This matches the existing vanilla branches and keeps max-level researches feeling
+                        like genuine milestones rather than routine purchases.</div>
+                </div>
+
+                <h3>flat vs percentage Buff Types</h3>
+                <div class="dev-tip">
+                    <div class="info-box-title">🔧 When to Use Each Type</div>
+                    <div>Use <code>percentage</code> for any buff that reduces or improves a continuous numeric
+                        value (time, money, %). Use <code>flat</code> only when the buff adds a discrete unit —
+                        such as <strong>+1 factory slot</strong> — where fractions have no meaning. The plugin
+                        applies flat buffs as integers regardless of what decimal is stored in the config.</div>
+                </div>
+
+                <h3>Minecraft Color Codes in <code>name</code> / <code>description</code></h3>
+                <p>The <code>name</code> field and <code>description</code> list accept standard Minecraft
+                    formatting codes (prefixed with <code>§</code>). Common codes used in this config:</p>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Color / Style</th>
+                                <th>Used by</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>§6</code></td>
+                                <td>Gold</td>
+                                <td>Fiscal Optimization</td>
+                            </tr>
+                            <tr>
+                                <td><code>§b</code></td>
+                                <td>Aqua</td>
+                                <td>AI Workforce Integration</td>
+                            </tr>
+                            <tr>
+                                <td><code>§d</code></td>
+                                <td>Light Purple</td>
+                                <td>Nano-Construction Framework</td>
+                            </tr>
+                            <tr>
+                                <td><code>§5</code></td>
+                                <td>Dark Purple</td>
+                                <td>Advanced Machine Technology</td>
+                            </tr>
+                            <tr>
+                                <td><code>§e</code></td>
+                                <td>Yellow</td>
+                                <td>Operational Cost Efficiency</td>
+                            </tr>
+                            <tr>
+                                <td><code>§c§l</code></td>
+                                <td>Red + Bold</td>
+                                <td>Industrial Mastery</td>
+                            </tr>
+                            <tr>
+                                <td><code>§a§l</code></td>
+                                <td>Green + Bold</td>
+                                <td>Business Expansion</td>
+                            </tr>
+                            <tr>
+                                <td><code>§7</code></td>
+                                <td>Gray</td>
+                                <td>Description body text</td>
+                            </tr>
+                            <tr>
+                                <td><code>§a</code></td>
+                                <td>Green</td>
+                                <td>Buff value highlight</td>
+                            </tr>
+                            <tr>
+                                <td><code>§9§l</code></td>
+                                <td>Blue + Bold</td>
+                                <td>Market Stability Regulation</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="warn-box">
+                    <div class="info-box-title">⚠️ Hot-Reload Warning</div>
+                    <div>If you edit <code>research.yml</code> while the server is running, players who currently
+                        have an active research timer <strong>will not be affected</strong> until their current
+                        level completes. Changes to <code>cost</code> and <code>duration</code> apply only to
+                        newly initiated research sessions. Always reload the config with
+                        <code>/factory reload</code> after saving changes to ensure new sessions pick up the
+                        updated values.
+                    </div>
+                </div>
+
+                <h3>Integration with External Features</h3>
+                <div class="dev-tip">
+                    <div class="info-box-title">🛒 Marketplace Sync</div>
+                    <div>Certain buff properties, such as <code>business_expansion</code> (listing limit) and
+                        <code>market_stability_regulation</code> (expiration persistence), compute via overriding core
+                        <code>config.yml</code> values. The variables inject dynamically when the respective
+                        limits/timers are read. Changes made to basic config limitations will effectively be stacked
+                        with these researched values.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Copy-to-clipboard for code blocks
+        function copyCode(btn) {
+            const pre = btn.closest('.code-wrap').querySelector('pre');
+            navigator.clipboard.writeText(pre.innerText).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+        }
+
+        const sections = document.querySelectorAll('.content-section');
+        const navLinks = document.querySelectorAll('.nav-list a');
+
+        // Smooth scroll implementation to avoid Google Sites URL hash change issues
+        navLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Intersection Observer for highlighting active link during scroll/view
+        const observerOptions = {
+            root: null, // Tracks viewport (works better in iframes usually)
+            rootMargin: '0px',
+            threshold: 0.3 // Highlights when 30% of the section is visible
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+
+</html>

@@ -19,6 +19,7 @@ resources:
       - "§7Can be processed into iron"
     custom-model-data: 1001
     glow: false
+    suggested_price: 10.0
     
   coal_ore:
     type: RAW_RESOURCES
@@ -29,6 +30,7 @@ resources:
       - "§7Fuel raw material"
     custom-model-data: 1002
     glow: false
+    suggested_price: 5.0
     
   copper_ore:
     type: RAW_RESOURCES
@@ -39,6 +41,7 @@ resources:
       - "§7Conductive material"
     custom-model-data: 1003
     glow: false
+    suggested_price: 15.0
     
   gold_ore:
     type: RAW_RESOURCES
@@ -49,6 +52,7 @@ resources:
       - "§7Valuable material"
     custom-model-data: 1004
     glow: false
+    suggested_price: 50.0
     
   diamond_ore:
     type: RAW_RESOURCES
@@ -59,6 +63,7 @@ resources:
       - "§7Very rare material"
     custom-model-data: 1005
     glow: true
+    suggested_price: 200.0
     
   redstone_dust:
     type: RAW_RESOURCES
@@ -69,6 +74,7 @@ resources:
       - "§7Electronic component"
     custom-model-data: 1006
     glow: false
+    suggested_price: 10.0
 
   # ==================== ADVANCED RESOURCES ====================
   steel_ingot:
@@ -80,6 +86,7 @@ resources:
       - "§7Processed from Steel Mill"
     custom-model-data: 2001
     glow: false
+    suggested_price: 100.0
     
   refined_copper:
     type: ADVANCED_RESOURCES
@@ -90,6 +97,7 @@ resources:
       - "§7For electronic components"
     custom-model-data: 2002
     glow: false
+    suggested_price: 80.0
     
   gold_alloy:
     type: ADVANCED_RESOURCES
@@ -100,6 +108,7 @@ resources:
       - "§7Premium material"
     custom-model-data: 2003
     glow: true
+    suggested_price: 250.0
     
   carbon_fiber:
     type: ADVANCED_RESOURCES
@@ -110,6 +119,7 @@ resources:
       - "§7Lightweight and strong material"
     custom-model-data: 2004
     glow: false
+    suggested_price: 300.0
 
   # ==================== FINAL RESOURCES ====================
   advanced_weapon:
@@ -123,7 +133,7 @@ resources:
       - "§eSell Price: §6$5,000"
     custom-model-data: 3001
     glow: true
-    sell-price: 5000.0
+    suggested_price: 5000.0
     
   advanced_armor:
     type: FINAL_RESOURCES
@@ -136,7 +146,7 @@ resources:
       - "§eSell Price: §6$4,500"
     custom-model-data: 3002
     glow: true
-    sell-price: 4500.0
+    suggested_price: 4500.0
     
   electronic_component:
     type: FINAL_RESOURCES
@@ -149,7 +159,7 @@ resources:
       - "§eSell Price: §6$3,000"
     custom-model-data: 3003
     glow: true
-    sell-price: 3000.0
+    suggested_price: 3000.0
     
   luxury_item:
     type: FINAL_RESOURCES
@@ -162,7 +172,7 @@ resources:
       - "§eSell Price: §6$10,000"
     custom-model-data: 3004
     glow: true
-    sell-price: 10000.0
+    suggested_price: 10000.0
 
   # ==================== FUEL ====================
   basic_fuel:
@@ -174,6 +184,7 @@ resources:
       - "§7From Refinery"
     custom-model-data: 4001
     glow: false
+    suggested_price: 20.0
     
   refined_fuel:
     type: FUEL
@@ -184,6 +195,7 @@ resources:
       - "§7High efficiency"
     custom-model-data: 4002
     glow: false
+    suggested_price: 60.0
     
   premium_fuel:
     type: FUEL
@@ -194,6 +206,7 @@ resources:
       - "§7Maximum efficiency"
     custom-model-data: 4003
     glow: true
+    suggested_price: 150.0
 
   # ==================== MACHINE PARTS ====================
   basic_gear:
@@ -205,6 +218,7 @@ resources:
       - "§7Machine component"
     custom-model-data: 5001
     glow: false
+    suggested_price: 30.0
     
   advanced_gear:
     type: MACHINE_PARTS
@@ -215,6 +229,7 @@ resources:
       - "§7Quality component"
     custom-model-data: 5002
     glow: false
+    suggested_price: 100.0
     
   engine_part:
     type: MACHINE_PARTS
@@ -225,6 +240,7 @@ resources:
       - "§7For production"
     custom-model-data: 5003
     glow: false
+    suggested_price: 200.0
     
   circuit_board:
     type: MACHINE_PARTS
@@ -235,6 +251,7 @@ resources:
       - "§7Electronic component"
     custom-model-data: 5004
     glow: true
+    suggested_price: 400.0
     
   hydraulic_system:
     type: MACHINE_PARTS
@@ -245,3 +262,4 @@ resources:
       - "§7High-precision component"
     custom-model-data: 5005
     glow: true
+    suggested_price: 600.0

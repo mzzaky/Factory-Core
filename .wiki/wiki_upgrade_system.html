@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee System - FactoryCore Wiki</title>
+    <title>Factory Upgrade System - FactoryCore Wiki</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
 
@@ -392,7 +392,7 @@
             color: #61afef;
         }
 
-        /* inline tag */
+        /* inline tag / §code */
 
         .code-lang-badge {
             position: absolute;
@@ -446,7 +446,11 @@
             color: #61afef;
         }
 
-        /* ── Badge ── */
+        /* ── Research Summary Table ── */
+        .data-table td code {
+            font-size: 12px;
+        }
+
         .badge {
             display: inline-block;
             padding: 2px 8px;
@@ -494,8 +498,8 @@
 
 <body>
     <div class="page-header">
-        <h1>Employee System</h1>
-        <p>Hire Staff, Automate Workflow, and Bring Your Factories to Life</p>
+        <h1>Upgrade System</h1>
+        <p>Unlock Permanent Upgrades to Optimize Your Factory</p>
     </div>
 
     <div class="breadcrumb">
@@ -503,7 +507,7 @@
         <span class="breadcrumb-sep">&raquo;</span>
         <a href="#">Systems</a>
         <span class="breadcrumb-sep">&raquo;</span>
-        <span class="breadcrumb-current">Employee System</span>
+        <span class="breadcrumb-current">Upgrade System</span>
     </div>
 
     <div class="content-container">
@@ -511,238 +515,180 @@
             <div class="nav-header">On This Page</div>
             <ul class="nav-list">
                 <li><a href="#overview" class="active">Overview</a></li>
-                <li><a href="#dynamic-behaviors">Dynamic Behaviors</a></li>
-                <li><a href="#hiring-assignment">Hiring &amp; Assignment</a></li>
-                <li><a href="#benefits">Impacts &amp; Benefits</a></li>
+                <li><a href="#mechanics">Upgrade Mechanics</a></li>
+                <li><a href="#requirements">Materials &amp; Times</a></li>
+                <li><a href="#benefits">Benefits &amp; Trade-offs</a></li>
                 <li><a href="#config-reference">Config Reference</a></li>
-                <li><a href="#developer-tips">Developer API</a></li>
             </ul>
         </nav>
 
         <main class="main-content">
-
             <!-- ════ OVERVIEW ════ -->
             <section class="content-section" id="overview">
                 <div class="section-title">
                     <h2>Overview</h2>
                 </div>
                 <p>
-                    The <strong>Employee System</strong> adds immersion and practical economic depth to your factory
-                    empire.
-                    Rather than operating as lifeless blocks, your factories can be staffed by highly dynamic structural
-                    NPCs.
-                    These NPC figures breathe life into the environment while physically representing your purchased
-                    structural upgrades.
+                    The <strong>Factory Upgrade System</strong> enables players to directly improve their existing
+                    factories.
+                    Rather than building entirely new factories to increase throughput, you can invest capital and
+                    resources to
+                    level up your operations, making them faster and cheaper to run over time.
                 </p>
                 <div class="info-box">
-                    <div class="info-box-title">💡 Core Concept</div>
-                    <div>Employees aren't just decorative! Purchasing and assigning an employee to a factory provides a
-                        <strong>Production Time Reduction</strong> buff, helping your facility produce recipes
-                        significantly faster.
-                        However, you must manage their recurring salaries to avoid fiscal penalties!
-                    </div>
-                </div>
-
-                <div class="phases-grid">
-                    <div class="phase-card">
-                        <span class="card-icon">👥</span>
-                        <h4>Vibrant Hubs</h4>
-                        <p>Employees roam your factories providing ambient voice lines, floating holos, idle animations,
-                            and particle effects.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">⚡</span>
-                        <h4>Production Buffs</h4>
-                        <p>Specialized employees offer scalable buffs, significantly reducing recipe production timers.
-                        </p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">💼</span>
-                        <h4>Economic Balance</h4>
-                        <p>Hiring costs money upfront, and retaining them deducts a periodic salary from your balance
-                            during assess cycles.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">📍</span>
-                        <h4>Single Assignment</h4>
-                        <p>Each factory can house only <strong>ONE</strong> employee at a time, requiring you to
-                            carefully strategize your HR allocations.</p>
+                    <div class="info-box-title">💡 The Core Objective</div>
+                    <div>Upgrading a factory is crucial for the mid-to-end game. It significantly reduces both the
+                        <strong>production time</strong> and the <strong>monetary cost</strong> of recipes inside that
+                        specific factory.
                     </div>
                 </div>
             </section>
 
-            <!-- ════ DYNAMIC BEHAVIORS ════ -->
-            <section class="content-section" id="dynamic-behaviors">
+            <!-- ════ UPGRADE MECHANICS ════ -->
+            <section class="content-section" id="mechanics">
                 <div class="section-title">
-                    <h2>Dynamic Behaviors</h2>
+                    <h2>Upgrade Mechanics</h2>
                 </div>
-                <p>
-                    FactoryCore avoids heavy plugin dependencies (like Citizens) by implementing its own
-                    highly-optimized custom NPC engine.
-                    NPCs look and feel like real players interacting with their environment.
-                </p>
-
+                <p>An upgrade requires money, materials, and real-life time to complete.</p>
                 <ul>
-                    <li><strong>Smart Head Tracking:</strong> NPCs actively track approaching players smoothly,
-                        establishing eye contact to make the factory feel responsive.</li>
-                    <li><strong>Idle Animations:</strong> When left alone, NPCs perform smooth, interpolated head
-                        rotations and gestures so they don't look like frozen statues.</li>
-                    <li><strong>Hovering Holograms:</strong> Utilizes invisible ArmorStands anchored to the NPC to
-                        provide clear, multi-line titles like "Foreman" or "Skilled Craftsman".</li>
-                    <li><strong>Particles &amp; Ambient Sounds:</strong> Periodic sensory elements (e.g. Villager
-                        murmurs and happy particles) ensure a lively atmosphere.</li>
-                    <li><strong>Self-Healing Engine:</strong> An automated <code>Respawn Task</code> constantly sweeps
-                        the realm. If an NPC entity goes missing due to WorldEdit overlaps, server reboots, or glitches,
-                        the plugin seamlessly re-summons them exact to their prior specs.</li>
+                    <li><strong>Monetary Cost:</strong> The cost scales based on the base price of the factory type. The
+                        default formula is: <code>Upgrade Cost = Base Price × 0.5 × Current Level</code>.</li>
+                    <li><strong>Material Investments:</strong> Alongside money, physical resources from your inventory
+                        are consumed. These requirements are fully configurable per level.</li>
+                    <li><strong>Construction Time:</strong> Upgrades happen in real-time. Once initiated, a background
+                        timer takes over. During this construction phase, you must wait for the upgrade to finish.</li>
                 </ul>
-
+                <div class="warn-box">
+                    <div class="info-box-title">⚠️ Synergy with Research</div>
+                    <div>The <strong>Nano-Construction Framework</strong> research globally reduces all factory upgrade
+                        timers! A high-level research can slash upgrade times by a massive percentage automatically.
+                    </div>
+                </div>
             </section>
 
-            <!-- ════ HIRING & ASSIGNMENT ════ -->
-            <section class="content-section" id="hiring-assignment">
+            <!-- ════ MATERIALS & TIMES ════ -->
+            <section class="content-section" id="requirements">
                 <div class="section-title">
-                    <h2>Hiring &amp; Assignment</h2>
+                    <h2>Materials &amp; Times</h2>
                 </div>
-                <p>To populate your factory, you must purchase an employee contract from the <strong>Employee Shop
-                        GUI</strong> and physically deploy them.</p>
+                <p>Upgrading requires various combinations of resources as you progress into higher tiers. Below are the
+                    default required intervals and materials up to the standard Level 5 cap.</p>
 
                 <div class="table-wrapper">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>GUI / Menu</th>
-                                <th>Functionality</th>
+                                <th>Target Level</th>
+                                <th>Default Time</th>
+                                <th>Items Required</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Employee Shop</strong></td>
-                                <td>Displays all available NPC types configured in <code>npc.yml</code>. You pay an
-                                    upfront cash price to secure their contract.</td>
+                                <td>Level 2</td>
+                                <td><code>60 seconds</code></td>
+                                <td>5x <strong>Basic Gear</strong></td>
                             </tr>
                             <tr>
-                                <td><strong>My Employees</strong></td>
-                                <td>A storage roster of all purchased personnel not currently deployed. Since they are
-                                    under contract, they still charge a wage!</td>
+                                <td>Level 3</td>
+                                <td><code>120 seconds</code></td>
+                                <td>10x <strong>Basic Gear</strong>, 5x <strong>Advanced Gear</strong></td>
                             </tr>
                             <tr>
-                                <td><strong>Assignment Board</strong></td>
-                                <td>Select an open NPC from 'My Employees' and click a valid, vacant factory to
-                                    instantly teleport and deploy them there.</td>
+                                <td>Level 4</td>
+                                <td><code>300 seconds</code></td>
+                                <td>15x <strong>Basic Gear</strong>, 10x <strong>Advanced Gear</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Level 5</td>
+                                <td><code>600 seconds</code></td>
+                                <td>20x <strong>Basic Gear</strong>, 20x <strong>Advanced Gear</strong></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <div class="warn-box">
-                    <div class="info-box-title">⚠️ Firing employees</div>
-                    <div>
-                        Currently, <code>FactoryCore</code> enforces permanent contracts. While you cannot outright
-                        "delete" an employee from existence once bought, you can leave them unassigned in the roster.
-                        Note that salaries apply to ALL owned employees, deployed or reserved.
-                    </div>
-                </div>
-
             </section>
 
-            <!-- ════ IMPACTS & BENEFITS ════ -->
+            <!-- ════ BENEFITS & TRADE-OFFS ════ -->
             <section class="content-section" id="benefits">
                 <div class="section-title">
-                    <h2>Impacts &amp; Benefits</h2>
+                    <h2>Benefits &amp; Trade-offs</h2>
                 </div>
-                <p>Every employee class carries a distinct buff, specifically impacting standard production delays.</p>
+                <p>With every level unlocked, the factory becomes significantly more competitive, though keeping
+                    higher-level factories incurs larger taxes.</p>
 
-                <div class="code-wrap">
-                    <span class="code-lang-badge">Logic</span>
-                    <pre
-                        class="code-block"><span class="cs">New Production Time</span> = Base Recipe Time - (Base Recipe Time * Production Reduction %)</pre>
+                <div class="phases-grid">
+                    <div class="phase-card">
+                        <span class="card-icon">📉</span>
+                        <h4>Cost Reduction</h4>
+                        <p>Reduces the money required to perform recipes inside the factory by a baseline
+                            <strong>5.0%</strong> per level.
+                        </p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">⏱️</span>
+                        <h4>Time Reduction</h4>
+                        <p>Slashes the base manufacturing time for items by <strong>10.0%</strong> per level, increasing
+                            throughput.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🧾</span>
+                        <h4>Heavier Taxes</h4>
+                        <p>High-level factories generate a larger property valuation. A <strong>+2.5%</strong> tax
+                            multiplier is added to your liabilities per level.</p>
+                    </div>
                 </div>
-
-                <p><strong>Example:</strong> If a recipe normally takes <span class="badge badge-flat">100
-                        seconds</span>, and you assign an employee with a <span class="badge badge-pct">15%</span> buff,
-                    the new cyclic duration for your factory drops to <strong>85 seconds</strong>.</p>
             </section>
 
             <!-- ════ CONFIG REFERENCE ════ -->
             <section class="content-section" id="config-reference">
                 <div class="section-title">
-                    <h2>Configuration (npc.yml)</h2>
+                    <h2>Config Reference</h2>
                 </div>
                 <p>
-                    Customize employee appearances, lore, buffs, costs, and the engine parameters inside
-                    <code>npc.yml</code>.
+                    All configurations governing the Upgrade System reside within the main <code>config.yml</code> file
+                    under the <code>factory:</code> section.
                 </p>
 
                 <div class="code-wrap">
                     <span class="code-lang-badge">YAML</span>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                    <pre class="code-block"><span class="ci">shop:</span>
-  <span class="ci">npcs:</span>
-    <span class="ck">skilled_craftsman:</span>
-      <span class="ck">display-name:</span> <span class="cn">"§fSkilled Craftsman"</span>
-      <span class="ck">shop-icon:</span> <span class="cn">"VILLAGER_SPAWN_EGG"</span>
-      <span class="ck">buy-price:</span> <span class="cn">5000.0</span>
-      <span class="ck">salary:</span> <span class="cn">50.0</span>
-      <span class="ck">production-time-reduction:</span> <span class="cn">15.0</span>
-      <span class="ck">template:</span> <span class="cn">"factory_employee"</span>
+                    <pre class="code-block"><span class="cs">factory:</span>
+  <span class="ck">max-level:</span> <span class="cn">5</span>
+  <span class="ck">max-factories-per-player:</span> <span class="cn">3</span>
 
-<span class="ci">templates:</span>
-  <span class="ck">factory_employee:</span>
-    <span class="ck">name:</span> <span class="cn">"§bTechnician"</span>
-    <span class="ck">profession:</span> <span class="cn">"LIBRARIAN"</span>
-    <span class="ck">type:</span> <span class="cn">"SNOW"</span>
-    <span class="ci">hologram:</span>
-      <span class="ck">enabled:</span> <span class="cv">true</span>
-      <span class="ck">lines:</span>
-        <span class="cm">- "&amp;bTechnician"</span></pre>
-                </div>
-            </section>
+  <span class="cm"># Linear bonuses added per factory level</span>
+  <span class="cs">level-bonuses:</span>
+    <span class="ck">cost-reduction:</span> <span class="cn">5.0</span>
+    <span class="ck">time-reduction:</span> <span class="cn">10.0</span>
 
-            <!-- ════ DEVELOPER TIPS ════ -->
-            <section class="content-section" id="developer-tips">
-                <div class="section-title">
-                    <h2>Developer Tips: The NPC Engine</h2>
-                </div>
-                <p>Developing add-ons? Here's an inside look at how FactoryCore's NPC engine optimizes behavior loops.
-                </p>
+  <span class="cm"># Required items to upgrade TO each level</span>
+  <span class="cs">upgrade-requirements:</span>
+    <span class="ck">2:</span>
+      <span class="ck">basic_gear:</span> <span class="cn">5</span>
+    <span class="ck">3:</span>
+      <span class="ck">basic_gear:</span> <span class="cn">10</span>
+      <span class="ck">advanced_gear:</span> <span class="cn">5</span>
+    <span class="ck">4:</span>
+      <span class="ck">basic_gear:</span> <span class="cn">15</span>
+      <span class="ck">advanced_gear:</span> <span class="cn">10</span>
+    <span class="ck">5:</span>
+      <span class="ck">basic_gear:</span> <span class="cn">20</span>
+      <span class="ck">advanced_gear:</span> <span class="cn">20</span>
 
-                <div class="phases-grid">
-                    <div class="phase-card">
-                        <span class="card-icon">🏎️</span>
-                        <h4>Tick Optimization</h4>
-                        <p>Instead of relying on NMS packets, we spawn actual <code>Villager</code> entities and cast a
-                            <code>runTaskTimer</code> using an <code>AtomicLong</code> to calculate localized behavioral
-                            frame rates safely.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">📐</span>
-                        <h4>Trigonometric Alignment</h4>
-                        <p>A common bug when coding <code>lookAt(...)</code> logic is NPCs staring into space.
-                            FactoryCore avoids this by measuring the Delta from the NPC's <strong>eye height (1.62
-                                Y)</strong> specifically to the player's <strong>chest height (1.1 Y)</strong>.</p>
-                    </div>
-                    <div class="phase-card">
-                        <span class="card-icon">🪑</span>
-                        <h4>Interpolation</h4>
-                        <p>Idle loops don't just snap. An idle variable maps a <code>targetPitchOffset</code>, divided
-                            into micro-steps across ticks, rendering a beautifully smooth visual gaze shift.</p>
-                    </div>
+  <span class="cm"># Duration in seconds to finish upgrading TO each level</span>
+  <span class="cs">upgrade-time:</span>
+    <span class="ck">2:</span> <span class="cn">60</span>
+    <span class="ck">3:</span> <span class="cn">120</span>
+    <span class="ck">4:</span> <span class="cn">300</span>
+    <span class="ck">5:</span> <span class="cn">600</span></pre>
                 </div>
 
                 <div class="dev-tip">
-                    <div class="info-box-title">👨‍💻 Code Snippet: Fetching Assigned personnel</div>
-                    <div style="margin-top: 10px; color: #d1d5db;">
-                        You can safely retrieve an NPC's buff from external plugins via the Factory Manager context.
-                    </div>
-                    <div class="code-wrap">
-                        <span class="code-lang-badge">Java</span>
-                        <pre class="code-block"><span class="cm">// Given an active factory UUID</span>
-FactoryNPC employee = FactoryCore.getInstance().getNPCManager().getAssignedNPCForFactory(factory.getId());
-
-<span class="ck">if</span> (employee != <span class="cv">null</span>) {
-    <span class="ck">double</span> speedBuff = employee.getProductionTimeReduction();
-    System.out.println(<span class="cn">"This factory operates "</span> + speedBuff + <span class="cn">"% faster!"</span>);
-}</pre>
+                    <div class="info-box-title">🔧 Creating Custom Upgrades</div>
+                    <div>If you extend <code>max-level</code> beyond 5, ensure you supply both
+                        <code>upgrade-requirements</code> and <code>upgrade-time</code> data for levels 6 and beyond, or
+                        the upgrade menu may malfunction or default.
                     </div>
                 </div>
 
@@ -751,41 +697,55 @@ FactoryNPC employee = FactoryCore.getInstance().getNPCManager().getAssignedNPCFo
     </div>
 
     <script>
-        // Smooth scrolling for sidebar links
-        document.querySelectorAll('.nav-list a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+        // Copy-to-clipboard for code blocks
+        function copyCode(btn) {
+            const pre = btn.closest('.code-wrap').querySelector('pre');
+            navigator.clipboard.writeText(pre.innerText).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+            });
+        }
+
+        const sections = document.querySelectorAll('.content-section');
+        const navLinks = document.querySelectorAll('.nav-list a');
+
+        // Smooth scroll implementation to avoid Google Sites URL hash change issues
+        navLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-
-                targetElement.scrollIntoView({
-                    behavior: 'smooth'
-                });
-
-                // Update active state
-                document.querySelectorAll('.nav-list a').forEach(a => a.classList.remove('active'));
-                this.classList.add('active');
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             });
         });
 
-        // Copy Code Function
-        function copyCode(btn) {
-            const codeBlock = btn.nextElementSibling;
-            const textToCopy = codeBlock.innerText;
+        // Intersection Observer for highlighting active link during scroll/view
+        const observerOptions = {
+            root: null, // Tracks viewport (works better in iframes usually)
+            rootMargin: '0px',
+            threshold: 0.3 // Highlights when 30% of the section is visible
+        };
 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = btn.innerText;
-                btn.innerText = 'Copied!';
-                btn.classList.add('copied');
-
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
             });
-        }
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
     </script>
 </body>
 

@@ -179,10 +179,11 @@
 
         <!-- SCore (ExecutableItems API) -->
         <dependency>
-            <groupId>maven.modrinth</groupId>
+            <groupId>com.ssomar.score</groupId>
             <artifactId>SCore</artifactId>
             <version>4.24.1.15</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/SCore-5.26.2.15.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

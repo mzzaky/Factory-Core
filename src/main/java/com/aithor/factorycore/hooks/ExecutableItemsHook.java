@@ -46,7 +46,8 @@ public class ExecutableItemsHook {
      * @return The ItemStack, or null if not found
      */
     public ItemStack getExecutableItem(String itemId, int amount) {
-        if (!enabled) return null;
+        if (!enabled)
+            return null;
 
         try {
             Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI
@@ -86,14 +87,15 @@ public class ExecutableItemsHook {
      * @return true if the item matches
      */
     public boolean isExecutableItem(ItemStack item, String itemId) {
-        if (!enabled || item == null) return false;
+        if (!enabled || item == null)
+            return false;
 
         try {
-            Optional<String> eiId = ExecutableItemsAPI
+            Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI
                     .getExecutableItemsManager()
-                    .getExecutableItemId(item);
+                    .getExecutableItem(item);
 
-            return eiId.isPresent() && eiId.get().equalsIgnoreCase(itemId);
+            return eiOpt.isPresent() && eiOpt.get().getId().equalsIgnoreCase(itemId);
         } catch (Exception e) {
             return false;
         }
@@ -103,14 +105,15 @@ public class ExecutableItemsHook {
      * Check if an ItemStack is any ExecutableItems item
      */
     public boolean isExecutableItem(ItemStack item) {
-        if (!enabled || item == null) return false;
+        if (!enabled || item == null)
+            return false;
 
         try {
-            Optional<String> eiId = ExecutableItemsAPI
+            Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI
                     .getExecutableItemsManager()
-                    .getExecutableItemId(item);
+                    .getExecutableItem(item);
 
-            return eiId.isPresent();
+            return eiOpt.isPresent();
         } catch (Exception e) {
             return false;
         }
@@ -123,14 +126,15 @@ public class ExecutableItemsHook {
      * @return The ExecutableItems item ID, or null if not an EI item
      */
     public String getExecutableItemId(ItemStack item) {
-        if (!enabled || item == null) return null;
+        if (!enabled || item == null)
+            return null;
 
         try {
-            Optional<String> eiId = ExecutableItemsAPI
+            Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI
                     .getExecutableItemsManager()
-                    .getExecutableItemId(item);
+                    .getExecutableItem(item);
 
-            return eiId.orElse(null);
+            return eiOpt.map(ExecutableItemInterface::getId).orElse(null);
         } catch (Exception e) {
             return null;
         }

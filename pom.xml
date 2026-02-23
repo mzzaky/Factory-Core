@@ -91,10 +91,16 @@
             <url>https://nexus.phoenixdevt.fr/repository/maven-public/</url>
         </repository>
 
-        <!-- SCore Repository (ExecutableItems) -->
+        <!-- Lumine Repository (MMOItems & MythicLib fallback) -->
         <repository>
-            <id>score-repo</id>
-            <url>https://raw.githubusercontent.com/Ssomar-Developper/SCore/mvn-repo/</url>
+            <id>lumine-repo</id>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
+
+        <!-- Modrinth Maven Repository (SCore / ExecutableItems) -->
+        <repository>
+            <id>modrinth-maven</id>
+            <url>https://api.modrinth.com/maven</url>
         </repository>
     </repositories>
 
@@ -159,7 +165,7 @@
         <dependency>
             <groupId>net.Indyuce</groupId>
             <artifactId>MMOItems-API</artifactId>
-            <version>6.10</version>
+            <version>6.10.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -167,15 +173,15 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>MythicLib-dist</artifactId>
-            <version>1.6.2</version>
+            <version>1.6.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- SCore (ExecutableItems API) -->
         <dependency>
-            <groupId>com.ssomar.score</groupId>
+            <groupId>maven.modrinth</groupId>
             <artifactId>SCore</artifactId>
-            <version>4.24.6.1</version>
+            <version>4.24.1.15</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

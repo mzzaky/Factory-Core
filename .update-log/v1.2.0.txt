@@ -1,0 +1,10 @@
+v1.2.0 Update Log
+
+- [New] Integrasi plugin MMOItems: resource di resources.yml kini dapat dihubungkan dengan item dari plugin MMOItems menggunakan field `mmoitems-type` dan `mmoitems-id`.
+- [New] Menambahkan class MMOItemsHook sebagai handler integrasi MMOItems, mendukung pembuatan item, identifikasi item, dan pengecekan tipe item secara otomatis.
+- [Update] ResourceManager kini mendukung pembuatan ItemStack dari MMOItems API. Jika MMOItems tidak tersedia atau item tidak ditemukan, sistem akan otomatis fallback ke item vanilla.
+- [Update] Identifikasi resource (getResourceId) kini dapat mengenali item MMOItems berdasarkan NBT data (MMOITEMS_ITEM_ID) selain pencocokan item vanilla.
+- [Update] Menambahkan MMOItems sebagai softdepend di plugin.yml, plugin tetap berjalan normal tanpa MMOItems.
+- [Update] Startup banner kini menampilkan status integrasi MMOItems (aktif/tidak tersedia).
+- [Update] Menambahkan contoh konfigurasi resource MMOItems di resources.yml (dalam keadaan commented) sebagai referensi pengguna.
+- [Info] Versi plugin diperbarui dari 1.1.5 ke 1.2.0.

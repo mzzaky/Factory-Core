@@ -7,6 +7,26 @@
 # 3. FINAL_RESOURCES - Finished products
 # 4. FUEL - Fuel
 # 5. MACHINE_PARTS - Machine parts
+#
+# ==================== MMOItems Integration ====================
+# Anda dapat menghubungkan resource dengan item dari plugin MMOItems.
+# Tambahkan field 'mmoitems-type' dan 'mmoitems-id' pada resource.
+# Jika MMOItems tersedia, plugin akan menggunakan item dari MMOItems.
+# Jika MMOItems tidak tersedia, plugin akan fallback ke item vanilla (material/name/lore).
+#
+# Format:
+#   resource_id:
+#     type: <RESOURCE_TYPE>
+#     material: <VANILLA_MATERIAL>        # Digunakan sebagai fallback
+#     name: "<Display Name>"              # Digunakan sebagai fallback
+#     lore:                               # Digunakan sebagai fallback
+#       - "<lore line>"
+#     custom-model-data: <number>         # Digunakan sebagai fallback
+#     glow: <true/false>                  # Digunakan sebagai fallback
+#     suggested_price: <price>
+#     mmoitems-type: "<MMOItems Type>"    # Contoh: SWORD, ARMOR, MATERIAL, CONSUMABLE, dll.
+#     mmoitems-id: "<MMOItems Item ID>"   # ID item yang terdaftar di MMOItems
+#
 
 resources:
   # ==================== RAW RESOURCES ====================
@@ -263,3 +283,83 @@ resources:
     custom-model-data: 5005
     glow: true
     suggested_price: 600.0
+
+  # ==================== MMOItems RESOURCES (CONTOH) ====================
+  # Uncomment dan sesuaikan dengan item MMOItems yang ada di server Anda.
+  # Pastikan plugin MMOItems sudah terinstall dan item-item berikut sudah terdaftar.
+
+  # Contoh: Raw material dari MMOItems
+  #mmo_raw_mythril:
+  #  type: RAW_RESOURCES
+  #  material: PRISMARINE_SHARD
+  #  name: "§bMythril Ore"
+  #  lore:
+  #    - "§7Bijih mythril langka"
+  #    - "§7Material dari MMOItems"
+  #  custom-model-data: 1101
+  #  glow: true
+  #  suggested_price: 500.0
+  #  mmoitems-type: "MATERIAL"
+  #  mmoitems-id: "MYTHRIL_ORE"
+
+  # Contoh: Advanced resource dari MMOItems
+  #mmo_enchanted_steel:
+  #  type: ADVANCED_RESOURCES
+  #  material: IRON_INGOT
+  #  name: "§dEnchanted Steel"
+  #  lore:
+  #    - "§7Baja yang telah di-enchant"
+  #    - "§7Material dari MMOItems"
+  #  custom-model-data: 2101
+  #  glow: true
+  #  suggested_price: 800.0
+  #  mmoitems-type: "MATERIAL"
+  #  mmoitems-id: "ENCHANTED_STEEL"
+
+  # Contoh: Final product senjata dari MMOItems
+  #mmo_legendary_sword:
+  #  type: FINAL_RESOURCES
+  #  material: DIAMOND_SWORD
+  #  name: "§6Legendary Sword"
+  #  lore:
+  #    - "§7Pedang legendaris"
+  #    - "§7Senjata dari MMOItems"
+  #    - ""
+  #    - "§eSell Price: §6$15,000"
+  #  custom-model-data: 3101
+  #  glow: true
+  #  suggested_price: 15000.0
+  #  mmoitems-type: "SWORD"
+  #  mmoitems-id: "LEGENDARY_SWORD"
+
+  # Contoh: Final product armor dari MMOItems
+  #mmo_dragon_armor:
+  #  type: FINAL_RESOURCES
+  #  material: DIAMOND_CHESTPLATE
+  #  name: "§cDragon Armor"
+  #  lore:
+  #    - "§7Armor yang dibuat dari sisik naga"
+  #    - "§7Armor dari MMOItems"
+  #    - ""
+  #    - "§eSell Price: §6$20,000"
+  #  custom-model-data: 3102
+  #  glow: true
+  #  suggested_price: 20000.0
+  #  mmoitems-type: "ARMOR"
+  #  mmoitems-id: "DRAGON_CHESTPLATE"
+
+  # Contoh: Consumable dari MMOItems
+  #mmo_healing_potion:
+  #  type: FINAL_RESOURCES
+  #  material: POTION
+  #  name: "§aSuper Healing Potion"
+  #  lore:
+  #    - "§7Ramuan penyembuhan super"
+  #    - "§7Consumable dari MMOItems"
+  #    - ""
+  #    - "§eSell Price: §6$2,000"
+  #  custom-model-data: 3103
+  #  glow: false
+  #  suggested_price: 2000.0
+  #  mmoitems-type: "CONSUMABLE"
+  #  mmoitems-id: "SUPER_HEALING_POTION"

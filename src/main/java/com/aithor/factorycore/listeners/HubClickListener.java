@@ -38,6 +38,7 @@ public class HubClickListener implements Listener {
     private final Map<UUID, HelpInfoGUI> helpInfoGUIs = new HashMap<>();
     private final Map<UUID, MarketplaceGUI> marketplaceGUIs = new HashMap<>();
     private final Map<UUID, ResearchGUI> researchGUIs = new HashMap<>();
+    private final Map<UUID, AchievementGUI> achievementGUIs = new HashMap<>();
 
     public HubClickListener(FactoryCore plugin) {
         this.plugin = plugin;
@@ -91,6 +92,8 @@ public class HubClickListener implements Listener {
             handleResearchCenterClick(player, clicked, meta, name);
         } else if (title.contains("Research:")) {
             handleResearchDetailClick(player, clicked, meta, name);
+        } else if (title.contains("Achievements")) {
+            handleAchievementsClick(player, clicked, meta, name);
         } else if (title.contains("Confirm Purchase") || title.contains("Confirm Sale") ||
                 title.contains("Confirm Fire") || title.contains("Confirm Unassign") ||
                 title.contains("Confirm Dismiss") || title.contains("Create Listing")) {
@@ -117,7 +120,8 @@ public class HubClickListener implements Listener {
                 title.contains("Confirm Dismiss") ||
                 title.contains("Create Listing") ||
                 title.contains("Research Center") ||
-                title.contains("Research:");
+                title.contains("Research:") ||
+                title.contains("Achievements");
     }
 
     // ==================== HUB MAIN MENU ====================
@@ -146,6 +150,10 @@ public class HubClickListener implements Listener {
             MarketplaceGUI gui = new MarketplaceGUI(plugin, player);
             marketplaceGUIs.put(player.getUniqueId(), gui);
             gui.openMarketplaceMenu();
+        } else if (name.contains("Achievements")) {
+            AchievementGUI gui = new AchievementGUI(plugin, player);
+            achievementGUIs.put(player.getUniqueId(), gui);
+            gui.openAchievementMenu();
         } else if (name.contains("Research Center")) {
             ResearchGUI gui = new ResearchGUI(plugin, player);
             researchGUIs.put(player.getUniqueId(), gui);
@@ -697,6 +705,26 @@ public class HubClickListener implements Listener {
         }
     }
 
+    // ==================== ACHIEVEMENTS ====================
+    private void handleAchievementsClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
+        AchievementGUI gui = achievementGUIs.getOrDefault(player.getUniqueId(), new AchievementGUI(plugin, player));
+        achievementGUIs.put(player.getUniqueId(), gui);
+
+        if (name.contains("Previous Page")) {
+            gui.openAchievementMenu(gui.getCurrentPage() - 1);
+            return;
+        }
+
+        if (name.contains("Next Page")) {
+            gui.openAchievementMenu(gui.getCurrentPage() + 1);
+            return;
+        }
+
+        if (name.contains("Back to Hub")) {
+            openHub(player);
+        }
+    }
+
     // ==================== CONFIRMATION DIALOGS ====================
     private void handleConfirmationClick(Player player, ItemStack clicked, ItemMeta meta, String name, String title) {
         // Purchase confirmation
@@ -865,5 +893,6 @@ public class HubClickListener implements Listener {
         helpInfoGUIs.remove(playerId);
         marketplaceGUIs.remove(playerId);
         researchGUIs.remove(playerId);
+        achievementGUIs.remove(playerId);
     }
 }

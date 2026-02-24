@@ -203,6 +203,17 @@ public class MarketplaceManager {
             removeListing(listingId);
         }
 
+        // Achievement: First Profit & Capitalist Monopoly (for the seller)
+        if (plugin.getAchievementManager() != null) {
+            Player sellerPlayer = Bukkit.getPlayer(listing.seller);
+            if (sellerPlayer != null) {
+                plugin.getAchievementManager().awardAchievement(sellerPlayer, "first_profit");
+                plugin.getAchievementManager().addProgress(sellerPlayer, "capitalist_monopoly", sellerReceives);
+            } else {
+                plugin.getAchievementManager().addProgressOffline(listing.seller, "capitalist_monopoly", sellerReceives);
+            }
+        }
+
         // Notify seller if online
         Player seller = Bukkit.getPlayer(listing.seller);
         if (seller != null) {

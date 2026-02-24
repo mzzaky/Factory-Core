@@ -831,6 +831,12 @@ public class NPCManager {
         spawnVillager(npc, configPath);
 
         saveAll();
+
+        // Achievement: Who Is The Boss Now - first NPC assignment
+        if (plugin.getAchievementManager() != null) {
+            plugin.getAchievementManager().awardAchievement(player, "who_is_the_boss_now");
+        }
+
         plugin.getLogger().info("NPC " + npcId + " assigned to factory " + factoryId + " by " + player.getName());
         return true;
     }

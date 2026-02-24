@@ -1,0 +1,156 @@
+# FactoryCore Achievement System Configuration
+# Version: 1.2.0
+# Author: aithor
+#
+# Each achievement has:
+#   name: Display name shown in GUI and toast
+#   description: Short description of how to unlock
+#   icon: Material name for the GUI icon
+#   type: Achievement trigger type
+#     - FIRST_FACTORY_PURCHASE: Buy a factory for the first time
+#     - FIRST_PRODUCTION: Complete a production cycle for the first time
+#     - CUMULATIVE_PRODUCTION_COST: Spend a total amount on production costs
+#     - CUMULATIVE_PRODUCTION_CYCLES: Complete a total number of production cycles
+#     - FIRST_MARKETPLACE_SALE: Sell an item on the marketplace for the first time
+#     - CUMULATIVE_MARKETPLACE_EARNINGS: Earn a total amount from marketplace sales
+#     - FIRST_NPC_ASSIGNMENT: Assign an NPC to a factory for the first time
+#     - CUMULATIVE_SALARY_PAID: Pay a total amount in salaries
+#     - FIRST_RESEARCH_COMPLETE: Complete a research for the first time
+#     - FIRST_MAX_RESEARCH: Max out a research for the first time
+#     - FIRST_TAX_PAYMENT: Pay a factory tax for the first time
+#     - CUMULATIVE_TAX_PAID: Pay a total amount in taxes
+#   threshold: Target value for cumulative achievements (ignored for FIRST_* types)
+#   sound: Sound effect played when achievement is unlocked
+#   sound-volume: Volume of the sound (0.0 - 1.0)
+#   sound-pitch: Pitch of the sound (0.5 - 2.0)
+
+# Global achievement settings
+settings:
+  # Enable/disable the achievement system
+  enabled: true
+  # Toast notification duration (ticks) - title display time
+  toast-fade-in: 10
+  toast-stay: 70
+  toast-fade-out: 20
+
+# Achievement definitions
+achievements:
+  new_investor:
+    name: "&6New Investor"
+    description: "Purchase your first factory"
+    icon: GOLD_BLOCK
+    type: FIRST_FACTORY_PURCHASE
+    threshold: 1
+    sound: ENTITY_PLAYER_LEVELUP
+    sound-volume: 1.0
+    sound-pitch: 1.2
+
+  early_prototype:
+    name: "&eEarly Prototype"
+    description: "Complete your first production cycle"
+    icon: CRAFTING_TABLE
+    type: FIRST_PRODUCTION
+    threshold: 1
+    sound: ENTITY_PLAYER_LEVELUP
+    sound-volume: 1.0
+    sound-pitch: 1.2
+
+  relentless_grinder:
+    name: "&cRelentless Grinder"
+    description: "Spend $500,000 on production costs"
+    icon: DIAMOND_PICKAXE
+    type: CUMULATIVE_PRODUCTION_COST
+    threshold: 500000
+    sound: UI_TOAST_CHALLENGE_COMPLETE
+    sound-volume: 1.0
+    sound-pitch: 1.0
+
+  mass_producer:
+    name: "&bMass Producer"
+    description: "Complete 100 production cycles across all factories"
+    icon: FURNACE
+    type: CUMULATIVE_PRODUCTION_CYCLES
+    threshold: 100
+    sound: UI_TOAST_CHALLENGE_COMPLETE
+    sound-volume: 1.0
+    sound-pitch: 1.0
+
+  first_profit:
+    name: "&aFirst Profit"
+    description: "Sell your first item on the marketplace"
+    icon: EMERALD
+    type: FIRST_MARKETPLACE_SALE
+    threshold: 1
+    sound: ENTITY_PLAYER_LEVELUP
+    sound-volume: 1.0
+    sound-pitch: 1.2
+
+  capitalist_monopoly:
+    name: "&5Capitalist Monopoly"
+    description: "Earn $500,000 from marketplace sales"
+    icon: EMERALD_BLOCK
+    type: CUMULATIVE_MARKETPLACE_EARNINGS
+    threshold: 500000
+    sound: UI_TOAST_CHALLENGE_COMPLETE
+    sound-volume: 1.0
+    sound-pitch: 1.0
+
+  who_is_the_boss_now:
+    name: "&3Who Is The Boss Now"
+    description: "Assign an NPC to a factory for the first time"
+    icon: VILLAGER_SPAWN_EGG
+    type: FIRST_NPC_ASSIGNMENT
+    threshold: 1
+    sound: ENTITY_PLAYER_LEVELUP
+    sound-volume: 1.0
+    sound-pitch: 1.2
+
+  big_spender:
+    name: "&6Big Spender"
+    description: "Pay $500,000 in total employee salaries"
+    icon: GOLD_INGOT
+    type: CUMULATIVE_SALARY_PAID
+    threshold: 500000
+    sound: UI_TOAST_CHALLENGE_COMPLETE
+    sound-volume: 1.0
+    sound-pitch: 1.0
+
+  tech_investment:
+    name: "&dTech Investment"
+    description: "Complete your first research"
+    icon: ENCHANTING_TABLE
+    type: FIRST_RESEARCH_COMPLETE
+    threshold: 1
+    sound: ENTITY_PLAYER_LEVELUP
+    sound-volume: 1.0
+    sound-pitch: 1.2
+
+  modern_factory:
+    name: "&5Modern Factory"
+    description: "Max out a research for the first time"
+    icon: BEACON
+    type: FIRST_MAX_RESEARCH
+    threshold: 1
+    sound: UI_TOAST_CHALLENGE_COMPLETE
+    sound-volume: 1.0
+    sound-pitch: 1.0
+
+  tax_contributor:
+    name: "&eTax Contributor"
+    description: "Pay your factory tax for the first time"
+    icon: PAPER
+    type: FIRST_TAX_PAYMENT
+    threshold: 1
+    sound: ENTITY_PLAYER_LEVELUP
+    sound-volume: 1.0
+    sound-pitch: 1.2
+
+  disciplined_businessman:
+    name: "&4Disciplined Businessman"
+    description: "Pay $500,000 in total factory taxes"
+    icon: DIAMOND
+    type: CUMULATIVE_TAX_PAID
+    threshold: 500000
+    sound: UI_TOAST_CHALLENGE_COMPLETE
+    sound-volume: 1.0
+    sound-pitch: 1.0

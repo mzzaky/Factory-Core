@@ -139,6 +139,23 @@ public class HubGUI {
                         "",
                         "§7Click to browse!")));
 
+        // Achievements (slot 30) - View achievements
+        int unlockedAchievements = plugin.getAchievementManager() != null
+                ? plugin.getAchievementManager().getUnlockedCount(player.getUniqueId())
+                : 0;
+        int totalAchievements = plugin.getAchievementManager() != null
+                ? plugin.getAchievementManager().getTotalAchievementCount()
+                : 0;
+        inv.setItem(30, createItem(Material.DIAMOND,
+                "§6§lAchievements",
+                Arrays.asList(
+                        "§7View your achievements",
+                        "§7and track progress",
+                        "",
+                        "§eUnlocked: §6" + unlockedAchievements + "§7/§6" + totalAchievements,
+                        "",
+                        "§7Click to view!")));
+
         // Research Center (slot 31) - Research technologies
         long activeResearch = 0;
         int totalCompleted = 0;

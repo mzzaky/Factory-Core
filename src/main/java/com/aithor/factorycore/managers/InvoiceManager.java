@@ -171,6 +171,11 @@ public class InvoiceManager {
             plugin.getAchievementManager().addProgress(player, "big_spender", invoice.getAmount());
         }
 
+        // Daily Quest: Payday Routine (SALARY_PAYMENT)
+        if (plugin.getDailyQuestManager() != null && invoice.getType() == InvoiceType.SALARY) {
+            plugin.getDailyQuestManager().addProgressByType(player, "SALARY_PAYMENT", 1);
+        }
+
         return true;
     }
 

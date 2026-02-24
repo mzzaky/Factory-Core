@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievement System - FactoryCore Wiki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #0a0c10;
+            color: #e4e6ea;
+            min-height: 100vh;
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #10b981;
+        }
+
+        .page-header p {
+            color: #9ca3af;
+            font-size: 1.15rem;
+            margin-top: 10px;
+        }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #10b981;
+        }
+
+        .breadcrumb-sep {
+            color: #4b5563;
+        }
+
+        .breadcrumb-current {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        /* ── Layout ── */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* ── Side Nav ── */
+        .side-nav {
+            position: sticky;
+            top: 20px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .nav-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.1);
+            font-weight: 700;
+            color: #e4e6ea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 15px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-list a:hover {
+            background: rgba(52, 211, 153, 0.05);
+            color: #d1fae5;
+        }
+
+        .nav-list a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(4, 120, 87, 0.05) 100%);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            font-weight: 600;
+        }
+
+        /* ── Main Content ── */
+        .main-content {
+            background: #0d1117;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .content-section {
+            padding: 40px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.08);
+            scroll-margin-top: 20px;
+        }
+
+        .content-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            margin-bottom: 25px;
+        }
+
+        .section-title h2 {
+            color: #10b981;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        /* ── Typography ── */
+        h3 {
+            color: #34d399;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #d1d5db;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            color: #d1d5db;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        strong {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 3px 6px;
+            border-radius: 5px;
+            color: #34d399;
+            font-size: 13px;
+        }
+
+        /* ── Info / Warning Boxes ── */
+        .info-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .info-box-title {
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .warn-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.03) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid #fbbf24;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.05), inset 0 0 12px rgba(245, 158, 11, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warn-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.1), transparent 50%);
+            pointer-events: none;
+        }
+
+        .warn-box .info-box-title {
+            color: #fbbf24;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .warn-box div:last-child {
+            color: #e5e7eb;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Feature Cards Grid ── */
+        .phases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .phase-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(52, 211, 153, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .phase-card:hover {
+            border-color: rgba(52, 211, 153, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .phase-card .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .phase-card h4 {
+            color: #10b981;
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .phase-card p {
+            color: #9ca3af;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* ── Table ── */
+        .table-wrapper {
+            margin: 25px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .data-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #34d399;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #c9cdd4;
+            font-size: 14px;
+        }
+
+        .data-table td:first-child {
+            font-weight: 600;
+            color: #e4e6ea;
+        }
+
+        /* ── Code Block ── */
+        .code-wrap {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #090d13;
+            border: 1px solid rgba(52, 211, 153, 0.18);
+            border-radius: 10px;
+            padding: 22px 24px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.75;
+            color: #abb2bf;
+        }
+
+        .code-block .cm {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .code-block .ck {
+            color: #e06c75;
+        }
+
+        .code-block .cv {
+            color: #98c379;
+        }
+
+        .code-block .cn {
+            color: #d19a66;
+        }
+
+        .code-block .cs {
+            color: #56b6c2;
+        }
+
+        .code-block .ci {
+            color: #61afef;
+        }
+
+        .code-lang-badge {
+            position: absolute;
+            top: 10px;
+            right: 48px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(52, 211, 153, 0.18);
+        }
+
+        .copy-btn.copied {
+            color: #10b981;
+            border-color: #10b981;
+        }
+
+        /* ── Dev Tip Box ── */
+        .dev-tip {
+            background: linear-gradient(135deg, rgba(97, 175, 239, 0.07) 0%, rgba(56, 139, 253, 0.03) 100%);
+            border: 1px solid rgba(97, 175, 239, 0.25);
+            border-left: 4px solid #61afef;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin: 20px 0;
+        }
+
+        .dev-tip .info-box-title {
+            color: #61afef;
+        }
+
+        /* ── Badge ── */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .badge-pct {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .badge-flat {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+
+            .side-nav {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .content-section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-header">
+        <h1>Achievement System</h1>
+        <p>Unlock Milestones and Track Your Factory Empire's Progress</p>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="wiki_index.html">Wiki Home</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <a href="#">Systems</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <span class="breadcrumb-current">Achievement System</span>
+    </div>
+
+    <div class="content-container">
+        <nav class="side-nav">
+            <div class="nav-header">On This Page</div>
+            <ul class="nav-list">
+                <li><a href="#overview" class="active">Overview</a></li>
+                <li><a href="#mechanics">How It Works</a></li>
+                <li><a href="#available-achievements">Available Achievements</a></li>
+                <li><a href="#configuration">Configuration & Data</a></li>
+                <li><a href="#developer-tips">Developer Tips</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <!-- ════ OVERVIEW ════ -->
+            <section class="content-section" id="overview">
+                <div class="section-title">
+                    <h2>Overview</h2>
+                </div>
+                <p>
+                    The <strong>Achievement System</strong> adds an engaging layer of progression implicitly connected
+                    to every fundamental module within your industrial ecosystem. From the first spark of production to
+                    controlling an immense multi-million capitalist empire, this system monitors player stats to award
+                    them with impressive customized popups, sounds, and an undeniable sense of accomplishment as they
+                    unlock distinct milestones.
+                </p>
+                <div class="info-box">
+                    <div class="info-box-title">💡 Highly Customizable</div>
+                    <div>Everything from achievement names, icons, thresholds, and even distinct pitch variations on
+                        sound effects can be meticulously tuned within <code>achievement.yml</code>.</div>
+                </div>
+            </section>
+
+            <!-- ════ HOW IT WORKS ════ -->
+            <section class="content-section" id="mechanics">
+                <div class="section-title">
+                    <h2>How It Works</h2>
+                </div>
+                <p>Achievements represent significant benchmarks divided into two main categories:</p>
+                <ul>
+                    <li><strong>First-time Achievements:</strong> These are granted the precise instant a player
+                        executes a milestone action for the first time. E.g., purchasing their first factory property or
+                        completing their first marketplace listing.</li>
+                    <li><strong>Cumulative Achievements:</strong> These require dedication. The plugin silently counts
+                        cumulative expenses and yields over an indefinite period (e.g., spending <code>$500,000</code>
+                        in employee salaries). The precise moment a threshold crosses the defined target, the
+                        achievement triggers permanently.</li>
+                    <li><strong>Offline Progression:</strong> Your empire never sleeps. For things like marketplace
+                        sales that might occur while the factory owner is offline, their progress is intelligently
+                        added. They'll receive their proper notifications the very next time they connect.</li>
+                </ul>
+                <div class="warn-box">
+                    <div class="info-box-title">🏆 Toast Notifications</div>
+                    <div>When a player satisfies the conditions, an immediate vibrant on-screen toast is presented. This
+                        includes a prominent <code>ACHIEVEMENT UNLOCKED</code> title card accompanied by the tailored
+                        sound effect, ensuring the moment feels triumphant!</div>
+                </div>
+            </section>
+
+            <!-- ════ AVAILABLE ACHIEVEMENTS ════ -->
+            <section class="content-section" id="available-achievements">
+                <div class="section-title">
+                    <h2>Available Achievements</h2>
+                </div>
+                <p>By default, FactoryCore introduces 12 expertly tuned achievements integrated into standard gameplay
+                    operations.</p>
+
+                <div class="phases-grid">
+                    <div class="phase-card">
+                        <span class="card-icon">🟨</span>
+                        <h4>New Investor</h4>
+                        <p>Purchase your very first factory and step into the industrial world.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🛠️</span>
+                        <h4>Early Prototype</h4>
+                        <p>Successfully complete your first production cycle.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">⛏️</span>
+                        <h4>Relentless Grinder</h4>
+                        <p>Spend $500,000 on continuous production costs.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🔥</span>
+                        <h4>Mass Producer</h4>
+                        <p>Complete 100 production cycles across all your factories.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">💎</span>
+                        <h4>First Profit</h4>
+                        <p>Capitalize on the economy by selling your first item on the marketplace.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🟩</span>
+                        <h4>Capitalist Monopoly</h4>
+                        <p>Earn an impressive $500,000 from accumulated marketplace sales.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">👨‍💼</span>
+                        <h4>Who Is The Boss Now</h4>
+                        <p>Step up to upper management and assign an NPC to a factory for the first time.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">💵</span>
+                        <h4>Big Spender</h4>
+                        <p>Pay $500,000 in total employee salaries.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">📚</span>
+                        <h4>Tech Investment</h4>
+                        <p>Finish processing your first technology research in the hub.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">🎇</span>
+                        <h4>Modern Factory</h4>
+                        <p>Fully maximize a technology research path linearly to its absolute limit.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">📄</span>
+                        <h4>Tax Contributor</h4>
+                        <p>Be a good citizen and transparently pay your factory tax for the first time.</p>
+                    </div>
+                    <div class="phase-card">
+                        <span class="card-icon">💠</span>
+                        <h4>Disciplined Businessman</h4>
+                        <p>Pay a monumental $500,000 in total factory taxes to the state.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════ CONFIGURATION & DATA ════ -->
+            <section class="content-section" id="configuration">
+                <div class="section-title">
+                    <h2>Configuration & Data</h2>
+                </div>
+                <p>The achievement definitions and global configurations natively reside in
+                    <code>achievement.yml</code>.</p>
+
+                <h3>Configuration Details</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Definition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>name & description</code></td>
+                                <td>The display interface formatting natively supporting standard <code>&</code> color
+                                    codes.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>type</code></td>
+                                <td>The specific trigger enumerator hooking inherently to the plugin's background
+                                    events. E.g., <code>CUMULATIVE_PRODUCTION_COST</code>.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>threshold</code></td>
+                                <td>The numeric value designating when an achievement is officially conquered (only
+                                    explicitly applicable to <code>CUMULATIVE_*</code> triggers).</td>
+                            </tr>
+                            <tr>
+                                <td><code>sound</code></td>
+                                <td>Standard XSound library string enum validating the SFX deployed in the toast. E.g.,
+                                    <code>UI_TOAST_CHALLENGE_COMPLETE</code>.</td>
+                            </tr>
+                            <tr>
+                                <td><code>toast-fade-in / stay / fade-out</code></td>
+                                <td>Configurable timing arguments defined directly in server ticks globally controlling
+                                    how long the title displays persist on-screen.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Player Save Data</h3>
+                <p>Actual progression metrics, cumulative floating-point values, and the permanent
+                    <code>unlockTimestamps</code> for when an achievement was awarded are flawlessly embedded in
+                    <code>data/achievements.yml</code> utilizing absolute player UUID representations.</p>
+            </section>
+
+            <!-- ════ DEVELOPER TIPS ════ -->
+            <section class="content-section" id="developer-tips">
+                <div class="section-title">
+                    <h2>Developer Tips</h2>
+                </div>
+
+                <div class="dev-tip">
+                    <div class="info-box-title">👨‍💻 Accessing the Manager API</div>
+                    <div>If you are utilizing our custom mechanics or overriding them via addons, you effortlessly plug
+                        into our <code>AchievementManager</code> instance to manipulate player progression dynamically.
+                    </div>
+                </div>
+
+                <p>You can seamlessly inject incremental stat modifications directly into a player's achievement pool
+                    using a simple API endpoint call.</p>
+
+                <div class="code-wrap">
+                    <span class="code-lang-badge">JAVA</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre
+                        class="code-block"><span class="cm">// Retrieve the primary manager from the core plugin instance</span>
+<span class="cv">AchievementManager</span> achManager = plugin.getAchievementManager();
+
+<span class="cm">// Example 1: Instantly awarding a FIRST-TIME achievement</span>
+achManager.awardAchievement(player, <span class="ci">"new_investor"</span>);
+
+<span class="cm">// Example 2: Programmatically progressing a cumulative track</span>
+<span class="cm">// If threshold reaches its maximum, the function handles the toast popup automatically.</span>
+<span class="cv">double</span> transactionAmount = <span class="cn">15000.0</span>;
+achManager.addProgress(player, <span class="ci">"relentless_grinder"</span>, transactionAmount);
+
+<span class="cm">// Example 3: Modifying offline player accumulation dynamically</span>
+achManager.addProgressOffline(offlinePlayerUUID, <span class="ci">"capitalist_monopoly"</span>, <span class="cn">500.0</span>);</pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Copy to clipboard functionality
+        function copyCode(btn) {
+            const pre = btn.nextElementSibling;
+            const text = pre.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Active state for side navigation based on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('.content-section');
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 60) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-list a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').substring(1) === current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

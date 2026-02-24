@@ -164,6 +164,15 @@ public class EmployeesCenterGUI {
             if (isPurchased) {
                 lore.add("§7Type: §e" + npc.getNpcTypeId());
                 lore.add("§7Production Buff: §a-" + npc.getProductionTimeReduction() + "% §7time");
+
+                long timeUntilNext = plugin.getInvoiceManager().getTimeUntilNextSalary();
+                if (timeUntilNext > 0) {
+                    long hours = timeUntilNext / (60 * 60 * 1000);
+                    long minutes = (timeUntilNext % (60 * 60 * 1000)) / (60 * 1000);
+                    lore.add("§7Next Salary In: §e" + hours + "h " + minutes + "m");
+                } else {
+                    lore.add("§7Next Salary In: §ePending...");
+                }
             } else {
                 lore.add("§7(Admin-spawned employee)");
             }

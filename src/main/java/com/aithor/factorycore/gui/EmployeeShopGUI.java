@@ -117,8 +117,6 @@ public class EmployeeShopGUI {
         headerLore.add("§7These are your purchased employees.");
         headerLore.add("§7Click an employee to assign them");
         headerLore.add("§7to one of your factories.");
-        headerLore.add("");
-        headerLore.add("§eUnassigned employees still cost salary!");
         inv.setItem(4, createItem(Material.PLAYER_HEAD, "§b§lMy Employees", headerLore));
 
         // Get player's unassigned NPCs

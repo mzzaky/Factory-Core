@@ -9,41 +9,41 @@
 # 5. MACHINE_PARTS - Machine parts
 #
 # ==================== MMOItems Integration ====================
-# Anda dapat menghubungkan resource dengan item dari plugin MMOItems.
-# Tambahkan field 'mmoitems-type' dan 'mmoitems-id' pada resource.
-# Jika MMOItems tersedia, plugin akan menggunakan item dari MMOItems.
-# Jika MMOItems tidak tersedia, plugin akan fallback ke item vanilla (material/name/lore).
+# You can connect resources with items from the MMOItems plugin.
+# Add the 'mmoitems-type' and 'mmoitems-id' fields to the resource.
+# If MMOItems is available, the plugin will use items from MMOItems.
+# If MMOItems is unavailable, the plugin will fallback to vanilla items (material/name/lore).
 #
 # Format:
 #   resource_id:
 #     type: <RESOURCE_TYPE>
-#     material: <VANILLA_MATERIAL>        # Digunakan sebagai fallback
-#     name: "<Display Name>"              # Digunakan sebagai fallback
-#     lore:                               # Digunakan sebagai fallback
+#     material: <VANILLA_MATERIAL>        # Used as fallback
+#     name: "<Display Name>"              # Used as fallback
+#     lore:                               # Used as fallback
 #       - "<lore line>"
-#     custom-model-data: <number>         # Digunakan sebagai fallback
-#     glow: <true/false>                  # Digunakan sebagai fallback
+#     custom-model-data: <number>         # Used as fallback
+#     glow: <true/false>                  # Used as fallback
 #     suggested_price: <price>
-#     mmoitems-type: "<MMOItems Type>"    # Contoh: SWORD, ARMOR, MATERIAL, CONSUMABLE, dll.
-#     mmoitems-id: "<MMOItems Item ID>"   # ID item yang terdaftar di MMOItems
+#     mmoitems-type: "<MMOItems Type>"    # Example: SWORD, ARMOR, MATERIAL, CONSUMABLE, etc.
+#     mmoitems-id: "<MMOItems Item ID>"   # Item ID registered in MMOItems
 #
 # ==================== ExecutableItems Integration ====================
-# Anda dapat menghubungkan resource dengan item dari plugin ExecutableItems.
-# Cukup tambahkan field 'executable-items-id' pada resource.
-# Jika ExecutableItems tersedia, plugin akan menggunakan item dari ExecutableItems.
-# Jika ExecutableItems tidak tersedia, plugin akan fallback ke item vanilla (material/name/lore).
+# You can connect resources with items from the ExecutableItems plugin.
+# Simply add the 'executable-items-id' field to the resource.
+# If ExecutableItems is available, the plugin will use items from ExecutableItems.
+# If ExecutableItems is unavailable, the plugin will fallback to vanilla items (material/name/lore).
 #
 # Format:
 #   resource_id:
 #     type: <RESOURCE_TYPE>
-#     material: <VANILLA_MATERIAL>        # Digunakan sebagai fallback
-#     name: "<Display Name>"              # Digunakan sebagai fallback
-#     lore:                               # Digunakan sebagai fallback
+#     material: <VANILLA_MATERIAL>        # Used as fallback
+#     name: "<Display Name>"              # Used as fallback
+#     lore:                               # Used as fallback
 #       - "<lore line>"
-#     custom-model-data: <number>         # Digunakan sebagai fallback
-#     glow: <true/false>                  # Digunakan sebagai fallback
+#     custom-model-data: <number>         # Used as fallback
+#     glow: <true/false>                  # Used as fallback
 #     suggested_price: <price>
-#     executable-items-id: "<EI Item ID>" # ID item yang terdaftar di ExecutableItems
+#     executable-items-id: "<EI Item ID>" # Item ID registered in ExecutableItems
 #
 
 resources:
@@ -302,46 +302,46 @@ resources:
     glow: true
     suggested_price: 600.0
 
-  # ==================== MMOItems RESOURCES (CONTOH) ====================
-  # Uncomment dan sesuaikan dengan item MMOItems yang ada di server Anda.
-  # Pastikan plugin MMOItems sudah terinstall dan item-item berikut sudah terdaftar.
+  # ==================== MMOItems RESOURCES (EXAMPLE) ====================
+  # Uncomment and adjust to the MMOItems items available on your server.
+  # Make sure the MMOItems plugin is installed and the following items are registered.
 
-  # Contoh: Raw material dari MMOItems
+  # Example: Raw material from MMOItems
   #mmo_raw_mythril:
   #  type: RAW_RESOURCES
   #  material: PRISMARINE_SHARD
   #  name: "§bMythril Ore"
   #  lore:
-  #    - "§7Bijih mythril langka"
-  #    - "§7Material dari MMOItems"
+  #    - "§7Rare mythril ore"
+  #    - "§7Material from MMOItems"
   #  custom-model-data: 1101
   #  glow: true
   #  suggested_price: 500.0
   #  mmoitems-type: "MATERIAL"
   #  mmoitems-id: "MYTHRIL_ORE"
 
-  # Contoh: Advanced resource dari MMOItems
+  # Example: Advanced resource from MMOItems
   #mmo_enchanted_steel:
   #  type: ADVANCED_RESOURCES
   #  material: IRON_INGOT
   #  name: "§dEnchanted Steel"
   #  lore:
-  #    - "§7Baja yang telah di-enchant"
-  #    - "§7Material dari MMOItems"
+  #    - "§7Enchanted steel"
+  #    - "§7Material from MMOItems"
   #  custom-model-data: 2101
   #  glow: true
   #  suggested_price: 800.0
   #  mmoitems-type: "MATERIAL"
   #  mmoitems-id: "ENCHANTED_STEEL"
 
-  # Contoh: Final product senjata dari MMOItems
+  # Example: Final product weapon from MMOItems
   #mmo_legendary_sword:
   #  type: FINAL_RESOURCES
   #  material: DIAMOND_SWORD
   #  name: "§6Legendary Sword"
   #  lore:
-  #    - "§7Pedang legendaris"
-  #    - "§7Senjata dari MMOItems"
+  #    - "§7Legendary sword"
+  #    - "§7Weapon from MMOItems"
   #    - ""
   #    - "§eSell Price: §6$15,000"
   #  custom-model-data: 3101
@@ -350,14 +350,14 @@ resources:
   #  mmoitems-type: "SWORD"
   #  mmoitems-id: "LEGENDARY_SWORD"
 
-  # Contoh: Final product armor dari MMOItems
+  # Example: Final product armor from MMOItems
   #mmo_dragon_armor:
   #  type: FINAL_RESOURCES
   #  material: DIAMOND_CHESTPLATE
   #  name: "§cDragon Armor"
   #  lore:
-  #    - "§7Armor yang dibuat dari sisik naga"
-  #    - "§7Armor dari MMOItems"
+  #    - "§7Armor made from dragon scales"
+  #    - "§7Armor from MMOItems"
   #    - ""
   #    - "§eSell Price: §6$20,000"
   #  custom-model-data: 3102
@@ -366,14 +366,14 @@ resources:
   #  mmoitems-type: "ARMOR"
   #  mmoitems-id: "DRAGON_CHESTPLATE"
 
-  # Contoh: Consumable dari MMOItems
+  # Example: Consumable from MMOItems
   #mmo_healing_potion:
   #  type: FINAL_RESOURCES
   #  material: POTION
   #  name: "§aSuper Healing Potion"
   #  lore:
-  #    - "§7Ramuan penyembuhan super"
-  #    - "§7Consumable dari MMOItems"
+  #    - "§7Super healing potion"
+  #    - "§7Consumable from MMOItems"
   #    - ""
   #    - "§eSell Price: §6$2,000"
   #  custom-model-data: 3103
@@ -382,44 +382,44 @@ resources:
   #  mmoitems-type: "CONSUMABLE"
   #  mmoitems-id: "SUPER_HEALING_POTION"
 
-  # ==================== ExecutableItems RESOURCES (CONTOH) ====================
-  # Uncomment dan sesuaikan dengan item ExecutableItems yang ada di server Anda.
-  # Pastikan plugin ExecutableItems sudah terinstall dan item-item berikut sudah terdaftar.
+  # ==================== ExecutableItems RESOURCES (EXAMPLE) ====================
+  # Uncomment and adjust to the ExecutableItems items available on your server.
+  # Make sure the ExecutableItems plugin is installed and the following items are registered.
 
-  # Contoh: Raw material dari ExecutableItems
+  # Example: Raw material from ExecutableItems
   #ei_magic_dust:
   #  type: RAW_RESOURCES
   #  material: GLOWSTONE_DUST
   #  name: "§dMagic Dust"
   #  lore:
-  #    - "§7Debu sihir langka"
-  #    - "§7Item dari ExecutableItems"
+  #    - "§7Rare magic dust"
+  #    - "§7Item from ExecutableItems"
   #  custom-model-data: 1201
   #  glow: true
   #  suggested_price: 350.0
   #  executable-items-id: "MAGIC_DUST"
 
-  # Contoh: Advanced resource dari ExecutableItems
+  # Example: Advanced resource from ExecutableItems
   #ei_enchanted_crystal:
   #  type: ADVANCED_RESOURCES
   #  material: AMETHYST_SHARD
   #  name: "§5Enchanted Crystal"
   #  lore:
-  #    - "§7Kristal yang telah di-enchant"
-  #    - "§7Item dari ExecutableItems"
+  #    - "§7Enchanted crystal"
+  #    - "§7Item from ExecutableItems"
   #  custom-model-data: 2201
   #  glow: true
   #  suggested_price: 750.0
   #  executable-items-id: "ENCHANTED_CRYSTAL"
 
-  # Contoh: Final product dari ExecutableItems
+  # Example: Final product from ExecutableItems
   #ei_thunder_blade:
   #  type: FINAL_RESOURCES
   #  material: DIAMOND_SWORD
   #  name: "§6Thunder Blade"
   #  lore:
-  #    - "§7Pedang dengan kekuatan petir"
-  #    - "§7Senjata dari ExecutableItems"
+  #    - "§7Sword with lightning power"
+  #    - "§7Weapon from ExecutableItems"
   #    - ""
   #    - "§eSell Price: §6$12,000"
   #  custom-model-data: 3201
@@ -427,27 +427,27 @@ resources:
   #  suggested_price: 12000.0
   #  executable-items-id: "THUNDER_BLADE"
 
-  # Contoh: Fuel dari ExecutableItems
+  # Example: Fuel from ExecutableItems
   #ei_arcane_fuel:
   #  type: FUEL
   #  material: MAGMA_CREAM
   #  name: "§cArcane Fuel"
   #  lore:
-  #    - "§7Bahan bakar berenergi sihir"
-  #    - "§7Fuel dari ExecutableItems"
+  #    - "§7Magic energy fuel"
+  #    - "§7Fuel from ExecutableItems"
   #  custom-model-data: 4201
   #  glow: true
   #  suggested_price: 200.0
   #  executable-items-id: "ARCANE_FUEL"
 
-  # Contoh: Machine part dari ExecutableItems
+  # Example: Machine part from ExecutableItems
   #ei_magic_core:
   #  type: MACHINE_PARTS
   #  material: HEART_OF_THE_SEA
   #  name: "§bMagic Core"
   #  lore:
-  #    - "§7Inti sihir untuk mesin"
-  #    - "§7Komponen dari ExecutableItems"
+  #    - "§7Magic core for machines"
+  #    - "§7Component from ExecutableItems"
   #  custom-model-data: 5201
   #  glow: true
   #  suggested_price: 900.0

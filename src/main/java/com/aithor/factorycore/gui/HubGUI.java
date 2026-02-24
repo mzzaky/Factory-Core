@@ -13,6 +13,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
+import com.aithor.factorycore.managers.TaxManager;
 
 /**
  * Main Hub GUI - Central menu for all FactoryCore features
@@ -81,7 +82,21 @@ public class HubGUI {
                         "§7Click to manage!")));
 
         // Invoice Center (slot 22) - All invoices
-        List<Invoice> allInvoices = plugin.getInvoiceManager().getInvoicesByOwner(player.getUniqueId());
+        List<Invoice> allInvoices = new ArrayList<>(
+                plugin.getInvoiceManager().getInvoicesByOwner(player.getUniqueId()));
+        if (plugin.getTaxManager() != null) {
+            for (TaxManager.TaxRecord record : plugin.getTaxManager().getPlayerTaxRecords(player.getUniqueId())) {
+                if (record.amountDue > 0) {
+                    Invoice taxInvoice = new Invoice(
+                            "TM_" + record.factoryId,
+                            player.getUniqueId(),
+                            InvoiceType.TAX,
+                            record.amountDue,
+                            record.dueDate);
+                    allInvoices.add(taxInvoice);
+                }
+            }
+        }
         long overdueInvoices = allInvoices.stream().filter(Invoice::isOverdue).count();
         double totalDue = allInvoices.stream().mapToDouble(Invoice::getAmount).sum();
         inv.setItem(22, createItem(overdueInvoices > 0 ? Material.RED_CONCRETE : Material.PAPER,
@@ -244,7 +259,7 @@ public class HubGUI {
 
             Map<FactoryType, Long> typeCounts = new HashMap<>();
             for (Factory f : owned) {
-                typeCounts.merge(f.getType(), 1L, Long::sum);
+                typeCounts.merge(f.getType(), 1L, (a, b) -> a + b);
             }
 
             for (Map.Entry<FactoryType, Long> entry : typeCounts.entrySet()) {

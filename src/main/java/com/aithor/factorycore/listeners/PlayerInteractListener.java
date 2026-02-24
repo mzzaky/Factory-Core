@@ -42,6 +42,9 @@ public class PlayerInteractListener implements Listener {
             plugin.getNPCManager().playInteractSound(player, npc);
         }
 
+        // Register right click to avoid triggering left click logic
+        EntityDamageListener.registerRightClick(player.getUniqueId());
+
         // Right-click → Open main factory menu
         FactoryGUI gui = new FactoryGUI(plugin, player, factoryId);
         gui.openMainMenu();

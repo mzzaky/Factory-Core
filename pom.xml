@@ -183,7 +183,7 @@
             <artifactId>SCore</artifactId>
             <version>4.24.1.15</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/SCore-5.26.2.15.jar</systemPath>
+            <systemPath>${project.basedir}/lib/SCore-5.26.2.15.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

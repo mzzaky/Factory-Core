@@ -194,8 +194,7 @@ templates:
     hologram:
       enabled: true
       lines:
-        - "§7[Click to open storage]"
-        - "§c§lSteel Mill Worker"
+        - "§7[Click to open Output Storage]"
       line-spacing: 0.3
       height-offset: 1.3
     idle-animation:
@@ -221,10 +220,9 @@ templates:
     hologram:
       enabled: true
       lines:
-        - "§7[Click to open storage]"
-        - "§e§lRefinery Operator"
+        - "§7[Click to open Output Storage]"
       line-spacing: 0.3
-      height-offset: 2.3
+      height-offset: 1.3
     idle-animation:
       yaw-range: 35.0
       pitch-range: 12.0
@@ -248,10 +246,9 @@ templates:
     hologram:
       enabled: true
       lines:
-        - "§7[Click to open storage]"
-        - "§b§lWorkshop Engineer"
+        - "§7[Click to open Output Storage]"
       line-spacing: 0.3
-      height-offset: 2.3
+      height-offset: 1.3
     idle-animation:
       yaw-range: 30.0
       pitch-range: 15.0
@@ -275,10 +272,9 @@ templates:
     hologram:
       enabled: true
       lines:
-        - "§7[Click to open storage]"
-        - "§5§lAdvanced Factory Manager"
+        - "§7[Click to open Output Storage]"
       line-spacing: 0.3
-      height-offset: 2.3
+      height-offset: 1.3
     idle-animation:
       yaw-range: 40.0
       pitch-range: 18.0
@@ -302,10 +298,9 @@ templates:
     hologram:
       enabled: true
       lines:
-        - "§7[Click to open storage]"
-        - "§9§lLogistics Manager"
+        - "§7[Click to open Output Storage]"
       line-spacing: 0.3
-      height-offset: 2.3
+      height-offset: 1.3
     idle-animation:
       yaw-range: 45.0
       pitch-range: 10.0
@@ -329,10 +324,9 @@ templates:
     hologram:
       enabled: true
       lines:
-        - "§7[Click to open storage]"
-        - "§a§lQuality Inspector"
+        - "§7[Click to open Output Storage]"
       line-spacing: 0.3
-      height-offset: 2.3
+      height-offset: 1.3
     idle-animation:
       yaw-range: 20.0
       pitch-range: 20.0
@@ -356,10 +350,9 @@ templates:
     hologram:
       enabled: true
       lines:
-        - "§7[Click to open storage]"
-        - "§6§lAssembly Expert"
+        - "§7[Click to open Output Storage]"
       line-spacing: 0.3
-      height-offset: 2.3
+      height-offset: 1.3
     idle-animation:
       yaw-range: 35.0
       pitch-range: 15.0
@@ -392,10 +385,10 @@ default:
   hologram:
     enabled: true
     lines:
-      - "§7[Click to open storage]"
+      - "§7[Click to open Output Storage]"
       - "§6§lFactory Employee"
     line-spacing: 0.3           # Spacing between hologram lines (blocks)
-    height-offset: 2.3          # Hologram height above the NPC
+    height-offset: 1.3          # Hologram height above the NPC
 
   # Idle animation: range of head angles moving randomly
   idle-animation:

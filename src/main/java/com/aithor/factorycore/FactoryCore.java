@@ -218,6 +218,8 @@ public class FactoryCore extends JavaPlugin {
     private void startSchedulers() {
         // Tax scheduler (every 3 days by default)
         int taxInterval = getConfig().getInt("tax.interval-ticks", 144000); // 3 days in ticks
+        long nextTaxMs = taxManager != null ? taxManager.getTimeUntilNextCollection() : taxInterval * 50L;
+        long initialTaxDelay = nextTaxMs > 0 ? (nextTaxMs / 50) + 1 : 20L;
         getServer().getScheduler().runTaskTimer(this, () -> {
             // Generate tax invoices using the old system
             invoiceManager.generateTaxInvoices();
@@ -226,13 +228,15 @@ public class FactoryCore extends JavaPlugin {
             if (taxManager != null) {
                 taxManager.assessTaxes();
             }
-        }, taxInterval, taxInterval);
+        }, initialTaxDelay, taxInterval);
 
         // Salary scheduler (every 24 hours by default)
         int salaryInterval = getConfig().getInt("salary.interval-ticks", 24000); // 1 day in ticks
+        long nextSalaryMs = invoiceManager != null ? invoiceManager.getTimeUntilNextSalary() : salaryInterval * 50L;
+        long initialSalaryDelay = nextSalaryMs > 0 ? (nextSalaryMs / 50) + 1 : 20L;
         getServer().getScheduler().runTaskTimer(this, () -> {
             invoiceManager.generateSalaryInvoices();
-        }, salaryInterval, salaryInterval);
+        }, initialSalaryDelay, salaryInterval);
 
         // Production + upgrade checker
         getServer().getScheduler().runTaskTimer(this, () -> {
@@ -306,7 +310,8 @@ public class FactoryCore extends JavaPlugin {
         console.sendMessage("§7- §aEconomy & Taxation §8(Active)");
         console.sendMessage("§7- §aGlobal Marketplace §8(Active)");
         console.sendMessage("§7- §aResearch Center §8(Active)");
-        console.sendMessage("§7- §aAchievement System §8(" + achievementManager.getTotalAchievementCount() + " achievements)");
+        console.sendMessage(
+                "§7- §aAchievement System §8(" + achievementManager.getTotalAchievementCount() + " achievements)");
         console.sendMessage("§7- §aNPC Workforce System §8(Active)");
         console.sendMessage("§7- §aInvoice & Storage System §8(Active)");
         console.sendMessage("");

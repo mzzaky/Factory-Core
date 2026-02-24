@@ -19,6 +19,7 @@ public class InvoiceManager {
     private final FactoryCore plugin;
     private final Map<String, Invoice> invoices;
     private final File dataFile;
+    private long lastSalaryCollection;
 
     public InvoiceManager(FactoryCore plugin) {
         this.plugin = plugin;
@@ -28,6 +29,7 @@ public class InvoiceManager {
             dataFolder.mkdirs();
         }
         this.dataFile = new File(dataFolder, "invoices.yml");
+        this.lastSalaryCollection = System.currentTimeMillis();
         loadInvoices();
     }
 
@@ -36,6 +38,7 @@ public class InvoiceManager {
             return;
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
+        lastSalaryCollection = config.getLong("last-salary-collection", System.currentTimeMillis());
 
         for (String key : config.getKeys(false)) {
             try {
@@ -55,6 +58,7 @@ public class InvoiceManager {
 
     public void saveAll() {
         FileConfiguration config = new YamlConfiguration();
+        config.set("last-salary-collection", lastSalaryCollection);
 
         for (Invoice invoice : invoices.values()) {
             String path = invoice.getId();
@@ -84,6 +88,14 @@ public class InvoiceManager {
 
             double amount = factory.getPrice() * totalRate;
 
+            // Apply fiscal_optimization research buff
+            if (plugin.getResearchManager() != null) {
+                double reduction = plugin.getResearchManager().getTaxReduction(factory.getOwner());
+                if (reduction > 0) {
+                    amount *= (1 - (reduction / 100.0));
+                }
+            }
+
             long dueDate = System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000); // 7 days
 
             String invoiceId = "tax_" + factory.getId() + "_" + System.currentTimeMillis();
@@ -101,12 +113,22 @@ public class InvoiceManager {
     }
 
     public void generateSalaryInvoices() {
+        lastSalaryCollection = System.currentTimeMillis();
+
         for (Factory factory : plugin.getFactoryManager().getAllFactories()) {
             if (factory.getOwner() == null)
                 continue;
 
-            double salaryRate = plugin.getConfig().getDouble("salary.rate", 1.0) / 100.0;
-            double amount = factory.getPrice() * salaryRate;
+            FactoryNPC assignedNPC = plugin.getNPCManager().getAssignedNPCForFactory(factory.getId());
+            if (assignedNPC == null || assignedNPC.getNpcTypeId() == null) {
+                continue;
+            }
+
+            double amount = plugin.getNPCManager().getNpcSettings()
+                    .getDouble("shop.npcs." + assignedNPC.getNpcTypeId() + ".salary", 0.0);
+            if (amount <= 0) {
+                continue;
+            }
 
             // Apply AI Workforce Integration research buff
             if (plugin.getResearchManager() != null) {
@@ -164,5 +186,10 @@ public class InvoiceManager {
 
     public Invoice getInvoice(String id) {
         return invoices.get(id);
+    }
+
+    public long getTimeUntilNextSalary() {
+        long interval = plugin.getConfig().getLong("salary.interval-ticks", 24000) * 50; // Convert ticks to ms
+        return (lastSalaryCollection + interval) - System.currentTimeMillis();
     }
 }

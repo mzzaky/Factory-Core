@@ -11,7 +11,14 @@ v1.2.0 Update Log
 - [Update] Startup banner kini menampilkan status integrasi MMOItems dan ExecutableItems (aktif/tidak tersedia).
 - [Update] Menambahkan contoh konfigurasi resource MMOItems dan ExecutableItems di resources.yml (dalam keadaan commented) sebagai referensi pengguna.
 - [Update] Menambahkan dependency SCore (ExecutableItems API) di pom.xml.
+- [Update] Menambahkan fitur tab-completion untuk argument <value> dan <player_name> pada command /fc admin give.
+- [Fix] Memperbaiki masalah bug dimana interaksi melakukan klik kanan pada NPC juga ikut memicu fungsi klik kiri (membuka Output Storage) secara bersamaan pada client Minecraft versi baru.
+- [Fix] Memperbaiki informasi yang kurang akurat pada lore dari item Invoice Center di HubGUI (sebelumnya kalkulasi jumlah tagihan tidak mengikutsertakan tagihan pajak dari sistem baru TaxManager).
+- [Update] Menambahkan realtime timer ("Next Salary In: Xh Ym") pada lore FactoryEmployeeItem di Employees Center GUI untuk menunjukkan kapan gaji pegawai akan ditagih kembali.
+- [Update] Merombak mekanisme penagihan gaji pegawai pada InvoiceManager. Pemain kini tidak lagi dikenakan biaya gaji untuk pegawai yang berada di pool (Unassigned). Gaji dihitung langsung dari konfigurasi npc.yml berdasarkan jenis pegawai yang di-assign. 
 - [Info] Versi plugin diperbarui dari 1.1.5 ke 1.2.0.
+- [update] meningkatkan rate pajak dari 5% ke 25% dari harga beli factory.
+- [update] meningkatkan rate denda keterlambatan dari 5% ke 50%.
 
 === Achievement System ===
 

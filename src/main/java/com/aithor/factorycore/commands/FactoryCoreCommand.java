@@ -1013,6 +1013,8 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             } else if (args[1].equalsIgnoreCase("give")) {
                 completions.addAll(plugin.getResourceManager().getAllResources().keySet());
             }
+        } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("give")) {
+            completions.addAll(Arrays.asList("1", "10", "32", "64"));
         } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("npc")) {
             // /fc admin npc <spawn|remove|respawn> <arg>
             String npcAction = args[2].toLowerCase();
@@ -1047,6 +1049,10 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                 // /fc admin research <upgrade|set> <factory_id> <research_id>
                 if (plugin.getResearchManager() != null) {
                     completions.addAll(plugin.getResearchManager().getResearchIds());
+                }
+            } else if (args[1].equalsIgnoreCase("give")) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    completions.add(p.getName());
                 }
             }
         } else if (args.length == 6 && args[0].equalsIgnoreCase("admin")) {

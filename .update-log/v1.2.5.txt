@@ -1,0 +1,3 @@
+v1.2.5 Update Log
+
+- [Fix] Memperbaiki delay/masalah pada scheduler untuk tagihan gaji NPC dan siklus pajak pabrik di FactoryCore.java yang terkadang tidak tercetak karena timing yang ke-reset. Scheduler kini menyesuaikan awal delay berdasarkan sisa waktu yang tepat (timeUntilNextSalary & getTimeUntilNextCollection) bukannya me-reset penungguan waktu satu interval penuh pada setiap kali server start/restart.

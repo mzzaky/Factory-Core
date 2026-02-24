@@ -111,21 +111,41 @@ public class InvoiceCenterGUI {
         long overdueCount = allInvoices.stream().filter(Invoice::isOverdue).count();
         double overdueDue = allInvoices.stream().filter(Invoice::isOverdue).mapToDouble(Invoice::getAmount).sum();
 
+        double taxReduction = plugin.getResearchManager() != null
+                ? plugin.getResearchManager().getTaxReduction(player.getUniqueId())
+                : 0;
+        double salaryReduction = plugin.getResearchManager() != null
+                ? plugin.getResearchManager().getSalaryReduction(player.getUniqueId())
+                : 0;
+
+        List<String> headerLore = new ArrayList<>(Arrays.asList(
+                "§7Manage all your invoices",
+                ""));
+
+        if (taxReduction > 0) {
+            headerLore.add("§d🔬 Research Buff: §f-" + String.format("%.0f", taxReduction) + "% §dTax Reduction!");
+        }
+        if (salaryReduction > 0) {
+            headerLore
+                    .add("§d🔬 Research Buff: §f-" + String.format("%.0f", salaryReduction) + "% §dSalary Reduction!");
+        }
+        if (taxReduction > 0 || salaryReduction > 0) {
+            headerLore.add("");
+        }
+
+        headerLore.addAll(Arrays.asList(
+                "§ePending Invoices: §6" + allInvoices.size(),
+                "§eTotal Due: §6$" + String.format("%.2f", totalDue),
+                "",
+                overdueCount > 0
+                        ? "§c§lOverdue: " + overdueCount + " invoices ($" + String.format("%.2f", overdueDue) + ")"
+                        : "§a✓ No overdue invoices",
+                "",
+                "§7Filter: §e" + getFilterDisplayName(),
+                "§7Sort: §e" + getSortDisplayName()));
+
         Material headerMat = overdueCount > 0 ? Material.RED_CONCRETE : Material.LIME_CONCRETE;
-        inv.setItem(4, createItem(headerMat, "§e§lInvoice Center",
-                Arrays.asList(
-                        "§7Manage all your invoices",
-                        "",
-                        "§ePending Invoices: §6" + allInvoices.size(),
-                        "§eTotal Due: §6$" + String.format("%.2f", totalDue),
-                        "",
-                        overdueCount > 0
-                                ? "§c§lOverdue: " + overdueCount + " invoices ($" + String.format("%.2f", overdueDue)
-                                        + ")"
-                                : "§a✓ No overdue invoices",
-                        "",
-                        "§7Filter: §e" + getFilterDisplayName(),
-                        "§7Sort: §e" + getSortDisplayName())));
+        inv.setItem(4, createItem(headerMat, "§e§lInvoice Center", headerLore));
 
         // Invoice slots (slots 9-44)
         int slotsPerPage = 36;

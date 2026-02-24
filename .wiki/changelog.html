@@ -668,7 +668,7 @@
         <h1>Factory-Core-Plugin Changelog</h1>
         <p>Track all updates, improvements, and bug fixes for Factory-Core-Plugin</p>
         <div class="current-version">
-            <span>Latest Version: v1.1.5</span>
+            <span>Latest Version: v1.2.0</span>
         </div>
     </div>
 
@@ -682,13 +682,181 @@
         <nav class="side-nav">
             <div class="nav-title">Version History</div>
             <ul class="nav-list">
-                <li><a href="#v1-1-5">v1.1.5 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-2-0" class="active">v1.2.0 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-1-5">v1.1.5</a></li>
                 <li><a href="#v1-1-0">v1.1.0</a></li>
-                <li><a href="#v1-0-0" class="active">v1.0.0 <span class="version-badge">Release</span></a></li>
+                <li><a href="#v1-0-0">v1.0.0 <span class="version-badge">Release</span></a></li>
             </ul>
         </nav>
 
         <main class="main-content">
+            <!-- Version 1.2.0 -->
+            <section class="version-section" id="v1-2-0">
+                <div class="version-header">
+                    <div class="version-header-left">
+                        <div class="version-title">
+                            <h2>Version 1.2.0</h2>
+                            <span class="version-type major">Release</span>
+                        </div>
+                        <div class="release-date">February 24, 2026</div>
+                    </div>
+                    <div class="version-toggle">
+                        <span class="version-toggle-icon">▼</span>
+                        <span class="version-toggle-text">Minimize</span>
+                    </div>
+                </div>
+
+                <div class="version-content">
+                    <div class="overview-box">
+                        <div class="overview-title">Release Overview</div>
+                        <div class="overview-grid">
+                            <div class="overview-stat">
+                                <div class="stat-label">Total Changes</div>
+                                <div class="stat-value">28</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">New Features</div>
+                                <div class="stat-value">7</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Improvements</div>
+                                <div class="stat-value">19</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Bug Fixes</div>
+                                <div class="stat-value">2</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Type</div>
+                                <div class="stat-value">Release</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Features -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">New Features</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>MMOItems Integration:</strong> Resources in <code>resources.yml</code> can now
+                                be linked with MMOItems using <code>mmoitems-type</code> and <code>mmoitems-id</code>
+                                fields. Added <code>MMOItemsHook</code> class to handle item creation and tracking.
+                            </li>
+                            <li class="change-item">
+                                <strong>ExecutableItems Integration:</strong> Resources in <code>resources.yml</code>
+                                can now be linked with ExecutableItems using the <code>executable-items-id</code> field.
+                                Added <code>ExecutableItemsHook</code> class to handle integration.
+                            </li>
+                            <li class="change-item">
+                                <strong>Achievement System:</strong> Added a comprehensive Achievement System with 12
+                                achievements covering major gameplay mechanics (e.g. "New Investor", "Mass Producer",
+                                "Capitalist Monopoly").
+                            </li>
+                            <li class="change-item">
+                                <strong>Achievement GUI & Manager:</strong> Created <code>AchievementManager</code> to
+                                handle progression, and <code>AchievementGUI</code> for players to view their stats,
+                                unlock timestamps, and navigate with pagination support.
+                            </li>
+                            <li class="change-item">
+                                <strong>Achievement Configuration:</strong> Achievements are defined in
+                                <code>achievement.yml</code> (name, description, icon, type, threshold, sound effects)
+                                and player data is persisted to <code>data/achievements.yml</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Hub Menu Addition:</strong> Added the "Achievements" button to the Hub GUI at
+                                slot 30 to track unlocked/total achievements easily.
+                            </li>
+                            <li class="change-item">
+                                <strong>Notification System:</strong> Unlocking an achievement now triggers a toast
+                                notification title, chat message, and sound effect.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Updates & Enhancements -->
+                    <div class="change-category">
+                        <div class="category-header improved">
+                            <div class="category-icon improved">~</div>
+                            <div class="category-title">Updates & Improvements</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Plugin Fallbacks:</strong> <code>ResourceManager</code> now safely falls back to
+                                vanilla items if MMOItems or ExecutableItems are missing or items are unfound.
+                            </li>
+                            <li class="change-item">
+                                <strong>Item Identification Fix:</strong> <code>getResourceId</code> identification
+                                priority is updated to: ExecutableItems → MMOItems → Vanilla.
+                            </li>
+                            <li class="change-item">
+                                <strong>Resource Model Enhancements:</strong> The <code>ResourceItem</code> model now
+                                directly supports <code>executableItem</code> and <code>executableItemsId</code> fields.
+                            </li>
+                            <li class="change-item">
+                                <strong>Dependency Optimization:</strong> MMOItems and ExecutableItems are added as
+                                <code>softdepend</code> in <code>plugin.yml</code>, allowing normal execution without
+                                them. SCore is explicitly added in <code>pom.xml</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Startup Monitor:</strong> The server startup banner now prints the
+                                active/unavailable status for MMOItems and ExecutableItems integrations. Also reports
+                                total achievement counts.
+                            </li>
+                            <li class="change-item">
+                                <strong>Config Examples:</strong> Added commented out example configurations for
+                                MMOItems and ExecutableItems in <code>resources.yml</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Command Auto-complete:</strong> Added tab-completion support for the
+                                <code>&lt;value&gt;</code> and <code>&lt;player_name&gt;</code> arguments inside the
+                                <code>/fc admin give</code> command.
+                            </li>
+                            <li class="change-item">
+                                <strong>Real-time Salary Timer:</strong> Displaying a live "Next Salary In: Xh Ym" timer
+                                on the employee item lore within the Employees Center GUI.
+                            </li>
+                            <li class="change-item">
+                                <strong>Improved Employee Wage Logic:</strong> Overhauled salary billings. Players are
+                                no longer billed for unassigned employees in the pool. Wages are dynamically matched
+                                with <code>npc.yml</code> configuration properties based on assignment.
+                            </li>
+                            <li class="change-item">
+                                <strong>Tax Re-balancing:</strong> Factory purchase tax rates have increased from 5% to
+                                25%. Additionally, late fee penalty rates have been increased from 5% to 50%.
+                            </li>
+                            <li class="change-item">
+                                <strong>Hub & Listener Integrity:</strong> <code>HubClickListener</code> now properly
+                                handles Achievements GUI navigation. <code>FactoryCore.java</code> registers
+                                <code>AchievementManager</code> securely and saves on disable.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Bug Fixes -->
+                    <div class="change-category">
+                        <div class="category-header fixed">
+                            <div class="category-icon fixed">-</div>
+                            <div class="category-title">Bug Fixes</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Simultaneous Click Exploits:</strong> Fixed a bug where a player's right-click
+                                on an NPC accidentally evaluated as a left-click simultaneously on newer Minecraft
+                                client versions, improperly opening the Output Storage view.
+                            </li>
+                            <li class="change-item">
+                                <strong>Invoice Calculation Fix:</strong> Addressed a bug causing inaccurate lore
+                                display in the Invoice Center item inside HubGUI, which previously excluded taxation
+                                bills passed from the new TaxManager calculations.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
             <!-- Version 1.1.5 -->
             <section class="version-section" id="v1-1-5">
                 <div class="version-header">

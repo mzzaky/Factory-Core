@@ -24,6 +24,13 @@ public class EntityDamageListener implements Listener {
     private final Map<UUID, Long> swingCooldown = new HashMap<>();
     private static final long SWING_COOLDOWN_MS = 300;
 
+    // Ignore swing events that are caused by a right-click
+    private static final Map<UUID, Long> recentRightClicks = new HashMap<>();
+
+    public static void registerRightClick(UUID uuid) {
+        recentRightClicks.put(uuid, System.currentTimeMillis());
+    }
+
     public EntityDamageListener(FactoryCore plugin) {
         this.plugin = plugin;
     }
@@ -56,6 +63,12 @@ public class EntityDamageListener implements Listener {
         long now = System.currentTimeMillis();
         Long lastSwing = swingCooldown.get(player.getUniqueId());
         if (lastSwing != null && now - lastSwing < SWING_COOLDOWN_MS)
+            return;
+
+        // Ignore if player just right-clicked (prevent right-click opening output
+        // storage)
+        Long lastRightClick = recentRightClicks.get(player.getUniqueId());
+        if (lastRightClick != null && now - lastRightClick < 200)
             return;
 
         // Raycast up to 5 blocks in the direction the player is looking

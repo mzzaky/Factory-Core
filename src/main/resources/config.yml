@@ -15,12 +15,12 @@ database:
 # Tax settings
 tax:
   enabled: true
-  rate: 5.0 # Percentage of factory price
+  rate: 25.0 # Percentage of factory price
   interval-ticks: 144000 # 3 days in Minecraft (72000 ticks = 1 day)
   level-multiplier: 2.5 # Additional tax per level (%)
   # NEW: Tax Center settings
   due-days: 7 # Days until tax is considered overdue
-  late-fee-rate: 5.0 # Late fee percentage when overdue
+  late-fee-rate: 50.0 # Late fee percentage when overdue
   notify-on-assessment: true # Notify players when tax is assessed
   notify-on-overdue: true # Notify players when tax becomes overdue
 

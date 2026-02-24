@@ -424,6 +424,14 @@ public class FactoryManager {
             }
         }
 
+        // Daily Quest: Industrial Hustle (PRODUCTION_COMPLETE)
+        if (plugin.getDailyQuestManager() != null && factory.getOwner() != null) {
+            Player questPlayer = Bukkit.getPlayer(factory.getOwner());
+            if (questPlayer != null) {
+                plugin.getDailyQuestManager().addProgressByType(questPlayer, "PRODUCTION_COMPLETE", 1);
+            }
+        }
+
         // Send completion message only once (prevent spam)
         Player owner = Bukkit.getPlayer(factory.getOwner());
         if (owner != null) {

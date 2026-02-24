@@ -214,6 +214,19 @@ public class MarketplaceManager {
             }
         }
 
+        // Daily Quest: Distribution Target (MARKETPLACE_SELL) for the seller
+        if (plugin.getDailyQuestManager() != null) {
+            Player sellerQuestPlayer = Bukkit.getPlayer(listing.seller);
+            if (sellerQuestPlayer != null) {
+                plugin.getDailyQuestManager().addProgressByType(sellerQuestPlayer, "MARKETPLACE_SELL", amount);
+            }
+        }
+
+        // Daily Quest: Daily Supply (MARKETPLACE_BUY) for the buyer
+        if (plugin.getDailyQuestManager() != null) {
+            plugin.getDailyQuestManager().addProgressByType(buyer, "MARKETPLACE_BUY", amount);
+        }
+
         // Notify seller if online
         Player seller = Bukkit.getPlayer(listing.seller);
         if (seller != null) {

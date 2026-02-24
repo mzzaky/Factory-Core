@@ -89,6 +89,11 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             case "tp":
                 return handleTeleport(sender, args);
 
+            case "dailyquest":
+            case "dq":
+            case "quest":
+                return handleDailyQuest(sender);
+
             case "help":
                 sendHelp(sender);
                 return true;
@@ -182,6 +187,18 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
         MarketplaceGUI gui = new MarketplaceGUI(plugin, player);
         gui.openMarketplaceMenu();
+        return true;
+    }
+
+    private boolean handleDailyQuest(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("player-only"));
+            return true;
+        }
+
+        Player player = (Player) sender;
+        DailyQuestGUI gui = new DailyQuestGUI(plugin, player);
+        gui.openDailyQuestMenu();
         return true;
     }
 
@@ -957,6 +974,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage("§6/fc taxes §7- View tax center");
         sender.sendMessage("§6/fc employees §7- View employees center");
         sender.sendMessage("§6/fc market §7- Open marketplace");
+        sender.sendMessage("§6/fc dailyquest §7- View daily quests");
         sender.sendMessage("");
         sender.sendMessage("§e§lFactory Commands:");
         sender.sendMessage("§6/fc buy <id> §7- Purchase a factory");
@@ -988,7 +1006,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             completions.addAll(Arrays.asList("hub", "browse", "my", "invoices", "taxes", "employees", "market",
-                    "buy", "sell", "info", "gui", "tp", "version", "help"));
+                    "dailyquest", "buy", "sell", "info", "gui", "tp", "version", "help"));
             if (sender.hasPermission("factorycore.admin")) {
                 completions.add("admin");
             }

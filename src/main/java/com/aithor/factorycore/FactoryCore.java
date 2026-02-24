@@ -30,6 +30,7 @@ public class FactoryCore extends JavaPlugin {
     private MarketplaceManager marketplaceManager;
     private ResearchManager researchManager;
     private AchievementManager achievementManager;
+    private DailyQuestManager dailyQuestManager;
 
     // Hooks
     private MMOItemsHook mmoItemsHook;
@@ -61,6 +62,7 @@ public class FactoryCore extends JavaPlugin {
         createDefaultConfigs();
         createResearchConfig();
         createAchievementConfig();
+        createDailyQuestConfig();
 
         // Initialize logger
         com.aithor.factorycore.utils.Logger.init(this);
@@ -119,6 +121,9 @@ public class FactoryCore extends JavaPlugin {
         if (achievementManager != null) {
             achievementManager.saveAll();
         }
+        if (dailyQuestManager != null) {
+            dailyQuestManager.saveAll();
+        }
 
         Logger.log("FactoryCore has been disabled!");
         getLogger().info("All data saved successfully!");
@@ -176,6 +181,12 @@ public class FactoryCore extends JavaPlugin {
         }
     }
 
+    private void createDailyQuestConfig() {
+        if (!new java.io.File(getDataFolder(), "daily-quest.yml").exists()) {
+            saveResource("daily-quest.yml", false);
+        }
+    }
+
     private void initializeHooks() {
         // MMOItems integration
         mmoItemsHook = new MMOItemsHook(this);
@@ -197,6 +208,7 @@ public class FactoryCore extends JavaPlugin {
         marketplaceManager = new MarketplaceManager(this);
         researchManager = new ResearchManager(this);
         achievementManager = new AchievementManager(this);
+        dailyQuestManager = new DailyQuestManager(this);
     }
 
     private void registerCommands() {
@@ -312,6 +324,8 @@ public class FactoryCore extends JavaPlugin {
         console.sendMessage("§7- §aResearch Center §8(Active)");
         console.sendMessage(
                 "§7- §aAchievement System §8(" + achievementManager.getTotalAchievementCount() + " achievements)");
+        console.sendMessage(
+                "§7- §aDaily Quest System §8(" + dailyQuestManager.getTotalQuestCount() + " quests)");
         console.sendMessage("§7- §aNPC Workforce System §8(Active)");
         console.sendMessage("§7- §aInvoice & Storage System §8(Active)");
         console.sendMessage("");
@@ -373,6 +387,10 @@ public class FactoryCore extends JavaPlugin {
 
     public AchievementManager getAchievementManager() {
         return achievementManager;
+    }
+
+    public DailyQuestManager getDailyQuestManager() {
+        return dailyQuestManager;
     }
 
     public MMOItemsHook getMMOItemsHook() {

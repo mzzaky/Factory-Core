@@ -193,6 +193,27 @@ public class HubGUI {
                         "",
                         "§7Click to research!")));
 
+        // Daily Quests (slot 32) - Daily quest system
+        int completedQuests = plugin.getDailyQuestManager() != null
+                ? plugin.getDailyQuestManager().getCompletedCount(player.getUniqueId())
+                : 0;
+        int totalQuests = plugin.getDailyQuestManager() != null
+                ? plugin.getDailyQuestManager().getTotalQuestCount()
+                : 0;
+        String resetTime = plugin.getDailyQuestManager() != null
+                ? plugin.getDailyQuestManager().formatTimeRemaining()
+                : "N/A";
+        inv.setItem(32, createItem(Material.WRITABLE_BOOK,
+                "§a§lDaily Quests",
+                Arrays.asList(
+                        "§7Complete daily missions",
+                        "§7for EXP and money rewards!",
+                        "",
+                        "§eCompleted: §a" + completedQuests + "§7/§a" + totalQuests,
+                        "§eResets in: §b" + resetTime,
+                        "",
+                        "§7Click to view quests!")));
+
         // Help & Info (slot 33) - Plugin information
         inv.setItem(33, createItem(Material.BOOK,
                 "§d§lHelp & Info",

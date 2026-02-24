@@ -2,6 +2,7 @@ package com.aithor.factorycore.listeners;
 
 import com.aithor.factorycore.FactoryCore;
 import com.aithor.factorycore.gui.*;
+import com.aithor.factorycore.managers.DailyQuestManager;
 import com.aithor.factorycore.managers.ResearchManager;
 import com.aithor.factorycore.managers.MarketplaceManager;
 import com.aithor.factorycore.managers.TaxManager;
@@ -39,6 +40,7 @@ public class HubClickListener implements Listener {
     private final Map<UUID, MarketplaceGUI> marketplaceGUIs = new HashMap<>();
     private final Map<UUID, ResearchGUI> researchGUIs = new HashMap<>();
     private final Map<UUID, AchievementGUI> achievementGUIs = new HashMap<>();
+    private final Map<UUID, DailyQuestGUI> dailyQuestGUIs = new HashMap<>();
 
     public HubClickListener(FactoryCore plugin) {
         this.plugin = plugin;
@@ -94,6 +96,8 @@ public class HubClickListener implements Listener {
             handleResearchDetailClick(player, clicked, meta, name);
         } else if (title.contains("Achievements")) {
             handleAchievementsClick(player, clicked, meta, name);
+        } else if (title.contains("Daily Quests")) {
+            handleDailyQuestClick(player, clicked, meta, name);
         } else if (title.contains("Confirm Purchase") || title.contains("Confirm Sale") ||
                 title.contains("Confirm Fire") || title.contains("Confirm Unassign") ||
                 title.contains("Confirm Dismiss") || title.contains("Create Listing")) {
@@ -121,7 +125,8 @@ public class HubClickListener implements Listener {
                 title.contains("Create Listing") ||
                 title.contains("Research Center") ||
                 title.contains("Research:") ||
-                title.contains("Achievements");
+                title.contains("Achievements") ||
+                title.contains("Daily Quests");
     }
 
     // ==================== HUB MAIN MENU ====================
@@ -154,6 +159,10 @@ public class HubClickListener implements Listener {
             AchievementGUI gui = new AchievementGUI(plugin, player);
             achievementGUIs.put(player.getUniqueId(), gui);
             gui.openAchievementMenu();
+        } else if (name.contains("Daily Quests")) {
+            DailyQuestGUI gui = new DailyQuestGUI(plugin, player);
+            dailyQuestGUIs.put(player.getUniqueId(), gui);
+            gui.openDailyQuestMenu();
         } else if (name.contains("Research Center")) {
             ResearchGUI gui = new ResearchGUI(plugin, player);
             researchGUIs.put(player.getUniqueId(), gui);
@@ -725,6 +734,70 @@ public class HubClickListener implements Listener {
         }
     }
 
+    // ==================== DAILY QUESTS ====================
+    private void handleDailyQuestClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
+        DailyQuestManager questManager = plugin.getDailyQuestManager();
+        if (questManager == null) return;
+
+        // Check for quest ID on clicked item (claim individual quest reward)
+        String questId = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "daily_quest_id"), PersistentDataType.STRING);
+        if (questId != null) {
+            if (questManager.isQuestCompleted(player.getUniqueId(), questId)
+                    && !questManager.isRewardClaimed(player.getUniqueId(), questId)) {
+                if (questManager.claimReward(player, questId)) {
+                    int exp = questManager.getQuestRewardExp(questId);
+                    double money = questManager.getQuestRewardMoney(questId);
+                    player.sendMessage("§aReward claimed! §e+" + exp + " EXP §7& §6$" + String.format("%.2f", money));
+                }
+            }
+            // Refresh the GUI
+            DailyQuestGUI gui = dailyQuestGUIs.getOrDefault(player.getUniqueId(),
+                    new DailyQuestGUI(plugin, player));
+            dailyQuestGUIs.put(player.getUniqueId(), gui);
+            gui.openDailyQuestMenu();
+            return;
+        }
+
+        // All-Complete Bonus claim
+        if (name.contains("All-Complete Bonus") && name.contains("Click")) {
+            if (questManager.claimBonus(player)) {
+                // Notification is handled inside claimBonus()
+            }
+            DailyQuestGUI gui = dailyQuestGUIs.getOrDefault(player.getUniqueId(),
+                    new DailyQuestGUI(plugin, player));
+            dailyQuestGUIs.put(player.getUniqueId(), gui);
+            gui.openDailyQuestMenu();
+            return;
+        }
+
+        // Claim All Rewards button
+        if (name.contains("Claim All Rewards")) {
+            int claimed = 0;
+            for (String qId : questManager.getQuestIds()) {
+                if (questManager.isQuestCompleted(player.getUniqueId(), qId)
+                        && !questManager.isRewardClaimed(player.getUniqueId(), qId)) {
+                    if (questManager.claimReward(player, qId)) {
+                        claimed++;
+                    }
+                }
+            }
+            if (claimed > 0) {
+                player.sendMessage("§aClaimed rewards for §e" + claimed + " §aquest(s)!");
+            }
+            DailyQuestGUI gui = dailyQuestGUIs.getOrDefault(player.getUniqueId(),
+                    new DailyQuestGUI(plugin, player));
+            dailyQuestGUIs.put(player.getUniqueId(), gui);
+            gui.openDailyQuestMenu();
+            return;
+        }
+
+        // Back to hub
+        if (name.contains("Back to Hub")) {
+            openHub(player);
+        }
+    }
+
     // ==================== CONFIRMATION DIALOGS ====================
     private void handleConfirmationClick(Player player, ItemStack clicked, ItemMeta meta, String name, String title) {
         // Purchase confirmation
@@ -894,5 +967,6 @@ public class HubClickListener implements Listener {
         marketplaceGUIs.remove(playerId);
         researchGUIs.remove(playerId);
         achievementGUIs.remove(playerId);
+        dailyQuestGUIs.remove(playerId);
     }
 }

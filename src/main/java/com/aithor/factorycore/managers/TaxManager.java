@@ -254,6 +254,11 @@ public class TaxManager {
             plugin.getAchievementManager().addProgress(player, "disciplined_businessman", paidAmount);
         }
 
+        // Daily Quest: Tax Compliance Duty (TAX_PAYMENT)
+        if (plugin.getDailyQuestManager() != null) {
+            plugin.getDailyQuestManager().addProgressByType(player, "TAX_PAYMENT", 1);
+        }
+
         return true;
     }
 

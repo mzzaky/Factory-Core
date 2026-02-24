@@ -1,3 +1,43 @@
 v1.2.5 Update Log
 
 - [Fix] Memperbaiki delay/masalah pada scheduler untuk tagihan gaji NPC dan siklus pajak pabrik di FactoryCore.java yang terkadang tidak tercetak karena timing yang ke-reset. Scheduler kini menyesuaikan awal delay berdasarkan sisa waktu yang tepat (timeUntilNextSalary & getTimeUntilNextCollection) bukannya me-reset penungguan waktu satu interval penuh pada setiap kali server start/restart.
+
+=== Daily Quest System ===
+
+- [New] Menambahkan sistem Daily Quest (Misi Harian) dengan 5 misi yang di-reset setiap hari.
+- [New] Membuat DailyQuestManager (com.aithor.factorycore.managers.DailyQuestManager) sebagai manager untuk tracking progress, pemberian reward, dan reset harian otomatis.
+- [New] Membuat DailyQuestGUI (com.aithor.factorycore.gui.DailyQuestGUI) - GUI khusus untuk melihat progress quest, klaim reward per-quest, klaim bonus all-complete, beserta progress bar visual.
+- [New] Membuat file konfigurasi daily-quest.yml untuk pengaturan quest (nama, deskripsi, ikon, target, tipe, reward, sound, notifikasi).
+- [New] Data progress quest harian disimpan di data/daily-quests.yml (progress per-pemain, status klaim, timestamp reset).
+- [New] Menambahkan tombol "Daily Quests" di Hub GUI (Main Hub) pada slot 32, menampilkan jumlah quest selesai dan waktu reset.
+- [New] Sistem notifikasi quest: menampilkan title toast + pesan chat + efek suara saat quest selesai dan saat semua quest selesai.
+- [New] Menambahkan command /fc dailyquest (alias: /fc dq, /fc quest) untuk membuka GUI Daily Quest.
+- [Update] HubClickListener kini menangani navigasi GUI Daily Quest (klaim reward, klaim bonus, klaim semua, kembali ke hub).
+- [Update] FactoryCore.java mendaftarkan DailyQuestManager, menyimpan data saat disable, memuat daily-quest.yml, dan menampilkan jumlah quest di startup banner.
+- [Update] FactoryCoreCommand.java menambahkan subcommand dailyquest/dq/quest beserta tab completion.
+
+Daftar Misi Harian:
+  1. "Industrial Hustle" - Menyelesaikan 12 produksi harian (dipicu di FactoryManager.completeProduction).
+  2. "Payday Routine" - Membayar gaji karyawan 8 kali (dipicu di InvoiceManager.payInvoice untuk tipe SALARY).
+  3. "Tax Compliance Duty" - Membayar pajak pabrik 3 kali (dipicu di TaxManager.payTax).
+  4. "Distribution Target" - Berhasil menjual 12 item di marketplace (dipicu di MarketplaceManager.purchaseListing untuk penjual).
+  5. "Daily Supply" - Membeli 8 item di marketplace (dipicu di MarketplaceManager.purchaseListing untuk pembeli).
+
+Hadiah:
+  - Setiap quest memberikan EXP dan uang (Vault) sesuai konfigurasi.
+  - Bonus tambahan diberikan saat semua 5 quest selesai (default: +500 EXP & $25,000).
+
+File Ditambahkan:
+  - src/main/resources/daily-quest.yml (konfigurasi quest)
+  - src/main/java/com/aithor/factorycore/managers/DailyQuestManager.java
+  - src/main/java/com/aithor/factorycore/gui/DailyQuestGUI.java
+
+File Dimodifikasi:
+  - src/main/java/com/aithor/factorycore/FactoryCore.java (registrasi manager, loading config, save saat disable, startup banner)
+  - src/main/java/com/aithor/factorycore/gui/HubGUI.java (menambahkan tombol Daily Quests di slot 32)
+  - src/main/java/com/aithor/factorycore/listeners/HubClickListener.java (menambahkan handling GUI Daily Quest, routing, cleanup)
+  - src/main/java/com/aithor/factorycore/commands/FactoryCoreCommand.java (menambahkan subcommand dailyquest/dq/quest + tab completion)
+  - src/main/java/com/aithor/factorycore/managers/FactoryManager.java (trigger quest Industrial Hustle pada completeProduction)
+  - src/main/java/com/aithor/factorycore/managers/InvoiceManager.java (trigger quest Payday Routine pada payInvoice tipe SALARY)
+  - src/main/java/com/aithor/factorycore/managers/TaxManager.java (trigger quest Tax Compliance Duty pada payTax)
+  - src/main/java/com/aithor/factorycore/managers/MarketplaceManager.java (trigger quest Distribution Target & Daily Supply pada purchaseListing)

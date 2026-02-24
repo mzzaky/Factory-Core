@@ -1,0 +1,82 @@
+# ==================== DAILY QUEST CONFIGURATION ====================
+# Daily quests reset every day at the configured hour (server time).
+# Players can complete quests to earn EXP and money rewards.
+
+settings:
+  enabled: true
+  # Hour of the day (0-23) when daily quests reset (server timezone)
+  reset-hour: 0
+
+# ==================== QUEST DEFINITIONS ====================
+quests:
+  industrial_hustle:
+    name: "&6Industrial Hustle"
+    description: "Complete 12 daily productions"
+    icon: FURNACE
+    target: 12
+    type: PRODUCTION_COMPLETE
+    reward:
+      exp: 100
+      money: 5000.0
+
+  payday_routine:
+    name: "&ePayday Routine"
+    description: "Pay employee salary 8 times"
+    icon: GOLD_NUGGET
+    target: 8
+    type: SALARY_PAYMENT
+    reward:
+      exp: 80
+      money: 4000.0
+
+  tax_compliance_duty:
+    name: "&cTax Compliance Duty"
+    description: "Pay factory tax 3 times"
+    icon: GOLD_INGOT
+    target: 3
+    type: TAX_PAYMENT
+    reward:
+      exp: 120
+      money: 6000.0
+
+  distribution_target:
+    name: "&2Distribution Target"
+    description: "Successfully sell 12 items on the marketplace"
+    icon: EMERALD
+    target: 12
+    type: MARKETPLACE_SELL
+    reward:
+      exp: 100
+      money: 5000.0
+
+  daily_supply:
+    name: "&bDaily Supply"
+    description: "Buy 8 items on the marketplace"
+    icon: CHEST
+    target: 8
+    type: MARKETPLACE_BUY
+    reward:
+      exp: 80
+      money: 4000.0
+
+# ==================== BONUS REWARD ====================
+# Bonus reward when ALL daily quests are completed
+all-complete-bonus:
+  enabled: true
+  exp: 500
+  money: 25000.0
+
+# ==================== SOUND EFFECTS ====================
+sound:
+  quest-complete: ENTITY_PLAYER_LEVELUP
+  quest-complete-volume: 1.0
+  quest-complete-pitch: 1.5
+  all-complete: UI_TOAST_CHALLENGE_COMPLETE
+  all-complete-volume: 1.0
+  all-complete-pitch: 1.0
+
+# ==================== NOTIFICATION SETTINGS ====================
+notifications:
+  toast-fade-in: 10
+  toast-stay: 60
+  toast-fade-out: 20

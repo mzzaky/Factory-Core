@@ -328,6 +328,18 @@ public class ResearchManager {
 
         saveAll();
 
+        // Achievement: Tech Investment - first research completion
+        // Achievement: Modern Factory - max out a research for the first time
+        if (plugin.getAchievementManager() != null) {
+            Player achPlayer = Bukkit.getPlayer(playerId);
+            if (achPlayer != null) {
+                plugin.getAchievementManager().awardAchievement(achPlayer, "tech_investment");
+                if (rd.completedLevel >= getMaxLevel(researchId)) {
+                    plugin.getAchievementManager().awardAchievement(achPlayer, "modern_factory");
+                }
+            }
+        }
+
         // Notify player if online
         Player player = Bukkit.getPlayer(playerId);
         if (player != null) {

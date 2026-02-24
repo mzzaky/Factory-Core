@@ -29,6 +29,7 @@ public class FactoryCore extends JavaPlugin {
     private TaxManager taxManager;
     private MarketplaceManager marketplaceManager;
     private ResearchManager researchManager;
+    private AchievementManager achievementManager;
 
     // Hooks
     private MMOItemsHook mmoItemsHook;
@@ -59,6 +60,7 @@ public class FactoryCore extends JavaPlugin {
         saveDefaultConfig();
         createDefaultConfigs();
         createResearchConfig();
+        createAchievementConfig();
 
         // Initialize logger
         com.aithor.factorycore.utils.Logger.init(this);
@@ -114,6 +116,9 @@ public class FactoryCore extends JavaPlugin {
         if (researchManager != null) {
             researchManager.saveAll();
         }
+        if (achievementManager != null) {
+            achievementManager.saveAll();
+        }
 
         Logger.log("FactoryCore has been disabled!");
         getLogger().info("All data saved successfully!");
@@ -165,6 +170,12 @@ public class FactoryCore extends JavaPlugin {
         }
     }
 
+    private void createAchievementConfig() {
+        if (!new java.io.File(getDataFolder(), "achievement.yml").exists()) {
+            saveResource("achievement.yml", false);
+        }
+    }
+
     private void initializeHooks() {
         // MMOItems integration
         mmoItemsHook = new MMOItemsHook(this);
@@ -185,6 +196,7 @@ public class FactoryCore extends JavaPlugin {
         taxManager = new TaxManager(this);
         marketplaceManager = new MarketplaceManager(this);
         researchManager = new ResearchManager(this);
+        achievementManager = new AchievementManager(this);
     }
 
     private void registerCommands() {
@@ -294,6 +306,7 @@ public class FactoryCore extends JavaPlugin {
         console.sendMessage("§7- §aEconomy & Taxation §8(Active)");
         console.sendMessage("§7- §aGlobal Marketplace §8(Active)");
         console.sendMessage("§7- §aResearch Center §8(Active)");
+        console.sendMessage("§7- §aAchievement System §8(" + achievementManager.getTotalAchievementCount() + " achievements)");
         console.sendMessage("§7- §aNPC Workforce System §8(Active)");
         console.sendMessage("§7- §aInvoice & Storage System §8(Active)");
         console.sendMessage("");
@@ -351,6 +364,10 @@ public class FactoryCore extends JavaPlugin {
 
     public ResearchManager getResearchManager() {
         return researchManager;
+    }
+
+    public AchievementManager getAchievementManager() {
+        return achievementManager;
     }
 
     public MMOItemsHook getMMOItemsHook() {

@@ -354,6 +354,11 @@ public class FactoryGUI {
         // ── Deduct money cost (with research buff applied) ─────────────────────
         if (moneyCost > 0) {
             plugin.getEconomy().withdrawPlayer(player, moneyCost);
+
+            // Achievement: Relentless Grinder - cumulative production cost
+            if (plugin.getAchievementManager() != null) {
+                plugin.getAchievementManager().addProgress(player, "relentless_grinder", moneyCost);
+            }
         }
 
         // Start production

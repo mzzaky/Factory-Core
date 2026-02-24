@@ -144,6 +144,11 @@ public class InvoiceManager {
         invoice.setPaid(true);
         saveAll();
 
+        // Achievement: Big Spender - cumulative salary payments
+        if (plugin.getAchievementManager() != null && invoice.getType() == InvoiceType.SALARY) {
+            plugin.getAchievementManager().addProgress(player, "big_spender", invoice.getAmount());
+        }
+
         return true;
     }
 

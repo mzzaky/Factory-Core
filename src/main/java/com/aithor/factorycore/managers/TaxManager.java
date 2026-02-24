@@ -228,13 +228,14 @@ public class TaxManager {
         }
 
         // Process payment
-        plugin.getEconomy().withdrawPlayer(player, record.amountDue);
+        double paidAmount = record.amountDue;
+        plugin.getEconomy().withdrawPlayer(player, paidAmount);
 
         // Record payment in history
         TaxPayment payment = new TaxPayment(
                 UUID.randomUUID().toString().substring(0, 8),
                 factoryId,
-                record.amountDue,
+                paidAmount,
                 System.currentTimeMillis());
 
         paymentHistory.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(payment);
@@ -245,6 +246,14 @@ public class TaxManager {
         record.lateFeeApplied = false;
 
         saveAll();
+
+        // Achievement: Tax Contributor - first tax payment
+        // Achievement: Disciplined Businessman - cumulative tax paid
+        if (plugin.getAchievementManager() != null) {
+            plugin.getAchievementManager().awardAchievement(player, "tax_contributor");
+            plugin.getAchievementManager().addProgress(player, "disciplined_businessman", paidAmount);
+        }
+
         return true;
     }
 

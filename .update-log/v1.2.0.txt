@@ -12,3 +12,46 @@ v1.2.0 Update Log
 - [Update] Menambahkan contoh konfigurasi resource MMOItems dan ExecutableItems di resources.yml (dalam keadaan commented) sebagai referensi pengguna.
 - [Update] Menambahkan dependency SCore (ExecutableItems API) di pom.xml.
 - [Info] Versi plugin diperbarui dari 1.1.5 ke 1.2.0.
+
+=== Achievement System ===
+
+- [New] Added Achievement System with 12 achievements covering all major gameplay mechanics.
+- [New] Created AchievementManager (com.aithor.factorycore.managers.AchievementManager) as the core manager for tracking, awarding, and persisting player achievements.
+- [New] Created AchievementGUI (com.aithor.factorycore.gui.AchievementGUI) - dedicated GUI for viewing achievements with progress bars, unlock timestamps, and pagination support.
+- [New] Created achievement.yml resource configuration file for defining achievements (name, description, icon, type, threshold, sound effects).
+- [New] Achievement data is persisted in data/achievements.yml (unlocked achievements, progress values, timestamps).
+- [New] Added "Achievements" button to the Hub GUI (Main Hub) at slot 30, showing unlocked/total count.
+- [New] Achievement toast notification system: displays title toast + chat message + sound effect when an achievement is unlocked.
+- [Update] HubClickListener now handles Achievements GUI navigation (page switching, back to hub).
+- [Update] FactoryCore.java registers AchievementManager, saves on disable, loads achievement.yml config, and displays achievement count in startup banner.
+
+Achievement List:
+  1. "New Investor" - Purchase your first factory (triggered in FactoryManager.buyFactory).
+  2. "Early Prototype" - Complete your first production cycle (triggered in FactoryManager.completeProduction).
+  3. "Relentless Grinder" - Spend $500,000 on production costs (cumulative, triggered in FactoryGUI.startProduction).
+  4. "Mass Producer" - Complete 100 production cycles across all factories (cumulative, triggered in FactoryManager.completeProduction).
+  5. "First Profit" - Sell your first item on the marketplace (triggered in MarketplaceManager.purchaseListing for the seller).
+  6. "Capitalist Monopoly" - Earn $500,000 from marketplace sales (cumulative, triggered in MarketplaceManager.purchaseListing for the seller).
+  7. "Who Is The Boss Now" - Assign an NPC to a factory for the first time (triggered in NPCManager.assignNPCToFactory).
+  8. "Big Spender" - Pay $500,000 in total employee salaries (cumulative, triggered in InvoiceManager.payInvoice for SALARY type).
+  9. "Tech Investment" - Complete your first research (triggered in ResearchManager.completeResearch).
+  10. "Modern Factory" - Max out a research for the first time (triggered in ResearchManager.completeResearch when level == maxLevel).
+  11. "Tax Contributor" - Pay your factory tax for the first time (triggered in TaxManager.payTax).
+  12. "Disciplined Businessman" - Pay $500,000 in total factory taxes (cumulative, triggered in TaxManager.payTax).
+
+Files Added:
+  - src/main/resources/achievement.yml (configuration)
+  - src/main/java/com/aithor/factorycore/managers/AchievementManager.java
+  - src/main/java/com/aithor/factorycore/gui/AchievementGUI.java
+
+Files Modified:
+  - src/main/java/com/aithor/factorycore/FactoryCore.java (manager registration, config loading, save on disable, startup banner)
+  - src/main/java/com/aithor/factorycore/gui/HubGUI.java (added Achievements button at slot 30)
+  - src/main/java/com/aithor/factorycore/listeners/HubClickListener.java (added Achievements GUI handling, routing, cleanup)
+  - src/main/java/com/aithor/factorycore/managers/FactoryManager.java (New Investor, Early Prototype, Mass Producer triggers)
+  - src/main/java/com/aithor/factorycore/gui/FactoryGUI.java (Relentless Grinder trigger on production cost deduction)
+  - src/main/java/com/aithor/factorycore/managers/MarketplaceManager.java (First Profit, Capitalist Monopoly triggers)
+  - src/main/java/com/aithor/factorycore/managers/NPCManager.java (Who Is The Boss Now trigger)
+  - src/main/java/com/aithor/factorycore/managers/InvoiceManager.java (Big Spender trigger on salary payment)
+  - src/main/java/com/aithor/factorycore/managers/ResearchManager.java (Tech Investment, Modern Factory triggers)
+  - src/main/java/com/aithor/factorycore/managers/TaxManager.java (Tax Contributor, Disciplined Businessman triggers)

@@ -283,6 +283,11 @@ public class FactoryManager {
         factory.setStatus(FactoryStatus.STOPPED);
         saveAll();
 
+        // Achievement: New Investor - first factory purchase
+        if (plugin.getAchievementManager() != null) {
+            plugin.getAchievementManager().awardAchievement(player, "new_investor");
+        }
+
         return true;
     }
 
@@ -406,6 +411,17 @@ public class FactoryManager {
         BossBar bossBar = productionBossBars.remove(factoryId);
         if (bossBar != null) {
             bossBar.removeAll();
+        }
+
+        // Achievement: Early Prototype + Mass Producer
+        if (plugin.getAchievementManager() != null && factory.getOwner() != null) {
+            Player achievementPlayer = Bukkit.getPlayer(factory.getOwner());
+            if (achievementPlayer != null) {
+                plugin.getAchievementManager().awardAchievement(achievementPlayer, "early_prototype");
+                plugin.getAchievementManager().addProgress(achievementPlayer, "mass_producer", 1);
+            } else {
+                plugin.getAchievementManager().addProgressOffline(factory.getOwner(), "mass_producer", 1);
+            }
         }
 
         // Send completion message only once (prevent spam)

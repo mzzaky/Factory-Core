@@ -26,19 +26,32 @@ public class MainMenuGUI {
     }
 
     public void openMainMenu() {
+        // Check regular factory first, then player-created factory
         Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null) {
+        com.aithor.factorycore.models.PlayerFactory playerFactory = null;
+
+        if (factory == null && plugin.getPlayerFactoryManager() != null) {
+            playerFactory = plugin.getPlayerFactoryManager().getFactory(factoryId);
+        }
+
+        if (factory == null && playerFactory == null) {
             player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
             return;
         }
 
-        if (!player.getUniqueId().equals(factory.getOwner())) {
+        // Determine owner and type from whichever factory type we found
+        java.util.UUID factoryOwner = factory != null ? factory.getOwner() : playerFactory.getOwner();
+        FactoryType factoryType = factory != null ? factory.getType() : playerFactory.getType();
+        int factoryLevel = factory != null ? factory.getLevel() : playerFactory.getLevel();
+        FactoryStatus factoryStatus = factory != null ? factory.getStatus() : playerFactory.getStatus();
+
+        if (!player.getUniqueId().equals(factoryOwner)) {
             player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-owned"));
             return;
         }
 
         // Additional validation
-        if (factory.getType() == null) {
+        if (factoryType == null) {
             player.sendMessage("§cError: Invalid Factory type!");
             return;
         }
@@ -48,7 +61,7 @@ public class MainMenuGUI {
                 PersistentDataType.STRING, factoryId);
 
         Inventory inv = Bukkit.createInventory(null, 27,
-                "§6§lFactory: §e" + factory.getType().getDisplayName());
+                "§6§lFactory: §e" + factoryType.getDisplayName());
 
         // Fill with border
         Material borderMat = Material
@@ -59,7 +72,7 @@ public class MainMenuGUI {
         }
 
         // Factory Status (Slot 4)
-        inv.setItem(4, createFactoryStatusItem(factory));
+        inv.setItem(4, createFactoryStatusItem(factory, playerFactory));
 
         // Start Production (Slot 10)
         inv.setItem(10, createItem(Material.CRAFTING_TABLE,
@@ -91,7 +104,7 @@ public class MainMenuGUI {
         inv.setItem(16, createItem(Material.NETHER_STAR,
                 "§d§lUpgrade Factory",
                 Arrays.asList(
-                        "§7Current level: §e" + factory.getLevel(),
+                        "§7Current level: §e" + factoryLevel,
                         "§7Click to upgrade")));
 
         // Fast Travel (Slot 22)
@@ -99,6 +112,23 @@ public class MainMenuGUI {
                 "§6§lFast Travel",
                 Arrays.asList(
                         "§7Teleport to the factory")));
+
+        // Toggle Border (Slot 20) — only for player-created factories
+        if (plugin.getPlayerFactoryManager() != null
+                && plugin.getPlayerFactoryManager().getFactory(factoryId) != null) {
+            boolean borderOn = plugin.getBorderParticleTask() != null
+                    && plugin.getBorderParticleTask().isEnabled(player.getUniqueId());
+            inv.setItem(20, createItem(
+                    borderOn ? Material.GLOWSTONE : Material.GLASS,
+                    borderOn ? "§e§lToggle Border §a(ON)" : "§e§lToggle Border §c(OFF)",
+                    Arrays.asList(
+                            "§7Show/hide your factory",
+                            "§7region borders with particles.",
+                            "",
+                            "§7Status: " + (borderOn ? "§aEnabled" : "§cDisabled"),
+                            "",
+                            "§eClick to toggle!")));
+        }
 
         // Back Button (Slot 26)
         inv.setItem(26, createItem(Material.ARROW,
@@ -109,22 +139,29 @@ public class MainMenuGUI {
         player.openInventory(inv);
     }
 
-    private ItemStack createFactoryStatusItem(Factory factory) {
-        Material material = factory.getStatus() == FactoryStatus.RUNNING ? Material.GREEN_WOOL : Material.RED_WOOL;
+    private ItemStack createFactoryStatusItem(Factory factory, com.aithor.factorycore.models.PlayerFactory playerFactory) {
+        FactoryStatus status = factory != null ? factory.getStatus() : playerFactory.getStatus();
+        int level = factory != null ? factory.getLevel() : playerFactory.getLevel();
+        FactoryType type = factory != null ? factory.getType() : playerFactory.getType();
+        ProductionTask production = factory != null ? factory.getCurrentProduction() : playerFactory.getCurrentProduction();
+
+        Material material = status == FactoryStatus.RUNNING ? Material.GREEN_WOOL : Material.RED_WOOL;
 
         List<String> lore = new ArrayList<>();
-        lore.add("§7Status: " + factory.getStatus().getDisplay());
-        lore.add("§7Level: §e" + factory.getLevel());
-        lore.add("§7Type: " + factory.getType().getDisplayName());
+        lore.add("§7Status: " + status.getDisplay());
+        lore.add("§7Level: §e" + level);
+        lore.add("§7Type: " + type.getDisplayName());
+        if (playerFactory != null) {
+            lore.add("§7Owner: §aPlayer-Created");
+        }
 
-        if (factory.getCurrentProduction() != null) {
-            ProductionTask task = factory.getCurrentProduction();
-            Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
+        if (production != null) {
+            Recipe recipe = plugin.getRecipeManager().getRecipe(production.getRecipeId());
             lore.add("");
             lore.add("§6Active Production:");
             lore.add("§e" + recipe.getName());
-            lore.add("§7Time remaining: §e" + task.getRemainingTime() + "s");
-            lore.add("§7Progress: §e" + (int) (task.getProgress() * 100) + "%");
+            lore.add("§7Time remaining: §e" + production.getRemainingTime() + "s");
+            lore.add("§7Progress: §e" + (int) (production.getProgress() * 100) + "%");
         }
 
         return createItem(material, "§6§lFactory Status", lore);

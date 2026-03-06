@@ -7,6 +7,7 @@ import com.aithor.factorycore.hooks.ExecutableItemsHook;
 import com.aithor.factorycore.hooks.MMOItemsHook;
 import com.aithor.factorycore.listeners.*;
 import com.aithor.factorycore.managers.*;
+import com.aithor.factorycore.tasks.BorderParticleTask;
 import com.aithor.factorycore.utils.Logger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -33,6 +34,10 @@ public class FactoryCore extends JavaPlugin {
     private ResearchManager researchManager;
     private AchievementManager achievementManager;
     private DailyQuestManager dailyQuestManager;
+    private PlayerFactoryManager playerFactoryManager;
+
+    // Tasks
+    private BorderParticleTask borderParticleTask;
 
     // Custom GUI configs
     private FileConfiguration mainMenuConfig;
@@ -129,6 +134,9 @@ public class FactoryCore extends JavaPlugin {
         }
         if (dailyQuestManager != null) {
             dailyQuestManager.saveAll();
+        }
+        if (playerFactoryManager != null) {
+            playerFactoryManager.saveAll();
         }
 
         Logger.log("FactoryCore has been disabled!");
@@ -232,6 +240,7 @@ public class FactoryCore extends JavaPlugin {
         researchManager = new ResearchManager(this);
         achievementManager = new AchievementManager(this);
         dailyQuestManager = new DailyQuestManager(this);
+        playerFactoryManager = new PlayerFactoryManager(this);
     }
 
     private void registerCommands() {
@@ -248,6 +257,9 @@ public class FactoryCore extends JavaPlugin {
         // Register hub click listener
         hubClickListener = new HubClickListener(this);
         getServer().getPluginManager().registerEvents(hubClickListener, this);
+
+        // Register player factory protection listener
+        getServer().getPluginManager().registerEvents(new PlayerFactoryProtectionListener(this), this);
     }
 
     private void startSchedulers() {
@@ -299,6 +311,11 @@ public class FactoryCore extends JavaPlugin {
                 researchManager.updateResearch();
             }
         }, 200L, 200L); // Every 10 seconds
+
+        // Border particle task
+        borderParticleTask = new BorderParticleTask(this);
+        int particleInterval = getConfig().getInt("player-factory.border-particle-interval", 10);
+        getServer().getScheduler().runTaskTimer(this, borderParticleTask, 20L, particleInterval);
     }
 
     // ==================== STARTUP BANNER ====================
@@ -351,6 +368,7 @@ public class FactoryCore extends JavaPlugin {
                 "§7- §aDaily Quest System §8(" + dailyQuestManager.getTotalQuestCount() + " quests)");
         console.sendMessage("§7- §aNPC Workforce System §8(Active)");
         console.sendMessage("§7- §aInvoice & Storage System §8(Active)");
+        console.sendMessage("§7- §aPlayer Factory System §8(" + playerFactoryManager.getAllFactories().size() + " player factories)");
         console.sendMessage("");
         console.sendMessage("§8========================================================");
         console.sendMessage("§a✔ Plugin successfully initialized and ready for use!");
@@ -414,6 +432,14 @@ public class FactoryCore extends JavaPlugin {
 
     public DailyQuestManager getDailyQuestManager() {
         return dailyQuestManager;
+    }
+
+    public PlayerFactoryManager getPlayerFactoryManager() {
+        return playerFactoryManager;
+    }
+
+    public BorderParticleTask getBorderParticleTask() {
+        return borderParticleTask;
     }
 
     /**

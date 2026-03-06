@@ -9,6 +9,8 @@ import com.aithor.factorycore.listeners.*;
 import com.aithor.factorycore.managers.*;
 import com.aithor.factorycore.utils.Logger;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,6 +33,9 @@ public class FactoryCore extends JavaPlugin {
     private ResearchManager researchManager;
     private AchievementManager achievementManager;
     private DailyQuestManager dailyQuestManager;
+
+    // Custom GUI configs
+    private FileConfiguration mainMenuConfig;
 
     // Hooks
     private MMOItemsHook mmoItemsHook;
@@ -63,6 +68,7 @@ public class FactoryCore extends JavaPlugin {
         createResearchConfig();
         createAchievementConfig();
         createDailyQuestConfig();
+        createMainMenuConfig();
 
         // Initialize logger
         com.aithor.factorycore.utils.Logger.init(this);
@@ -185,6 +191,23 @@ public class FactoryCore extends JavaPlugin {
         if (!new java.io.File(getDataFolder(), "daily-quest.yml").exists()) {
             saveResource("daily-quest.yml", false);
         }
+    }
+
+    private void createMainMenuConfig() {
+        // Create the custom_gui directory if needed
+        java.io.File guiDir = new java.io.File(getDataFolder(), "custom_gui");
+        if (!guiDir.exists()) {
+            guiDir.mkdirs();
+        }
+
+        java.io.File menuFile = new java.io.File(guiDir, "main_menu.yml");
+        if (!menuFile.exists()) {
+            // Save the bundled default from the jar
+            saveResource("custom_gui/main_menu.yml", false);
+        }
+
+        // Always load from disk so live edits are picked up on /fc reload
+        mainMenuConfig = YamlConfiguration.loadConfiguration(menuFile);
     }
 
     private void initializeHooks() {
@@ -391,6 +414,23 @@ public class FactoryCore extends JavaPlugin {
 
     public DailyQuestManager getDailyQuestManager() {
         return dailyQuestManager;
+    }
+
+    /**
+     * Returns the loaded configuration for the main hub menu
+     * ({@code custom_gui/main_menu.yml}).
+     * Call {@link #reloadMainMenuConfig()} after file edits to pick up changes.
+     */
+    public FileConfiguration getMainMenuConfig() {
+        if (mainMenuConfig == null)
+            createMainMenuConfig();
+        return mainMenuConfig;
+    }
+
+    /** Re-reads {@code custom_gui/main_menu.yml} from disk. */
+    public void reloadMainMenuConfig() {
+        java.io.File menuFile = new java.io.File(getDataFolder(), "custom_gui/main_menu.yml");
+        mainMenuConfig = YamlConfiguration.loadConfiguration(menuFile);
     }
 
     public MMOItemsHook getMMOItemsHook() {

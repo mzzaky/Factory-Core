@@ -14,6 +14,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -46,6 +48,17 @@ public class HubClickListener implements Listener {
         this.plugin = plugin;
     }
 
+    // ── Block drag-and-drop into/from all Hub GUIs ───────────────────────────
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (!(event.getWhoClicked() instanceof Player))
+            return;
+        String title = event.getView().getTitle();
+        if (isHubGUI(title)) {
+            event.setCancelled(true);
+        }
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player))
@@ -59,7 +72,7 @@ public class HubClickListener implements Listener {
         if (!isHubGUI(title))
             return;
 
-        // Cancel all events to prevent item manipulation
+        // Cancel ALL click actions in Hub GUIs to prevent any item manipulation
         event.setCancelled(true);
 
         if (clicked == null || clicked.getType() == Material.AIR)
@@ -67,11 +80,21 @@ public class HubClickListener implements Listener {
         if (!clicked.hasItemMeta())
             return;
 
+        // Only process clicks that originated from the top (GUI) inventory.
+        // Clicks on the player's bottom inventory (e.g. shift-click from hotbar)
+        // must be blocked entirely — they have no hub action to perform.
+        Inventory clickedInv = event.getClickedInventory();
+        if (clickedInv == null || clickedInv.equals(player.getInventory()))
+            return;
+
         ItemMeta meta = clicked.getItemMeta();
         String name = meta.getDisplayName();
 
         // Route to appropriate handler based on GUI title
-        if (title.contains("Main Hub")) {
+        String configuredHubTitle = org.bukkit.ChatColor.translateAlternateColorCodes('&',
+                plugin.getMainMenuConfig().getString("gui.title", "Main Hub"));
+
+        if (title.equals(configuredHubTitle) || title.contains("Main Hub")) {
             handleHubClick(player, clicked, meta, name);
         } else if (title.contains("Factory Browse")) {
             handleFactoryBrowseClick(player, clicked, meta, name, event.getClick());
@@ -106,7 +129,11 @@ public class HubClickListener implements Listener {
     }
 
     private boolean isHubGUI(String title) {
-        return title.contains("Main Hub") ||
+        String configuredHubTitle = org.bukkit.ChatColor.translateAlternateColorCodes('&',
+                plugin.getMainMenuConfig().getString("gui.title", "Main Hub"));
+
+        return title.equals(configuredHubTitle) ||
+                title.contains("Main Hub") ||
                 title.contains("Factory Browse") ||
                 title.contains("My Factories") ||
                 title.contains("Invoice Center") ||
@@ -131,49 +158,240 @@ public class HubClickListener implements Listener {
 
     // ==================== HUB MAIN MENU ====================
     private void handleHubClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
-        if (name.contains("Factory Browse")) {
-            FactoryBrowseGUI gui = new FactoryBrowseGUI(plugin, player);
-            browseGUIs.put(player.getUniqueId(), gui);
-            gui.openBrowseMenu();
-        } else if (name.contains("My Factories")) {
-            MyFactoriesGUI gui = new MyFactoriesGUI(plugin, player);
-            myFactoriesGUIs.put(player.getUniqueId(), gui);
-            gui.openMyFactoriesMenu();
-        } else if (name.contains("Invoice Center")) {
-            InvoiceCenterGUI gui = new InvoiceCenterGUI(plugin, player);
-            invoiceCenterGUIs.put(player.getUniqueId(), gui);
-            gui.openInvoiceCenterMenu();
-        } else if (name.contains("Tax Center")) {
-            TaxCenterGUI gui = new TaxCenterGUI(plugin, player);
-            taxCenterGUIs.put(player.getUniqueId(), gui);
-            gui.openTaxCenterMenu();
-        } else if (name.contains("Employees Center")) {
-            EmployeesCenterGUI gui = new EmployeesCenterGUI(plugin, player);
-            employeesCenterGUIs.put(player.getUniqueId(), gui);
-            gui.openEmployeesCenterMenu();
-        } else if (name.contains("Marketplace")) {
-            MarketplaceGUI gui = new MarketplaceGUI(plugin, player);
-            marketplaceGUIs.put(player.getUniqueId(), gui);
-            gui.openMarketplaceMenu();
-        } else if (name.contains("Achievements")) {
-            AchievementGUI gui = new AchievementGUI(plugin, player);
-            achievementGUIs.put(player.getUniqueId(), gui);
-            gui.openAchievementMenu();
-        } else if (name.contains("Daily Quests")) {
-            DailyQuestGUI gui = new DailyQuestGUI(plugin, player);
-            dailyQuestGUIs.put(player.getUniqueId(), gui);
-            gui.openDailyQuestMenu();
-        } else if (name.contains("Research Center")) {
-            ResearchGUI gui = new ResearchGUI(plugin, player);
-            researchGUIs.put(player.getUniqueId(), gui);
-            gui.openResearchMenu();
-        } else if (name.contains("Help & Info")) {
-            HelpInfoGUI gui = new HelpInfoGUI(plugin, player);
-            helpInfoGUIs.put(player.getUniqueId(), gui);
-            gui.openHelpMenu();
-        } else if (name.contains("Close")) {
+        // ── Special on_click action (configured in main_menu.yml) ────────────
+        if (executeOnClick(player, meta))
+            return;
+
+        // ── Route by stable hub_gui_id PDC tag ───────────────────────────────
+        String guiId = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "hub_gui_id"),
+                PersistentDataType.STRING);
+
+        if (guiId != null) {
+            switch (guiId) {
+                case "factory_browse": {
+                    playHubSound(player, "factory_browse");
+                    FactoryBrowseGUI gui = new FactoryBrowseGUI(plugin, player);
+                    browseGUIs.put(player.getUniqueId(), gui);
+                    gui.openBrowseMenu();
+                    break;
+                }
+                case "my_factories": {
+                    playHubSound(player, "my_factories");
+                    MyFactoriesGUI gui = new MyFactoriesGUI(plugin, player);
+                    myFactoriesGUIs.put(player.getUniqueId(), gui);
+                    gui.openMyFactoriesMenu();
+                    break;
+                }
+                case "invoice_center": {
+                    playHubSound(player, "invoice_center");
+                    InvoiceCenterGUI gui = new InvoiceCenterGUI(plugin, player);
+                    invoiceCenterGUIs.put(player.getUniqueId(), gui);
+                    gui.openInvoiceCenterMenu();
+                    break;
+                }
+                case "tax_center": {
+                    playHubSound(player, "tax_center");
+                    TaxCenterGUI gui = new TaxCenterGUI(plugin, player);
+                    taxCenterGUIs.put(player.getUniqueId(), gui);
+                    gui.openTaxCenterMenu();
+                    break;
+                }
+                case "employees_center": {
+                    playHubSound(player, "employees_center");
+                    EmployeesCenterGUI gui = new EmployeesCenterGUI(plugin, player);
+                    employeesCenterGUIs.put(player.getUniqueId(), gui);
+                    gui.openEmployeesCenterMenu();
+                    break;
+                }
+                case "marketplace": {
+                    playHubSound(player, "marketplace");
+                    MarketplaceGUI gui = new MarketplaceGUI(plugin, player);
+                    marketplaceGUIs.put(player.getUniqueId(), gui);
+                    gui.openMarketplaceMenu();
+                    break;
+                }
+                case "achievements": {
+                    playHubSound(player, "achievements");
+                    AchievementGUI gui = new AchievementGUI(plugin, player);
+                    achievementGUIs.put(player.getUniqueId(), gui);
+                    gui.openAchievementMenu();
+                    break;
+                }
+                case "daily_quests": {
+                    playHubSound(player, "daily_quests");
+                    DailyQuestGUI gui = new DailyQuestGUI(plugin, player);
+                    dailyQuestGUIs.put(player.getUniqueId(), gui);
+                    gui.openDailyQuestMenu();
+                    break;
+                }
+                case "research_center": {
+                    playHubSound(player, "research_center");
+                    ResearchGUI gui = new ResearchGUI(plugin, player);
+                    researchGUIs.put(player.getUniqueId(), gui);
+                    gui.openResearchMenu();
+                    break;
+                }
+                case "help_info": {
+                    playHubSound(player, "help_info");
+                    HelpInfoGUI gui = new HelpInfoGUI(plugin, player);
+                    helpInfoGUIs.put(player.getUniqueId(), gui);
+                    gui.openHelpMenu();
+                    break;
+                }
+                case "close_button": {
+                    playHubSound(player, "close_button");
+                    player.closeInventory();
+                    break;
+                }
+                default:
+                    break;
+            }
+            return;
+        }
+
+        // ── Legacy fallback: route by display name (border/unnamed items) ─────
+        if (name.contains("Close")) {
             player.closeInventory();
         }
+    }
+
+    /**
+     * Checks whether {@code meta} carries a {@code hub_on_click} PDC tag and, if
+     * so, executes the configured action on behalf of {@code player}.
+     *
+     * <p>
+     * Supported actions:
+     * <ul>
+     * <li>{@code console_command} – each {@code ;}-separated segment of the
+     * {@code hub_on_click_value} PDC tag is dispatched as a console command
+     * with {@code %player%} replaced by the player's name.</li>
+     * <li>{@code open_gui_factory_browse} – open Factory Browse GUI.</li>
+     * <li>{@code open_gui_my_factories} – open My Factories GUI.</li>
+     * <li>{@code open_gui_invoice_center} – open Invoice Center GUI.</li>
+     * <li>{@code open_gui_tax_center} – open Tax Center GUI.</li>
+     * <li>{@code open_gui_employees_center} – open Employees Center GUI.</li>
+     * <li>{@code open_gui_marketplace} – open Marketplace GUI.</li>
+     * <li>{@code open_gui_achievements} – open Achievements GUI.</li>
+     * <li>{@code open_gui_research_center} – open Research Center GUI.</li>
+     * <li>{@code open_gui_daily_quests} – open Daily Quests GUI.</li>
+     * <li>{@code open_gui_help_info} – open Help &amp; Info GUI.</li>
+     * </ul>
+     *
+     * @param player the clicking player
+     * @param meta   the ItemMeta of the clicked item
+     * @return {@code true} if an action was found and executed (caller should
+     *         {@code return} after this); {@code false} if no action was configured
+     */
+    private boolean executeOnClick(Player player, ItemMeta meta) {
+        String action = meta.getPersistentDataContainer().get(
+                new org.bukkit.NamespacedKey(plugin, "hub_on_click"),
+                org.bukkit.persistence.PersistentDataType.STRING);
+
+        if (action == null)
+            return false;
+
+        String value = meta.getPersistentDataContainer().get(
+                new org.bukkit.NamespacedKey(plugin, "hub_on_click_value"),
+                org.bukkit.persistence.PersistentDataType.STRING);
+
+        if (value == null)
+            value = "";
+
+        switch (action) {
+            case "console_command": {
+                String playerName = player.getName();
+                org.bukkit.command.ConsoleCommandSender console = org.bukkit.Bukkit.getConsoleSender();
+                for (String cmd : value.split(";")) {
+                    String finalCmd = cmd.trim().replace("%player%", playerName);
+                    if (!finalCmd.isEmpty()) {
+                        org.bukkit.Bukkit.dispatchCommand(console, finalCmd);
+                    }
+                }
+                return true;
+            }
+            case "open_gui_factory_browse": {
+                playHubSound(player, "factory_browse");
+                FactoryBrowseGUI browseGui = new FactoryBrowseGUI(plugin, player);
+                browseGUIs.put(player.getUniqueId(), browseGui);
+                browseGui.openBrowseMenu();
+                return true;
+            }
+            case "open_gui_my_factories": {
+                playHubSound(player, "my_factories");
+                MyFactoriesGUI myGui = new MyFactoriesGUI(plugin, player);
+                myFactoriesGUIs.put(player.getUniqueId(), myGui);
+                myGui.openMyFactoriesMenu();
+                return true;
+            }
+            case "open_gui_invoice_center": {
+                playHubSound(player, "invoice_center");
+                InvoiceCenterGUI invoiceGui = new InvoiceCenterGUI(plugin, player);
+                invoiceCenterGUIs.put(player.getUniqueId(), invoiceGui);
+                invoiceGui.openInvoiceCenterMenu();
+                return true;
+            }
+            case "open_gui_tax_center": {
+                playHubSound(player, "tax_center");
+                TaxCenterGUI taxGui = new TaxCenterGUI(plugin, player);
+                taxCenterGUIs.put(player.getUniqueId(), taxGui);
+                taxGui.openTaxCenterMenu();
+                return true;
+            }
+            case "open_gui_employees_center": {
+                playHubSound(player, "employees_center");
+                EmployeesCenterGUI empGui = new EmployeesCenterGUI(plugin, player);
+                employeesCenterGUIs.put(player.getUniqueId(), empGui);
+                empGui.openEmployeesCenterMenu();
+                return true;
+            }
+            case "open_gui_marketplace": {
+                playHubSound(player, "marketplace");
+                MarketplaceGUI marketGui = new MarketplaceGUI(plugin, player);
+                marketplaceGUIs.put(player.getUniqueId(), marketGui);
+                marketGui.openMarketplaceMenu();
+                return true;
+            }
+            case "open_gui_achievements": {
+                playHubSound(player, "achievements");
+                AchievementGUI achGui = new AchievementGUI(plugin, player);
+                achievementGUIs.put(player.getUniqueId(), achGui);
+                achGui.openAchievementMenu();
+                return true;
+            }
+            case "open_gui_research_center": {
+                playHubSound(player, "research_center");
+                ResearchGUI resGui = new ResearchGUI(plugin, player);
+                researchGUIs.put(player.getUniqueId(), resGui);
+                resGui.openResearchMenu();
+                return true;
+            }
+            case "open_gui_daily_quests": {
+                playHubSound(player, "daily_quests");
+                DailyQuestGUI questGui = new DailyQuestGUI(plugin, player);
+                dailyQuestGUIs.put(player.getUniqueId(), questGui);
+                questGui.openDailyQuestMenu();
+                return true;
+            }
+            case "open_gui_help_info": {
+                playHubSound(player, "help_info");
+                HelpInfoGUI helpGui = new HelpInfoGUI(plugin, player);
+                helpInfoGUIs.put(player.getUniqueId(), helpGui);
+                helpGui.openHelpMenu();
+                return true;
+            }
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Delegates sound playback to
+     * {@link com.aithor.factorycore.gui.HubGUI#playClickSound(String)}.
+     * HubGUI reads all sound settings from {@code custom_gui/main_menu.yml}.
+     */
+    private void playHubSound(Player player, String itemKey) {
+        new com.aithor.factorycore.gui.HubGUI(plugin, player).playClickSound(itemKey);
     }
 
     // ==================== FACTORY BROWSE ====================
@@ -620,7 +838,8 @@ public class HubClickListener implements Listener {
 
         // Check if player clicked a custom resource to sell in their inventory
         String clickedResourceId = plugin.getResourceManager().getResourceId(clicked);
-        if (clickedResourceId != null && !meta.getPersistentDataContainer().has(new NamespacedKey(plugin, "market_listing_id"), PersistentDataType.STRING)) {
+        if (clickedResourceId != null && !meta.getPersistentDataContainer()
+                .has(new NamespacedKey(plugin, "market_listing_id"), PersistentDataType.STRING)) {
             gui.openSellConfirmation(clickedResourceId, clicked.getAmount());
             return;
         }
@@ -737,7 +956,8 @@ public class HubClickListener implements Listener {
     // ==================== DAILY QUESTS ====================
     private void handleDailyQuestClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
         DailyQuestManager questManager = plugin.getDailyQuestManager();
-        if (questManager == null) return;
+        if (questManager == null)
+            return;
 
         // Check for quest ID on clicked item (claim individual quest reward)
         String questId = meta.getPersistentDataContainer().get(

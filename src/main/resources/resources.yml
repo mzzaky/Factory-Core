@@ -2,11 +2,20 @@
 # All items used in FactoryCore plugin
 
 # Resource Types:
-# 1. RAW_RESOURCES - Raw materials
-# 2. ADVANCED_RESOURCES - Processed materials
-# 3. FINAL_RESOURCES - Finished products
-# 4. FUEL - Fuel
-# 5. MACHINE_PARTS - Machine parts
+# 1. RAW_RESOURCES     - Raw plugin materials (produced by the Smeltery from vanilla inputs)
+# 2. ADVANCED_RESOURCES - Processed materials (produced by Steel Mill)
+# 3. FINAL_RESOURCES   - Finished products (produced by Advanced Factory)
+# 4. FUEL              - Fuel (produced by Refinery)
+# 5. MACHINE_PARTS     - Machine parts (produced by Workshop)
+#
+# ==================== Smeltery — Vanilla Input Note ====================
+# The Smeltery factory type accepts REAL vanilla materials that players
+# mine or obtain naturally in the world (e.g. raw IRON_ORE from mining).
+# These inputs are stored in factory input-storage under a "vanilla:" prefix
+# key (e.g. "vanilla:IRON_ORE") so the engine can match by Bukkit Material
+# name only — custom-model-data items are explicitly rejected as substitutes.
+# Smeltery recipes convert these vanilla inputs into the plugin-tracked
+# RAW_RESOURCES listed below.
 #
 # ==================== MMOItems Integration ====================
 # You can connect resources with items from the MMOItems plugin.

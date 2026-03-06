@@ -1,0 +1,491 @@
+# ============================================================
+#  FactoryCore - Main Menu GUI Configuration
+#  File: custom_gui/main_menu.yml
+# ============================================================
+#
+#  This file allows you to fully customize the Main Hub GUI
+#  without modifying any Java source code.
+#
+#  SUPPORTED FIELDS PER ITEM:
+#    enabled:           true / false — hide the item by setting false,
+#                       OR delete the entire section to hide it.
+#    slot:              Inventory slot(s). Supports three formats:
+#                         Single  : slot: 20
+#                         Multi   : slot: "20, 21, 22"
+#                         YAML list:
+#                           slot:
+#                             - 20
+#                             - 21
+#                             - 22
+#                       When multiple slots are given, the item is
+#                       placed in ALL of them simultaneously.
+#    material:          Bukkit Material name (e.g. COMPASS, PAPER)
+#    custom_model_data: Custom model data integer (0 = disabled)
+#    name:              Display name (supports & color codes)
+#    lore:              List of lore lines (supports & color codes)
+#    sound:
+#      enabled:         true / false
+#      sound:           Bukkit Sound name (e.g. UI_BUTTON_CLICK)
+#      volume:          Float, 0.0 - 1.0
+#      pitch:           Float, 0.5 - 2.0
+#    on_click:          Optional special action to run when this item
+#                       is clicked. Supported values:
+#
+#                       ── Open a registered GUI ───────────────────────────
+#                         open_gui_factory_browse   — open Factory Browse GUI
+#                         open_gui_my_factories     — open My Factories GUI
+#                         open_gui_invoice_center   — open Invoice Center GUI
+#                         open_gui_tax_center       — open Tax Center GUI
+#                         open_gui_employees_center — open Employees Center GUI
+#                         open_gui_marketplace      — open Marketplace GUI
+#                         open_gui_achievements     — open Achievements GUI
+#                         open_gui_research_center  — open Research Center GUI
+#                         open_gui_daily_quests     — open Daily Quests GUI
+#                         open_gui_help_info        — open Help & Info GUI
+#
+#                       Example (open Invoice Center on click):
+#                         on_click: open_gui_invoice_center
+#
+#                       ── Run a console command ────────────────────────────
+#                         console_command — run one or more server-side
+#                           commands as console (op-level). Use
+#                           %player% as a placeholder for the clicker's
+#                           name. Multiple commands are separated by
+#                           a semicolon  ;  character.
+#
+#                       Example:
+#                         on_click: console_command
+#                         value: "money give %player% 9999"
+#                       Multi-command example:
+#                         on_click: console_command
+#                         value: "money give %player% 9999; say %player% got free money!"
+#
+#  GUI IDs (hub_gui_id) - each main-menu item carries a stable internal
+#    ID tag so the click listener routes actions correctly regardless of
+#    how you rename the item's display name. The IDs are:
+#      player_info, factory_browse, my_factories, invoice_center,
+#      tax_center, employees_center, marketplace, achievements,
+#      research_center, daily_quests, help_info, quick_stats,
+#      close_button
+#
+#  COLOR CODES: Use & followed by a color code character.
+#    Example: &6&lHello &7World
+#
+#  GLOBAL PLACEHOLDERS (NEW): All variables below are now GLOBAL
+#    and can be used in any item (including custom items):
+#
+#    {player_name}               : Player's name
+#    {factory_available_count}   : Number of unowned factories on the server
+#    {factory_owned_count}       : Number of factories owned by the player
+#    {factory_running_count}     : Number of the player's factories currently running
+#    {factory_stopped_count}     : Number of the player's factories currently stopped
+#    {factory_total_value}       : Total asset value of the player's factories
+#    {invoice_count}             : Total number of invoices (including tax)
+#    {invoice_overdue_count}     : Number of overdue invoices
+#    {invoice_total_due}         : Total amount due from invoices
+#    {invoice_overdue_warning}   : Displays a dynamic warning if there are overdue invoices
+#    {tax_due}                   : Total tax overdue by the player
+#    {tax_rate}                  : Current tax rate percentage
+#    {employee_assigned_count}   : Number of employees (NPCs) assigned to factories
+#    {employee_owned_count}      : Total number of employees owned by the player
+#    {employee_unassigned_line}  : Displays dynamic info if there are unassigned NPCs
+#    {marketplace_listing_count} : Number of active market listings owned by the player
+#    {achievement_unlocked_count}: Number of achievements unlocked
+#    {achievement_total_count}   : Total possible achievements
+#    {research_active_count}     : Number of active researches
+#    {research_completed_count}  : Total completed research levels
+#    {quest_completed_count}     : Number of completed daily quests
+#    {quest_total_count}         : Total daily quests assigned today
+#    {quest_reset_time}          : Countdown time until quests are reset
+#
+#    *(Note: Old short placeholders like {owned_count} still
+#     work on default items for backwards compatibility).
+#
+# ============================================================
+
+
+# ----------------------------------------------------------
+# GUI Window Settings
+# ----------------------------------------------------------
+gui:
+  title: "&6&lFactoryCore &8- &eMain Hub"
+  size: 54   # Must be a multiple of 9 (9, 18, 27, 36, 45, 54)
+
+  # Default click sound played when any item is clicked.
+  # Individual items can override this.
+  default_click_sound:
+    enabled: true
+    sound: "UI_BUTTON_CLICK"
+    volume: 0.5
+    pitch: 1.0
+
+  # Border item that fills the GUI edges
+  # Set enabled: false to remove the border entirely.
+  border:
+    enabled: true
+    material: "BLACK_STAINED_GLASS_PANE"
+    name: " "
+    custom_model_data: 0
+
+# ----------------------------------------------------------
+# Main Menu Items
+# ----------------------------------------------------------
+items:
+
+  # ── Player Info Header ──────────────────────────────────
+  # GUI ID  : player_info
+  # on_click: (no action — this item is informational only)
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {player_name}  - viewer's in-game name
+  #               {owned_count}  - number of factories owned
+  #               {total_value}  - combined purchase price of all owned factories
+  player_info:
+    enabled: true
+    slot: 4
+    # Uses PLAYER_HEAD with the viewer's skull texture.
+    # Material is always forced to PLAYER_HEAD for this item.
+    material: "PLAYER_HEAD"
+    custom_model_data: 0
+    name: "&6&l{player_name}"
+    lore:
+      - "&7Welcome to FactoryCore!"
+      - ""
+      - "&eFactories Owned: &6{owned_count}"
+      - "&eTotal Value: &6${total_value}"
+    sound:
+      enabled: false
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.5
+      pitch: 1.0
+
+  # ── Factory Browse ───────────────────────────────────────
+  # GUI ID  : factory_browse
+  # on_click: open_gui_factory_browse
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {available_count} - number of factories without an owner
+  factory_browse:
+    enabled: true
+    slot: 20
+    material: "COMPASS"
+    custom_model_data: 0
+    name: "&a&lFactory Browse"
+    lore:
+      - "&7Browse and purchase"
+      - "&7available factories"
+      - ""
+      - "&eAvailable: &a{available_count} factories"
+      - ""
+      - "&7Click to browse!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── My Factories ─────────────────────────────────────────
+  # GUI ID  : my_factories
+  # on_click: open_gui_my_factories
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {owned_count}   - number of factories owned by the player
+  #               {running_count} - number of currently running factories
+  #               {stopped_count} - number of stopped factories
+  my_factories:
+    enabled: true
+    slot: 21
+    material: "SMITHING_TABLE"
+    custom_model_data: 0
+    name: "&6&lMy Factories"
+    lore:
+      - "&7Manage your factories"
+      - ""
+      - "&eOwned: &6{owned_count} factories"
+      - "&eRunning: &a{running_count}"
+      - "&eStopped: &c{stopped_count}"
+      - ""
+      - "&7Click to manage!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Invoice Center ───────────────────────────────────────
+  # GUI ID  : invoice_center
+  # on_click: open_gui_invoice_center
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {invoice_count}  - total pending invoices
+  #               {overdue_count}  - number of overdue invoices
+  #               {total_due}      - total money owed (formatted, 2 decimals)
+  #               {overdue_warning}- colored warning line (auto empty if none overdue)
+  invoice_center:
+    enabled: true
+    slot: 22
+    # Material is overridden at runtime:
+    #   RED_CONCRETE if there are overdue invoices, otherwise PAPER.
+    # You can force a static material by setting force_material: true
+    material: "PAPER"
+    force_material: false
+    custom_model_data: 0
+    name: "&e&lInvoice Center"
+    lore:
+      - "&7View and pay all invoices"
+      - ""
+      - "&ePending: &6{invoice_count} invoices"
+      - "&eOverdue: &c{overdue_count}"
+      - "&eTotal Due: &6${total_due}"
+      - ""
+      - "{overdue_warning}"
+      - ""
+      - "&7Click to manage!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Tax Center ───────────────────────────────────────────
+  # GUI ID  : tax_center
+  # on_click: open_gui_tax_center
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {tax_due}  - total tax owed (formatted, 2 decimals)
+  #               {tax_rate} - current tax rate percentage from config
+  tax_center:
+    enabled: true
+    slot: 23
+    material: "GOLD_INGOT"
+    custom_model_data: 0
+    name: "&c&lTax Center"
+    lore:
+      - "&7View and pay taxes"
+      - ""
+      - "&eTax Due: &6${tax_due}"
+      - "&eTax Rate: &e{tax_rate}%"
+      - ""
+      - "&7Click to manage!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Employees Center ─────────────────────────────────────
+  # GUI ID  : employees_center
+  # on_click: open_gui_employees_center
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {assigned_count}  - NPCs assigned to the player's factories
+  #               {owned_count}     - total NPCs owned by the player
+  #               {unassigned_line} - colored status line (unassigned count or "All assigned!")
+  employees_center:
+    enabled: true
+    slot: 24
+    material: "VILLAGER_SPAWN_EGG"
+    custom_model_data: 0
+    name: "&b&lEmployees Center"
+    lore:
+      - "&7Manage factory employees"
+      - ""
+      - "&eAssigned Employees: &b{assigned_count}"
+      - "&eOwned (total): &b{owned_count}"
+      - "{unassigned_line}"
+      - ""
+      - "&7Click to manage!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Marketplace ──────────────────────────────────────────
+  # GUI ID  : marketplace
+  # on_click: open_gui_marketplace
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {listing_count} - number of active marketplace listings by the player
+  marketplace:
+    enabled: true
+    slot: 29
+    material: "EMERALD"
+    custom_model_data: 0
+    name: "&2&lMarketplace"
+    lore:
+      - "&7Buy and sell resources"
+      - ""
+      - "&eYour Listings: &2{listing_count}"
+      - ""
+      - "&7Click to browse!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.2
+
+  # ── Achievements ─────────────────────────────────────────
+  # GUI ID  : achievements
+  # on_click: open_gui_achievements
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {unlocked_count} - number of achievements the player has unlocked
+  #               {total_count}    - total achievements available in the plugin
+  achievements:
+    enabled: true
+    slot: 30
+    material: "DIAMOND"
+    custom_model_data: 0
+    name: "&6&lAchievements"
+    lore:
+      - "&7View your achievements"
+      - "&7and track progress"
+      - ""
+      - "&eUnlocked: &6{unlocked_count}&7/&6{total_count}"
+      - ""
+      - "&7Click to view!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Research Center ──────────────────────────────────────
+  # GUI ID  : research_center
+  # on_click: open_gui_research_center
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {active_count}    - number of research items currently in progress
+  #               {completed_count} - total research levels completed across all trees
+  research_center:
+    enabled: true
+    slot: 31
+    material: "ENCHANTING_TABLE"
+    custom_model_data: 0
+    name: "&5&lResearch Center"
+    lore:
+      - "&7Unlock powerful buffs"
+      - "&7through R&D technology"
+      - ""
+      - "&eActive Research: &d{active_count}"
+      - "&eCompleted Levels: &a{completed_count}"
+      - ""
+      - "&7Click to research!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Daily Quests ─────────────────────────────────────────
+  # GUI ID  : daily_quests
+  # on_click: open_gui_daily_quests
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {completed_count} - quests completed today by the player
+  #               {total_count}     - total daily quests available
+  #               {reset_time}      - human-readable countdown until next daily reset
+  daily_quests:
+    enabled: true
+    slot: 32
+    material: "WRITABLE_BOOK"
+    custom_model_data: 0
+    name: "&a&lDaily Quests"
+    lore:
+      - "&7Complete daily missions"
+      - "&7for EXP and money rewards!"
+      - ""
+      - "&eCompleted: &a{completed_count}&7/&a{total_count}"
+      - "&eResets in: &b{reset_time}"
+      - ""
+      - "&7Click to view quests!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Help & Info ──────────────────────────────────────────
+  # GUI ID  : help_info
+  # on_click: open_gui_help_info
+  # Delete this section or set enabled: false to hide it.
+  help_info:
+    enabled: true
+    slot: 33
+    material: "BOOK"
+    custom_model_data: 0
+    name: "&d&lHelp & Info"
+    lore:
+      - "&7Learn about FactoryCore"
+      - ""
+      - "&7• Plugin guide"
+      - "&7• Commands reference"
+      - "&7• Tips & tricks"
+      - ""
+      - "&7Click to learn more!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Quick Stats ──────────────────────────────────────────
+  # GUI ID  : quick_stats
+  # on_click: (no action — this item is informational only)
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {player_name}    - viewer's in-game name
+  #               {factory_count}  - number of factories owned
+  #               {running_count}  - number of running factories
+  #               {total_value}    - combined purchase price of all owned factories
+  # Note: if lore is omitted or empty, a detailed built-in breakdown is shown instead.
+  quick_stats:
+    enabled: true
+    slot: 49
+    material: "NETHER_STAR"
+    custom_model_data: 0
+    name: "&e&lQuick Stats"
+    lore:
+      - "&7Your quick statistics"
+      - ""
+      - "&eFactories: &6{factory_count}"
+      - "&eRunning: &a{running_count}"
+      - "&eTotal Value: &6${total_value}"
+    sound:
+      enabled: false
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.5
+      pitch: 1.0
+
+  # ── Custom Discord Link (Custom Item Example) ───────────
+  # This is an example of adding a custom item. You can add
+  # as many items as you want with any key as long as it's not a core GUI ID.
+  custom_discord_link:
+    enabled: true
+    slot: 45
+    material: "PAPER"
+    custom_model_data: 0
+    name: "&9&lDiscord Server"
+    lore:
+      - "&7Join our community!"
+      - ""
+      - "&eClick to get the link!"
+    sound:
+      enabled: true
+      sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+      volume: 0.5
+      pitch: 1.0
+    on_click: console_command
+    value: "tellraw %player% {\"text\":\"Click here to join Discord!\",\"color\":\"aqua\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://discord.gg/example\"}}"
+
+  # ── Close Button ─────────────────────────────────────────
+  # GUI ID  : close_button
+  # on_click: (closes the inventory — built-in, no on_click needed)
+  # Delete this section or set enabled: false to hide it.
+  #
+  # on_click / value example — uncomment to give free money on click:
+  #   on_click: console_command
+  #   value: "money give %player% 9999"
+  close_button:
+    enabled: true
+    slot: 53
+    material: "BARRIER"
+    custom_model_data: 0
+    name: "&c&lClose"
+    lore:
+      - "&7Click to close"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.5
+      pitch: 0.8

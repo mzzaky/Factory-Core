@@ -1,6 +1,7 @@
 package com.aithor.factorycore.gui;
 
 import com.aithor.factorycore.FactoryCore;
+import com.aithor.factorycore.managers.ResourceManager;
 import com.aithor.factorycore.models.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -62,15 +63,25 @@ public class StorageGUI {
                 if (slot >= itemAreaSize)
                     break;
 
-                ItemStack item = plugin.getResourceManager().createItemStack(entry.getKey(), entry.getValue());
+                String resourceId = entry.getKey();
+                int storedAmount = entry.getValue();
+                ItemStack item;
+
+                // Vanilla inputs (e.g. "vanilla:IRON_ORE") use a special display helper
+                if (ResourceManager.isVanillaInput(resourceId)) {
+                    item = plugin.getResourceManager().createVanillaInputDisplay(resourceId, storedAmount);
+                } else {
+                    item = plugin.getResourceManager().createItemStack(resourceId, storedAmount);
+                }
+
                 if (item != null) {
                     ItemMeta meta = item.getItemMeta();
                     if (meta != null) {
-                        // Store resource ID in the item
+                        // Store resource ID in the item for click-handling
                         meta.getPersistentDataContainer().set(new NamespacedKey(plugin, "resource_id"),
-                                PersistentDataType.STRING, entry.getKey());
+                                PersistentDataType.STRING, resourceId);
 
-                        // Add lore for clarity
+                        // Add interaction lore
                         List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
                         lore.add("");
                         lore.add("§eLeft Click: §aTake All");

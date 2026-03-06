@@ -15,6 +15,9 @@ v1.2.5 Update Log
 - [Update] HubClickListener kini menangani navigasi GUI Daily Quest (klaim reward, klaim bonus, klaim semua, kembali ke hub).
 - [Update] FactoryCore.java mendaftarkan DailyQuestManager, menyimpan data saat disable, memuat daily-quest.yml, dan menampilkan jumlah quest di startup banner.
 - [Update] FactoryCoreCommand.java menambahkan subcommand dailyquest/dq/quest beserta tab completion.
+- [New] Menambahkan buff research baru "Task Productivity Booster" untuk meningkatkan hadiah uang dari Daily Quest sebesar +10% per level (maksimal level 5).
+- [Update] GUI Daily Quest (DailyQuestGUI.java) sekarang menampilkan perhitungan efek buff secara realtime di lore item quest dan reward bonus.
+- [Update] ResearchManager.java menambahkan metode getDailyQuestMoneyBonus() untuk memproses buff.
 
 Daftar Misi Harian:
   1. "Industrial Hustle" - Menyelesaikan 12 produksi harian (dipicu di FactoryManager.completeProduction).

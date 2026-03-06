@@ -455,6 +455,14 @@ public class ResearchManager {
         return (int) getBuffValue(playerId, "market_stability_regulation");
     }
 
+    /**
+     * Get the additional daily quest money percentage (from
+     * task_productivity_booster)
+     */
+    public double getDailyQuestMoneyBonus(UUID playerId) {
+        return getBuffValue(playerId, "task_productivity_booster");
+    }
+
     // ── Persistence ─────────────────────────────────────────────────────────
 
     private void loadPlayerData() {

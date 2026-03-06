@@ -668,7 +668,7 @@
         <h1>Factory-Core-Plugin Changelog</h1>
         <p>Track all updates, improvements, and bug fixes for Factory-Core-Plugin</p>
         <div class="current-version">
-            <span>Latest Version: v1.2.0</span>
+            <span>Latest Version: v1.2.5</span>
         </div>
     </div>
 
@@ -682,7 +682,8 @@
         <nav class="side-nav">
             <div class="nav-title">Version History</div>
             <ul class="nav-list">
-                <li><a href="#v1-2-0" class="active">v1.2.0 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-2-5" class="active">v1.2.5 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-2-0">v1.2.0</a></li>
                 <li><a href="#v1-1-5">v1.1.5</a></li>
                 <li><a href="#v1-1-0">v1.1.0</a></li>
                 <li><a href="#v1-0-0">v1.0.0 <span class="version-badge">Release</span></a></li>
@@ -690,6 +691,159 @@
         </nav>
 
         <main class="main-content">
+            <!-- Version 1.2.5 -->
+            <section class="version-section" id="v1-2-5">
+                <div class="version-header">
+                    <div class="version-header-left">
+                        <div class="version-title">
+                            <h2>Version 1.2.5</h2>
+                            <span class="version-type update">Update</span>
+                        </div>
+                        <div class="release-date">February 25, 2026</div>
+                    </div>
+                    <div class="version-toggle">
+                        <span class="version-toggle-icon">▼</span>
+                        <span class="version-toggle-text">Minimize</span>
+                    </div>
+                </div>
+
+                <div class="version-content">
+                    <div class="overview-box">
+                        <div class="overview-title">Release Overview</div>
+                        <div class="overview-grid">
+                            <div class="overview-stat">
+                                <div class="stat-label">Total Changes</div>
+                                <div class="stat-value">15</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">New Features</div>
+                                <div class="stat-value">9</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Improvements</div>
+                                <div class="stat-value">5</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Bug Fixes</div>
+                                <div class="stat-value">1</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Type</div>
+                                <div class="stat-value">Update</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Features -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">New Features</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Daily Quest System:</strong> Added a new Daily Quest system containing 5
+                                specific missions that reset daily.
+                            </li>
+                            <li class="change-item">
+                                <strong>DailyQuestManager:</strong> Created <code>DailyQuestManager</code> to handle
+                                progress tracking, automatic daily resets, and reward distribution.
+                            </li>
+                            <li class="change-item">
+                                <strong>DailyQuestGUI:</strong> Introduced a dedicated GUI to view quest progress, claim
+                                individual rewards, and claim an all-complete bonus, complete with visual progress bars.
+                            </li>
+                            <li class="change-item">
+                                <strong>Quest Configuration:</strong> Added <code>daily-quest.yml</code> to easily
+                                configure quest settings including names, descriptions, icons, targets, types, rewards,
+                                sounds, and notifications.
+                            </li>
+                            <li class="change-item">
+                                <strong>Data Storage:</strong> Player progress, claim statuses, and reset timestamps are
+                                now persistently saved in <code>data/daily-quests.yml</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Hub Menu Addition:</strong> Added a "Daily Quests" button to the Main Hub GUI at
+                                slot 32, displaying the current number of completed quests and reset timers.
+                            </li>
+                            <li class="change-item">
+                                <strong>Notification System:</strong> Unlocking or completing a quest triggers on-screen
+                                toast titles, chat messages, and audio cues.
+                            </li>
+                            <li class="change-item">
+                                <strong>Quest Commands:</strong> Registered <code>/fc dailyquest</code> command (with
+                                aliases <code>/fc dq</code> and <code>/fc quest</code>) to directly open the Daily Quest
+                                GUI.
+                            </li>
+                            <li class="change-item">
+                                <strong>New Research Buff:</strong> Added <code>Task Productivity Booster</code>
+                                research buff to increase money rewards from Daily Quests by +10% per level (up to level
+                                5).
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Updates & Enhancements -->
+                    <div class="change-category">
+                        <div class="category-header improved">
+                            <div class="category-icon improved">~</div>
+                            <div class="category-title">Updates & Improvements</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Hub Navigation:</strong> <code>HubClickListener</code> updated to successfully
+                                handle GUI routing and reward claiming for the Daily Quests interface.
+                            </li>
+                            <li class="change-item">
+                                <strong>FactoryCore Registry:</strong> The main <code>FactoryCore.java</code> handler
+                                securely registers data loading/saving events and presents the total active quests in
+                                the startup banner.
+                            </li>
+                            <li class="change-item">
+                                <strong>Tab Completions:</strong> Correctly implemented subcommands logic and parameter
+                                tab completions inside <code>FactoryCoreCommand.java</code>.
+                            </li>
+                            <li class="change-item">
+                                <strong>Real-Time UI Updates:</strong> Research buff additions dynamically alter
+                                displayed item lores and bonus rewards within the Daily Quest GUI.
+                            </li>
+                            <li class="change-item">
+                                <strong>Bonus Processing Logic:</strong> Added <code>getDailyQuestMoneyBonus()</code>
+                                computation in <code>ResearchManager.java</code> to apply the latest buffs properly.
+                                <ul class="sub-item">
+                                    <li><strong>Industrial Hustle:</strong> Triggered on 12 factory productions via
+                                        <code>FactoryManager.completeProduction()</code></li>
+                                    <li><strong>Payday Routine:</strong> Triggered on paying 8 employee salaries via
+                                        <code>InvoiceManager.payInvoice()</code></li>
+                                    <li><strong>Tax Compliance Duty:</strong> Triggered on paying factory taxes 3 times
+                                        via <code>TaxManager.payTax()</code></li>
+                                    <li><strong>Distribution Target:</strong> Triggered on selling 12 items securely via
+                                        marketplace seller API</li>
+                                    <li><strong>Daily Supply:</strong> Triggered on purchasing 8 listed items securely
+                                        via marketplace buyer API</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Bug Fixes -->
+                    <div class="change-category">
+                        <div class="category-header fixed">
+                            <div class="category-icon fixed">-</div>
+                            <div class="category-title">Bug Fixes</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Scheduler Delay Fix:</strong> Prevented an issue causing NPC salaries and
+                                Factory taxes schedulers skipping cycles upon server restarts. Schedulers now measure
+                                <code>timeUntilNextSalary</code> and <code>getTimeUntilNextCollection</code> precisely
+                                rather than executing complete reset intervals.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
             <!-- Version 1.2.0 -->
             <section class="version-section" id="v1-2-0">
                 <div class="version-header">

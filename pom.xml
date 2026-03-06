@@ -7,7 +7,7 @@
 
     <groupId>com.aithor</groupId>
     <artifactId>FactoryCore</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.5</version>
     <packaging>jar</packaging>
 
     <name>FactoryCore</name>
@@ -86,15 +86,24 @@
         </repository>
 
         <!-- Phoenix Dev Team Repository (MMOItems & MythicLib) -->
+        <!-- updatePolicy=always ensures SNAPSHOT artifacts are never served stale from cache -->
         <repository>
             <id>phoenixdevt</id>
             <url>https://nexus.phoenixdevt.fr/repository/maven-public/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
 
         <!-- Lumine Repository (MMOItems & MythicLib fallback) -->
         <repository>
             <id>lumine-repo</id>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
 
         <!-- Modrinth Maven Repository (SCore / ExecutableItems) -->
@@ -162,6 +171,8 @@
         </dependency>
 
         <!-- MMOItems API -->
+        <!-- Use a pinned non-SNAPSHOT version to avoid inconsistent class resolution.
+             If you need a newer snapshot, run: mvn -U clean compile to force update. -->
         <dependency>
             <groupId>net.Indyuce</groupId>
             <artifactId>MMOItems-API</artifactId>
@@ -169,19 +180,31 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- MythicLib (required by MMOItems) -->
+        <!-- MythicLib (required by MMOItems)
+             IMPORTANT: Must use MythicLib-dist (the full distribution jar).
+             Version must be compatible with the MMOItems-API version above.
+             Root cause of "cannot access io.lumine.mythic.lib.module.MMOPlugin":
+             SNAPSHOT builds are cached locally and may be stale/incomplete.
+             Fix: always run `mvn -U clean compile` after dependency changes, or
+             install MythicLib jar manually via `mvn install:install-file`. -->
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>MythicLib-dist</artifactId>
-            <version>1.6.2-SNAPSHOT</version>
+            <version>1.7.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- SCore (ExecutableItems API) -->
+        <!-- SCore (ExecutableItems API)
+             WARNING: scope=system with hardcoded path breaks on other machines.
+             Preferred fix: install the jar to your local Maven repo once:
+               mvn install:install-file -Dfile=lib/SCore-5.26.2.15.jar \
+                 -DgroupId=com.ssomar.score -DartifactId=SCore \
+                 -Dversion=5.26.2.15 -Dpackaging=jar
+             Then change scope to `provided` and remove systemPath. -->
         <dependency>
             <groupId>com.ssomar.score</groupId>
             <artifactId>SCore</artifactId>
-            <version>4.24.1.15</version>
+            <version>5.26.2.15</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/SCore-5.26.2.15.jar</systemPath>
         </dependency>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer API - FactoryCore Wiki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #0a0c10;
+            color: #e4e6ea;
+            min-height: 100vh;
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #10b981;
+        }
+
+        .page-header p {
+            color: #9ca3af;
+            font-size: 1.15rem;
+            margin-top: 10px;
+        }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #10b981;
+        }
+
+        .breadcrumb-sep {
+            color: #4b5563;
+        }
+
+        .breadcrumb-current {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        /* ── Layout ── */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* ── Side Nav ── */
+        .side-nav {
+            position: sticky;
+            top: 20px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .nav-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.1);
+            font-weight: 700;
+            color: #e4e6ea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 15px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-list a:hover {
+            background: rgba(52, 211, 153, 0.05);
+            color: #d1fae5;
+        }
+
+        .nav-list a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(4, 120, 87, 0.05) 100%);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            font-weight: 600;
+        }
+
+        /* ── Main Content ── */
+        .main-content {
+            background: #0d1117;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .content-section {
+            padding: 40px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.08);
+            scroll-margin-top: 20px;
+        }
+
+        .content-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            margin-bottom: 25px;
+        }
+
+        .section-title h2 {
+            color: #10b981;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        /* ── Typography ── */
+        h3 {
+            color: #34d399;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #d1d5db;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            color: #d1d5db;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        strong {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 3px 6px;
+            border-radius: 5px;
+            color: #34d399;
+            font-size: 13px;
+        }
+
+        /* ── Info / Warning Boxes ── */
+        .info-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .info-box-title {
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .warn-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.03) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid #fbbf24;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.05), inset 0 0 12px rgba(245, 158, 11, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warn-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.1), transparent 50%);
+            pointer-events: none;
+        }
+
+        .warn-box .info-box-title {
+            color: #fbbf24;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .warn-box div:last-child {
+            color: #e5e7eb;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Table ── */
+        .table-wrapper {
+            margin: 25px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .data-table th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #34d399;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: #c9cdd4;
+            font-size: 14px;
+        }
+
+        .data-table td:first-child {
+            font-weight: 600;
+            color: #e4e6ea;
+        }
+
+        /* ── Code Block ── */
+        .code-wrap {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #090d13;
+            border: 1px solid rgba(52, 211, 153, 0.18);
+            border-radius: 10px;
+            padding: 22px 24px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.75;
+            color: #abb2bf;
+        }
+
+        .code-block .cm {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .code-block .ck {
+            color: #e06c75;
+        }
+
+        .code-block .cv {
+            color: #98c379;
+        }
+
+        .code-block .cn {
+            color: #d19a66;
+        }
+
+        .code-block .cs {
+            color: #56b6c2;
+        }
+
+        .code-block .ci {
+            color: #61afef;
+        }
+
+        .code-lang-badge {
+            position: absolute;
+            top: 10px;
+            right: 48px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            font-family: 'Fira Code', monospace;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(52, 211, 153, 0.18);
+        }
+
+        .copy-btn.copied {
+            color: #10b981;
+            border-color: #10b981;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+
+            .side-nav {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .content-section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-header">
+        <h1>Developer API</h1>
+        <p>Panduan Integrasi FactoryCore ke Plugin Eksternal</p>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="index.html">Wiki Home</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <a href="#">Developer</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <span class="breadcrumb-current">Developer API</span>
+    </div>
+
+    <div class="content-container">
+        <nav class="side-nav">
+            <div class="nav-header">Daftar Isi</div>
+            <ul class="nav-list">
+                <li><a href="#overview" class="active">Overview</a></li>
+                <li><a href="#setup">Setup & Instalasi</a></li>
+                <li><a href="#get-instance">Mengambil API Instance</a></li>
+                <li><a href="#methods">Fitur Utama API</a></li>
+                <li><a href="#example">Contoh Penggunaan</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <!-- ════ OVERVIEW ════ -->
+            <section class="content-section" id="overview">
+                <div class="section-title">
+                    <h2>Overview</h2>
+                </div>
+                <p>
+                    <strong>FactoryCore API</strong> memungkinkan developer lain untuk berinteraksi dengan sistem
+                    FactoryCore secara langsung melalui kode. Dengan API ini, Anda dapat menghubungkan plugin buatan
+                    Anda untuk mendapatkan data pabrik, memodifikasi penyimpanan, mengecek status produksi, hingga
+                    memberikan limit custom kepada player tertentu.
+                </p>
+                <div class="info-box">
+                    <div class="info-box-title">💡 Kenapa Menggunakan API?</div>
+                    <div>API disediakan secara terstruktur dalam kelas <code>FactoryCoreAPI</code>. Semua interaksi yang
+                        melibatkan data pabrik, resource, dan NPC sebaiknya dilakukan melalui API ini untuk menghindari
+                        kerusakan data (data corruption).</div>
+                </div>
+            </section>
+
+            <!-- ════ SETUP ════ -->
+            <section class="content-section" id="setup">
+                <div class="section-title">
+                    <h2>Setup & Instalasi</h2>
+                </div>
+                <p>Langkah pertama sebelum Anda menggunakan API dari FactoryCore adalah memastikan plugin Anda mengenali
+                    FactoryCore sebagai dependensi.</p>
+
+                <h3>1. Tambahkan ke plugin.yml</h3>
+                <p>Pastikan Anda menambahkan FactoryCore ke dalam <code>depend</code> atau <code>softdepend</code> di
+                    file <code>plugin.yml</code> Anda agar plugin Anda dimuat setelah FactoryCore siap.</p>
+
+                <div class="code-wrap">
+                    <span class="code-lang-badge">YAML</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre class="code-block"><span class="ck">name</span>: <span class="cv">PluginKerenSaya</span>
+<span class="ck">version</span>: <span class="cv">1.0</span>
+<span class="ck">main</span>: <span class="cv">com.plugin.keren.MainClass</span>
+<span class="ck">depend</span>: <span class="cv">[FactoryCore]</span></pre>
+                </div>
+
+                <h3>2. Tambahkan Library (Jika menggunakan Maven/Gradle)</h3>
+                <p>Saat ini Anda dapat menambahkan jar FactoryCore secara lokal ke project Anda untuk mengakses kelas
+                    dan fungsinya ketika proses kompilasi.</p>
+            </section>
+
+            <!-- ════ GET INSTANCE ════ -->
+            <section class="content-section" id="get-instance">
+                <div class="section-title">
+                    <h2>Mengambil API Instance</h2>
+                </div>
+                <p>Cara paling mudah untuk menggunakan semua manager dan fungsi adalah melalui kelas
+                    <code>FactoryCoreAPI</code>.</p>
+                <div class="code-wrap">
+                    <span class="code-lang-badge">JAVA</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre class="code-block"><span class="ck">import</span> com.aithor.factorycore.api.FactoryCoreAPI;
+
+<span class="cm">// Inisialisasi API</span>
+<span class="cv">FactoryCoreAPI</span> api = <span class="ck">new</span> FactoryCoreAPI();</pre>
+                </div>
+            </section>
+
+            <!-- ════ METHODS ════ -->
+            <section class="content-section" id="methods">
+                <div class="section-title">
+                    <h2>Fitur Utama API</h2>
+                </div>
+                <p>API dikelompokkan menjadi beberapa kategori fungsi utama yang dapat Anda panggil.</p>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Kategori</th>
+                                <th>Contoh Method</th>
+                                <th>Deskripsi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Factory Data</td>
+                                <td><code>api.getFactory(String factoryId)</code><br><code>api.getFactoriesByOwner(UUID owner)</code>
+                                </td>
+                                <td>Mengambil objek Factory, daftar pabrik, dan status kepemilikan pabrik seorang
+                                    player.</td>
+                            </tr>
+                            <tr>
+                                <td>Storage & Resource</td>
+                                <td><code>api.addToStorage(id, res, amt)</code><br><code>api.giveResource(player, res, amt)</code>
+                                </td>
+                                <td>Menambahkan / mengurangi item dari sistem penyimpanan (input/output storage) atau ID
+                                    resource.</td>
+                            </tr>
+                            <tr>
+                                <td>Production</td>
+                                <td><code>api.isProducing(factoryId)</code><br><code>api.getProductionProgress(String)</code>
+                                </td>
+                                <td>Mengecek apakah pabrik sedang berjalan dan mengetahui persentase progres produksinya
+                                    (0.0 ke 1.0).</td>
+                            </tr>
+                            <tr>
+                                <td>Economy & Tax</td>
+                                <td><code>api.getPlayerInvoices(UUID)</code><br><code>api.payInvoice(Player, ID)</code>
+                                </td>
+                                <td>Berinteraksi dengan sistem Invoice & Pajak, memberikan tagihan atau membayarnya via
+                                    kode.</td>
+                            </tr>
+                            <tr>
+                                <td>Employee (NPC)</td>
+                                <td><code>api.spawnNPCWithTemplate(...)</code><br><code>api.isFactoryNPC(UUID)</code>
+                                </td>
+                                <td>Memunculkan NPC secara dinamis atau mengecek apakah suatu Entity merupakan karyawan
+                                    pabrik.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ════ EXAMPLE ════ -->
+            <section class="content-section" id="example">
+                <div class="section-title">
+                    <h2>Contoh Penggunaan</h2>
+                </div>
+
+                <p>Berikut adalah contoh implementasi penuh bagaimana Anda dapat menggunakan <code>FactoryCoreAPI</code>
+                    untuk mengecek statistik pabrik milik player yang login dan menambahkan item ke penyimpanannya.</p>
+
+                <div class="code-wrap">
+                    <span class="code-lang-badge">JAVA</span>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre class="code-block"><span class="ck">package</span> com.yourplugin.test;
+
+<span class="ck">import</span> com.aithor.factorycore.api.FactoryCoreAPI;
+<span class="ck">import</span> com.aithor.factorycore.models.Factory;
+<span class="ck">import</span> org.bukkit.entity.Player;
+<span class="ck">import</span> org.bukkit.event.EventHandler;
+<span class="ck">import</span> org.bukkit.event.Listener;
+<span class="ck">import</span> org.bukkit.event.player.PlayerJoinEvent;
+<span class="ck">import</span> org.bukkit.plugin.java.JavaPlugin;
+
+<span class="ck">import</span> java.util.List;
+
+<span class="ck">public class</span> <span class="cv">YourPlugin</span> <span class="ck">extends</span> <span class="cv">JavaPlugin</span> <span class="ck">implements</span> <span class="cv">Listener</span> {
+
+    <span class="ck">private</span> <span class="cv">FactoryCoreAPI</span> api;
+
+    <span class="ck">@Override</span>
+    <span class="ck">public void</span> <span class="ci">onEnable</span>() {
+        <span class="cm">// Inisialisasi API saat plugin dihidupkan</span>
+        api = <span class="ck">new</span> <span class="ci">FactoryCoreAPI</span>();
+        getServer().getPluginManager().registerEvents(this, this);
+    }
+
+    <span class="ck">@EventHandler</span>
+    <span class="ck">public void</span> <span class="ci">onPlayerJoin</span>(<span class="cv">PlayerJoinEvent</span> event) {
+        <span class="cv">Player</span> player = event.getPlayer();
+        
+        <span class="cm">// Mendapatkan daftar pabrik milik player</span>
+        <span class="cv">List&lt;Factory&gt;</span> factories = api.getFactoriesByOwner(player.getUniqueId());
+        
+        <span class="ck">if</span> (!factories.isEmpty()) {
+            player.sendMessage(<span class="cs">"Selamat datang kembali Bos! Anda memiliki "</span> + factories.size() + <span class="cs">" pabrik."</span>);
+            
+            <span class="ck">for</span> (<span class="cv">Factory</span> factory : factories) {
+                <span class="cm">// Mengecek apakah pabrik sedang produksi</span>
+                <span class="ck">if</span> (api.isProducing(factory.getId())) {
+                    <span class="cv">double</span> progress = api.getProductionProgress(factory.getId());
+                    <span class="cv">int</span> percent = (<span class="cv">int</span>)(progress * <span class="cn">100</span>);
+                    player.sendMessage(<span class="cs">"Pabrik "</span> + factory.getId() + <span class="cs">" sedang memproduksi dengan progress: "</span> + percent + <span class="cs">"%"</span>);
+                }
+            }
+        } <span class="ck">else</span> {
+            <span class="cm">// Contoh menggunakan API untuk memberikan item modal</span>
+            api.giveResource(player, <span class="cs">"iron_ingot"</span>, <span class="cn">10</span>);
+            player.sendMessage(<span class="cs">"Ini 10 Besi sebagai modal mendirikan pabrik!"</span>);
+        }
+    }
+}</pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Copy to clipboard functionality
+        function copyCode(btn) {
+            const pre = btn.nextElementSibling;
+            const text = pre.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Active state for side navigation based on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('.content-section');
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 60) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-list a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').substring(1) === current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

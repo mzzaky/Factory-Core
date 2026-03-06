@@ -1,0 +1,98 @@
+v1.2.6 Update Log
+
+=== Custom Main Menu GUI ===
+
+- [New] Memisahkan semua properti visual Main Hub GUI dari hardcode ke file konfigurasi `custom_gui/main_menu.yml`.
+- [New] Admin sekarang dapat mengubah title GUI, ukuran (size), border material, dan custom model data langsung dari config.
+- [New] Semua item pada Main Hub kini memiliki field `slot`, `material`, `custom_model_data`, `name`, `lore`, dan `sound` yang dapat dikustomisasi secara interaktif.
+- [New] Menambahkan fitur "multi-slot": properti `slot` pada item kini mendukung 3 format (integer tunggal, string dengan koma "20, 21", atau YAML list). Item akan ditempatkan di semua slot yang dikonfigurasi secara bersamaan.
+- [New] Menambahkan field `enabled` (true/false) pada setiap item dan border. Item dapat disembunyikan kapan saja hanya dengan mengubah nilainya menjadi false atau menghapus seluruh section itemnya dari file yaml.
+- [New] Efek suara (sound) saat mengklik item dapat diatur individual per item (`sound`, `volume`, `pitch`). Config juga mendukung default click sound sebagai fallback jika item tidak menetapkan suara khususnya.
+- [Update] HubGUI.java dan HubClickListener.java telah direfactor penuh untuk membaca tampilan dan suara dari `main_menu.yml` serta menampung multi-slot placement logic. Data placeholder dinamis (seperti stat pemain) tetap disuntikkan oleh plugin saat runtime.
+- [Update] Menambahkan mekanisme fallback otomatis. Jika `main_menu.yml` dihapus, rusak, atau ada konfigurasi yang hilang, GUI akan otomatis kembali ke default hardcoded sebelumnya tanpa menyebabkan error.
+- [Update] Perintah `/fc admin reload` sekarang juga me-reload konfigurasi `custom_gui/main_menu.yml`. Admin bisa mengubah tampilan dan menerapkannya seketika tanpa perlu merestart server.
+
+File Ditambahkan:
+  - src/main/resources/custom_gui/main_menu.yml
+
+File Dimodifikasi:
+  - src/main/java/com/aithor/factorycore/gui/HubGUI.java (Refactor parsing config, multi-slot rendering, sound handling, dan item render fallback)
+  - src/main/java/com/aithor/factorycore/FactoryCore.java (Menambahkan createMainMenuConfig, getter, dan reload)
+  - src/main/java/com/aithor/factorycore/listeners/HubClickListener.java (Mengalihkan efek suara ke HubGUI.playClickSound sebelum membuka sub-menu)
+  - src/main/java/com/aithor/factorycore/commands/FactoryCoreCommand.java (Include reloadMainMenuConfig pada /fc admin reload)
+
+=== GUI ID System & open_gui_* Special Actions ===
+
+- [Fix] The main Hub menu items had no function when clicked if their display name was changed.
+         Clicks were previously routed by matching the item's display name (e.g. the listener
+         checked name.contains("Factory Browse")), which broke silently whenever an admin
+         renamed any item in main_menu.yml.
+- [New] Every main-menu item now receives a stable internal "hub_gui_id" Persistent Data
+         Container (PDC) tag stamped at build time (e.g. "factory_browse", "invoice_center").
+         The click listener uses this ID tag for routing — the display name is now irrelevant.
+         Items can be freely renamed without losing their click action.
+- [New] Added 10 new "open_gui_*" special actions for the on_click field in main_menu.yml:
+           open_gui_factory_browse   — opens Factory Browse GUI
+           open_gui_my_factories     — opens My Factories GUI
+           open_gui_invoice_center   — opens Invoice Center GUI
+           open_gui_tax_center       — opens Tax Center GUI
+           open_gui_employees_center — opens Employees Center GUI
+           open_gui_marketplace      — opens Marketplace GUI
+           open_gui_achievements     — opens Achievements GUI
+           open_gui_research_center  — opens Research Center GUI
+           open_gui_daily_quests     — opens Daily Quests GUI
+           open_gui_help_info        — opens Help & Info GUI
+         These actions can be assigned to ANY item slot, enabling custom shortcut buttons.
+         Example usage in main_menu.yml:
+           on_click: open_gui_invoice_center
+- [Update] main_menu.yml header now documents all open_gui_* actions and lists every
+            registered GUI ID so admins have a full reference without reading source code.
+- [Update] Each item section in main_menu.yml now has a "GUI ID" comment line showing
+            its internal ID and the matching on_click value for quick reference.
+
+File Modified:
+  - src/main/resources/custom_gui/main_menu.yml (Added full open_gui_* documentation and per-item GUI ID comments)
+  - src/main/java/com/aithor/factorycore/gui/HubGUI.java (Added stampGuiId(); all items now stamped with hub_gui_id PDC tag; expanded stampOnClick() Javadoc)
+  - src/main/java/com/aithor/factorycore/listeners/HubClickListener.java (Rewrote handleHubClick() to route by hub_gui_id; extended executeOnClick() to handle all open_gui_* actions)
+
+=== Dynamic Title & Unlimited Custom Items ===
+
+- [New] Main Hub sekarang secara dinamis mendukung item kustom tak terbatas (custom items). Admin dapat menambahkan key baru apa pun (selain key core seperti `factory_browse`, dsb) di bagian `items` pada `main_menu.yml`. Item tersebut akan otomatis dirender di slot yang ditentukan.
+- [New] Sangat berguna bagi admin yang ingin menambahkan tombol dekoratif, informasi server, atau tombol eksekusi perintah (menggunakan `on_click: console_command`) tanpa memodifikasi kode Java.
+- [New] Judul GUI pada listener sekarang tidak lagi di-hardcode dengan mengecek label "Main Hub". Jika admin menggunakan custom font dengan karakter khusus Unicode (seperti `&f<shift:-8>ꐒ`) pada `gui.title`, fungsi GUI tetap berjalan 100% aman berkat pengecekan dinamis ke config secara langsung.
+
+File Dimodifikasi:
+  - src/main/resources/custom_gui/main_menu.yml (Ditambahkan contoh item `custom_discord_link`)
+  - src/main/java/com/aithor/factorycore/gui/HubGUI.java (Ditambahkan loop dinamis untuk merender custom key di luar default core IDs)
+  - src/main/java/com/aithor/factorycore/listeners/HubClickListener.java (Filter isHubGUI dan click action dibuat dinamis mengacu langsung ke `gui.title` config YAML)
+
+=== Global Placeholders Everywhere ===
+
+- [New] Seluruh Placeholder (seperti jumlah pabrik, jumlah npc, total tagihan dll) kini bersifat GLOBAL! Sebelumnya placeholder seperti `{owned_count}` hanya dapat dibaca oleh item spesifik (seperti pada tombol `my_factories`). Sekarang semua variabel diproses secara global saat menu dibuka.
+- [New] Admin sekarang dapat meletakkan placeholder statistik APAPUN pada item manapun, termasuk pada item kustom yang dibuat sendiri!
+- [Update] Merestrukturisasi `HubGUI.java` dengan metode satu atap `buildGlobalPlaceholders()` untuk performa rendering UI jauh yang lebih optimal.
+- [Update] Standarisasi penamaan variabel (untuk menghindari duplikasi antar item lama) contoh placeholder global yang baru: `{factory_owned_count}`, `{invoice_count}`, `{tax_due}`, `{quest_completed_count}`, dan lebih dari 15 placeholder detail lainnya.
+- [Update] Menjaga kompatibilitas penuh (backward compatibility) dengan YAML terdahulu. Placeholder singkat dari nama lama seperti `{owned_count}` akan di-_fallback_ secara lokal tanpa merusak config server lama yang belum dirubah.
+
+File Dimodifikasi:
+  - src/main/java/com/aithor/factorycore/gui/HubGUI.java (Sentralisasi sistem Placeholder & refactor penuh `openHubMenu`)
+  - src/main/resources/custom_gui/main_menu.yml (Ditambahkan dokumentasi lengkap Global Placeholder di komentar atas header config)
+
+=== Vanilla Input Recipes & Smeltery ===
+
+- [New] Menambahkan pabrik jenis baru: `Smeltery` sebagai pabrik entry-point. Pabrik ini dikhususkan untuk memproses material vanilla asli (seperti ore hasil tambang) menjadi raw resources yang terdaftar di plugin.
+- [New] Mesin resep (Recipe Engine) sekarang mendukung prefix `vanilla:` pada `recipes.yml` (contoh: `vanilla:IRON_ORE`). Jika prefix ini digunakan, plugin akan mencocokkan item langsung menggunakan Material Bukkit asli (mengabaikan plugin resource ID dan melarang penggunaan custom-model-data item sebagai substitusi material asli).
+- [New] Menambahkan 12 resep Smeltery default di `recipes.yml` yang mencakup peleburan untuk semua jenis ore standar (Iron, Coal, Copper, Gold, Diamond, Redstone), varian Deepslate dengan imbalan hasil lebih tinggi, dan batch smelting untuk item mentah hasil Fortune pickaxe (Raw Iron/Copper/Gold).
+- [Update] `ResourceManager.java` diperbarui secara menyeluruh dengan kumpulan fungsi pembantu (`isVanillaInput`, `getVanillaMaterial`, `getVanillaDisplayName`, dll.) untuk memisahkan dan menangani material vanilla dengan aman.
+- [Update] Implementasi penuh sistem setor/tarik pada GUI penyimpanan (`FactoryGUI`, `StorageGUI`). Pemain sekarang dapat menyetorkan material vanilla ke dalam input storage Smeltery menggunakan shift-click, dan fungsi "Deposit All" kini cukup cerdas memindai dan memasukkan item vanilla yang dibutuhkan otomatis berdasarkan resep aktif pabrik.
+- [Update] Konfigurasi default ditambahkan secara mulus pada `config.yml`, `resources.yml`, dan `FactoryType.java` dengan komentar dokumentasi yang informatif mengenai cara kerja input vanilla.
+
+File Dimodifikasi:
+  - src/main/java/com/aithor/factorycore/models/FactoryType.java (Penambahan tipe enum SMELTERY)
+  - src/main/resources/config.yml (Registrasi pabrik Smeltery)
+  - src/main/resources/resources.yml (Dokumentasi relasi antara Smeltery dengan RAW_RESOURCES)
+  - src/main/resources/recipes.yml (Dokumentasi prefix vanilla: beserta 12 resep baru)
+  - src/main/java/com/aithor/factorycore/managers/ResourceManager.java (Menambahkan static helpers dan inventory scanners untuk Vanilla Items)
+  - src/main/java/com/aithor/factorycore/gui/StorageGUI.java (Render penyimpanan item menggunakan helper VanillaItem)
+  - src/main/java/com/aithor/factorycore/gui/RecipeConfirmationGUI.java (Pengecekan stok Storage ke Vanilla Key di input-storage.yml)
+  - src/main/java/com/aithor/factorycore/gui/FactoryGUI.java (Flow Deposit individu & Deposit All untuk mendeteksi vanilla material dari konfigurasi Recipes)

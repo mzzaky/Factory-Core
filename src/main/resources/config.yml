@@ -80,27 +80,33 @@ factory:
 
 # Factory types configuration
 factory-types:
+  smeltery:
+    name: "§aSmeltery"
+    description: "§7Processes vanilla materials into raw resources"
+    base-price: 50000.0
+    icon: BLAST_FURNACE
+
   steel_mill:
     name: "§6Steel Mill"
-    description: "§7Mengubah raw resources menjadi advanced resources"
+    description: "§7Transforms raw resources into advanced resources"
     base-price: 100000.0
     icon: IRON_BLOCK
     
   refinery:
     name: "§eRefinery"
-    description: "§7Memproduksi bahan bakar untuk pabrik"
+    description: "§7Produces fuel for factories"
     base-price: 150000.0
     icon: FURNACE
     
   workshop:
     name: "§bWorkshop"
-    description: "§7Memproduksi machine parts"
+    description: "§7Produces machine parts"
     base-price: 200000.0
     icon: ANVIL
     
   advanced_factory:
     name: "§5Advanced Factory"
-    description: "§7Memproduksi final resources bernilai tinggi"
+    description: "§7Produces high-value final resources"
     base-price: 250000.0
     icon: NETHER_STAR
 

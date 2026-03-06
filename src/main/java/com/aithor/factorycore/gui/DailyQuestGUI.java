@@ -24,7 +24,7 @@ public class DailyQuestGUI {
     private final Player player;
 
     // Quest display slots (centered in row 2, columns 1-5)
-    private static final int[] QUEST_SLOTS = {20, 21, 22, 23, 24};
+    private static final int[] QUEST_SLOTS = { 20, 21, 22, 23, 24 };
 
     public DailyQuestGUI(FactoryCore plugin, Player player) {
         this.plugin = plugin;
@@ -103,7 +103,8 @@ public class DailyQuestGUI {
 
         StringBuilder progressBar = new StringBuilder("§a");
         for (int i = 0; i < barLength; i++) {
-            if (i == filled) progressBar.append("§7");
+            if (i == filled)
+                progressBar.append("§7");
             progressBar.append("|");
         }
 
@@ -134,7 +135,9 @@ public class DailyQuestGUI {
         int progress = manager.getProgress(playerId, questId);
         int target = manager.getQuestTarget(questId);
         int rewardExp = manager.getQuestRewardExp(questId);
-        double rewardMoney = manager.getQuestRewardMoney(questId);
+        double baseMoney = manager.getQuestRewardMoney(questId);
+        double bonusPercent = plugin.getResearchManager().getDailyQuestMoneyBonus(playerId);
+        double rewardMoney = baseMoney + (baseMoney * (bonusPercent / 100.0));
 
         Material iconMaterial;
         if (claimed) {
@@ -168,8 +171,16 @@ public class DailyQuestGUI {
             lore.add("§eProgress: §a" + progress + "§7/§a" + target + " §a(100%)");
             lore.add("");
             lore.add("§6Rewards:");
-            if (rewardExp > 0) lore.add("§7  +" + rewardExp + " EXP");
-            if (rewardMoney > 0) lore.add("§7  +$" + String.format("%.2f", rewardMoney));
+            if (rewardExp > 0)
+                lore.add("§7  +" + rewardExp + " EXP");
+            if (baseMoney > 0) {
+                if (bonusPercent > 0) {
+                    lore.add("§7  +$" + String.format("%.2f", rewardMoney) + " §a(+"
+                            + String.format("%.0f", bonusPercent) + "% Buff)");
+                } else {
+                    lore.add("§7  +$" + String.format("%.2f", baseMoney));
+                }
+            }
             lore.add("");
             lore.add("§e>>> Click to claim reward! <<<");
         } else {
@@ -182,7 +193,8 @@ public class DailyQuestGUI {
             int filled = (int) (barLength * (progressPercent / 100));
             StringBuilder bar = new StringBuilder("§a");
             for (int i = 0; i < barLength; i++) {
-                if (i == filled) bar.append("§7");
+                if (i == filled)
+                    bar.append("§7");
                 bar.append("|");
             }
 
@@ -191,8 +203,16 @@ public class DailyQuestGUI {
             lore.add("§8" + String.format("%.1f", progressPercent) + "% complete");
             lore.add("");
             lore.add("§6Rewards:");
-            if (rewardExp > 0) lore.add("§7  +" + rewardExp + " EXP");
-            if (rewardMoney > 0) lore.add("§7  +$" + String.format("%.2f", rewardMoney));
+            if (rewardExp > 0)
+                lore.add("§7  +" + rewardExp + " EXP");
+            if (baseMoney > 0) {
+                if (bonusPercent > 0) {
+                    lore.add("§7  +$" + String.format("%.2f", rewardMoney) + " §a(+"
+                            + String.format("%.0f", bonusPercent) + "% Buff)");
+                } else {
+                    lore.add("§7  +$" + String.format("%.2f", baseMoney));
+                }
+            }
         }
 
         ItemStack item = new ItemStack(iconMaterial);
@@ -232,7 +252,9 @@ public class DailyQuestGUI {
         boolean allCompleted = manager.areAllQuestsCompleted(playerId);
         boolean bonusClaimed = manager.isBonusClaimed(playerId);
         int bonusExp = manager.getBonusExp();
-        double bonusMoney = manager.getBonusMoney();
+        double baseBonusMoney = manager.getBonusMoney();
+        double bonusPercent = plugin.getResearchManager().getDailyQuestMoneyBonus(playerId);
+        double totalBonusMoney = baseBonusMoney + (baseBonusMoney * (bonusPercent / 100.0));
 
         Material material;
         List<String> lore = new ArrayList<>();
@@ -249,8 +271,16 @@ public class DailyQuestGUI {
             lore.add("§a§lALL QUESTS COMPLETED!");
             lore.add("");
             lore.add("§6Bonus Rewards:");
-            if (bonusExp > 0) lore.add("§e  +" + bonusExp + " EXP");
-            if (bonusMoney > 0) lore.add("§6  +$" + String.format("%.2f", bonusMoney));
+            if (bonusExp > 0)
+                lore.add("§e  +" + bonusExp + " EXP");
+            if (baseBonusMoney > 0) {
+                if (bonusPercent > 0) {
+                    lore.add("§6  +$" + String.format("%.2f", totalBonusMoney) + " §a(+"
+                            + String.format("%.0f", bonusPercent) + "% Buff)");
+                } else {
+                    lore.add("§6  +$" + String.format("%.2f", baseBonusMoney));
+                }
+            }
             lore.add("");
             lore.add("§e>>> Click to claim bonus! <<<");
         } else {
@@ -265,8 +295,16 @@ public class DailyQuestGUI {
             lore.add("§eRemaining: §c" + remaining + " quests");
             lore.add("");
             lore.add("§6Bonus Rewards:");
-            if (bonusExp > 0) lore.add("§7  +" + bonusExp + " EXP");
-            if (bonusMoney > 0) lore.add("§7  +$" + String.format("%.2f", bonusMoney));
+            if (bonusExp > 0)
+                lore.add("§7  +" + bonusExp + " EXP");
+            if (baseBonusMoney > 0) {
+                if (bonusPercent > 0) {
+                    lore.add("§7  +$" + String.format("%.2f", totalBonusMoney) + " §a(+"
+                            + String.format("%.0f", bonusPercent) + "% Buff)");
+                } else {
+                    lore.add("§7  +$" + String.format("%.2f", baseBonusMoney));
+                }
+            }
         }
 
         String displayName;

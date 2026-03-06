@@ -475,6 +475,12 @@
             border-color: rgba(167, 139, 250, 0.2);
         }
 
+        .wiki-card-badge.info {
+            background: rgba(156, 163, 175, 0.1);
+            color: #9ca3af;
+            border-color: rgba(156, 163, 175, 0.2);
+        }
+
         .wiki-card h3 {
             font-size: 1.15rem;
             font-weight: 700;
@@ -590,53 +596,78 @@
         /* ── Dependencies Section ── */
         .deps-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
 
         .dep-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(52, 211, 153, 0.08);
-            border-radius: 14px;
-            padding: 18px 20px;
+            border-radius: 16px;
+            padding: 24px 20px;
             display: flex;
-            align-items: center;
-            gap: 14px;
-            transition: all 0.2s ease;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.25s ease;
         }
 
         .dep-card:hover {
             border-color: rgba(52, 211, 153, 0.2);
             background: rgba(52, 211, 153, 0.03);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
         .dep-icon {
-            font-size: 22px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
             flex-shrink: 0;
+        }
+
+        .dep-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dep-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 6px;
         }
 
         .dep-info h5 {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #e4e6ea;
-            margin-bottom: 2px;
+            margin: 0;
+            line-height: 1.3;
         }
 
         .dep-info p {
-            font-size: 11.5px;
-            color: #6b7280;
+            font-size: 13px;
+            color: #9ca3af;
             margin: 0;
+            line-height: 1.5;
         }
 
         .dep-required {
-            margin-left: auto;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 3px 8px;
+            letter-spacing: 0.8px;
+            padding: 4px 10px;
             border-radius: 20px;
             flex-shrink: 0;
+            white-space: nowrap;
         }
 
         .dep-required.req {
@@ -922,7 +953,7 @@
             <a href="wiki_tax_system.html">
                 <span>💰</span> Tax System
             </a>
-            <span class="nav-badge">v1.0.0</span>
+            <span class="nav-badge">v1.2.5</span>
         </div>
     </nav>-->
 
@@ -960,19 +991,19 @@
     <div style="max-width:1200px;margin:0 auto;padding:0 40px;">
         <div class="stats-strip">
             <div class="stat-item">
-                <div class="stat-value">3</div>
+                <div class="stat-value">8+</div>
                 <div class="stat-label">Core Systems</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">1.21</div>
+                <div class="stat-value">1.21+</div>
                 <div class="stat-label">MC Version</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">5+</div>
+                <div class="stat-value">7+</div>
                 <div class="stat-label">Integrations</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">v1.0</div>
+                <div class="stat-value">v1.2.5</div>
                 <div class="stat-label">Plugin Version</div>
             </div>
         </div>
@@ -1059,6 +1090,234 @@
                         <span class="topic-tag">Taxes</span>
                         <span class="topic-tag">Penalties</span>
                         <span class="topic-tag">Tax Center</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Factory Types -->
+            <a href="wiki_factory_type.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">🏭</div>
+                    <span class="wiki-card-badge core">Core</span>
+                </div>
+                <div>
+                    <h3>Factory Types</h3>
+                    <p>Learn about different factory variants, their unique outputs, recipes, and resource requirements
+                        to strategize your industrial expansion.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">Variants</span>
+                        <span class="topic-tag">Recipes</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Upgrade System -->
+            <a href="wiki_upgrade_system.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">📈</div>
+                    <span class="wiki-card-badge core">Core</span>
+                </div>
+                <div>
+                    <h3>Upgrade System</h3>
+                    <p>Boost your factory's performance. Increase storage limits and production speeds scaling
+                        progressively with each level up.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">Level Up</span>
+                        <span class="topic-tag">Boosts</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Marketplace System -->
+            <a href="wiki_marketplace_system.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">🏪</div>
+                    <span class="wiki-card-badge economy">Economy</span>
+                </div>
+                <div>
+                    <h3>Marketplace System</h3>
+                    <p>Trade resources using the global marketplace. Buy essential materials or sell your factory's
+                        output to maximize profits.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">Trade</span>
+                        <span class="topic-tag">Sell</span>
+                        <span class="topic-tag">Buy</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            </a>
+
+            <!-- Daily Quests System -->
+            <a href="wiki_quests.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">🎯</div>
+                    <span class="wiki-card-badge info">Features</span>
+                </div>
+                <div>
+                    <h3>Daily Quests</h3>
+                    <p>Keep players engaged by rewarding their everyday industrial actions like completing productions
+                        and paying taxes.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">Quests</span>
+                        <span class="topic-tag">Rewards</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Research System -->
+            <a href="wiki_research_system.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">🔬</div>
+                    <span class="wiki-card-badge">Tech</span>
+                </div>
+                <div>
+                    <h3>Research System</h3>
+                    <p>Unlock new technologies and permanent buffs. Reduce taxes, lower upgrade costs, and optimize your
+                        entire factory network.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">Technology</span>
+                        <span class="topic-tag">Buffs</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Achievements System -->
+            <a href="wiki_achievements.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">🏆</div>
+                    <span class="wiki-card-badge">Rewards</span>
+                </div>
+                <div>
+                    <h3>Achievements</h3>
+                    <p>Complete milestones to earn titles and specialized rewards. Track your progression as you build
+                        your industrial empire.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">Milestones</span>
+                        <span class="topic-tag">Rewards</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Commands -->
+            <a href="wiki_commands.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">⌨️</div>
+                    <span class="wiki-card-badge info">Info</span>
+                </div>
+                <div>
+                    <h3>Commands & Permissions</h3>
+                    <p>A comprehensive list of all player and admin commands, along with their respective permission
+                        nodes.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">Commands</span>
+                        <span class="topic-tag">Admin</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- PlaceholderAPI -->
+            <a href="wiki_placeholderapi.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">📋</div>
+                    <span class="wiki-card-badge info">Info</span>
+                </div>
+                <div>
+                    <h3>PlaceholderAPI</h3>
+                    <p>Integrate FactoryCore stats into your scoreboards and menus using placeholder hooks to display
+                        data anywhere.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">PAPI</span>
+                        <span class="topic-tag">Placeholders</span>
+                    </div>
+                    <div class="wiki-card-arrow">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Developer API -->
+            <a href="wiki_developer_api.html" class="wiki-card">
+                <div class="wiki-card-top">
+                    <div class="wiki-card-icon">👨‍💻</div>
+                    <span class="wiki-card-badge info">Dev</span>
+                </div>
+                <div>
+                    <h3>Developer API</h3>
+                    <p>Integrate your external plugins with FactoryCore. Access factories, manipulate storage, and
+                        trigger custom events.</p>
+                </div>
+                <div class="wiki-card-footer">
+                    <div class="wiki-card-topics">
+                        <span class="topic-tag">API</span>
+                        <span class="topic-tag">Integration</span>
                     </div>
                     <div class="wiki-card-arrow">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1175,42 +1434,72 @@
             <div class="dep-card">
                 <div class="dep-icon">🟠</div>
                 <div class="dep-info">
-                    <h5>Spigot / Paper</h5>
+                    <div class="dep-info-header">
+                        <h5>Spigot / Paper</h5>
+                        <span class="dep-required req">Required</span>
+                    </div>
                     <p>1.21.4 or newer</p>
                 </div>
-                <span class="dep-required req">Required</span>
             </div>
             <div class="dep-card">
                 <div class="dep-icon">💰</div>
                 <div class="dep-info">
-                    <h5>Vault</h5>
+                    <div class="dep-info-header">
+                        <h5>Vault</h5>
+                        <span class="dep-required req">Required</span>
+                    </div>
                     <p>Economy API bridge</p>
                 </div>
-                <span class="dep-required req">Required</span>
             </div>
             <div class="dep-card">
                 <div class="dep-icon">🛡️</div>
                 <div class="dep-info">
-                    <h5>WorldGuard</h5>
+                    <div class="dep-info-header">
+                        <h5>WorldGuard</h5>
+                        <span class="dep-required req">Required</span>
+                    </div>
                     <p>Region protection</p>
                 </div>
-                <span class="dep-required req">Required</span>
             </div>
             <div class="dep-card">
                 <div class="dep-icon">🌍</div>
                 <div class="dep-info">
-                    <h5>WorldEdit</h5>
+                    <div class="dep-info-header">
+                        <h5>WorldEdit</h5>
+                        <span class="dep-required req">Required</span>
+                    </div>
                     <p>WorldGuard dependency</p>
                 </div>
-                <span class="dep-required req">Required</span>
             </div>
             <div class="dep-card">
                 <div class="dep-icon">📋</div>
                 <div class="dep-info">
-                    <h5>PlaceholderAPI</h5>
+                    <div class="dep-info-header">
+                        <h5>PlaceholderAPI</h5>
+                        <span class="dep-required opt">Optional</span>
+                    </div>
                     <p>Placeholder support</p>
                 </div>
-                <span class="dep-required opt">Optional</span>
+            </div>
+            <div class="dep-card">
+                <div class="dep-icon">⚔️</div>
+                <div class="dep-info">
+                    <div class="dep-info-header">
+                        <h5>MMOItems</h5>
+                        <span class="dep-required opt">Optional</span>
+                    </div>
+                    <p>Custom item support</p>
+                </div>
+            </div>
+            <div class="dep-card">
+                <div class="dep-icon">✨</div>
+                <div class="dep-info">
+                    <div class="dep-info-header">
+                        <h5>ExecutableItems</h5>
+                        <span class="dep-required opt">Optional</span>
+                    </div>
+                    <p>Custom item support</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1297,6 +1586,12 @@
                 <a href="wiki_factory_system.html">Factory System</a>
                 <a href="wiki_employee_system.html">Employee System</a>
                 <a href="wiki_tax_system.html">Tax System</a>
+                <a href="wiki_marketplace_system.html">Marketplace</a>
+                <a href="wiki_research_system.html">Research</a>
+                <a href="wiki_achievements.html">Achievements</a>
+                <a href="wiki_commands.html">Commands</a>
+                <a href="wiki_quests.html">Daily Quests</a>
+                <a href="wiki_developer_api.html">Developer API</a>
             </div>
             <p class="footer-copy">FactoryCore Plugin &copy; 2026. All rights reserved. Built for Minecraft 1.21.4
                 (Spigot / Paper).</p>

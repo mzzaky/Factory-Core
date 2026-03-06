@@ -382,9 +382,10 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             plugin.getResourceManager().reload();
             plugin.getRecipeManager().reload();
             plugin.getNPCManager().reload();
+            plugin.reloadMainMenuConfig();
 
             sender.sendMessage("§a§l✅ Reload Successful!");
-            sender.sendMessage("§7Reloaded all configurations.");
+            sender.sendMessage("§7Reloaded all configurations (including custom_gui/main_menu.yml).");
 
             Logger.logAdminCommand(sender.getName(), "reload all configurations");
             return true;

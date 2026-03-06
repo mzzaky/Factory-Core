@@ -20,10 +20,13 @@ import java.time.ZoneId;
 import java.util.*;
 
 /**
- * DailyQuestManager - Handles daily quest tracking, progress, rewards and reset.
+ * DailyQuestManager - Handles daily quest tracking, progress, rewards and
+ * reset.
  * <p>
- * Tracks per-player daily quest progress, automatically resets at the configured hour,
- * awards EXP and money (Vault) rewards, and plays sound/notification on completion.
+ * Tracks per-player daily quest progress, automatically resets at the
+ * configured hour,
+ * awards EXP and money (Vault) rewards, and plays sound/notification on
+ * completion.
  * </p>
  */
 public class DailyQuestManager {
@@ -74,7 +77,8 @@ public class DailyQuestManager {
      */
     public Set<String> getQuestIds() {
         ConfigurationSection section = questConfig.getConfigurationSection("quests");
-        if (section == null) return Collections.emptySet();
+        if (section == null)
+            return Collections.emptySet();
         return section.getKeys(false);
     }
 
@@ -133,7 +137,8 @@ public class DailyQuestManager {
     public int getProgress(UUID playerId, String questId) {
         checkAndResetDaily(playerId);
         PlayerQuestData data = playerData.get(playerId);
-        if (data == null) return 0;
+        if (data == null)
+            return 0;
         return data.questProgress.getOrDefault(questId, 0);
     }
 
@@ -150,7 +155,8 @@ public class DailyQuestManager {
     public boolean isRewardClaimed(UUID playerId, String questId) {
         checkAndResetDaily(playerId);
         PlayerQuestData data = playerData.get(playerId);
-        if (data == null) return false;
+        if (data == null)
+            return false;
         return data.claimedRewards.contains(questId);
     }
 
@@ -160,7 +166,8 @@ public class DailyQuestManager {
     public boolean isBonusClaimed(UUID playerId) {
         checkAndResetDaily(playerId);
         PlayerQuestData data = playerData.get(playerId);
-        if (data == null) return false;
+        if (data == null)
+            return false;
         return data.bonusClaimed;
     }
 
@@ -196,7 +203,8 @@ public class DailyQuestManager {
      * @param amount    The amount to add
      */
     public void addProgressByType(Player player, String questType, int amount) {
-        if (!isEnabled()) return;
+        if (!isEnabled())
+            return;
         UUID playerId = player.getUniqueId();
         checkAndResetDaily(playerId);
 
@@ -211,7 +219,8 @@ public class DailyQuestManager {
      * Add progress to a specific quest.
      */
     public void addProgress(Player player, String questId, int amount) {
-        if (!isEnabled()) return;
+        if (!isEnabled())
+            return;
         UUID playerId = player.getUniqueId();
         checkAndResetDaily(playerId);
 
@@ -221,7 +230,8 @@ public class DailyQuestManager {
         int target = getQuestTarget(questId);
 
         // Already completed, no need to add more
-        if (currentProgress >= target) return;
+        if (currentProgress >= target)
+            return;
 
         int newProgress = Math.min(currentProgress + amount, target);
         data.questProgress.put(questId, newProgress);
@@ -240,12 +250,15 @@ public class DailyQuestManager {
      * @return true if reward was claimed successfully
      */
     public boolean claimReward(Player player, String questId) {
-        if (!isEnabled()) return false;
+        if (!isEnabled())
+            return false;
         UUID playerId = player.getUniqueId();
         checkAndResetDaily(playerId);
 
-        if (!isQuestCompleted(playerId, questId)) return false;
-        if (isRewardClaimed(playerId, questId)) return false;
+        if (!isQuestCompleted(playerId, questId))
+            return false;
+        if (isRewardClaimed(playerId, questId))
+            return false;
 
         PlayerQuestData data = playerData.computeIfAbsent(playerId, k -> new PlayerQuestData());
         data.claimedRewards.add(questId);
@@ -257,9 +270,11 @@ public class DailyQuestManager {
         }
 
         // Give money reward
-        double money = getQuestRewardMoney(questId);
-        if (money > 0) {
-            plugin.getEconomy().depositPlayer(player, money);
+        double baseMoney = getQuestRewardMoney(questId);
+        if (baseMoney > 0) {
+            double bonusPercent = plugin.getResearchManager().getDailyQuestMoneyBonus(playerId);
+            double totalMoney = baseMoney + (baseMoney * (bonusPercent / 100.0));
+            plugin.getEconomy().depositPlayer(player, totalMoney);
         }
 
         saveAll();
@@ -272,12 +287,15 @@ public class DailyQuestManager {
      * @return true if bonus was claimed successfully
      */
     public boolean claimBonus(Player player) {
-        if (!isEnabled() || !isBonusEnabled()) return false;
+        if (!isEnabled() || !isBonusEnabled())
+            return false;
         UUID playerId = player.getUniqueId();
         checkAndResetDaily(playerId);
 
-        if (!areAllQuestsCompleted(playerId)) return false;
-        if (isBonusClaimed(playerId)) return false;
+        if (!areAllQuestsCompleted(playerId))
+            return false;
+        if (isBonusClaimed(playerId))
+            return false;
 
         PlayerQuestData data = playerData.computeIfAbsent(playerId, k -> new PlayerQuestData());
         data.bonusClaimed = true;
@@ -289,9 +307,12 @@ public class DailyQuestManager {
         }
 
         // Give bonus money
-        double money = getBonusMoney();
-        if (money > 0) {
-            plugin.getEconomy().depositPlayer(player, money);
+        double baseMoney = getBonusMoney();
+        double totalMoney = baseMoney;
+        if (baseMoney > 0) {
+            double bonusPercent = plugin.getResearchManager().getDailyQuestMoneyBonus(playerId);
+            totalMoney = baseMoney + (baseMoney * (bonusPercent / 100.0));
+            plugin.getEconomy().depositPlayer(player, totalMoney);
         }
 
         // Play all-complete sound
@@ -310,14 +331,14 @@ public class DailyQuestManager {
 
         player.sendTitle(
                 "§6§lALL QUESTS COMPLETED!",
-                "§aBonus reward claimed! §e+" + exp + " EXP §7& §6$" + String.format("%.0f", money),
+                "§aBonus reward claimed! §e+" + exp + " EXP §7& §6$" + String.format("%.0f", totalMoney),
                 fadeIn, stay, fadeOut);
 
         player.sendMessage("");
         player.sendMessage("§8§m----------------------------------------");
         player.sendMessage("§6§l  ALL DAILY QUESTS COMPLETED!");
         player.sendMessage("§a  Bonus Reward Claimed:");
-        player.sendMessage("§e  +" + exp + " EXP §7& §6$" + String.format("%.2f", money));
+        player.sendMessage("§e  +" + exp + " EXP §7& §6$" + String.format("%.2f", totalMoney));
         player.sendMessage("§8§m----------------------------------------");
         player.sendMessage("");
 
@@ -332,7 +353,8 @@ public class DailyQuestManager {
      */
     private void checkAndResetDaily(UUID playerId) {
         PlayerQuestData data = playerData.get(playerId);
-        if (data == null) return;
+        if (data == null)
+            return;
 
         long resetTimestamp = getResetTimestampForToday();
 
@@ -425,11 +447,13 @@ public class DailyQuestManager {
     // ── Persistence ──────────────────────────────────────────────────────────
 
     private void loadPlayerData() {
-        if (!dataFile.exists()) return;
+        if (!dataFile.exists())
+            return;
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
 
-        if (!config.contains("players")) return;
+        if (!config.contains("players"))
+            return;
 
         for (String uuidStr : config.getConfigurationSection("players").getKeys(false)) {
             try {
@@ -504,7 +528,8 @@ public class DailyQuestManager {
         try {
             NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase());
             Sound s = Registry.SOUNDS.get(key);
-            if (s != null) return s;
+            if (s != null)
+                return s;
         } catch (Exception ignored) {
         }
         try {

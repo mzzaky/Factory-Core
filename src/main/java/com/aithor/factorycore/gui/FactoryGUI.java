@@ -1,6 +1,7 @@
 package com.aithor.factorycore.gui;
 
 import com.aithor.factorycore.FactoryCore;
+import com.aithor.factorycore.managers.ResourceManager;
 import com.aithor.factorycore.models.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -335,10 +336,11 @@ public class FactoryGUI {
         }
 
         // Check materials in input storage
+        // Both plugin resources and vanilla: inputs are stored together in
+        // input-storage.
         for (Map.Entry<String, Integer> input : recipe.getInputs().entrySet()) {
             int available = plugin.getStorageManager().getInputAmount(currentFactoryId, input.getKey());
             if (available < input.getValue()) {
-                // Clear recipe ID when there are insufficient materials
                 player.getPersistentDataContainer().remove(new NamespacedKey(plugin, "current_recipe_id"));
                 player.sendMessage(plugin.getLanguageManager().getMessage("production-insufficient-materials"));
                 player.closeInventory();
@@ -346,7 +348,8 @@ public class FactoryGUI {
             }
         }
 
-        // Remove materials from input storage
+        // Remove materials from input storage (same for both plugin resources and
+        // vanilla inputs)
         for (Map.Entry<String, Integer> input : recipe.getInputs().entrySet()) {
             plugin.getStorageManager().removeInputItem(currentFactoryId, input.getKey(), input.getValue());
         }
@@ -457,8 +460,20 @@ public class FactoryGUI {
         if (amountToWithdraw <= 0)
             return;
 
-        // Create the item to give to the player
-        ItemStack toGive = plugin.getResourceManager().createItemStack(resourceId, amountToWithdraw);
+        // Build the ItemStack to return to the player
+        ItemStack toGive;
+        if (ResourceManager.isVanillaInput(resourceId)) {
+            // Return a plain vanilla item (no custom name / custom-model-data)
+            org.bukkit.Material mat = ResourceManager.getVanillaMaterial(resourceId);
+            if (mat == null) {
+                player.sendMessage("§cError: Unknown material for this vanilla resource.");
+                return;
+            }
+            toGive = new ItemStack(mat, amountToWithdraw);
+        } else {
+            toGive = plugin.getResourceManager().createItemStack(resourceId, amountToWithdraw);
+        }
+
         if (toGive == null) {
             player.sendMessage("§cError: Could not create item for this resource.");
             return;
@@ -470,14 +485,16 @@ public class FactoryGUI {
         // Add to player's inventory
         HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(toGive);
         if (!leftover.isEmpty()) {
-            // If inventory is full, return the leftover items to storage
             int amountNotAdded = leftover.values().stream().mapToInt(ItemStack::getAmount).sum();
             plugin.getStorageManager().addInputItem(currentFactoryId, resourceId, amountNotAdded);
             player.sendMessage(plugin.getLanguageManager().getMessage("storage-inventory-full"));
         } else {
+            String displayName = ResourceManager.isVanillaInput(resourceId)
+                    ? ResourceManager.getVanillaDisplayName(resourceId)
+                    : (meta.hasDisplayName() ? meta.getDisplayName() : resourceId);
             player.sendMessage(plugin.getLanguageManager().getMessage("storage-item-withdrawn")
                     .replace("{amount}", String.valueOf(amountToWithdraw))
-                    .replace("{item}", meta.getDisplayName()));
+                    .replace("{item}", displayName));
         }
 
         // Refresh the GUI
@@ -485,28 +502,72 @@ public class FactoryGUI {
     }
 
     private void handleDeposit(ItemStack clickedItem) {
+        // ── Try to identify as a plugin resource first ──────────────────────────
         String resourceId = plugin.getResourceManager().getResourceId(clickedItem);
-        if (resourceId == null) {
-            player.sendMessage(plugin.getLanguageManager().getMessage("storage-invalid-item"));
+
+        if (resourceId != null) {
+            // Normal plugin resource deposit path
+            int amountToDeposit = clickedItem.getAmount();
+            String itemName = clickedItem.getItemMeta() != null
+                    ? clickedItem.getItemMeta().getDisplayName()
+                    : clickedItem.getType().toString();
+
+            plugin.getStorageManager().addInputItem(currentFactoryId, resourceId, amountToDeposit);
+            clickedItem.setAmount(0);
+
+            player.sendMessage(plugin.getLanguageManager().getMessage("storage-item-deposited")
+                    .replace("{amount}", String.valueOf(amountToDeposit))
+                    .replace("{item}", itemName));
+            openStorageMenu();
             return;
         }
 
-        int amountToDeposit = clickedItem.getAmount();
-        String itemName = clickedItem.getItemMeta() != null ? clickedItem.getItemMeta().getDisplayName()
-                : clickedItem.getType().toString();
+        // ── Try as a plain vanilla item (for Smeltery) ──────────────────────────
+        // Check whether the factory currently accepts any vanilla: input that matches
+        // the clicked item's material (and the item must be unmodified — no
+        // custom-model-data).
+        Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+        if (factory != null) {
+            // Find the active-recipe or any recipe for this factory type that accepts this
+            // material
+            org.bukkit.Material clickedMat = clickedItem.getType();
+            boolean isCustomised = clickedItem.hasItemMeta() &&
+                    (clickedItem.getItemMeta().hasCustomModelData() ||
+                            clickedItem.getItemMeta().hasDisplayName());
 
-        // Add to input storage
-        plugin.getStorageManager().addInputItem(currentFactoryId, resourceId, amountToDeposit);
+            if (!isCustomised) {
+                // Look for a matching vanilla: input key across all recipes of this factory
+                // type
+                String matchedKey = null;
+                for (Recipe r : plugin.getRecipeManager().getRecipesByFactoryType(factory.getType().getId())) {
+                    for (String inputKey : r.getInputs().keySet()) {
+                        if (ResourceManager.isVanillaInput(inputKey)) {
+                            org.bukkit.Material mat = ResourceManager.getVanillaMaterial(inputKey);
+                            if (mat == clickedMat) {
+                                matchedKey = inputKey;
+                                break;
+                            }
+                        }
+                    }
+                    if (matchedKey != null)
+                        break;
+                }
 
-        // Remove from player's inventory by setting amount to 0
-        clickedItem.setAmount(0);
+                if (matchedKey != null) {
+                    int amountToDeposit = clickedItem.getAmount();
+                    plugin.getStorageManager().addInputItem(currentFactoryId, matchedKey, amountToDeposit);
+                    clickedItem.setAmount(0);
+                    player.sendMessage(plugin.getLanguageManager().getMessage("storage-item-deposited")
+                            .replace("{amount}", String.valueOf(amountToDeposit))
+                            .replace("{item}", ResourceManager.getVanillaDisplayName(matchedKey)));
+                    openStorageMenu();
+                    return;
+                }
+            }
+        }
 
-        player.sendMessage(plugin.getLanguageManager().getMessage("storage-item-deposited")
-                .replace("{amount}", String.valueOf(amountToDeposit))
-                .replace("{item}", itemName));
-
-        // Refresh the GUI to show updated storage contents
-        openStorageMenu();
+        // Item is neither a plugin resource nor an accepted vanilla material
+        player.sendMessage(plugin.getLanguageManager().getMessage("storage-invalid-item"));
     }
 
     /**
@@ -562,30 +623,65 @@ public class FactoryGUI {
     /**
      * Scans the player's entire inventory for items registered in the plugin's
      * ResourceManager and deposits all of them into the factory's input storage.
+     * For Smeltery factories, also accepts plain vanilla items that match any
+     * vanilla: input required by the factory's recipes.
      */
     private void handleDepositAll() {
         ItemStack[] contents = player.getInventory().getContents();
         int totalDeposited = 0;
         boolean foundAny = false;
 
+        // Build a set of vanilla material keys accepted by this factory (for Smeltery)
+        Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+        Map<org.bukkit.Material, String> acceptedVanilla = new HashMap<>();
+        if (factory != null) {
+            for (Recipe r : plugin.getRecipeManager().getRecipesByFactoryType(factory.getType().getId())) {
+                for (String inputKey : r.getInputs().keySet()) {
+                    if (ResourceManager.isVanillaInput(inputKey)) {
+                        org.bukkit.Material mat = ResourceManager.getVanillaMaterial(inputKey);
+                        if (mat != null)
+                            acceptedVanilla.put(mat, inputKey);
+                    }
+                }
+            }
+        }
+
         for (int i = 0; i < contents.length; i++) {
             ItemStack item = contents[i];
             if (item == null || item.getType() == Material.AIR)
                 continue;
 
+            // ── Try as a plugin resource first ────────────────────────────────
             String resourceId = plugin.getResourceManager().getResourceId(item);
-            if (resourceId == null)
-                continue; // not a plugin resource — skip
+            if (resourceId != null) {
+                foundAny = true;
+                int amount = item.getAmount();
+                plugin.getStorageManager().addInputItem(currentFactoryId, resourceId, amount);
+                player.getInventory().setItem(i, null);
+                totalDeposited += amount;
+                continue;
+            }
 
-            foundAny = true;
-            int amount = item.getAmount();
-            plugin.getStorageManager().addInputItem(currentFactoryId, resourceId, amount);
-            player.getInventory().setItem(i, null); // remove from player inventory
-            totalDeposited += amount;
+            // ── Try as a plain vanilla item ───────────────────────────────────
+            if (!acceptedVanilla.isEmpty()) {
+                boolean isCustomised = item.hasItemMeta() &&
+                        (item.getItemMeta().hasCustomModelData() ||
+                                item.getItemMeta().hasDisplayName());
+                if (!isCustomised) {
+                    String vanillaKey = acceptedVanilla.get(item.getType());
+                    if (vanillaKey != null) {
+                        foundAny = true;
+                        int amount = item.getAmount();
+                        plugin.getStorageManager().addInputItem(currentFactoryId, vanillaKey, amount);
+                        player.getInventory().setItem(i, null);
+                        totalDeposited += amount;
+                    }
+                }
+            }
         }
 
         if (!foundAny) {
-            player.sendMessage("§7No plugin-registered items found in your inventory.");
+            player.sendMessage("§7No valid items found in your inventory to deposit.");
         } else {
             player.sendMessage("§aSuccessfully deposited §e" + totalDeposited + "§a item(s) into storage.");
         }

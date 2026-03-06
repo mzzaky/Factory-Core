@@ -228,3 +228,31 @@ research:
     buff-per-level: 8
     buff-type: "flat"
     buff-description: "§a+{value}h §7listing expiration"
+
+  # ── 9. Task Productivity Booster ──────────────────────────────────────────────
+  # Increases money reward obtained from daily quests.
+  task_productivity_booster:
+    name: "§b§lTask Productivity Booster"
+    description:
+      - "§7Boost the efficiency of daily"
+      - "§7tasks, granting bonus money"
+      - "§7from completing daily quests."
+      - ""
+      - "§eBuff: §aIncreases daily quest money"
+    icon: KNOWLEDGE_BOOK
+    max-level: 5
+    cost:
+      1: 50000.0
+      2: 120000.0
+      3: 250000.0
+      4: 500000.0
+      5: 1000000.0
+    duration:
+      1: 1440
+      2: 2880
+      3: 4320
+      4: 5760
+      5: 7200
+    buff-per-level: 10
+    buff-type: "percentage"
+    buff-description: "§a+{value}% §7quest money"

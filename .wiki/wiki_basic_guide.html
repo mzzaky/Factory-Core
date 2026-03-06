@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Guide - FactoryCore Wiki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #0a0c10;
+            color: #e4e6ea;
+            min-height: 100vh;
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #10b981;
+        }
+
+        .page-header p {
+            color: #9ca3af;
+            font-size: 1.15rem;
+            margin-top: 10px;
+        }
+
+        /* ── Breadcrumb ── */
+        .breadcrumb {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #10b981;
+        }
+
+        .breadcrumb-sep {
+            color: #4b5563;
+        }
+
+        .breadcrumb-current {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        /* ── Layout ── */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* ── Side Nav ── */
+        .side-nav {
+            position: sticky;
+            top: 20px;
+            background: rgba(13, 17, 23, 0.95);
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .nav-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.1);
+            font-weight: 700;
+            color: #e4e6ea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 15px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav-list a:hover {
+            background: rgba(52, 211, 153, 0.05);
+            color: #d1fae5;
+        }
+
+        .nav-list a.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(4, 120, 87, 0.05) 100%);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            font-weight: 600;
+        }
+
+        /* ── Main Content ── */
+        .main-content {
+            background: #0d1117;
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .content-section {
+            padding: 40px;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.08);
+            scroll-margin-top: 20px;
+        }
+
+        .content-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            margin-bottom: 25px;
+        }
+
+        .section-title h2 {
+            color: #10b981;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        /* ── Typography ── */
+        h3 {
+            color: #34d399;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #d1d5db;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+            color: #d1d5db;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        strong {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 3px 6px;
+            border-radius: 5px;
+            color: #34d399;
+            font-size: 13px;
+        }
+
+        /* ── Info / Warning Boxes ── */
+        .info-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .info-box-title {
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .warn-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.03) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid #fbbf24;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.05), inset 0 0 12px rgba(245, 158, 11, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warn-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.1), transparent 50%);
+            pointer-events: none;
+        }
+
+        .warn-box .info-box-title {
+            color: #fbbf24;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .warn-box div:last-child {
+            color: #e5e7eb;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Custom Image Styling ── */
+        .guide-image {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            margin: 20px 0;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .guide-image:hover {
+            transform: scale(1.01);
+            border-color: rgba(52, 211, 153, 0.5);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+
+            .side-nav {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .content-section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-header">
+        <h1>Basic Guide</h1>
+        <p>A comprehensive tutorial to start building your industrial empire</p>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="index.html">Wiki Home</a>
+        <span class="breadcrumb-sep">&raquo;</span>
+        <span class="breadcrumb-current">Basic Guide</span>
+    </div>
+
+    <div class="content-container">
+        <nav class="side-nav">
+            <div class="nav-header">On This Page</div>
+            <ul class="nav-list">
+                <li><a href="#creating-factory" class="active">1. Creating a Factory</a></li>
+                <li><a href="#hiring-employees">2. Hiring Employees</a></li>
+                <li><a href="#producing-items">3. Producing Items</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <!-- ════ 1. CREATING FACTORY ════ -->
+            <section class="content-section" id="creating-factory">
+                <div class="section-title">
+                    <h2>1. Creating a Factory</h2>
+                </div>
+                <p>
+                    The first step to building your industrial empire is establishing a base of operations.
+                    In FactoryCore, you need to register a Region in the world where your factory will operate.
+                </p>
+
+                <h3>Step-by-Step Procedure:</h3>
+                <ol>
+                    <li><strong>Obtain the selection wand:</strong> Use the command <code>//wand</code> to get the
+                        WorldEdit selection tool (usually a wooden axe).</li>
+                    <li><strong>Select the area:</strong> Left-click one corner of your desired factory area, and
+                        right-click the opposite corner to select the region boundaries.</li>
+                    <li><strong>Define the region:</strong> Use the WorldGuard command
+                        <code>/rg define &lt;region_id&gt;</code> to officially protect and register the selected area.
+                    </li>
+                    <li><strong>Execute the creation command:</strong> Link the region to FactoryCore using the admin
+                        command:
+                        <br><code>/fc admin create &lt;region_id&gt; &lt;factory_id&gt; &lt;factory_type&gt; &lt;price_value&gt;</code>.
+                    </li>
+                    <li><strong>Confirmation:</strong> Upon success, your region is officially recognized as a Factory
+                        by the plugin. You can now access its main management interface!</li>
+                </ol>
+
+                <img src="https://placehold.co/800x400/0d1117/10b981?text=Screenshot:+Creating+a+Factory+Region+in-game"
+                    alt="Creating a Factory" class="guide-image">
+
+                <div class="info-box">
+                    <div class="info-box-title">💡 Developer Tip</div>
+                    <div>Make sure you have enough in-game balance if the server has a configured economy cost for
+                        registering new factories!</div>
+                </div>
+            </section>
+
+            <!-- ════ 2. HIRING EMPLOYEES ════ -->
+            <section class="content-section" id="hiring-employees">
+                <div class="section-title">
+                    <h2>2. Hiring Employees</h2>
+                </div>
+                <p>
+                    A factory cannot run on its own. You need workers to operate the machinery and process resources.
+                    Adding employees to your factory brings it to life and boosts the production rate.
+                </p>
+
+                <h3>How to Register and Assign Employees:</h3>
+                <ol>
+                    <li><strong>Open the Factory GUI:</strong> Use <code>/factory gui</code> or interact with the
+                        factory block to open the main menu.</li>
+                    <li><strong>Navigate to Employees Center:</strong> Click on the "Employees" menu icon to see your
+                        workforce overview.</li>
+                    <li><strong>Hire an Employee:</strong> Purchase an employee contract from the available NPC list.
+                        Each employee type has different production bonuses and salary requirements.</li>
+                    <li><strong>Spawn / Register the NPC:</strong> Once hired, place the employee inside your factory
+                        region. They will become an active NPC worker representing your workforce!</li>
+                </ol>
+
+                <img src="https://placehold.co/800x400/0d1117/10b981?text=Screenshot:+Employees+Center+GUI+and+NPCs"
+                    alt="Hiring Employees" class="guide-image">
+
+                <div class="warn-box">
+                    <div class="info-box-title">⚖️ Salary Payments</div>
+                    <div>Remember that active employees generate salary invoices over time. If you fail to pay their
+                        salaries through the Invoice Center, they may stop working!</div>
+                </div>
+            </section>
+
+            <!-- ════ 3. PRODUCING ITEMS ════ -->
+            <section class="content-section" id="producing-items">
+                <div class="section-title">
+                    <h2>3. Producing Items</h2>
+                </div>
+                <p>
+                    Once your factory is established and your employees are working, it's time to manufacture goods.
+                    Production is the heart of your economy, turning raw materials into highly profitable products.
+                </p>
+
+                <h3>Understanding the Production Mechanism:</h3>
+                <ol>
+                    <li><strong>Provide Input Resources:</strong> Factories require specific input materials. Deposit
+                        the required items into the factory's Input Storage.</li>
+                    <li><strong>Wait for the Cycle:</strong> The production cycle runs automatically on a scheduled
+                        timer. The speed depends on the factory type, installed research, and employee buffs.</li>
+                    <li><strong>Harvesting the Output:</strong> Once a production cycle completes, the newly synthesized
+                        goods are moved to the Output Storage.</li>
+                    <li><strong>Claim Your Items:</strong> Left-click or interact with your factory NPC (or Output
+                        Storage blocks) to open the output inventory and claim your newly manufactured items!</li>
+                </ol>
+
+                <img src="https://placehold.co/800x400/0d1117/10b981?text=Screenshot:+Claiming+Production+Output"
+                    alt="Producing Items" class="guide-image">
+
+                <div class="info-box">
+                    <div class="info-box-title">💰 Next Steps</div>
+                    <div>Take the items you just harvested and sell them in the <strong>Marketplace</strong> for a
+                        massive profit, or use them as input for higher-tier factories!</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Active state for side navigation based on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('.content-section');
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 60) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-list a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').substring(1) === current) {
+                    a.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -77,8 +77,10 @@ public class ResourceManager {
 
         // Build info message
         StringBuilder info = new StringBuilder("Loaded " + resources.size() + " resources!");
-        if (mmoItemCount > 0) info.append(" (").append(mmoItemCount).append(" MMOItems linked)");
-        if (eiItemCount > 0) info.append(" (").append(eiItemCount).append(" ExecutableItems linked)");
+        if (mmoItemCount > 0)
+            info.append(" (").append(mmoItemCount).append(" MMOItems linked)");
+        if (eiItemCount > 0)
+            info.append(" (").append(eiItemCount).append(" ExecutableItems linked)");
         plugin.getLogger().info(info.toString());
     }
 
@@ -91,14 +93,14 @@ public class ResourceManager {
         if (resource == null)
             return null;
 
-        // If this resource is linked to an ExecutableItems item, use ExecutableItems API
+        // If this resource is linked to an ExecutableItems item, use ExecutableItems
+        // API
         if (resource.isExecutableItem()) {
             ExecutableItemsHook eiHook = plugin.getExecutableItemsHook();
             if (eiHook != null && eiHook.isEnabled()) {
                 ItemStack eiItem = eiHook.getExecutableItem(
                         resource.getExecutableItemsId(),
-                        amount
-                );
+                        amount);
                 if (eiItem != null) {
                     return eiItem;
                 }
@@ -117,8 +119,7 @@ public class ResourceManager {
                 ItemStack mmoItem = mmoHook.getMMOItem(
                         resource.getMMOItemsType(),
                         resource.getMMOItemsId(),
-                        amount
-                );
+                        amount);
                 if (mmoItem != null) {
                     return mmoItem;
                 }
@@ -201,7 +202,8 @@ public class ResourceManager {
             ResourceItem resource = entry.getValue();
 
             // Skip external plugin resources (already checked above)
-            if (resource.isMMOItem() || resource.isExecutableItem()) continue;
+            if (resource.isMMOItem() || resource.isExecutableItem())
+                continue;
 
             // Compare critical properties
             if (resource.getMaterial().equals(item.getType().name()) &&
@@ -257,5 +259,125 @@ public class ResourceManager {
 
     public Map<String, ResourceItem> getAllResources() {
         return new HashMap<>(resources);
+    }
+
+    // ==================== VANILLA INPUT HELPERS ====================
+    // Keys prefixed with "vanilla:" represent plain Minecraft materials that
+    // players obtain naturally in the world (e.g. vanilla:IRON_ORE).
+    // These are used exclusively as inputs in Smeltery recipes.
+
+    /** Returns true if the recipe input key represents a vanilla material. */
+    public static boolean isVanillaInput(String inputKey) {
+        return inputKey != null && inputKey.startsWith("vanilla:");
+    }
+
+    /**
+     * Extracts the Bukkit Material from a vanilla input key.
+     * Returns null if the key is not a vanilla input or the material is unknown.
+     */
+    public static Material getVanillaMaterial(String inputKey) {
+        if (!isVanillaInput(inputKey))
+            return null;
+        String materialName = inputKey.substring("vanilla:".length());
+        return Material.matchMaterial(materialName);
+    }
+
+    /**
+     * Formats a vanilla input key into a human-readable display name.
+     * e.g. "vanilla:IRON_ORE" -> "Iron Ore (Vanilla)"
+     */
+    public static String getVanillaDisplayName(String inputKey) {
+        Material mat = getVanillaMaterial(inputKey);
+        if (mat == null)
+            return inputKey;
+        String pretty = mat.name().replace('_', ' ');
+        // Title-case each word
+        StringBuilder sb = new StringBuilder();
+        for (String word : pretty.split(" ")) {
+            if (!word.isEmpty()) {
+                sb.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1).toLowerCase())
+                        .append(' ');
+            }
+        }
+        return sb.toString().trim() + " §7(Vanilla)";
+    }
+
+    /**
+     * Counts how many of a vanilla material a player holds, ignoring
+     * custom-model-data.
+     * Only plain items (no custom-model-data, no custom display name) are accepted.
+     */
+    public int countVanillaInInventory(Player player, String inputKey) {
+        Material mat = getVanillaMaterial(inputKey);
+        if (mat == null)
+            return 0;
+        int total = 0;
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item == null || item.getType() != mat)
+                continue;
+            // Reject items that appear to be plugin-modified (custom model data or display
+            // name)
+            if (item.hasItemMeta()) {
+                ItemMeta m = item.getItemMeta();
+                if (m.hasCustomModelData() || m.hasDisplayName())
+                    continue;
+            }
+            total += item.getAmount();
+        }
+        return total;
+    }
+
+    /**
+     * Removes the specified amount of a plain vanilla material from the player's
+     * inventory.
+     * Only plain items (no custom-model-data, no custom display name) are consumed.
+     * 
+     * @return number of items actually removed
+     */
+    public int consumeVanillaFromInventory(Player player, String inputKey, int amount) {
+        Material mat = getVanillaMaterial(inputKey);
+        if (mat == null)
+            return 0;
+        int remaining = amount;
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length && remaining > 0; i++) {
+            ItemStack item = contents[i];
+            if (item == null || item.getType() != mat)
+                continue;
+            if (item.hasItemMeta()) {
+                ItemMeta m = item.getItemMeta();
+                if (m.hasCustomModelData() || m.hasDisplayName())
+                    continue;
+            }
+            if (item.getAmount() <= remaining) {
+                remaining -= item.getAmount();
+                player.getInventory().setItem(i, null);
+            } else {
+                item.setAmount(item.getAmount() - remaining);
+                remaining = 0;
+            }
+        }
+        return amount - remaining;
+    }
+
+    /**
+     * Creates a plain vanilla ItemStack for display purposes (used in Storage GUI).
+     * Returns null if the input key is not a valid vanilla material.
+     */
+    public ItemStack createVanillaInputDisplay(String inputKey, int amount) {
+        Material mat = getVanillaMaterial(inputKey);
+        if (mat == null)
+            return null;
+        ItemStack item = new ItemStack(mat, Math.min(amount, mat.getMaxStackSize()));
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName("§f" + getVanillaDisplayName(inputKey).replace(" §7(Vanilla)", ""));
+            meta.setLore(Arrays.asList(
+                    "§7Vanilla material stored for Smeltery.",
+                    "§eAmount: §f" + amount));
+            item.setItemMeta(meta);
+        }
+        return item;
     }
 }

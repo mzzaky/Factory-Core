@@ -1,6 +1,7 @@
 package com.aithor.factorycore.gui;
 
 import com.aithor.factorycore.FactoryCore;
+import com.aithor.factorycore.managers.ResourceManager;
 import com.aithor.factorycore.models.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -77,12 +78,23 @@ public class RecipeConfirmationGUI {
         lore.add("");
         lore.add("§7Input:");
         for (Map.Entry<String, Integer> input : recipe.getInputs().entrySet()) {
-            int available = plugin.getStorageManager().getInputAmount(factoryId, input.getKey());
-            ResourceItem resource = plugin.getResourceManager().getResource(input.getKey());
-            String name = resource != null ? resource.getName() : input.getKey();
+            String inputKey = input.getKey();
+            int required = input.getValue();
+            int available;
+            String name;
 
-            String color = available >= input.getValue() ? "§a" : "§c";
-            lore.add("  " + color + input.getValue() + "x " + name + " §7(" + available + " available)");
+            if (ResourceManager.isVanillaInput(inputKey)) {
+                // Vanilla inputs are stored in input-storage under their vanilla: key
+                available = plugin.getStorageManager().getInputAmount(factoryId, inputKey);
+                name = ResourceManager.getVanillaDisplayName(inputKey);
+            } else {
+                available = plugin.getStorageManager().getInputAmount(factoryId, inputKey);
+                ResourceItem resource = plugin.getResourceManager().getResource(inputKey);
+                name = resource != null ? resource.getName() : inputKey;
+            }
+
+            String color = available >= required ? "§a" : "§c";
+            lore.add("  " + color + required + "x " + name + " §7(" + available + " stored)");
         }
 
         Material confirmMaterial;

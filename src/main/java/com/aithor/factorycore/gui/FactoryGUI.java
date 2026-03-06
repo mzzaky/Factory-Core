@@ -189,8 +189,63 @@ public class FactoryGUI {
             openStorageMenu();
         } else if (name.contains("Upgrade Factory")) {
             openUpgradeMenu();
+        } else if (name.contains("Toggle Border")) {
+            // Toggle border particle visualization
+            if (plugin.getBorderParticleTask() != null) {
+                boolean enabled = plugin.getBorderParticleTask().toggle(player.getUniqueId());
+                if (enabled) {
+                    player.sendMessage(plugin.getLanguageManager().getMessage("player-factory-border-enabled"));
+                    if (plugin.getConfig().getBoolean("notifications.sound.enabled")) {
+                        try {
+                            player.playSound(player.getLocation(),
+                                    plugin.getConfig().getString("notifications.sound.border-toggle",
+                                            "BLOCK_NOTE_BLOCK_PLING"),
+                                    1.0f, 1.5f);
+                        } catch (Exception ignored) {}
+                    }
+                    if (plugin.getConfig().getBoolean("notifications.titles.enabled")) {
+                        player.sendTitle(
+                                plugin.getLanguageManager().getMessage("titles.player-factory-border-on.title"),
+                                plugin.getLanguageManager().getMessage("titles.player-factory-border-on.subtitle"),
+                                10, 30, 10);
+                    }
+                } else {
+                    player.sendMessage(plugin.getLanguageManager().getMessage("player-factory-border-disabled"));
+                    if (plugin.getConfig().getBoolean("notifications.sound.enabled")) {
+                        try {
+                            player.playSound(player.getLocation(),
+                                    plugin.getConfig().getString("notifications.sound.border-toggle",
+                                            "BLOCK_NOTE_BLOCK_PLING"),
+                                    1.0f, 0.5f);
+                        } catch (Exception ignored) {}
+                    }
+                    if (plugin.getConfig().getBoolean("notifications.titles.enabled")) {
+                        player.sendTitle(
+                                plugin.getLanguageManager().getMessage("titles.player-factory-border-off.title"),
+                                plugin.getLanguageManager().getMessage("titles.player-factory-border-off.subtitle"),
+                                10, 30, 10);
+                    }
+                }
+                // Refresh the menu to show updated state
+                openMainMenu();
+            }
         } else if (name.contains("Fast Travel")) {
             player.closeInventory();
+
+            // Check player-created factory first
+            com.aithor.factorycore.models.PlayerFactory playerFactory =
+                    plugin.getPlayerFactoryManager() != null
+                            ? plugin.getPlayerFactoryManager().getFactory(currentFactoryId) : null;
+            if (playerFactory != null) {
+                org.bukkit.Location loc = playerFactory.getCenterLocation();
+                if (loc != null) {
+                    player.teleport(loc);
+                    player.sendMessage("§aSuccessfully teleported to the factory!");
+                } else {
+                    player.sendMessage("§cFailed to teleport to the factory!");
+                }
+                return;
+            }
 
             // Get factory and check ownership
             Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);

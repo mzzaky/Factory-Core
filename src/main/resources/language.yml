@@ -122,7 +122,18 @@ messages:
   # ==================== NEW: FACTORY BROWSE MESSAGES ====================
   factory-purchase-confirm: "{prefix} §7Please confirm your purchase."
   factory-purchase-success: "{prefix} §aCongratulations! You now own this factory!"
-  
+
+  # ==================== PLAYER FACTORY CREATION MESSAGES ====================
+  player-factory-created: "{prefix} §a§lFactory created successfully! §7Your §e{type} §7factory is ready."
+  player-factory-world-not-allowed: "{prefix} §cYou cannot create a factory in this world!"
+  player-factory-limit-reached: "{prefix} §cYou have reached your factory creation limit! §7(Max: §e{limit}§7)"
+  player-factory-overlap: "{prefix} §cThis region overlaps with an existing factory! §7Move to a different location."
+  player-factory-protected: "{prefix} §cThis area is protected by a player factory! §7Only the owner can modify blocks here."
+  player-factory-sold: "{prefix} §aFactory sold successfully! §7You received §6${price}§7."
+  player-factory-border-enabled: "{prefix} §aBorder visualization §2ENABLED§a! §7You can now see your factory borders."
+  player-factory-border-disabled: "{prefix} §eBorder visualization §cDISABLED§e."
+  player-factory-no-factories: "{prefix} §cYou don't have any player-created factories!"
+
   # Help messages
   help:
     header: "{prefix} §6=== FactoryCore Help ==="
@@ -324,6 +335,15 @@ messages:
     research-complete:
       title: "§a§lRESEARCH COMPLETE!"
       subtitle: "§e{research} §7Level §6{level}"
+    player-factory-created:
+      title: "§a§lFACTORY CREATED!"
+      subtitle: "§7Your §e{type} §7is ready"
+    player-factory-border-on:
+      title: "§a§lBORDER VISIBLE"
+      subtitle: "§7Factory borders are now shown"
+    player-factory-border-off:
+      title: "§c§lBORDER HIDDEN"
+      subtitle: "§7Factory borders are now hidden"
 
   # Bossbar messages
   bossbar:

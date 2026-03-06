@@ -118,6 +118,19 @@ public class FactoryBrowseGUI {
             inv.setItem(53, createNavigationItem(Material.ARROW, "§e§lNext Page ►", page + 1));
         }
 
+        // Create Factory button (slot 50)
+        if (plugin.getConfig().getBoolean("player-factory.enabled", true)) {
+            inv.setItem(50, createItem(Material.EMERALD_BLOCK, "§a§lCreate Factory",
+                    Arrays.asList(
+                            "§7Create your own factory",
+                            "§7at your current location!",
+                            "",
+                            "§7No admin required.",
+                            "§7Region will be protected.",
+                            "",
+                            "§eClick to start!")));
+        }
+
         // Back to hub (slot 51)
         inv.setItem(51, createItem(Material.DARK_OAK_DOOR, "§c§lBack to Hub",
                 Arrays.asList("§7Return to main menu")));

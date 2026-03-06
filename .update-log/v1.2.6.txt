@@ -96,3 +96,61 @@ File Dimodifikasi:
   - src/main/java/com/aithor/factorycore/gui/StorageGUI.java (Render penyimpanan item menggunakan helper VanillaItem)
   - src/main/java/com/aithor/factorycore/gui/RecipeConfirmationGUI.java (Pengecekan stok Storage ke Vanilla Key di input-storage.yml)
   - src/main/java/com/aithor/factorycore/gui/FactoryGUI.java (Flow Deposit individu & Deposit All untuk mendeteksi vanilla material dari konfigurasi Recipes)
+
+=== Player Factory Creation System (Self-Service Factory Apartments) ===
+
+- [New] Players can now create their own factory regions without needing admin intervention or WorldGuard.
+         A new "Create Factory" button has been added to the Factory Browse GUI (FactoryBrowseGUI.java).
+         Clicking it opens a factory type selection sub-menu where players choose the type they want to build.
+- [New] Each factory type has a configurable creation price under `player-factory.creation-prices` in config.yml.
+         Prices are independent from admin-assigned factory base prices.
+- [New] After selecting a factory type, a confirmation GUI shows region size, location, price, and balance info.
+         Upon confirmation, a 3D region is automatically registered centered on the player's position:
+           - Horizontal radius: configurable via `player-factory.region-radius` (default: 3 blocks each direction)
+           - Vertical height: configurable via `player-factory.region-height-up` and `region-height-down`
+- [New] World whitelist: admins can restrict which worlds allow player factory creation via
+         `player-factory.allowed-worlds` in config.yml. Leave empty to allow all worlds.
+- [New] Factory ownership limit: configurable via `player-factory.max-per-player` (default: 3).
+         Bypass permission: `factorycore.bypass.player-factory-limit`
+- [New] Region overlap detection: the system prevents players from creating factories that overlap
+         with any existing player-created factory region.
+- [New] Region protection: blocks within a player factory region cannot be broken or placed by anyone
+         except the factory owner and players with `factorycore.admin` permission.
+         Configurable via `player-factory.protection.enabled` in config.yml.
+- [New] Sell-price-multiplier integration: player-created factories use the same `factory.sell-price-multiplier`
+         from config.yml (default: 50% of creation price) when sold.
+- [New] Toggle Border function added to the factory MainMenuGUI. When clicked, particle effects
+         (configurable particle type via `player-factory.border-particle`) are displayed at all edges
+         and corners of the player's factory region to help visualize boundaries.
+         Particle spacing and interval are configurable.
+- [New] Player-created factories are displayed in the "My Factories" GUI alongside admin-created ones,
+         marked with a purple "[Player]" tag for distinction.
+- [New] Fast Travel support: player-created factories can be teleported to using the factory menu's
+         Fast Travel button (teleports to the center/creation location).
+- [New] Sound effects: factory creation plays ENTITY_PLAYER_LEVELUP, border toggle plays BLOCK_NOTE_BLOCK_PLING.
+         All sounds configurable under `notifications.sound` in config.yml.
+- [New] Title notifications: factory creation and border toggle display animated titles.
+         All title text is configurable in language.yml under `titles.player-factory-created`,
+         `titles.player-factory-border-on`, and `titles.player-factory-border-off`.
+- [New] 10 new configurable messages added to language.yml for all player factory actions:
+         player-factory-created, player-factory-world-not-allowed, player-factory-limit-reached,
+         player-factory-overlap, player-factory-protected, player-factory-sold,
+         player-factory-border-enabled, player-factory-border-disabled, player-factory-no-factories.
+
+File Ditambahkan:
+  - src/main/java/com/aithor/factorycore/models/PlayerFactory.java (Model wilayah factory buatan pemain dengan region 3D)
+  - src/main/java/com/aithor/factorycore/managers/PlayerFactoryManager.java (Manager CRUD, overlap check, save/load YAML)
+  - src/main/java/com/aithor/factorycore/gui/FactoryTypeSelectGUI.java (Sub-menu pemilihan tipe factory)
+  - src/main/java/com/aithor/factorycore/gui/FactoryCreateConfirmGUI.java (Menu konfirmasi pembuatan factory)
+  - src/main/java/com/aithor/factorycore/listeners/PlayerFactoryProtectionListener.java (Proteksi blok di wilayah factory)
+  - src/main/java/com/aithor/factorycore/tasks/BorderParticleTask.java (Scheduler particle untuk visualisasi batas wilayah)
+
+File Dimodifikasi:
+  - src/main/resources/config.yml (Ditambahkan seluruh section player-factory: enabled, allowed-worlds, region-radius, creation-prices, protection, border-particle, dan sound baru)
+  - src/main/resources/language.yml (Ditambahkan 10 pesan baru untuk player factory + 3 title notification baru)
+  - src/main/java/com/aithor/factorycore/gui/FactoryBrowseGUI.java (Ditambahkan tombol "Create Factory" di slot 50)
+  - src/main/java/com/aithor/factorycore/gui/MainMenuGUI.java (Ditambahkan tombol "Toggle Border" di slot 20 untuk player factory, refactor status item untuk dual-type support)
+  - src/main/java/com/aithor/factorycore/gui/MyFactoriesGUI.java (Ditambahkan rendering player-created factories dengan tag [Player])
+  - src/main/java/com/aithor/factorycore/gui/FactoryGUI.java (Ditambahkan handler Toggle Border click + Fast Travel support untuk player factory)
+  - src/main/java/com/aithor/factorycore/FactoryCore.java (Ditambahkan PlayerFactoryManager, BorderParticleTask, PlayerFactoryProtectionListener, getter methods, startup banner, dan save on disable)
+  - src/main/java/com/aithor/factorycore/listeners/HubClickListener.java (Ditambahkan routing untuk Create Factory dan Confirm Factory Creation GUI, handler untuk player factory di My Factories)

@@ -110,6 +110,37 @@ factory-types:
     base-price: 250000.0
     icon: NETHER_STAR
 
+# ==================== PLAYER FACTORY CREATION ====================
+# Allows players to create their own factory regions without admin or WorldGuard
+player-factory:
+  enabled: true
+  # Maximum player-created factories per player (bypass: factorycore.bypass.player-factory-limit)
+  max-per-player: 3
+  # Worlds where players are allowed to create factories
+  # Leave empty to allow all worlds
+  allowed-worlds:
+    - world
+  # Region size: radius extends in each horizontal direction from player position
+  region-radius: 3
+  # Region height above and below the player
+  region-height-up: 5
+  region-height-down: 5
+  # Creation prices per factory type (overrides base-price for player creation)
+  creation-prices:
+    smeltery: 50000.0
+    steel_mill: 100000.0
+    refinery: 150000.0
+    workshop: 200000.0
+    advanced_factory: 250000.0
+  # Region protection settings
+  protection:
+    enabled: true
+  # Border visualization particle
+  border-particle: FLAME
+  border-particle-spacing: 1.0
+  # Interval in ticks for border particle display (20 = 1 second)
+  border-particle-interval: 10
+
 # Notification settings
 notifications:
   enabled: true
@@ -122,6 +153,8 @@ notifications:
     # NEW: Additional sounds
     tax-due: BLOCK_NOTE_BLOCK_BASS
     marketplace-sale: ENTITY_EXPERIENCE_ORB_PICKUP
+    factory-created: ENTITY_PLAYER_LEVELUP
+    border-toggle: BLOCK_NOTE_BLOCK_PLING
   titles:
     enabled: true
     fade-in: 10

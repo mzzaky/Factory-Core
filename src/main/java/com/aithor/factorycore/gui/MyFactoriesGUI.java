@@ -103,8 +103,26 @@ public class MyFactoriesGUI {
             inv.setItem(slot++, createFactoryItem(factory));
         }
 
+        // Also show player-created factories
+        if (plugin.getPlayerFactoryManager() != null) {
+            List<PlayerFactory> playerFactories = plugin.getPlayerFactoryManager()
+                    .getFactoriesByOwner(player.getUniqueId());
+            // Apply filter for player factories too
+            if (!filterStatus.equals("all")) {
+                FactoryStatus filterStat = filterStatus.equals("running")
+                        ? FactoryStatus.RUNNING : FactoryStatus.STOPPED;
+                playerFactories.removeIf(pf -> pf.getStatus() != filterStat);
+            }
+            for (PlayerFactory pf : playerFactories) {
+                if (slot >= 45) break;
+                inv.setItem(slot++, createPlayerFactoryItem(pf));
+            }
+        }
+
         // Show empty message if no factories
-        if (filteredFactories.isEmpty()) {
+        boolean hasPlayerFactories = plugin.getPlayerFactoryManager() != null
+                && !plugin.getPlayerFactoryManager().getFactoriesByOwner(player.getUniqueId()).isEmpty();
+        if (filteredFactories.isEmpty() && !hasPlayerFactories) {
             inv.setItem(22, createItem(Material.BARRIER, "§c§lNo Factories",
                     Arrays.asList(
                             filterStatus.equals("all") ? "§7You don't own any factories yet!"
@@ -207,6 +225,57 @@ public class MyFactoriesGUI {
                     new NamespacedKey(plugin, "my_factory_id"),
                     PersistentDataType.STRING,
                     factory.getId());
+            item.setItemMeta(meta);
+        }
+
+        return item;
+    }
+
+    private ItemStack createPlayerFactoryItem(PlayerFactory pf) {
+        Material material;
+        switch (pf.getStatus()) {
+            case RUNNING:
+                material = Material.LIME_CONCRETE;
+                break;
+            default:
+                material = Material.RED_CONCRETE;
+        }
+
+        List<String> lore = new ArrayList<>();
+        lore.add("§7ID: §e" + pf.getId());
+        lore.add("§7Type: " + pf.getType().getDisplayName());
+        lore.add("§7Level: §e" + pf.getLevel());
+        lore.add("§7Status: " + pf.getStatus().getDisplay());
+        lore.add("§d§oPlayer-Created Factory");
+        lore.add("");
+
+        if (pf.getCurrentProduction() != null) {
+            ProductionTask task = pf.getCurrentProduction();
+            Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
+            if (recipe != null) {
+                lore.add("§6Production: §e" + recipe.getName());
+                lore.add("§7Progress: §e" + (int) (task.getProgress() * 100) + "%");
+                lore.add("§7Time Left: §e" + task.getRemainingTime() + "s");
+                lore.add("");
+            }
+        }
+
+        double sellValue = pf.getPrice() * plugin.getConfig().getDouble("factory.sell-price-multiplier", 0.5);
+        lore.add("§7Value: §6$" + String.format("%.2f", pf.getPrice()));
+        lore.add("§7Sell Value: §6$" + String.format("%.2f", sellValue));
+        lore.add("");
+        lore.add("§eLeft Click: §7Open Management");
+        lore.add("§eRight Click: §7Quick Teleport");
+        lore.add("§eShift + Right Click: §7Sell Factory");
+
+        ItemStack item = createItem(material, pf.getType().getDisplayName() + " §d[Player] §7- §e" + pf.getId(), lore);
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.getPersistentDataContainer().set(
+                    new NamespacedKey(plugin, "my_factory_id"),
+                    PersistentDataType.STRING,
+                    pf.getId());
             item.setItemMeta(meta);
         }
 

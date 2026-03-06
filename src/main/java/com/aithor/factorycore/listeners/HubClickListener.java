@@ -121,6 +121,10 @@ public class HubClickListener implements Listener {
             handleAchievementsClick(player, clicked, meta, name);
         } else if (title.contains("Daily Quests")) {
             handleDailyQuestClick(player, clicked, meta, name);
+        } else if (title.contains("Create Factory") && title.contains("Select Type")) {
+            handleFactoryTypeSelectClick(player, clicked, meta, name);
+        } else if (title.contains("Confirm Factory Creation")) {
+            handleFactoryCreateConfirmClick(player, clicked, meta, name);
         } else if (title.contains("Confirm Purchase") || title.contains("Confirm Sale") ||
                 title.contains("Confirm Fire") || title.contains("Confirm Unassign") ||
                 title.contains("Confirm Dismiss") || title.contains("Create Listing")) {
@@ -153,7 +157,9 @@ public class HubClickListener implements Listener {
                 title.contains("Research Center") ||
                 title.contains("Research:") ||
                 title.contains("Achievements") ||
-                title.contains("Daily Quests");
+                title.contains("Daily Quests") ||
+                title.contains("Create Factory") ||
+                title.contains("Confirm Factory Creation");
     }
 
     // ==================== HUB MAIN MENU ====================
@@ -433,6 +439,13 @@ public class HubClickListener implements Listener {
             return;
         }
 
+        // Create Factory button
+        if (name.contains("Create Factory")) {
+            FactoryTypeSelectGUI typeGui = new FactoryTypeSelectGUI(plugin, player);
+            typeGui.open();
+            return;
+        }
+
         // Back to hub
         if (name.contains("Back to Hub")) {
             openHub(player);
@@ -448,16 +461,38 @@ public class HubClickListener implements Listener {
         String factoryId = meta.getPersistentDataContainer().get(
                 new NamespacedKey(plugin, "my_factory_id"), PersistentDataType.STRING);
         if (factoryId != null) {
+            // Check if it's a player-created factory
+            PlayerFactory playerFactory = plugin.getPlayerFactoryManager() != null
+                    ? plugin.getPlayerFactoryManager().getFactory(factoryId) : null;
             Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-            if (factory == null)
+
+            if (factory == null && playerFactory == null)
                 return;
 
             if (clickType == ClickType.SHIFT_RIGHT) {
-                // Sell factory
-                gui.openSellConfirmation(factoryId);
+                if (playerFactory != null) {
+                    // Sell player factory
+                    double sellPrice = plugin.getPlayerFactoryManager().getSellPrice(factoryId);
+                    if (plugin.getPlayerFactoryManager().sellFactory(player, factoryId)) {
+                        player.sendMessage(plugin.getLanguageManager().getMessage("player-factory-sold")
+                                .replace("{price}", String.format("%.2f", sellPrice)));
+                        player.closeInventory();
+                    }
+                } else {
+                    gui.openSellConfirmation(factoryId);
+                }
             } else if (clickType == ClickType.RIGHT) {
                 // Quick teleport
-                if (plugin.getFactoryManager().teleportPlayer(player, factoryId)) {
+                if (playerFactory != null) {
+                    org.bukkit.Location loc = playerFactory.getCenterLocation();
+                    if (loc != null) {
+                        player.teleport(loc);
+                        player.sendMessage("§aSuccessfully teleported to factory!");
+                        player.closeInventory();
+                    } else {
+                        player.sendMessage("§cCould not teleport to factory!");
+                    }
+                } else if (plugin.getFactoryManager().teleportPlayer(player, factoryId)) {
                     player.sendMessage("§aSuccessfully teleported to factory!");
                     player.closeInventory();
                 } else {
@@ -1015,6 +1050,82 @@ public class HubClickListener implements Listener {
         // Back to hub
         if (name.contains("Back to Hub")) {
             openHub(player);
+        }
+    }
+
+    // ==================== FACTORY TYPE SELECT (Create Factory) ====================
+    private void handleFactoryTypeSelectClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
+        // Check for factory type selection
+        String typeStr = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "create_factory_type"), PersistentDataType.STRING);
+        if (typeStr != null) {
+            try {
+                FactoryType type = FactoryType.valueOf(typeStr);
+                FactoryCreateConfirmGUI confirmGui = new FactoryCreateConfirmGUI(plugin, player);
+                confirmGui.open(type);
+            } catch (IllegalArgumentException e) {
+                player.sendMessage("§cInvalid factory type!");
+            }
+            return;
+        }
+
+        // Back button
+        if (name.contains("Back")) {
+            FactoryBrowseGUI gui = browseGUIs.getOrDefault(player.getUniqueId(),
+                    new FactoryBrowseGUI(plugin, player));
+            browseGUIs.put(player.getUniqueId(), gui);
+            gui.openBrowseMenu();
+        }
+    }
+
+    // ==================== FACTORY CREATE CONFIRM ====================
+    private void handleFactoryCreateConfirmClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
+        // Confirm creation
+        String typeStr = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "confirm_create_factory_type"), PersistentDataType.STRING);
+        if (typeStr != null && name.contains("Confirm")) {
+            try {
+                FactoryType type = FactoryType.valueOf(typeStr);
+                PlayerFactory pf = plugin.getPlayerFactoryManager().createFactory(player, type);
+                if (pf != null) {
+                    // Success message
+                    player.sendMessage(plugin.getLanguageManager().getMessage("player-factory-created")
+                            .replace("{type}", type.getDisplayName()));
+
+                    // Sound effect
+                    if (plugin.getConfig().getBoolean("notifications.sound.enabled")) {
+                        try {
+                            player.playSound(player.getLocation(),
+                                    plugin.getConfig().getString("notifications.sound.factory-created",
+                                            "ENTITY_PLAYER_LEVELUP"),
+                                    1.0f, 1.0f);
+                        } catch (Exception ignored) {}
+                    }
+
+                    // Title
+                    if (plugin.getConfig().getBoolean("notifications.titles.enabled")) {
+                        player.sendTitle(
+                                plugin.getLanguageManager().getMessage("titles.player-factory-created.title"),
+                                plugin.getLanguageManager().getMessage("titles.player-factory-created.subtitle")
+                                        .replace("{type}", type.getDisplayName()),
+                                plugin.getConfig().getInt("notifications.titles.fade-in", 10),
+                                plugin.getConfig().getInt("notifications.titles.stay", 40),
+                                plugin.getConfig().getInt("notifications.titles.fade-out", 10));
+                    }
+
+                    player.closeInventory();
+                }
+                // If createFactory returned null, error message was already sent by the manager
+            } catch (IllegalArgumentException e) {
+                player.sendMessage("§cInvalid factory type!");
+            }
+            return;
+        }
+
+        // Cancel button
+        if (name.contains("Cancel")) {
+            FactoryTypeSelectGUI typeGui = new FactoryTypeSelectGUI(plugin, player);
+            typeGui.open();
         }
     }
 

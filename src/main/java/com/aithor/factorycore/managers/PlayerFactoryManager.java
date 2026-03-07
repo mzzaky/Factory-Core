@@ -17,7 +17,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Manages player-created factories with built-in region protection (no WorldGuard needed).
+ * Manages player-created factories with built-in region protection (no
+ * WorldGuard needed).
  */
 public class PlayerFactoryManager {
 
@@ -29,7 +30,8 @@ public class PlayerFactoryManager {
         this.plugin = plugin;
         this.playerFactories = new HashMap<>();
         File dataFolder = new File(plugin.getDataFolder(), "data");
-        if (!dataFolder.exists()) dataFolder.mkdirs();
+        if (!dataFolder.exists())
+            dataFolder.mkdirs();
         this.dataFile = new File(dataFolder, "player_factories.yml");
         loadAll();
     }
@@ -37,7 +39,8 @@ public class PlayerFactoryManager {
     // ── Load / Save ──────────────────────────────────────────────────────────
 
     public void loadAll() {
-        if (!dataFile.exists()) return;
+        if (!dataFile.exists())
+            return;
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
         for (String key : config.getKeys(false)) {
@@ -141,7 +144,8 @@ public class PlayerFactoryManager {
 
     /**
      * Creates a new player factory centered on the player's position.
-     * The region extends 3 blocks in each horizontal direction and 5 blocks up/down.
+     * The region extends 3 blocks in each horizontal direction and 5 blocks
+     * up/down.
      *
      * @return the created PlayerFactory, or null on failure
      */
@@ -157,8 +161,8 @@ public class PlayerFactoryManager {
         }
 
         // Check factory limit
-        int limit = plugin.getConfig().getInt("player-factory.max-per-player", 3);
-        if (player.hasPermission("factorycore.bypass.player-factory-limit")) {
+        int limit = plugin.getConfig().getInt("factory.max-factories-per-player", 3);
+        if (player.hasPermission("factorycore.bypass.factory-limit")) {
             limit = Integer.MAX_VALUE;
         }
         int currentCount = getFactoryCountByOwner(player.getUniqueId());
@@ -194,7 +198,8 @@ public class PlayerFactoryManager {
         int minZ = bz - radius, maxZ = bz + radius;
 
         for (PlayerFactory existing : playerFactories.values()) {
-            if (!existing.getWorldName().equals(worldName)) continue;
+            if (!existing.getWorldName().equals(worldName))
+                continue;
             if (regionsOverlap(minX, minY, minZ, maxX, maxY, maxZ,
                     existing.getMinX(), existing.getMinY(), existing.getMinZ(),
                     existing.getMaxX(), existing.getMaxY(), existing.getMaxZ())) {
@@ -223,8 +228,10 @@ public class PlayerFactoryManager {
 
     public boolean sellFactory(Player player, String factoryId) {
         PlayerFactory pf = playerFactories.get(factoryId);
-        if (pf == null) return false;
-        if (!pf.getOwner().equals(player.getUniqueId())) return false;
+        if (pf == null)
+            return false;
+        if (!pf.getOwner().equals(player.getUniqueId()))
+            return false;
 
         double sellMultiplier = plugin.getConfig().getDouble("factory.sell-price-multiplier", 0.5);
         double sellPrice = pf.getPrice() * sellMultiplier;
@@ -241,7 +248,8 @@ public class PlayerFactoryManager {
 
     public double getSellPrice(String factoryId) {
         PlayerFactory pf = playerFactories.get(factoryId);
-        if (pf == null) return 0;
+        if (pf == null)
+            return 0;
         double sellMultiplier = plugin.getConfig().getDouble("factory.sell-price-multiplier", 0.5);
         return pf.getPrice() * sellMultiplier;
     }
@@ -273,7 +281,8 @@ public class PlayerFactoryManager {
      */
     public PlayerFactory getFactoryAt(Location loc) {
         for (PlayerFactory pf : playerFactories.values()) {
-            if (pf.containsLocation(loc)) return pf;
+            if (pf.containsLocation(loc))
+                return pf;
         }
         return null;
     }
@@ -281,9 +290,9 @@ public class PlayerFactoryManager {
     // ── Region overlap check ─────────────────────────────────────────────────
 
     private boolean regionsOverlap(int ax1, int ay1, int az1, int ax2, int ay2, int az2,
-                                   int bx1, int by1, int bz1, int bx2, int by2, int bz2) {
+            int bx1, int by1, int bz1, int bx2, int by2, int bz2) {
         return ax1 <= bx2 && ax2 >= bx1 &&
-               ay1 <= by2 && ay2 >= by1 &&
-               az1 <= bz2 && az2 >= bz1;
+                ay1 <= by2 && ay2 >= by1 &&
+                az1 <= bz2 && az2 >= bz1;
     }
 }

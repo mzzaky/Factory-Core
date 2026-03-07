@@ -114,8 +114,6 @@ factory-types:
 # Allows players to create their own factory regions without admin or WorldGuard
 player-factory:
   enabled: true
-  # Maximum player-created factories per player (bypass: factorycore.bypass.player-factory-limit)
-  max-per-player: 3
   # Worlds where players are allowed to create factories
   # Leave empty to allow all worlds
   allowed-worlds:
@@ -137,7 +135,7 @@ player-factory:
     enabled: true
   # Border visualization particle
   border-particle: FLAME
-  border-particle-spacing: 1.0
+  border-particle-spacing: 3.5
   # Interval in ticks for border particle display (20 = 1 second)
   border-particle-interval: 10
 

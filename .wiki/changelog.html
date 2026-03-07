@@ -668,7 +668,7 @@
         <h1>Factory-Core-Plugin Changelog</h1>
         <p>Track all updates, improvements, and bug fixes for Factory-Core-Plugin</p>
         <div class="current-version">
-            <span>Latest Version: v1.2.5</span>
+            <span>Latest Version: v1.2.6</span>
         </div>
     </div>
 
@@ -682,7 +682,8 @@
         <nav class="side-nav">
             <div class="nav-title">Version History</div>
             <ul class="nav-list">
-                <li><a href="#v1-2-5" class="active">v1.2.5 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-2-6" class="active">v1.2.6 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-2-5">v1.2.5</a></li>
                 <li><a href="#v1-2-0">v1.2.0</a></li>
                 <li><a href="#v1-1-5">v1.1.5</a></li>
                 <li><a href="#v1-1-0">v1.1.0</a></li>
@@ -691,6 +692,166 @@
         </nav>
 
         <main class="main-content">
+            <!-- Version 1.2.6 -->
+            <section class="version-section" id="v1-2-6">
+                <div class="version-header">
+                    <div class="version-header-left">
+                        <div class="version-title">
+                            <h2>Version 1.2.6</h2>
+                            <span class="version-type major">Major</span>
+                        </div>
+                        <div class="release-date">March 06, 2026</div>
+                    </div>
+                    <div class="version-toggle">
+                        <span class="version-toggle-icon">▼</span>
+                        <span class="version-toggle-text">Minimize</span>
+                    </div>
+                </div>
+
+                <div class="version-content">
+                    <div class="overview-box">
+                        <div class="overview-title">Release Overview</div>
+                        <div class="overview-grid">
+                            <div class="overview-stat">
+                                <div class="stat-label">Total Changes</div>
+                                <div class="stat-value">41</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">New Features</div>
+                                <div class="stat-value">29</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Improvements</div>
+                                <div class="stat-value">11</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Bug Fixes</div>
+                                <div class="stat-value">1</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Type</div>
+                                <div class="stat-value">Major</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Features -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">New Features</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Custom Main Menu GUI:</strong> Separated all visual properties of the Main Hub
+                                GUI from hardcode into the <code>custom_gui/main_menu.yml</code> configuration file.
+                                Admins can now change the GUI title, size, border material, and custom model data
+                                directly from the config.
+                            </li>
+                            <li class="change-item">
+                                <strong>Custom GUI Items:</strong> All items on the Main Hub now have customizable
+                                <code>slot</code>, <code>material</code>, <code>custom_model_data</code>,
+                                <code>name</code>, <code>lore</code>, and <code>sound</code> fields. Added "multi-slot"
+                                feature supporting multiple slot formats. Items can be hidden via the
+                                <code>enabled</code> field. Click sound effects can be set individually per item.
+                            </li>
+                            <li class="change-item">
+                                <strong>GUI ID System & Special Actions:</strong> Every main-menu item now receives a
+                                stable internal "hub_gui_id" PDC tag. Added 10 new "open_gui_*" special actions for the
+                                <code>on_click</code> field in <code>main_menu.yml</code> (e.g.,
+                                <code>open_gui_factory_browse</code>).
+                            </li>
+                            <li class="change-item">
+                                <strong>Unlimited Custom Items:</strong> The Main Hub now dynamically supports unlimited
+                                custom items. Admins can add any new keys in the items section of
+                                <code>main_menu.yml</code>, useful for decorative buttons or console command execution.
+                                GUI title processing is now fully dynamic.
+                            </li>
+                            <li class="change-item">
+                                <strong>Global Placeholders:</strong> All Placeholders (factory count, npc count, total
+                                bills, etc.) are now GLOBAL. Admins can place ANY statistic placeholder on any item,
+                                including custom created items.
+                            </li>
+                            <li class="change-item">
+                                <strong>Vanilla Input Recipes & Smeltery:</strong> Added a new factory type:
+                                <code>Smeltery</code> to process vanilla materials (like mined ores) into raw resources.
+                                The Recipe Engine now supports the <code>vanilla:</code> prefix in
+                                <code>recipes.yml</code> to directly match Bukkit Materials.
+                            </li>
+                            <li class="change-item">
+                                <strong>Smeltery Recipes:</strong> Added 12 default Smeltery recipes covering smelting
+                                for all standard ores, Deepslate variants, and batch smelting for raw items.
+                            </li>
+                            <li class="change-item">
+                                <strong>Player Factory Creation System (Self-Service):</strong> Players can now create
+                                their own factory regions without needing admin intervention or WorldGuard. Each factory
+                                type has a configurable creation price. Includes region overlap detection and block
+                                protection.
+                            </li>
+                            <li class="change-item">
+                                <strong>Player Factory Features:</strong> World whitelist, ownership limits, fast travel
+                                support, toggleable particle borders for visualization, and unique marking in the "My
+                                Factories" GUI. Included specific sound effects and animated title notifications for
+                                creation and border actions.
+                            </li>
+                            <li class="change-item">
+                                <strong>Language Configuration:</strong> Added 10 new configurable messages to
+                                <code>language.yml</code> for all player factory actions.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Updates & Enhancements -->
+                    <div class="change-category">
+                        <div class="category-header improved">
+                            <div class="category-icon improved">~</div>
+                            <div class="category-title">Updates & Improvements</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>HubGUI Refactor:</strong> <code>HubGUI.java</code> and
+                                <code>HubClickListener.java</code> have been fully refactored to read appearance and
+                                sounds from <code>main_menu.yml</code>. Includes an automatic fallback mechanism.
+                            </li>
+                            <li class="change-item">
+                                <strong>Admin Commands:</strong> The <code>/fc admin reload</code> command now also
+                                reloads the <code>custom_gui/main_menu.yml</code> configuration for instant application.
+                            </li>
+                            <li class="change-item">
+                                <strong>Configuration Documentation:</strong> <code>main_menu.yml</code> header now
+                                documents all <code>open_gui_*</code> actions and lists every registered GUI ID. Each
+                                item section has a "GUI ID" comment line.
+                            </li>
+                            <li class="change-item">
+                                <strong>Placeholder Performance:</strong> Restructured <code>HubGUI.java</code> with a
+                                centralized <code>buildGlobalPlaceholders()</code> method for optimal UI rendering
+                                performance. Maintained full backward compatibility with older YAMLs.
+                            </li>
+                            <li class="change-item">
+                                <strong>Vanilla Item Handling:</strong> <code>ResourceManager.java</code> thoroughly
+                                updated with helper functions to securely handle vanilla materials. Full implementation
+                                of deposit/withdraw system on storage GUIs for vanilla materials.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Bug Fixes -->
+                    <div class="change-category">
+                        <div class="category-header fixed">
+                            <div class="category-icon fixed">×</div>
+                            <div class="category-title">Bug Fixes</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">
+                                <strong>Hub Menu Routing:</strong> Fixed an issue where main Hub menu items lost their
+                                click functionality if their display name was changed, by migrating to the new stable
+                                "hub_gui_id" PDC tag routing.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
             <!-- Version 1.2.5 -->
             <section class="version-section" id="v1-2-5">
                 <div class="version-header">
@@ -812,9 +973,11 @@
                                 computation in <code>ResearchManager.java</code> to apply the latest buffs properly.
                                 <ul class="sub-item">
                                     <li><strong>Industrial Hustle:</strong> Triggered on 12 factory productions via
-                                        <code>FactoryManager.completeProduction()</code></li>
+                                        <code>FactoryManager.completeProduction()</code>
+                                    </li>
                                     <li><strong>Payday Routine:</strong> Triggered on paying 8 employee salaries via
-                                        <code>InvoiceManager.payInvoice()</code></li>
+                                        <code>InvoiceManager.payInvoice()</code>
+                                    </li>
                                     <li><strong>Tax Compliance Duty:</strong> Triggered on paying factory taxes 3 times
                                         via <code>TaxManager.payTax()</code></li>
                                     <li><strong>Distribution Target:</strong> Triggered on selling 12 items securely via

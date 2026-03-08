@@ -26,3 +26,41 @@ FactoryCore Update Log - v1.2.7
 - Fixed OutputStorageGUI so it can now be opened correctly by player-created factories. Previously, the GUI lookup strictly checked the admin FactoryManager, causing it to fail silently when a player factory's NPC was left-clicked. Items can now be safely withdrawn (including vanilla items).
 - Fully synchronized the crafting/production completion mechanism for player-created factories in PlayerFactoryManager. Completing production in a player factory now correctly awards the "early_prototype" and "mass_producer" achievements, adds progress to the "Industrial Hustle" daily quest, and triggers the configured completion sound and title notifications, exactly mirroring admin factories.
 - Improved MyFactoriesGUI item names and lore for better readability. Huge raw UUID values have been reformatted to display only the first 8 characters and are enclosed cleanly in parentheses (e.g. `Iron Smeltery (#a1b2c3d4)` instead of massive raw strings). The full ID remains functional for background event clicks.
+
+[New Features]
+
+== MySQL Database Support ==
+- Implemented full MySQL database support as configured in config.yml (database.type: MYSQL).
+- Added DatabaseManager that handles MySQL connections with auto-reconnect and connection validation.
+- When MySQL is enabled, all 11 data files (factories, player_factories, input-storage, output-storage, invoices, npcs, marketplace, taxes, achievements, daily-quests, research) can be stored in MySQL tables.
+- Added data migration commands to transfer data between YAML and MySQL:
+  - `/fc admin database status` — View current database connection status (YAML or MySQL).
+  - `/fc admin database migrate yaml-to-mysql` — Migrate all existing YAML data files into MySQL tables.
+  - `/fc admin database migrate mysql-to-yaml` — Export all MySQL data back to YAML files.
+- MySQL tables use InnoDB engine with utf8mb4 charset for full Unicode support.
+- Connection auto-recovery: if the MySQL connection drops, it automatically reconnects on next data operation.
+- Database status is displayed in the startup banner.
+
+== Comprehensive Backup System ==
+- Added a full backup system for the plugin's data folder with ZIP compression.
+- Backups can be managed via `/fc admin backup <event>` commands:
+  - `/fc admin backup start [label]` — Create a new backup (optional label for identification).
+  - `/fc admin backup restore <filename>` — Restore a backup (automatically creates a safety backup before restoring).
+  - `/fc admin backup list` — List all available backups with file size and date.
+  - `/fc admin backup delete <filename>` — Delete a specific backup file.
+  - `/fc admin backup auto` — Toggle automatic scheduled backups on/off.
+  - `/fc admin backup status` — View backup system status (auto-backup state, interval, backup count).
+- Automatic backup system with configurable toggle and interval in config.yml (`backup.auto-backup`).
+- Configurable maximum backup retention (`backup.max-backups`) — oldest backups are automatically deleted when the limit is exceeded.
+- Safety mechanism: restoring a backup always creates a pre-restore safety backup first, preventing accidental data loss.
+- All backup operations are logged to the FactoryCore log file.
+- Tab-completion support for all backup subcommands, including backup filenames for restore/delete.
+- Backup system status is displayed in the startup banner.
+
+[Configuration Changes]
+- config.yml: Updated `database.type` comment — MySQL is now fully supported (no longer "coming soon").
+- config.yml: Added `backup` section with `max-backups`, `auto-backup.enabled`, and `auto-backup.interval-ticks`.
+- language.yml: Added backup messages (backup-created, backup-restored, backup-deleted, backup-failed, etc.).
+- language.yml: Added database messages (database-connected, database-migration-start, etc.).
+- language.yml: Added help entries for backup and database admin commands.
+- plugin.yml: Added `factorycore.admin.backup` and `factorycore.admin.database` permissions (default: op).

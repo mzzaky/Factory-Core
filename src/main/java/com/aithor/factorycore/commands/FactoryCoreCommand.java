@@ -14,6 +14,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import com.aithor.factorycore.managers.BackupManager;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -212,7 +214,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
         if (args.length < 2) {
             sender.sendMessage(
-                    "§cUsage: /fc admin <create|remove|list|info|reload|checkrecipes|setowner|teleport|give|npc|tax|market|research>");
+                    "§cUsage: /fc admin <create|remove|list|info|reload|checkrecipes|setowner|teleport|give|npc|tax|market|research|backup|database>");
             sender.sendMessage("§cFor create: /fc admin create <region_id> <factory_id> <factory_type> <price_value>");
             return true;
         }
@@ -258,6 +260,13 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
             case "research":
                 return adminResearch(sender, args);
+
+            case "backup":
+                return adminBackup(sender, args);
+
+            case "database":
+            case "db":
+                return adminDatabase(sender, args);
 
             default:
                 sender.sendMessage("§cInvalid admin command!");
@@ -784,6 +793,188 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    // ==================== BACKUP COMMANDS ====================
+
+    private boolean adminBackup(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            sender.sendMessage("§6=== Backup Admin Commands ===");
+            sender.sendMessage("§e/fc admin backup start §7[label] - Create a new backup");
+            sender.sendMessage("§e/fc admin backup restore §7<filename> - Restore a backup");
+            sender.sendMessage("§e/fc admin backup list §7- List all backups");
+            sender.sendMessage("§e/fc admin backup delete §7<filename> - Delete a backup");
+            sender.sendMessage("§e/fc admin backup auto §7- Toggle automatic backups");
+            sender.sendMessage("§e/fc admin backup status §7- View backup system status");
+            return true;
+        }
+
+        String action = args[2].toLowerCase();
+        BackupManager backupManager = plugin.getBackupManager();
+
+        if (backupManager == null) {
+            sender.sendMessage("§cBackup system is not available!");
+            return true;
+        }
+
+        switch (action) {
+            case "start":
+            case "create": {
+                String label = args.length >= 4 ? args[3] : null;
+                sender.sendMessage("§7Creating backup...");
+                String result = backupManager.createBackup(label);
+                if (result != null) {
+                    sender.sendMessage("§a✔ Backup created successfully: §e" + result);
+                } else {
+                    sender.sendMessage("§c✘ Failed to create backup! Check console for details.");
+                }
+                Logger.logAdminCommand(sender.getName(), "backup start" + (label != null ? " " + label : ""));
+                return true;
+            }
+
+            case "restore": {
+                if (args.length < 4) {
+                    sender.sendMessage("§cUsage: /fc admin backup restore <filename>");
+                    return true;
+                }
+                String fileName = args[3];
+                sender.sendMessage("§7Restoring backup: §e" + fileName + "§7...");
+                sender.sendMessage("§c§lWARNING: §7A safety backup will be created before restoring.");
+                sender.sendMessage("§c§lWARNING: §7All current data will be overwritten! Use §e/fc admin reload §7after restore.");
+
+                if (backupManager.restoreBackup(fileName)) {
+                    sender.sendMessage("§a✔ Backup restored successfully!");
+                    sender.sendMessage("§eRun §6/fc admin reload §eto reload data from the restored files.");
+                } else {
+                    sender.sendMessage("§c✘ Failed to restore backup! File may not exist.");
+                }
+                Logger.logAdminCommand(sender.getName(), "backup restore " + fileName);
+                return true;
+            }
+
+            case "list": {
+                List<BackupManager.BackupInfo> backups = backupManager.listBackups();
+                if (backups.isEmpty()) {
+                    sender.sendMessage("§7No backups found.");
+                    return true;
+                }
+
+                sender.sendMessage("§6=== Available Backups (" + backups.size() + ") ===");
+                for (BackupManager.BackupInfo backup : backups) {
+                    sender.sendMessage("§e" + backup.getFileName()
+                            + " §7| Size: §b" + backup.getFormattedSize()
+                            + " §7| Date: §f" + backup.getFormattedDate());
+                }
+                return true;
+            }
+
+            case "delete": {
+                if (args.length < 4) {
+                    sender.sendMessage("§cUsage: /fc admin backup delete <filename>");
+                    return true;
+                }
+                String fileName = args[3];
+                if (backupManager.deleteBackup(fileName)) {
+                    sender.sendMessage("§a✔ Backup deleted: §e" + fileName);
+                } else {
+                    sender.sendMessage("§c✘ Backup not found: §e" + fileName);
+                }
+                Logger.logAdminCommand(sender.getName(), "backup delete " + fileName);
+                return true;
+            }
+
+            case "auto":
+            case "toggle": {
+                boolean nowOn = backupManager.toggleAutoBackup();
+                if (nowOn) {
+                    sender.sendMessage("§a✔ Automatic backup §2ENABLED§a!");
+                    sender.sendMessage("§7Interval: §e" + (backupManager.getAutoBackupIntervalTicks() / 20) + " seconds");
+                } else {
+                    sender.sendMessage("§e✔ Automatic backup §cDISABLED§e.");
+                }
+                Logger.logAdminCommand(sender.getName(), "backup auto toggle -> " + (nowOn ? "ON" : "OFF"));
+                return true;
+            }
+
+            case "status": {
+                sender.sendMessage("§6=== Backup System Status ===");
+                sender.sendMessage("§7Auto-backup: " + (backupManager.isAutoBackupRunning() ? "§aENABLED" : "§cDISABLED"));
+                sender.sendMessage("§7Config auto-backup: " + (backupManager.isAutoBackupEnabled() ? "§aEnabled" : "§cDisabled"));
+                sender.sendMessage("§7Interval: §e" + (backupManager.getAutoBackupIntervalTicks() / 20) + " seconds");
+                sender.sendMessage("§7Max backups: §e" + backupManager.getMaxBackups());
+
+                List<BackupManager.BackupInfo> backups = backupManager.listBackups();
+                sender.sendMessage("§7Total backups: §e" + backups.size());
+                if (!backups.isEmpty()) {
+                    sender.sendMessage("§7Latest: §e" + backups.get(0).getFileName()
+                            + " §7(" + backups.get(0).getFormattedDate() + ")");
+                }
+                return true;
+            }
+
+            default:
+                sender.sendMessage("§cUnknown backup action: §e" + action);
+                sender.sendMessage("§7Valid actions: §estart§7, §erestore§7, §elist§7, §edelete§7, §eauto§7, §estatus");
+                return true;
+        }
+    }
+
+    // ==================== DATABASE COMMANDS ====================
+
+    private boolean adminDatabase(CommandSender sender, String[] args) {
+        if (args.length < 3) {
+            sender.sendMessage("§6=== Database Admin Commands ===");
+            sender.sendMessage("§e/fc admin database status §7- View database status");
+            sender.sendMessage("§e/fc admin database migrate §7<yaml-to-mysql|mysql-to-yaml> - Migrate data");
+            return true;
+        }
+
+        String action = args[2].toLowerCase();
+
+        switch (action) {
+            case "status": {
+                if (plugin.getDatabaseManager() == null) {
+                    sender.sendMessage("§cDatabase manager is not available!");
+                    return true;
+                }
+                sender.sendMessage("§6=== Database Status ===");
+                sender.sendMessage(plugin.getDatabaseManager().getStatusInfo());
+                return true;
+            }
+
+            case "migrate": {
+                if (args.length < 4) {
+                    sender.sendMessage("§cUsage: /fc admin database migrate <yaml-to-mysql|mysql-to-yaml>");
+                    return true;
+                }
+
+                if (plugin.getDatabaseManager() == null) {
+                    sender.sendMessage("§cDatabase manager is not available!");
+                    return true;
+                }
+
+                String direction = args[3].toLowerCase();
+                if (direction.equals("yaml-to-mysql")) {
+                    sender.sendMessage("§7Starting YAML to MySQL migration...");
+                    plugin.getDatabaseManager().migrateYamlToMySQL();
+                    sender.sendMessage("§a✔ Migration complete! Check console for details.");
+                    Logger.logAdminCommand(sender.getName(), "database migrate yaml-to-mysql");
+                } else if (direction.equals("mysql-to-yaml")) {
+                    sender.sendMessage("§7Starting MySQL to YAML migration...");
+                    plugin.getDatabaseManager().migrateMySQLToYaml();
+                    sender.sendMessage("§a✔ Migration complete! Check console for details.");
+                    Logger.logAdminCommand(sender.getName(), "database migrate mysql-to-yaml");
+                } else {
+                    sender.sendMessage("§cInvalid direction! Use: §eyaml-to-mysql §cor §emysql-to-yaml");
+                }
+                return true;
+            }
+
+            default:
+                sender.sendMessage("§cUnknown database action: §e" + action);
+                sender.sendMessage("§7Valid actions: §estatus§7, §emigrate");
+                return true;
+        }
+    }
+
     // ==================== PLAYER COMMANDS ====================
 
     private boolean handleBuy(CommandSender sender, String[] args) {
@@ -1012,6 +1203,8 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage("§6/fc admin tax §7- Manage taxes");
             sender.sendMessage("§6/fc admin market §7- Manage marketplace");
             sender.sendMessage("§6/fc admin research §7- Manage factory research");
+            sender.sendMessage("§6/fc admin backup §7- Manage backups");
+            sender.sendMessage("§6/fc admin database §7- Manage database");
         }
 
         sender.sendMessage("");
@@ -1030,9 +1223,13 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length == 2 && args[0].equalsIgnoreCase("admin")) {
             completions.addAll(Arrays.asList("create", "remove", "list", "info", "reload", "checkrecipes",
-                    "setowner", "teleport", "give", "npc", "tax", "market", "research"));
+                    "setowner", "teleport", "give", "npc", "tax", "market", "research", "backup", "database"));
         } else if (args.length == 3 && args[0].equalsIgnoreCase("admin")) {
-            if (args[1].equalsIgnoreCase("npc")) {
+            if (args[1].equalsIgnoreCase("backup")) {
+                completions.addAll(Arrays.asList("start", "restore", "list", "delete", "auto", "status"));
+            } else if (args[1].equalsIgnoreCase("database") || args[1].equalsIgnoreCase("db")) {
+                completions.addAll(Arrays.asList("status", "migrate"));
+            } else if (args[1].equalsIgnoreCase("npc")) {
                 completions.addAll(Arrays.asList("spawn", "remove", "list", "respawn"));
             } else if (args[1].equalsIgnoreCase("tax")) {
                 completions.addAll(Arrays.asList("assess", "check"));
@@ -1048,6 +1245,22 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                 }
             } else if (args[1].equalsIgnoreCase("give")) {
                 completions.addAll(plugin.getResourceManager().getAllResources().keySet());
+            }
+        } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("backup")) {
+            String backupAction = args[2].toLowerCase();
+            if (backupAction.equals("restore") || backupAction.equals("delete")) {
+                // Suggest backup file names
+                if (plugin.getBackupManager() != null) {
+                    plugin.getBackupManager().listBackups()
+                            .forEach(b -> completions.add(b.getFileName()));
+                }
+            } else if (backupAction.equals("start") || backupAction.equals("create")) {
+                completions.addAll(Arrays.asList("manual", "pre_update", "scheduled"));
+            }
+        } else if (args.length == 4 && args[0].equalsIgnoreCase("admin")
+                && (args[1].equalsIgnoreCase("database") || args[1].equalsIgnoreCase("db"))) {
+            if (args[2].equalsIgnoreCase("migrate")) {
+                completions.addAll(Arrays.asList("yaml-to-mysql", "mysql-to-yaml"));
             }
         } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("give")) {
             completions.addAll(Arrays.asList("1", "10", "32", "64"));

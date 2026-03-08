@@ -38,6 +38,8 @@ permissions:
       factorycore.admin.npc: true
       factorycore.admin.tax: true
       factorycore.admin.market: true
+      factorycore.admin.backup: true
+      factorycore.admin.database: true
       
   factorycore.admin.create:
     description: Permission to create factories
@@ -82,7 +84,15 @@ permissions:
   factorycore.admin.market:
     description: Permission to manage marketplace
     default: op
-    
+
+  factorycore.admin.backup:
+    description: Permission to manage backups
+    default: op
+
+  factorycore.admin.database:
+    description: Permission to manage database
+    default: op
+
   factorycore.use:
     description: Basic user permissions
     default: true

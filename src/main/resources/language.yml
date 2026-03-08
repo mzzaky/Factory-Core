@@ -134,6 +134,22 @@ messages:
   player-factory-border-disabled: "{prefix} §eBorder visualization §cDISABLED§e."
   player-factory-no-factories: "{prefix} §cYou don't have any player-created factories!"
 
+  # ==================== BACKUP MESSAGES ====================
+  backup-created: "{prefix} §aBackup created successfully: §e{filename}"
+  backup-restored: "{prefix} §aBackup restored successfully: §e{filename}"
+  backup-deleted: "{prefix} §aBackup deleted: §e{filename}"
+  backup-failed: "{prefix} §cBackup operation failed! Check console for details."
+  backup-not-found: "{prefix} §cBackup not found: §e{filename}"
+  backup-auto-enabled: "{prefix} §aAutomatic backup §2ENABLED§a!"
+  backup-auto-disabled: "{prefix} §eAutomatic backup §cDISABLED§e."
+
+  # ==================== DATABASE MESSAGES ====================
+  database-connected: "{prefix} §aMySQL database connected successfully!"
+  database-disconnected: "{prefix} §cMySQL database disconnected."
+  database-migration-start: "{prefix} §7Starting data migration..."
+  database-migration-complete: "{prefix} §aMigration completed successfully!"
+  database-migration-failed: "{prefix} §cMigration failed! Check console for details."
+
   # Help messages
   help:
     header: "{prefix} §6=== FactoryCore Help ==="
@@ -160,6 +176,8 @@ messages:
     # NEW: Admin tax/market commands
     admin-tax: "§e/fc admin tax <assess|check> §7- Manage taxes"
     admin-market: "§e/fc admin market <cleanup|stats> §7- Manage marketplace"
+    admin-backup: "§e/fc admin backup <start|restore|list|delete|auto|status> §7- Manage backups"
+    admin-database: "§e/fc admin database <status|migrate> §7- Manage database"
     buy: "§e/fc buy <id> §7- Buy factory"
     sell: "§e/fc sell <id> §7- Sell factory"
     info: "§e/fc info <id> §7- Factory information"

@@ -71,16 +71,22 @@ public class MyFactoriesGUI {
         long runningCount = ownedFactories.stream().filter(f -> f.getStatus() == FactoryStatus.RUNNING).count();
         double totalValue = ownedFactories.stream().mapToDouble(Factory::getPrice).sum();
 
-        int baseLimit = plugin.getConfig().getInt("factory.max-ownership", 3);
+        int baseLimit = plugin.getConfig().getInt("factory.max-factories-per-player", 3);
         int extraLimit = plugin.getResearchManager() != null
                 ? plugin.getResearchManager().getAdditionalFactoryLimit(player.getUniqueId())
                 : 0;
         int maxFactories = baseLimit + extraLimit;
 
+        // Count player-created factories too
+        int playerFactoryCount = plugin.getPlayerFactoryManager() != null
+                ? plugin.getPlayerFactoryManager().getFactoryCountByOwner(player.getUniqueId())
+                : 0;
+        int totalOwnedCount = ownedFactories.size() + playerFactoryCount;
+
         List<String> headerLore = new ArrayList<>();
         headerLore.add("§7Your factory overview");
         headerLore.add("");
-        headerLore.add("§eFactories Owned: §6" + ownedFactories.size() + "§7/§e" + maxFactories);
+        headerLore.add("§eFactories Owned: §6" + totalOwnedCount + "§7/§e" + maxFactories);
         if (extraLimit > 0) {
             headerLore.add("§d🔬 Research Buff: §f+" + extraLimit + " §dFactory Limit");
         }
@@ -110,11 +116,13 @@ public class MyFactoriesGUI {
             // Apply filter for player factories too
             if (!filterStatus.equals("all")) {
                 FactoryStatus filterStat = filterStatus.equals("running")
-                        ? FactoryStatus.RUNNING : FactoryStatus.STOPPED;
+                        ? FactoryStatus.RUNNING
+                        : FactoryStatus.STOPPED;
                 playerFactories.removeIf(pf -> pf.getStatus() != filterStat);
             }
             for (PlayerFactory pf : playerFactories) {
-                if (slot >= 45) break;
+                if (slot >= 45)
+                    break;
                 inv.setItem(slot++, createPlayerFactoryItem(pf));
             }
         }
@@ -188,8 +196,10 @@ public class MyFactoriesGUI {
                 material = Material.RED_CONCRETE;
         }
 
+        String shortId = factory.getId().length() > 8 ? factory.getId().substring(0, 8) : factory.getId();
+
         List<String> lore = new ArrayList<>();
-        lore.add("§7ID: §e" + factory.getId());
+        lore.add("§7ID: §e#" + shortId);
         lore.add("§7Type: " + factory.getType().getDisplayName());
         lore.add("§7Level: §e" + factory.getLevel());
         lore.add("§7Status: " + factory.getStatus().getDisplay());
@@ -216,7 +226,8 @@ public class MyFactoriesGUI {
         lore.add("§eRight Click: §7Quick Teleport");
         lore.add("§eShift + Right Click: §7Sell Factory");
 
-        ItemStack item = createItem(material, factory.getType().getDisplayName() + " §7- §e" + factory.getId(), lore);
+        ItemStack item = createItem(material, "§f" + factory.getType().getDisplayName() + " §7(§e#" + shortId + "§7)",
+                lore);
 
         // Store factory ID for click handling
         ItemMeta meta = item.getItemMeta();
@@ -241,8 +252,10 @@ public class MyFactoriesGUI {
                 material = Material.RED_CONCRETE;
         }
 
+        String shortId = pf.getId().length() > 8 ? pf.getId().substring(0, 8) : pf.getId();
+
         List<String> lore = new ArrayList<>();
-        lore.add("§7ID: §e" + pf.getId());
+        lore.add("§7ID: §e#" + shortId);
         lore.add("§7Type: " + pf.getType().getDisplayName());
         lore.add("§7Level: §e" + pf.getLevel());
         lore.add("§7Status: " + pf.getStatus().getDisplay());
@@ -268,7 +281,8 @@ public class MyFactoriesGUI {
         lore.add("§eRight Click: §7Quick Teleport");
         lore.add("§eShift + Right Click: §7Sell Factory");
 
-        ItemStack item = createItem(material, pf.getType().getDisplayName() + " §d[Player] §7- §e" + pf.getId(), lore);
+        ItemStack item = createItem(material,
+                "§f" + pf.getType().getDisplayName() + " §d[Player] §7(§e#" + shortId + "§7)", lore);
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -336,11 +350,31 @@ public class MyFactoriesGUI {
 
     // Sell confirmation dialog
     public void openSellConfirmation(String factoryId) {
+        // Try admin factory first, then player factory
         Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null || !factory.getOwner().equals(player.getUniqueId())) {
+        com.aithor.factorycore.models.PlayerFactory playerFactory = null;
+        if (factory == null && plugin.getPlayerFactoryManager() != null) {
+            playerFactory = plugin.getPlayerFactoryManager().getFactory(factoryId);
+        }
+
+        if (factory == null && playerFactory == null) {
             player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-owned"));
             return;
         }
+
+        // Ownership check
+        java.util.UUID ownerId = factory != null ? factory.getOwner() : playerFactory.getOwner();
+        if (!player.getUniqueId().equals(ownerId)) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-owned"));
+            return;
+        }
+
+        double factoryPrice = factory != null ? factory.getPrice() : playerFactory.getPrice();
+        String factoryTypeDisplay = factory != null
+                ? factory.getType().getDisplayName()
+                : playerFactory.getType().getDisplayName();
+        int factoryLevel = factory != null ? factory.getLevel() : playerFactory.getLevel();
+        boolean isPlayerFactory = playerFactory != null;
 
         Inventory inv = Bukkit.createInventory(null, 27, "§c§lConfirm Sale");
 
@@ -352,19 +386,23 @@ public class MyFactoriesGUI {
             inv.setItem(i, border);
 
         // Factory info (slot 13)
-        double sellValue = factory.getPrice() * plugin.getConfig().getDouble("factory.sell-price-multiplier", 0.5);
+        double sellValue = factoryPrice * plugin.getConfig().getDouble("factory.sell-price-multiplier", 0.5);
         List<String> infoLore = new ArrayList<>();
-        infoLore.add("§7Type: " + factory.getType().getDisplayName());
-        infoLore.add("§7Level: §e" + factory.getLevel());
+        infoLore.add("§7Type: " + factoryTypeDisplay);
+        infoLore.add("§7Level: §e" + factoryLevel);
+        if (isPlayerFactory)
+            infoLore.add("§d§oPlayer-Created Factory");
         infoLore.add("");
-        infoLore.add("§7Original Price: §6$" + String.format("%.2f", factory.getPrice()));
+        infoLore.add("§7Original Price: §6$" + String.format("%.2f", factoryPrice));
         infoLore.add("§7Sell Value: §a$" + String.format("%.2f", sellValue));
         infoLore.add("");
         infoLore.add("§c§lWarning: This action cannot be undone!");
         infoLore.add("§c§lAll stored items will be lost!");
 
-        inv.setItem(13, createItem(getFactoryMaterial(factory.getType()),
-                "§c" + factory.getType().getDisplayName() + " §7- §e" + factory.getId(), infoLore));
+        Material factoryMat = factory != null ? getFactoryMaterial(factory.getType())
+                : getFactoryMaterial(playerFactory.getType());
+        inv.setItem(13, createItem(factoryMat,
+                "§c" + factoryTypeDisplay + " §7- §e" + factoryId, infoLore));
 
         // Confirm button (slot 11)
         ItemStack confirmItem = createItem(Material.LIME_WOOL, "§a§lConfirm Sale",
@@ -372,7 +410,7 @@ public class MyFactoriesGUI {
         ItemMeta confirmMeta = confirmItem.getItemMeta();
         if (confirmMeta != null) {
             confirmMeta.getPersistentDataContainer().set(
-                    new NamespacedKey(plugin, "confirm_sell_factory"),
+                    new NamespacedKey(plugin, isPlayerFactory ? "confirm_sell_player_factory" : "confirm_sell_factory"),
                     PersistentDataType.STRING,
                     factoryId);
             confirmItem.setItemMeta(confirmMeta);

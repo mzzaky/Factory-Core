@@ -251,25 +251,32 @@ public class InvoiceCenterGUI {
 
         lore.add("");
 
-        // Get associated factory info
+        // Get associated factory info — check both admin and player factories
         String invoiceId = invoice.getId();
-        Factory factory = null;
+        String resolvedFactoryId = null;
+
         if (invoiceId.startsWith("TM_")) {
-            factory = plugin.getFactoryManager().getFactory(invoiceId.substring(3));
+            resolvedFactoryId = invoiceId.substring(3);
         } else if (invoiceId.contains("_")) {
             String[] parts = invoiceId.split("_");
             if (parts.length >= 3) {
-                String factoryIdStr = String.join("_", Arrays.copyOfRange(parts, 1, parts.length - 1));
-                factory = plugin.getFactoryManager().getFactory(factoryIdStr);
+                resolvedFactoryId = String.join("_", Arrays.copyOfRange(parts, 1, parts.length - 1));
             }
         }
+        if (resolvedFactoryId == null) {
+            resolvedFactoryId = invoice.getFactoryId().toString();
+        }
 
-        if (factory == null) {
-            factory = plugin.getFactoryManager().getFactory(invoice.getFactoryId().toString());
+        Factory factory = plugin.getFactoryManager().getFactory(resolvedFactoryId);
+        com.aithor.factorycore.models.PlayerFactory playerFactory = null;
+        if (factory == null && plugin.getPlayerFactoryManager() != null) {
+            playerFactory = plugin.getPlayerFactoryManager().getFactory(resolvedFactoryId);
         }
 
         if (factory != null) {
-            lore.add("§7Factory: §e" + factory.getId());
+            lore.add("§7Factory: §e" + factory.getId() + " §8(Admin)");
+        } else if (playerFactory != null) {
+            lore.add("§7Factory: §e" + playerFactory.getId() + " §d(Player)");
         } else {
             lore.add("§7Factory: §eUnknown");
         }

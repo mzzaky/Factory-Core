@@ -150,6 +150,7 @@ public class TaxManager {
         long taxDueDays = plugin.getConfig().getLong("tax.due-days", 7);
         long dueDate = currentTime + (taxDueDays * 24 * 60 * 60 * 1000);
 
+        // ── Admin factories ──────────────────────────────────────────────────
         for (Factory factory : plugin.getFactoryManager().getAllFactories()) {
             if (factory.getOwner() == null)
                 continue;
@@ -159,19 +160,52 @@ public class TaxManager {
             TaxRecord record = taxRecords.getOrDefault(factory.getId(),
                     new TaxRecord(factory.getId(), 0, 0, 0, false));
 
-            // Add new tax to existing due amount
             record.amountDue += taxAmount;
             record.lastAssessment = currentTime;
             record.dueDate = dueDate;
 
             taxRecords.put(factory.getId(), record);
 
-            // Notify owner
             Player owner = Bukkit.getPlayer(factory.getOwner());
             if (owner != null) {
                 owner.sendMessage(plugin.getLanguageManager().getMessage("tax-assessed")
                         .replace("{factory}", factory.getId())
                         .replace("{amount}", String.format("%.2f", taxAmount)));
+            }
+        }
+
+        // ── Player factories ─────────────────────────────────────────────────
+        if (plugin.getPlayerFactoryManager() != null) {
+            for (PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                if (pf.getOwner() == null)
+                    continue;
+
+                double baseRate = plugin.getConfig().getDouble("tax.rate", 5.0) / 100.0;
+                double levelMultiplier = plugin.getConfig().getDouble("tax.level-multiplier", 2.5) / 100.0;
+                double totalRate = baseRate + (levelMultiplier * (pf.getLevel() - 1));
+                double taxAmount = pf.getPrice() * totalRate;
+
+                if (plugin.getResearchManager() != null) {
+                    double reduction = plugin.getResearchManager().getTaxReduction(pf.getOwner());
+                    if (reduction > 0)
+                        taxAmount *= (1 - (reduction / 100.0));
+                }
+
+                TaxRecord record = taxRecords.getOrDefault(pf.getId(),
+                        new TaxRecord(pf.getId(), 0, 0, 0, false));
+
+                record.amountDue += taxAmount;
+                record.lastAssessment = currentTime;
+                record.dueDate = dueDate;
+
+                taxRecords.put(pf.getId(), record);
+
+                Player owner = Bukkit.getPlayer(pf.getOwner());
+                if (owner != null) {
+                    owner.sendMessage(plugin.getLanguageManager().getMessage("tax-assessed")
+                            .replace("{factory}", pf.getId())
+                            .replace("{amount}", String.format("%.2f", taxAmount)));
+                }
             }
         }
 
@@ -185,21 +219,35 @@ public class TaxManager {
     public void checkOverdueTaxes() {
         long currentTime = System.currentTimeMillis();
 
-        for (TaxRecord record : taxRecords.values()) {
+        for (Map.Entry<String, TaxRecord> entry : taxRecords.entrySet()) {
+            TaxRecord record = entry.getValue();
             if (record.amountDue > 0 && currentTime > record.dueDate) {
                 record.overdue = true;
 
-                // Apply late fee if configured
                 double lateFeeRate = plugin.getConfig().getDouble("tax.late-fee-rate", 5.0) / 100.0;
                 if (lateFeeRate > 0 && !record.lateFeeApplied) {
                     record.amountDue += record.amountDue * lateFeeRate;
                     record.lateFeeApplied = true;
 
+                    // Resolve owner from either admin or player factory
+                    UUID ownerId = null;
+                    String factoryDisplayId = record.factoryId;
                     Factory factory = plugin.getFactoryManager().getFactory(record.factoryId);
                     if (factory != null && factory.getOwner() != null) {
-                        Player owner = Bukkit.getPlayer(factory.getOwner());
+                        ownerId = factory.getOwner();
+                        factoryDisplayId = factory.getId();
+                    } else if (plugin.getPlayerFactoryManager() != null) {
+                        PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(record.factoryId);
+                        if (pf != null && pf.getOwner() != null) {
+                            ownerId = pf.getOwner();
+                            factoryDisplayId = pf.getId();
+                        }
+                    }
+
+                    if (ownerId != null) {
+                        Player owner = Bukkit.getPlayer(ownerId);
                         if (owner != null) {
-                            owner.sendMessage("§c§lTax Overdue! §7Late fee applied to factory §e" + factory.getId());
+                            owner.sendMessage("§c§lTax Overdue! §7Late fee applied to factory §e" + factoryDisplayId);
                         }
                     }
                 }
@@ -218,8 +266,18 @@ public class TaxManager {
             return false;
         }
 
+        // Resolve owner from either admin factory or player factory
+        UUID ownerId = null;
         Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null || !factory.getOwner().equals(player.getUniqueId())) {
+        if (factory != null) {
+            ownerId = factory.getOwner();
+        } else if (plugin.getPlayerFactoryManager() != null) {
+            PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(factoryId);
+            if (pf != null)
+                ownerId = pf.getOwner();
+        }
+
+        if (ownerId == null || !ownerId.equals(player.getUniqueId())) {
             return false;
         }
 
@@ -275,11 +333,23 @@ public class TaxManager {
             return false;
         }
 
-        List<Factory> playerFactories = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId());
-        for (Factory factory : playerFactories) {
+        // Pay admin factories
+        for (Factory factory : plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId())) {
             TaxRecord record = taxRecords.get(factory.getId());
             if (record != null && record.amountDue > 0) {
                 payTax(player, factory.getId());
+            }
+        }
+
+        // Pay player factories
+        if (plugin.getPlayerFactoryManager() != null) {
+            for (PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                if (!pf.getOwner().equals(player.getUniqueId()))
+                    continue;
+                TaxRecord record = taxRecords.get(pf.getId());
+                if (record != null && record.amountDue > 0) {
+                    payTax(player, pf.getId());
+                }
             }
         }
 
@@ -290,13 +360,23 @@ public class TaxManager {
      * Get total tax due for a player
      */
     public double getTotalTaxDue(UUID playerId) {
-        List<Factory> playerFactories = plugin.getFactoryManager().getFactoriesByOwner(playerId);
         double total = 0;
 
-        for (Factory factory : playerFactories) {
+        // Admin factories
+        for (Factory factory : plugin.getFactoryManager().getFactoriesByOwner(playerId)) {
             TaxRecord record = taxRecords.get(factory.getId());
-            if (record != null) {
+            if (record != null)
                 total += record.amountDue;
+        }
+
+        // Player factories
+        if (plugin.getPlayerFactoryManager() != null) {
+            for (PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                if (!pf.getOwner().equals(playerId))
+                    continue;
+                TaxRecord record = taxRecords.get(pf.getId());
+                if (record != null)
+                    total += record.amountDue;
             }
         }
 
@@ -314,13 +394,23 @@ public class TaxManager {
      * Get all tax records for a player's factories
      */
     public List<TaxRecord> getPlayerTaxRecords(UUID playerId) {
-        List<Factory> playerFactories = plugin.getFactoryManager().getFactoriesByOwner(playerId);
         List<TaxRecord> records = new ArrayList<>();
 
-        for (Factory factory : playerFactories) {
+        // Admin factories
+        for (Factory factory : plugin.getFactoryManager().getFactoriesByOwner(playerId)) {
             TaxRecord record = taxRecords.get(factory.getId());
-            if (record != null && record.amountDue > 0) {
+            if (record != null && record.amountDue > 0)
                 records.add(record);
+        }
+
+        // Player factories
+        if (plugin.getPlayerFactoryManager() != null) {
+            for (PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                if (!pf.getOwner().equals(playerId))
+                    continue;
+                TaxRecord record = taxRecords.get(pf.getId());
+                if (record != null && record.amountDue > 0)
+                    records.add(record);
             }
         }
 

@@ -77,14 +77,27 @@ public class HubClickListener implements Listener {
 
         if (clicked == null || clicked.getType() == Material.AIR)
             return;
-        if (!clicked.hasItemMeta())
+
+        // Handle bottom inventory clicks (player's inventory) immediately
+        Inventory clickedInv = event.getClickedInventory();
+        if (clickedInv != null && clickedInv.equals(player.getInventory())) {
+            if (title.contains("Marketplace") && title.contains("Sell Items")) {
+                String clickedResourceId = plugin.getResourceManager().getResourceId(clicked);
+                if (clickedResourceId != null) {
+                    MarketplaceGUI gui = marketplaceGUIs.getOrDefault(player.getUniqueId(),
+                            new MarketplaceGUI(plugin, player));
+                    gui.openSellConfirmation(clickedResourceId, clicked.getAmount());
+                } else {
+                    player.sendMessage("§cThis item cannot be sold. Only valid factory items can be sold!");
+                }
+            }
+            return;
+        }
+
+        if (clickedInv == null)
             return;
 
-        // Only process clicks that originated from the top (GUI) inventory.
-        // Clicks on the player's bottom inventory (e.g. shift-click from hotbar)
-        // must be blocked entirely — they have no hub action to perform.
-        Inventory clickedInv = event.getClickedInventory();
-        if (clickedInv == null || clickedInv.equals(player.getInventory()))
+        if (!clicked.hasItemMeta())
             return;
 
         ItemMeta meta = clicked.getItemMeta();
@@ -463,7 +476,8 @@ public class HubClickListener implements Listener {
         if (factoryId != null) {
             // Check if it's a player-created factory
             PlayerFactory playerFactory = plugin.getPlayerFactoryManager() != null
-                    ? plugin.getPlayerFactoryManager().getFactory(factoryId) : null;
+                    ? plugin.getPlayerFactoryManager().getFactory(factoryId)
+                    : null;
             Factory factory = plugin.getFactoryManager().getFactory(factoryId);
 
             if (factory == null && playerFactory == null)
@@ -871,14 +885,6 @@ public class HubClickListener implements Listener {
             return;
         }
 
-        // Check if player clicked a custom resource to sell in their inventory
-        String clickedResourceId = plugin.getResourceManager().getResourceId(clicked);
-        if (clickedResourceId != null && !meta.getPersistentDataContainer()
-                .has(new NamespacedKey(plugin, "market_listing_id"), PersistentDataType.STRING)) {
-            gui.openSellConfirmation(clickedResourceId, clicked.getAmount());
-            return;
-        }
-
         // Sell resource button
         String sellResourceId = meta.getPersistentDataContainer().get(
                 new NamespacedKey(plugin, "sell_resource_id"), PersistentDataType.STRING);
@@ -1053,7 +1059,8 @@ public class HubClickListener implements Listener {
         }
     }
 
-    // ==================== FACTORY TYPE SELECT (Create Factory) ====================
+    // ==================== FACTORY TYPE SELECT (Create Factory)
+    // ====================
     private void handleFactoryTypeSelectClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
         // Check for factory type selection
         String typeStr = meta.getPersistentDataContainer().get(
@@ -1099,7 +1106,8 @@ public class HubClickListener implements Listener {
                                     plugin.getConfig().getString("notifications.sound.factory-created",
                                             "ENTITY_PLAYER_LEVELUP"),
                                     1.0f, 1.0f);
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+                        }
                     }
 
                     // Title
@@ -1147,7 +1155,7 @@ public class HubClickListener implements Listener {
             return;
         }
 
-        // Sell confirmation
+        // Sell confirmation (admin factory)
         String sellFactoryId = meta.getPersistentDataContainer().get(
                 new NamespacedKey(plugin, "confirm_sell_factory"), PersistentDataType.STRING);
         if (sellFactoryId != null && name.contains("Confirm")) {
@@ -1157,6 +1165,19 @@ public class HubClickListener implements Listener {
                 player.sendMessage(plugin.getLanguageManager().getMessage("factory-sold")
                         .replace("{factory}", factory.getType().getDisplayName())
                         .replace("{price}", String.valueOf(sellPrice)));
+                player.closeInventory();
+            }
+            return;
+        }
+
+        // Sell confirmation (player factory)
+        String sellPlayerFactoryId = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "confirm_sell_player_factory"), PersistentDataType.STRING);
+        if (sellPlayerFactoryId != null && name.contains("Confirm") && plugin.getPlayerFactoryManager() != null) {
+            double sellPrice = plugin.getPlayerFactoryManager().getSellPrice(sellPlayerFactoryId);
+            if (plugin.getPlayerFactoryManager().sellFactory(player, sellPlayerFactoryId)) {
+                player.sendMessage(plugin.getLanguageManager().getMessage("player-factory-sold")
+                        .replace("{price}", String.format("%.2f", sellPrice)));
                 player.closeInventory();
             }
             return;

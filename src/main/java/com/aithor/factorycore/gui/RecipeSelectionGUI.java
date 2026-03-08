@@ -26,22 +26,29 @@ public class RecipeSelectionGUI {
     }
 
     public void openRecipeMenu() {
+        // Resolve from either admin factory or player factory
         Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null)
+        com.aithor.factorycore.models.PlayerFactory playerFactory = null;
+        if (factory == null && plugin.getPlayerFactoryManager() != null) {
+            playerFactory = plugin.getPlayerFactoryManager().getFactory(factoryId);
+        }
+        if (factory == null && playerFactory == null)
             return;
+
+        FactoryType resolvedType = factory != null ? factory.getType() : playerFactory.getType();
 
         // Store factory ID in player's persistent data for click handling
         player.getPersistentDataContainer().set(new NamespacedKey(plugin, "current_factory_id"),
                 PersistentDataType.STRING, factoryId);
 
         List<Recipe> recipes = plugin.getRecipeManager()
-                .getRecipesByFactoryType(factory.getType().getId());
+                .getRecipesByFactoryType(resolvedType.getId());
 
         if (recipes.isEmpty()) {
-            player.sendMessage("§cError: No recipes found for factory type: " + factory.getType().getId());
-            plugin.getLogger().warning("No recipes loaded for factory type: " + factory.getType().getId() +
+            player.sendMessage("§cError: No recipes found for factory type: " + resolvedType.getId());
+            plugin.getLogger().warning("No recipes loaded for factory type: " + resolvedType.getId() +
                     ". Available recipes: " + plugin.getRecipeManager().getAllRecipes().keySet());
-            plugin.getLogger().warning("Factory type: " + factory.getType().getId() +
+            plugin.getLogger().warning("Factory type: " + resolvedType.getId() +
                     ", Factory ID: " + factoryId);
             return;
         }

@@ -201,7 +201,8 @@ public class FactoryGUI {
                                     plugin.getConfig().getString("notifications.sound.border-toggle",
                                             "BLOCK_NOTE_BLOCK_PLING"),
                                     1.0f, 1.5f);
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+                        }
                     }
                     if (plugin.getConfig().getBoolean("notifications.titles.enabled")) {
                         player.sendTitle(
@@ -217,7 +218,8 @@ public class FactoryGUI {
                                     plugin.getConfig().getString("notifications.sound.border-toggle",
                                             "BLOCK_NOTE_BLOCK_PLING"),
                                     1.0f, 0.5f);
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+                        }
                     }
                     if (plugin.getConfig().getBoolean("notifications.titles.enabled")) {
                         player.sendTitle(
@@ -233,9 +235,9 @@ public class FactoryGUI {
             player.closeInventory();
 
             // Check player-created factory first
-            com.aithor.factorycore.models.PlayerFactory playerFactory =
-                    plugin.getPlayerFactoryManager() != null
-                            ? plugin.getPlayerFactoryManager().getFactory(currentFactoryId) : null;
+            com.aithor.factorycore.models.PlayerFactory playerFactory = plugin.getPlayerFactoryManager() != null
+                    ? plugin.getPlayerFactoryManager().getFactory(currentFactoryId)
+                    : null;
             if (playerFactory != null) {
                 org.bukkit.Location loc = playerFactory.getCenterLocation();
                 if (loc != null) {
@@ -329,8 +331,19 @@ public class FactoryGUI {
                 }
                 openRecipeConfirm(recipeId);
             } else {
-                plugin.getLogger().warning("Recipe not found for ID: " + recipeId + " in factory type: " +
-                        plugin.getFactoryManager().getFactory(currentFactoryId).getType().getId());
+                // Resolve factory type from either manager for logging
+                String factoryTypeId = "unknown";
+                Factory f = plugin.getFactoryManager().getFactory(currentFactoryId);
+                if (f != null)
+                    factoryTypeId = f.getType().getId();
+                else if (plugin.getPlayerFactoryManager() != null) {
+                    com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager()
+                            .getFactory(currentFactoryId);
+                    if (pf != null)
+                        factoryTypeId = pf.getType().getId();
+                }
+                plugin.getLogger()
+                        .warning("Recipe not found for ID: " + recipeId + " in factory type: " + factoryTypeId);
                 player.sendMessage("§cError: Recipe not found! (ID: " + recipeId + ")");
             }
         } else {
@@ -338,9 +351,19 @@ public class FactoryGUI {
             if (plugin.getConfig().getBoolean("debug.gui-debug", false)) {
                 plugin.getLogger().info(
                         "Clicked non-recipe item in recipe menu: " + name + " (Material: " + clicked.getType() + ")");
+                // Resolve type safely
+                String typeId = "unknown";
+                Factory f = plugin.getFactoryManager().getFactory(currentFactoryId);
+                if (f != null)
+                    typeId = f.getType().getId();
+                else if (plugin.getPlayerFactoryManager() != null) {
+                    com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager()
+                            .getFactory(currentFactoryId);
+                    if (pf != null)
+                        typeId = pf.getType().getId();
+                }
                 plugin.getLogger().info("Available recipe IDs should be: " +
-                        plugin.getRecipeManager().getRecipesByFactoryType(
-                                plugin.getFactoryManager().getFactory(currentFactoryId).getType().getId()).stream()
+                        plugin.getRecipeManager().getRecipesByFactoryType(typeId).stream()
                                 .map(Recipe::getId).toList());
             }
         }
@@ -359,10 +382,15 @@ public class FactoryGUI {
     }
 
     private void startProduction() {
+        // Resolve factory from either admin or player factory
         Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+        com.aithor.factorycore.models.PlayerFactory playerFactory = null;
+        if (factory == null && plugin.getPlayerFactoryManager() != null) {
+            playerFactory = plugin.getPlayerFactoryManager().getFactory(currentFactoryId);
+        }
         Recipe recipe = plugin.getRecipeManager().getRecipe(currentRecipeId);
 
-        if (factory == null || recipe == null)
+        if ((factory == null && playerFactory == null) || recipe == null)
             return;
 
         // ── Check: factory must have an employee assigned ──────────────────────
@@ -419,8 +447,17 @@ public class FactoryGUI {
             }
         }
 
-        // Start production
-        plugin.getFactoryManager().startProduction(factory, currentRecipeId);
+        // Start production on the correct factory type
+        if (factory != null) {
+            plugin.getFactoryManager().startProduction(factory, currentRecipeId);
+        } else {
+            // PlayerFactory production start (mirrors FactoryManager logic)
+            playerFactory.setCurrentProduction(
+                    new com.aithor.factorycore.models.ProductionTask(
+                            currentRecipeId, System.currentTimeMillis(), recipe.getProductionTime()));
+            playerFactory.setStatus(com.aithor.factorycore.models.FactoryStatus.RUNNING);
+            plugin.getPlayerFactoryManager().saveAll();
+        }
 
         // Clear recipe ID after successful production start
         player.getPersistentDataContainer().remove(new NamespacedKey(plugin, "current_recipe_id"));
@@ -577,24 +614,28 @@ public class FactoryGUI {
             return;
         }
 
-        // ── Try as a plain vanilla item (for Smeltery) ──────────────────────────
+        // ── Try as a plain vanilla item (for Smeltery) ───────────────────────────────
         // Check whether the factory currently accepts any vanilla: input that matches
         // the clicked item's material (and the item must be unmodified — no
         // custom-model-data).
+        // Resolve from either admin or player factory
         Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
-        if (factory != null) {
-            // Find the active-recipe or any recipe for this factory type that accepts this
-            // material
+        com.aithor.factorycore.models.PlayerFactory playerFactory = null;
+        if (factory == null && plugin.getPlayerFactoryManager() != null) {
+            playerFactory = plugin.getPlayerFactoryManager().getFactory(currentFactoryId);
+        }
+        FactoryType resolvedType = factory != null
+                ? factory.getType()
+                : (playerFactory != null ? playerFactory.getType() : null);
+        if (resolvedType != null) {
             org.bukkit.Material clickedMat = clickedItem.getType();
             boolean isCustomised = clickedItem.hasItemMeta() &&
                     (clickedItem.getItemMeta().hasCustomModelData() ||
                             clickedItem.getItemMeta().hasDisplayName());
 
             if (!isCustomised) {
-                // Look for a matching vanilla: input key across all recipes of this factory
-                // type
                 String matchedKey = null;
-                for (Recipe r : plugin.getRecipeManager().getRecipesByFactoryType(factory.getType().getId())) {
+                for (Recipe r : plugin.getRecipeManager().getRecipesByFactoryType(resolvedType.getId())) {
                     for (String inputKey : r.getInputs().keySet()) {
                         if (ResourceManager.isVanillaInput(inputKey)) {
                             org.bukkit.Material mat = ResourceManager.getVanillaMaterial(inputKey);
@@ -646,7 +687,16 @@ public class FactoryGUI {
             if (amount <= 0)
                 continue;
 
-            ItemStack toGive = plugin.getResourceManager().createItemStack(resourceId, amount);
+            // Build item to give back: handle vanilla inputs separately
+            ItemStack toGive;
+            if (ResourceManager.isVanillaInput(resourceId)) {
+                org.bukkit.Material mat = ResourceManager.getVanillaMaterial(resourceId);
+                if (mat == null)
+                    continue;
+                toGive = new ItemStack(mat, amount);
+            } else {
+                toGive = plugin.getResourceManager().createItemStack(resourceId, amount);
+            }
             if (toGive == null)
                 continue;
 
@@ -687,10 +737,18 @@ public class FactoryGUI {
         boolean foundAny = false;
 
         // Build a set of vanilla material keys accepted by this factory (for Smeltery)
+        // Resolve from either admin or player factory
         Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+        com.aithor.factorycore.models.PlayerFactory pfForVanilla = null;
+        if (factory == null && plugin.getPlayerFactoryManager() != null) {
+            pfForVanilla = plugin.getPlayerFactoryManager().getFactory(currentFactoryId);
+        }
+        FactoryType resolvedTypeForDeposit = factory != null
+                ? factory.getType()
+                : (pfForVanilla != null ? pfForVanilla.getType() : null);
         Map<org.bukkit.Material, String> acceptedVanilla = new HashMap<>();
-        if (factory != null) {
-            for (Recipe r : plugin.getRecipeManager().getRecipesByFactoryType(factory.getType().getId())) {
+        if (resolvedTypeForDeposit != null) {
+            for (Recipe r : plugin.getRecipeManager().getRecipesByFactoryType(resolvedTypeForDeposit.getId())) {
                 for (String inputKey : r.getInputs().keySet()) {
                     if (ResourceManager.isVanillaInput(inputKey)) {
                         org.bukkit.Material mat = ResourceManager.getVanillaMaterial(inputKey);
@@ -812,12 +870,22 @@ public class FactoryGUI {
 
         // Player clicked the next-level EMERALD → open confirmation GUI
         if (name.contains("Level") && clicked.getType() == Material.EMERALD) {
+            // Check admin factory first, then player factory
             Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
             if (factory != null && !factory.isUpgrading()) {
                 UpgradeGUI upgradeGUI = new UpgradeGUI(plugin, player, currentFactoryId);
                 upgradeGUI.openUpgradeConfirm();
             } else if (factory != null && factory.isUpgrading()) {
                 player.sendMessage("§c⚠ Factory is already being upgraded!");
+            } else if (plugin.getPlayerFactoryManager() != null) {
+                com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager()
+                        .getFactory(currentFactoryId);
+                if (pf != null && !pf.isUpgrading()) {
+                    UpgradeGUI upgradeGUI = new UpgradeGUI(plugin, player, currentFactoryId);
+                    upgradeGUI.openUpgradeConfirm();
+                } else if (pf != null && pf.isUpgrading()) {
+                    player.sendMessage("§c⚠ Factory is already being upgraded!");
+                }
             }
         }
     }
@@ -828,10 +896,45 @@ public class FactoryGUI {
         String name = clicked.getItemMeta().getDisplayName();
 
         if (name.contains("Confirm Upgrade")) {
-            // Attempt to start the timed upgrade
-            if (plugin.getFactoryManager().startUpgrade(player, currentFactoryId)) {
-                player.sendMessage("§a✔ §7Upgrade started! Your factory will reach the next level shortly.");
-                openUpgradeMenu(); // Show timer view
+            // Try admin factory first, then player factory
+            Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+            if (factory != null) {
+                if (plugin.getFactoryManager().startUpgrade(player, currentFactoryId)) {
+                    player.sendMessage("§a✔ §7Upgrade started! Your factory will reach the next level shortly.");
+                    openUpgradeMenu();
+                }
+            } else if (plugin.getPlayerFactoryManager() != null) {
+                com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager()
+                        .getFactory(currentFactoryId);
+                if (pf != null) {
+                    // PlayerFactory upgrade: same logic as FactoryManager.startUpgrade but for
+                    // PlayerFactory
+                    int maxLevel = plugin.getConfig().getInt("factory.max-level", 5);
+                    if (pf.getLevel() >= maxLevel) {
+                        player.sendMessage("§cFactory is already at max level!");
+                        return;
+                    }
+                    double upgradeCost = pf.getPrice() * 0.5 * pf.getLevel();
+                    if (!plugin.getEconomy().has(player, upgradeCost)) {
+                        player.sendMessage(plugin.getLanguageManager().getMessage("insufficient-funds")
+                                .replace("{amount}", String.format("%.2f", upgradeCost)));
+                        return;
+                    }
+                    plugin.getEconomy().withdrawPlayer(player, upgradeCost);
+                    int targetLevel = pf.getLevel() + 1;
+                    int duration = plugin.getConfig().getInt("factory.upgrade-time." + targetLevel, 60);
+                    if (plugin.getResearchManager() != null) {
+                        double rd = plugin.getResearchManager().getUpgradeTimeReduction(player.getUniqueId());
+                        if (rd > 0)
+                            duration = (int) (duration * (1 - rd / 100.0));
+                        duration = Math.max(1, duration);
+                    }
+                    pf.setUpgradeStartTime(System.currentTimeMillis());
+                    pf.setUpgradeDurationSeconds(duration);
+                    plugin.getPlayerFactoryManager().saveAll();
+                    player.sendMessage("§a✔ §7Upgrade started! Your factory will reach the next level shortly.");
+                    openUpgradeMenu();
+                }
             }
             // If startUpgrade returned false, the reason was already messaged to player
         } else if (name.contains("Cancel")) {

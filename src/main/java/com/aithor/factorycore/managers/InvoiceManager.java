@@ -78,6 +78,7 @@ public class InvoiceManager {
     }
 
     public void generateTaxInvoices() {
+        // ── Admin factories ─────────────────────────────────────────────────
         for (Factory factory : plugin.getFactoryManager().getAllFactories()) {
             if (factory.getOwner() == null)
                 continue;
@@ -85,27 +86,51 @@ public class InvoiceManager {
             double taxRate = plugin.getConfig().getDouble("tax.rate", 5.0) / 100.0;
             double levelMultiplier = plugin.getConfig().getDouble("tax.level-multiplier", 2.5) / 100.0;
             double totalRate = taxRate + (levelMultiplier * (factory.getLevel() - 1));
-
             double amount = factory.getPrice() * totalRate;
 
-            // Apply fiscal_optimization research buff
             if (plugin.getResearchManager() != null) {
                 double reduction = plugin.getResearchManager().getTaxReduction(factory.getOwner());
-                if (reduction > 0) {
+                if (reduction > 0)
                     amount *= (1 - (reduction / 100.0));
-                }
             }
 
-            long dueDate = System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000); // 7 days
-
+            long dueDate = System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000);
             String invoiceId = "tax_" + factory.getId() + "_" + System.currentTimeMillis();
-            Invoice invoice = new Invoice(invoiceId, factory.getOwner(), InvoiceType.TAX, amount, dueDate);
-            invoices.put(invoiceId, invoice);
+            invoices.put(invoiceId, new Invoice(invoiceId, factory.getOwner(), InvoiceType.TAX, amount, dueDate));
 
             Player owner = Bukkit.getPlayer(factory.getOwner());
             if (owner != null) {
                 owner.sendMessage(plugin.getLanguageManager().getMessage("tax-generated")
                         .replace("{amount}", String.format("%.2f", amount)));
+            }
+        }
+
+        // ── Player factories ───────────────────────────────────────────────
+        if (plugin.getPlayerFactoryManager() != null) {
+            for (com.aithor.factorycore.models.PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                if (pf.getOwner() == null)
+                    continue;
+
+                double taxRate = plugin.getConfig().getDouble("tax.rate", 5.0) / 100.0;
+                double levelMultiplier = plugin.getConfig().getDouble("tax.level-multiplier", 2.5) / 100.0;
+                double totalRate = taxRate + (levelMultiplier * (pf.getLevel() - 1));
+                double amount = pf.getPrice() * totalRate;
+
+                if (plugin.getResearchManager() != null) {
+                    double reduction = plugin.getResearchManager().getTaxReduction(pf.getOwner());
+                    if (reduction > 0)
+                        amount *= (1 - (reduction / 100.0));
+                }
+
+                long dueDate = System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000);
+                String invoiceId = "tax_" + pf.getId() + "_" + System.currentTimeMillis();
+                invoices.put(invoiceId, new Invoice(invoiceId, pf.getOwner(), InvoiceType.TAX, amount, dueDate));
+
+                Player owner = Bukkit.getPlayer(pf.getOwner());
+                if (owner != null) {
+                    owner.sendMessage(plugin.getLanguageManager().getMessage("tax-generated")
+                            .replace("{amount}", String.format("%.2f", amount)));
+                }
             }
         }
 
@@ -115,39 +140,67 @@ public class InvoiceManager {
     public void generateSalaryInvoices() {
         lastSalaryCollection = System.currentTimeMillis();
 
+        // ── Admin factories ─────────────────────────────────────────────────
         for (Factory factory : plugin.getFactoryManager().getAllFactories()) {
             if (factory.getOwner() == null)
                 continue;
 
             FactoryNPC assignedNPC = plugin.getNPCManager().getAssignedNPCForFactory(factory.getId());
-            if (assignedNPC == null || assignedNPC.getNpcTypeId() == null) {
+            if (assignedNPC == null || assignedNPC.getNpcTypeId() == null)
                 continue;
-            }
 
             double amount = plugin.getNPCManager().getNpcSettings()
                     .getDouble("shop.npcs." + assignedNPC.getNpcTypeId() + ".salary", 0.0);
-            if (amount <= 0) {
+            if (amount <= 0)
                 continue;
-            }
 
-            // Apply AI Workforce Integration research buff
             if (plugin.getResearchManager() != null) {
                 double reduction = plugin.getResearchManager().getSalaryReduction(factory.getOwner());
-                if (reduction > 0) {
+                if (reduction > 0)
                     amount *= (1 - (reduction / 100.0));
-                }
             }
 
-            long dueDate = System.currentTimeMillis() + (3 * 24 * 60 * 60 * 1000); // 3 days
-
+            long dueDate = System.currentTimeMillis() + (3 * 24 * 60 * 60 * 1000);
             String invoiceId = "salary_" + factory.getId() + "_" + System.currentTimeMillis();
-            Invoice invoice = new Invoice(invoiceId, factory.getOwner(), InvoiceType.SALARY, amount, dueDate);
-            invoices.put(invoiceId, invoice);
+            invoices.put(invoiceId, new Invoice(invoiceId, factory.getOwner(), InvoiceType.SALARY, amount, dueDate));
 
             Player owner = Bukkit.getPlayer(factory.getOwner());
             if (owner != null) {
                 owner.sendMessage(plugin.getLanguageManager().getMessage("salary-generated")
                         .replace("{amount}", String.format("%.2f", amount)));
+            }
+        }
+
+        // ── Player factories ───────────────────────────────────────────────
+        if (plugin.getPlayerFactoryManager() != null) {
+            for (com.aithor.factorycore.models.PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                if (pf.getOwner() == null)
+                    continue;
+
+                FactoryNPC assignedNPC = plugin.getNPCManager().getAssignedNPCForFactory(pf.getId());
+                if (assignedNPC == null || assignedNPC.getNpcTypeId() == null)
+                    continue;
+
+                double amount = plugin.getNPCManager().getNpcSettings()
+                        .getDouble("shop.npcs." + assignedNPC.getNpcTypeId() + ".salary", 0.0);
+                if (amount <= 0)
+                    continue;
+
+                if (plugin.getResearchManager() != null) {
+                    double reduction = plugin.getResearchManager().getSalaryReduction(pf.getOwner());
+                    if (reduction > 0)
+                        amount *= (1 - (reduction / 100.0));
+                }
+
+                long dueDate = System.currentTimeMillis() + (3 * 24 * 60 * 60 * 1000);
+                String invoiceId = "salary_" + pf.getId() + "_" + System.currentTimeMillis();
+                invoices.put(invoiceId, new Invoice(invoiceId, pf.getOwner(), InvoiceType.SALARY, amount, dueDate));
+
+                Player owner = Bukkit.getPlayer(pf.getOwner());
+                if (owner != null) {
+                    owner.sendMessage(plugin.getLanguageManager().getMessage("salary-generated")
+                            .replace("{amount}", String.format("%.2f", amount)));
+                }
             }
         }
 

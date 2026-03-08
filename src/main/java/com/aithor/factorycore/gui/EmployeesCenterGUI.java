@@ -57,13 +57,18 @@ public class EmployeesCenterGUI {
             inv.setItem(i, border);
 
         // Header info
+        int totalFactoriesWithEmployees = getFactoriesWithEmployees();
+        int totalOwnedFactories = playerFactories.size() + (plugin.getPlayerFactoryManager() != null
+                ? plugin.getPlayerFactoryManager().getFactoriesByOwner(player.getUniqueId()).size()
+                : 0);
+
         List<String> headerLore = new ArrayList<>();
         headerLore.add("§7Manage your factory employees");
         headerLore.add("");
         headerLore.add("§eOwned Employees: §b" + ownedNPCs.size());
         headerLore.add("§eUnassigned Employees: §e" + unassignedCount);
-        headerLore.add("§eFactories with Employees: §b" + getFactoriesWithEmployees());
-        headerLore.add("§eFactories without Employees: §c" + (playerFactories.size() - getFactoriesWithEmployees()));
+        headerLore.add("§eFactories with Employees: §b" + totalFactoriesWithEmployees);
+        headerLore.add("§eFactories without Employees: §c" + (totalOwnedFactories - totalFactoriesWithEmployees));
         headerLore.add("");
         headerLore.add("§7Employees boost production speed");
         headerLore.add("§7and are required to start production.");
@@ -81,8 +86,19 @@ public class EmployeesCenterGUI {
             inv.setItem(slot++, createFactoryEmployeeItem(factory));
         }
 
+        // Also show player-created factories
+        if (plugin.getPlayerFactoryManager() != null) {
+            List<PlayerFactory> pfList = plugin.getPlayerFactoryManager().getFactoriesByOwner(player.getUniqueId());
+            for (PlayerFactory pf : pfList) {
+                if (slot >= 45)
+                    break;
+                inv.setItem(slot++, createPlayerFactoryEmployeeItem(pf));
+            }
+        }
+
         // Show message if no factories
-        if (playerFactories.isEmpty()) {
+        if (playerFactories.isEmpty() && (plugin.getPlayerFactoryManager() == null
+                || plugin.getPlayerFactoryManager().getFactoriesByOwner(player.getUniqueId()).isEmpty())) {
             inv.setItem(22, createItem(Material.BARRIER, "§c§lNo Factories",
                     Arrays.asList(
                             "§7You don't own any factories!",
@@ -122,11 +138,11 @@ public class EmployeesCenterGUI {
         inv.setItem(49, createEmployeeInfoItem());
 
         // Page info (slot 50)
-        int totalPages = (int) Math.ceil((double) playerFactories.size() / slotsPerPage);
+        int totalPages = (int) Math.ceil((double) totalOwnedFactories / slotsPerPage);
         inv.setItem(50, createItem(Material.PAPER, "§e§lPage Info",
                 Arrays.asList(
                         "§7Page: §e" + (page + 1) + " / " + Math.max(1, totalPages),
-                        "§7Factories: §e" + playerFactories.size())));
+                        "§7Factories: §e" + totalOwnedFactories)));
 
         // Back to hub (slot 51)
         inv.setItem(51, createItem(Material.DARK_OAK_DOOR, "§c§lBack to Hub",
@@ -226,6 +242,90 @@ public class EmployeesCenterGUI {
         return item;
     }
 
+    private ItemStack createPlayerFactoryEmployeeItem(PlayerFactory factory) {
+        FactoryNPC assignedNPC = plugin.getNPCManager().getAssignedNPCForFactory(factory.getId());
+        FactoryNPC anyNPC = plugin.getNPCManager().getAnyNPCForFactory(factory.getId());
+        boolean hasEmployee = anyNPC != null;
+        boolean isPurchased = assignedNPC != null;
+
+        Material material = hasEmployee ? Material.LIME_CONCRETE : Material.GRAY_CONCRETE;
+
+        List<String> lore = new ArrayList<>();
+        lore.add("§7Factory: §e" + factory.getId());
+        lore.add("§7Type: " + factory.getType().getDisplayName());
+        lore.add("§7Level: §b" + factory.getLevel());
+        lore.add("§d§oPlayer-Created Factory");
+        lore.add("");
+
+        if (hasEmployee) {
+            FactoryNPC npc = isPurchased ? assignedNPC : anyNPC;
+            lore.add("§a✓ Employee Assigned");
+            lore.add("");
+            lore.add("§7Employee: §b" + npc.getName());
+            if (isPurchased) {
+                lore.add("§7Type: §e" + npc.getNpcTypeId());
+                lore.add("§7Production Buff: §a-" + npc.getProductionTimeReduction() + "% §7time");
+
+                long timeUntilNext = plugin.getInvoiceManager().getTimeUntilNextSalary();
+                if (timeUntilNext > 0) {
+                    long hours = timeUntilNext / (60 * 60 * 1000);
+                    long minutes = (timeUntilNext % (60 * 60 * 1000)) / (60 * 1000);
+                    lore.add("§7Next Salary In: §e" + hours + "h " + minutes + "m");
+                } else {
+                    lore.add("§7Next Salary In: §ePending...");
+                }
+            } else {
+                lore.add("§7(Admin-spawned employee)");
+            }
+            lore.add("§7Location: §e" + formatLocation(npc.getLocation()));
+            lore.add("");
+            if (isPurchased) {
+                lore.add("§eLeft Click: §7Teleport to Employee");
+                lore.add("§eRight Click: §7Unassign Employee");
+                lore.add("§eShift+Right: §7Dismiss Employee (permanent)");
+            } else {
+                lore.add("§eLeft Click: §7Teleport to Employee");
+                lore.add("§eRight Click: §7Fire Employee");
+            }
+        } else {
+            lore.add("§c✗ No Employee Assigned");
+            lore.add("");
+            lore.add("§cProduction is BLOCKED!");
+            lore.add("§7Assign an employee to enable");
+            lore.add("§7production at this factory.");
+            lore.add("");
+            lore.add("§7Buy employees from the §6Employee Shop§7.");
+            lore.add("");
+            lore.add("§eClick: §7Open Employee Shop");
+        }
+
+        String title = (hasEmployee ? "§a" : "§7") + factory.getType().getDisplayName() + " §d[Player] §7- §e"
+                + factory.getId();
+        ItemStack item = createItem(material, title, lore);
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.getPersistentDataContainer().set(
+                    new NamespacedKey(plugin, "employee_factory_id"),
+                    PersistentDataType.STRING,
+                    factory.getId());
+            if (hasEmployee) {
+                FactoryNPC npc = isPurchased ? assignedNPC : anyNPC;
+                meta.getPersistentDataContainer().set(
+                        new NamespacedKey(plugin, "employee_npc_id"),
+                        PersistentDataType.STRING,
+                        npc.getId());
+                meta.getPersistentDataContainer().set(
+                        new NamespacedKey(plugin, "employee_is_purchased"),
+                        PersistentDataType.INTEGER,
+                        isPurchased ? 1 : 0);
+            }
+            item.setItemMeta(meta);
+        }
+
+        return item;
+    }
+
     private ItemStack createEmployeeInfoItem() {
         List<String> lore = new ArrayList<>();
         lore.add("§7About Factory Employees");
@@ -256,6 +356,10 @@ public class EmployeesCenterGUI {
         Set<String> playerFactoryIds = playerFactories.stream()
                 .map(Factory::getId)
                 .collect(Collectors.toSet());
+        if (plugin.getPlayerFactoryManager() != null) {
+            plugin.getPlayerFactoryManager().getFactoriesByOwner(player.getUniqueId())
+                    .forEach(pf -> playerFactoryIds.add(pf.getId()));
+        }
 
         for (FactoryNPC npc : plugin.getNPCManager().getAllNPCs()) {
             if (playerFactoryIds.contains(npc.getFactoryId())) {
@@ -272,6 +376,14 @@ public class EmployeesCenterGUI {
         for (Factory factory : playerFactories) {
             if (plugin.getNPCManager().factoryHasEmployee(factory.getId())) {
                 count++;
+            }
+        }
+        if (plugin.getPlayerFactoryManager() != null) {
+            List<PlayerFactory> pfList = plugin.getPlayerFactoryManager().getFactoriesByOwner(player.getUniqueId());
+            for (PlayerFactory pf : pfList) {
+                if (plugin.getNPCManager().factoryHasEmployee(pf.getId())) {
+                    count++;
+                }
             }
         }
         return count;

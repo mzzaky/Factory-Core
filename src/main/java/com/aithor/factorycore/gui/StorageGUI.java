@@ -27,11 +27,17 @@ public class StorageGUI {
     }
 
     public void openStorageMenu() {
+        // Resolve from either admin factory or player factory
         Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null) {
+        com.aithor.factorycore.models.PlayerFactory playerFactory = null;
+        if (factory == null && plugin.getPlayerFactoryManager() != null) {
+            playerFactory = plugin.getPlayerFactoryManager().getFactory(factoryId);
+        }
+        if (factory == null && playerFactory == null) {
             player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
             return;
         }
+        FactoryType resolvedType = factory != null ? factory.getType() : playerFactory.getType();
 
         if (plugin.getStorageManager() == null) {
             player.sendMessage("§cError: Storage manager not available!");

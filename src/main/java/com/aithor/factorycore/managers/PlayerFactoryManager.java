@@ -239,6 +239,12 @@ public class PlayerFactoryManager {
         plugin.getEconomy().depositPlayer(player, sellPrice);
         playerFactories.remove(factoryId);
 
+        // Unassign NPC if any is attached to this player factory
+        com.aithor.factorycore.models.FactoryNPC npc = plugin.getNPCManager().getAssignedNPCForFactory(factoryId);
+        if (npc != null) {
+            plugin.getNPCManager().unassignNPC(player, npc.getId());
+        }
+
         // Clear storage
         plugin.getStorageManager().clearStorage(factoryId);
 
@@ -294,5 +300,120 @@ public class PlayerFactoryManager {
         return ax1 <= bx2 && ax2 >= bx1 &&
                 ay1 <= by2 && ay2 >= by1 &&
                 az1 <= bz2 && az2 >= bz1;
+    }
+
+    // ── Upgrade tick (call from scheduler, mirrors FactoryManager.updateUpgrades)
+    // ───
+
+    /**
+     * Checks all player factories for completed upgrade timers and levels them up.
+     * Call this from the same scheduler task that calls
+     * FactoryManager.updateUpgrades().
+     */
+    public void updateUpgrades() {
+        for (PlayerFactory pf : playerFactories.values()) {
+            if (pf.isUpgradeComplete()) {
+                completeUpgrade(pf);
+            }
+        }
+    }
+
+    private void completeUpgrade(PlayerFactory pf) {
+        pf.setLevel(pf.getLevel() + 1);
+        pf.setUpgradeStartTime(-1);
+        pf.setUpgradeDurationSeconds(0);
+        saveAll();
+
+        org.bukkit.entity.Player owner = org.bukkit.Bukkit.getPlayer(pf.getOwner());
+        if (owner != null) {
+            owner.sendMessage(plugin.getLanguageManager().getMessage("level-up")
+                    .replace("{level}", String.valueOf(pf.getLevel())));
+        }
+    }
+
+    // ── Production tick (mirrors FactoryManager.updateProduction) ───────────────
+
+    /**
+     * Checks all running player factories for completed productions and adds
+     * output items to storage. Call from the same scheduler task.
+     */
+    public void updateProduction() {
+        for (PlayerFactory pf : playerFactories.values()) {
+            if (pf.getStatus() != com.aithor.factorycore.models.FactoryStatus.RUNNING)
+                continue;
+            com.aithor.factorycore.models.ProductionTask task = pf.getCurrentProduction();
+            if (task == null) {
+                pf.setStatus(com.aithor.factorycore.models.FactoryStatus.STOPPED);
+                continue;
+            }
+            if (task.isComplete()) {
+                completeProduction(pf, task);
+            }
+        }
+    }
+
+    private void completeProduction(PlayerFactory pf, com.aithor.factorycore.models.ProductionTask task) {
+        com.aithor.factorycore.models.Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
+        if (recipe != null) {
+            for (java.util.Map.Entry<String, Integer> output : recipe.getOutputs().entrySet()) {
+                plugin.getStorageManager().addOutputItem(pf.getId(), output.getKey(), output.getValue());
+            }
+            // Execute console commands
+            for (String cmd : recipe.getConsoleCommands()) {
+                String command = cmd.replace("{player}",
+                        org.bukkit.Bukkit.getOfflinePlayer(pf.getOwner()).getName());
+                org.bukkit.Bukkit.dispatchCommand(org.bukkit.Bukkit.getConsoleSender(), command);
+            }
+        }
+
+        pf.setCurrentProduction(null);
+        pf.setStatus(com.aithor.factorycore.models.FactoryStatus.STOPPED);
+        saveAll();
+
+        // ── Achievements ────────────────────────────────────────────────────
+        if (plugin.getAchievementManager() != null) {
+            org.bukkit.entity.Player online = org.bukkit.Bukkit.getPlayer(pf.getOwner());
+            if (online != null) {
+                plugin.getAchievementManager().awardAchievement(online, "early_prototype");
+                plugin.getAchievementManager().addProgress(online, "mass_producer", 1);
+            } else {
+                plugin.getAchievementManager().addProgressOffline(pf.getOwner(), "mass_producer", 1);
+            }
+        }
+
+        // ── Daily Quest ─────────────────────────────────────────────────────
+        if (plugin.getDailyQuestManager() != null) {
+            org.bukkit.entity.Player online = org.bukkit.Bukkit.getPlayer(pf.getOwner());
+            if (online != null) {
+                plugin.getDailyQuestManager().addProgressByType(online, "PRODUCTION_COMPLETE", 1);
+            }
+        }
+
+        // ── Notify owner ────────────────────────────────────────────────────
+        org.bukkit.entity.Player owner = org.bukkit.Bukkit.getPlayer(pf.getOwner());
+        if (owner != null) {
+            String recipeName = (recipe != null && recipe.getName() != null) ? recipe.getName() : "Unknown Recipe";
+            owner.sendMessage(plugin.getLanguageManager().getMessage("production-complete")
+                    .replace("{recipe}", recipeName));
+
+            // Sound
+            if (plugin.getConfig().getBoolean("notifications.sound.enabled")) {
+                try {
+                    owner.playSound(owner.getLocation(),
+                            plugin.getConfig().getString("notifications.sound.production-complete"),
+                            1.0f, 1.0f);
+                } catch (Exception ignored) {
+                }
+            }
+
+            // Title
+            if (plugin.getConfig().getBoolean("notifications.titles.enabled")) {
+                owner.sendTitle(
+                        plugin.getLanguageManager().getMessage("titles.production-complete.title"),
+                        plugin.getLanguageManager().getMessage("titles.production-complete.subtitle")
+                                .replace("{recipe}", recipeName),
+                        10, 40, 10);
+            }
+        }
     }
 }

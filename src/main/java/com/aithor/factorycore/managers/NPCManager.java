@@ -207,7 +207,12 @@ public class NPCManager {
         if (npcs.containsKey(npcId))
             return false;
 
-        if (plugin.getFactoryManager().getFactory(factoryId) == null) {
+        // Validate factory exists — check both admin and player factory managers
+        boolean factoryExists = plugin.getFactoryManager().getFactory(factoryId) != null;
+        if (!factoryExists && plugin.getPlayerFactoryManager() != null) {
+            factoryExists = plugin.getPlayerFactoryManager().getFactory(factoryId) != null;
+        }
+        if (!factoryExists) {
             plugin.getLogger().warning("Factory not found: " + factoryId + ". Cannot spawn NPC.");
             return false;
         }
@@ -597,6 +602,37 @@ public class NPCManager {
                 // Skip unassigned purchased NPCs (no location = not in world)
                 if (npc.getLocation() == null)
                     continue;
+
+                // Skip if the factory this NPC belongs to no longer exists
+                // (handles both admin factories and player-created factories)
+                if (npc.getFactoryId() != null && !npc.getFactoryId().isEmpty()) {
+                    boolean factoryStillExists = plugin.getFactoryManager().getFactory(npc.getFactoryId()) != null;
+                    if (!factoryStillExists && plugin.getPlayerFactoryManager() != null) {
+                        factoryStillExists = plugin.getPlayerFactoryManager().getFactory(npc.getFactoryId()) != null;
+                    }
+                    if (!factoryStillExists) {
+                        // Factory removed but NPC record is orphaned.
+                        // We must properly unassign it so the player gets their employee back!
+                        plugin.getLogger().info("Factory missing for NPC " + npc.getId() + " - Auto-unassigning...");
+
+                        // Remove old entity/hologram traces just in case
+                        removeVillagerEntity(npc);
+                        removeHolograms(npc);
+                        if (npc.getEntityUUID() != null) {
+                            entityToFactory.remove(npc.getEntityUUID());
+                            entityToNpcId.remove(npc.getEntityUUID());
+                        }
+
+                        // Clear assignment
+                        npc.setFactoryId(null);
+                        npc.setLocation(null);
+                        npc.setEntityUUID(null);
+                        saveAll();
+
+                        continue;
+                    }
+                }
+
                 if (!isEntityAlive(npc)) {
                     plugin.getLogger().info("Respawning missing NPC: " + npc.getId());
                     String configPath = resolveConfigPath(npc.getTemplate());
@@ -799,12 +835,25 @@ public class NPCManager {
 
         // Check factory exists and player owns it
         com.aithor.factorycore.models.Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null) {
+        com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager() != null
+                ? plugin.getPlayerFactoryManager().getFactory(factoryId)
+                : null;
+
+        Location spawnLoc = null;
+        if (factory != null) {
+            if (!player.getUniqueId().equals(factory.getOwner())) {
+                player.sendMessage("§cYou don't own this factory!");
+                return false;
+            }
+            spawnLoc = factory.getFastTravelLocation();
+        } else if (pf != null) {
+            if (!player.getUniqueId().equals(pf.getOwner())) {
+                player.sendMessage("§cYou don't own this factory!");
+                return false;
+            }
+            spawnLoc = pf.getCenterLocation();
+        } else {
             player.sendMessage("§cFactory not found!");
-            return false;
-        }
-        if (!player.getUniqueId().equals(factory.getOwner())) {
-            player.sendMessage("§cYou don't own this factory!");
             return false;
         }
 
@@ -815,10 +864,9 @@ public class NPCManager {
             return false;
         }
 
-        // Determine spawn location: use fast-travel location if available
-        Location spawnLoc = factory.getFastTravelLocation();
+        // Determine spawn location
         if (spawnLoc == null) {
-            player.sendMessage("§cThis factory has no fast-travel location set. Ask an admin to set one first.");
+            player.sendMessage("§cThis factory has no valid location for the employee.");
             return false;
         }
 
@@ -914,8 +962,19 @@ public class NPCManager {
      */
     public boolean respawnNPCIfNotExists(String npcId) {
         FactoryNPC npc = npcs.get(npcId);
-        if (npc == null)
+        if (npc == null || npc.getLocation() == null)
             return false;
+
+        // Skip if the factory this NPC belongs to no longer exists
+        if (npc.getFactoryId() != null && !npc.getFactoryId().isEmpty()) {
+            boolean factoryStillExists = plugin.getFactoryManager().getFactory(npc.getFactoryId()) != null;
+            if (!factoryStillExists && plugin.getPlayerFactoryManager() != null) {
+                factoryStillExists = plugin.getPlayerFactoryManager().getFactory(npc.getFactoryId()) != null;
+            }
+            if (!factoryStillExists) {
+                return false;
+            }
+        }
 
         if (isEntityAlive(npc))
             return false;

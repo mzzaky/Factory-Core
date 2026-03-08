@@ -27,26 +27,39 @@ public class OutputStorageGUI {
     }
 
     public void openOutputStorage() {
+        // Resolve from either admin or player factory
         Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null) {
+        com.aithor.factorycore.models.PlayerFactory playerFactory = null;
+        if (factory == null && plugin.getPlayerFactoryManager() != null) {
+            playerFactory = plugin.getPlayerFactoryManager().getFactory(factoryId);
+        }
+
+        if (factory == null && playerFactory == null) {
             player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
             return;
         }
 
-        // Check if player is the factory owner
-        if (!player.getUniqueId().equals(factory.getOwner())) {
+        // Ownership check
+        java.util.UUID ownerUUID = factory != null ? factory.getOwner() : playerFactory.getOwner();
+        if (!player.getUniqueId().equals(ownerUUID)) {
             player.sendMessage("§cYou are not the owner of this factory!");
             return;
         }
 
-        // Calculate storage slots based on factory level from config
+        // Resolve display info
+        String typeDisplay = factory != null
+                ? factory.getType().getDisplayName()
+                : playerFactory.getType().getDisplayName();
+        int factoryLevel = factory != null ? factory.getLevel() : playerFactory.getLevel();
+
+        // Calculate storage slots
         int slots = plugin.getConfig().getInt("factory.base-storage-slots", 9);
         int size = ((slots + 8) / 9) * 9;
         if (size > 54)
-            size = 54; // Max 6 rows
+            size = 54;
 
         Inventory inv = Bukkit.createInventory(null, size,
-                "§6§lOutput Storage - " + factory.getType().getDisplayName());
+                "§6§lOutput Storage - " + typeDisplay);
 
         // Fill with border
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ", null);
@@ -63,14 +76,21 @@ public class OutputStorageGUI {
                 break;
 
             ItemStack item = plugin.getResourceManager().createItemStack(entry.getKey(), entry.getValue());
+            if (item == null && entry.getKey().startsWith("vanilla:")) {
+                // Handle vanilla items
+                String materialName = entry.getKey().substring("vanilla:".length()).toUpperCase();
+                try {
+                    Material mat = Material.valueOf(materialName);
+                    item = new ItemStack(mat, entry.getValue());
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
             if (item != null) {
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null) {
-                    // Store resource ID in the item
                     meta.getPersistentDataContainer().set(new NamespacedKey(plugin, "resource_id"),
                             PersistentDataType.STRING, entry.getKey());
 
-                    // Add lore for clarity
                     List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
                     if (lore != null) {
                         lore.add("");
@@ -86,11 +106,11 @@ public class OutputStorageGUI {
             }
         }
 
-        // Add info item in the last slot
+        // Info item in last slot
         if (size >= 9) {
             List<String> infoLore = new ArrayList<>();
             infoLore.add("§7Storage Slots: §e" + slots);
-            infoLore.add("§7Factory Level: §e" + factory.getLevel());
+            infoLore.add("§7Factory Level: §e" + factoryLevel);
             infoLore.add("§7Items in storage: §e" + outputStorage.size());
             inv.setItem(size - 1, createItem(Material.BOOK, "§6§lStorage Info", infoLore));
         }
@@ -133,13 +153,21 @@ public class OutputStorageGUI {
     }
 
     private void handleWithdraw(ItemStack clickedItem, String resourceId) {
+        // Verify factory ownership from either manager
+        boolean ownerValid = false;
         Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null)
+        if (factory != null) {
+            ownerValid = player.getUniqueId().equals(factory.getOwner());
+        } else if (plugin.getPlayerFactoryManager() != null) {
+            com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(factoryId);
+            if (pf != null)
+                ownerValid = player.getUniqueId().equals(pf.getOwner());
+        }
+        if (!ownerValid)
             return;
 
         int amountToWithdraw = clickedItem.getAmount();
 
-        // Check if there's enough in output storage
         int available = plugin.getStorageManager().getOutputAmount(factoryId, resourceId);
         if (available < amountToWithdraw) {
             amountToWithdraw = available;
@@ -150,27 +178,34 @@ public class OutputStorageGUI {
             return;
         }
 
-        // Remove from output storage using StorageManager
         plugin.getStorageManager().removeOutputItem(factoryId, resourceId, amountToWithdraw);
 
-        // Give item to player
+        // Build item to give — handle vanilla: prefix
         ItemStack toGive = plugin.getResourceManager().createItemStack(resourceId, amountToWithdraw);
+        if (toGive == null && resourceId.startsWith("vanilla:")) {
+            String materialName = resourceId.substring("vanilla:".length()).toUpperCase();
+            try {
+                toGive = new ItemStack(Material.valueOf(materialName), amountToWithdraw);
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
         if (toGive != null) {
             HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(toGive);
             if (!leftover.isEmpty()) {
-                // If inventory is full, return items to output storage
                 int amountNotAdded = leftover.values().stream().mapToInt(ItemStack::getAmount).sum();
                 plugin.getStorageManager().addOutputItem(factoryId, resourceId, amountNotAdded);
                 player.sendMessage("§cInventory is full! Some items were returned to storage.");
             } else {
                 ItemMeta itemMeta = toGive.getItemMeta();
-                String itemName = (itemMeta != null) ? itemMeta.getDisplayName() : resourceId;
+                String itemName = (itemMeta != null && itemMeta.hasDisplayName())
+                        ? itemMeta.getDisplayName()
+                        : resourceId;
                 player.sendMessage("§aSuccessfully took §e" + amountToWithdraw + "x " +
                         itemName + " §afrom the output storage!");
             }
         }
 
-        // Close the GUI instead of refreshing
         player.closeInventory();
     }
 

@@ -58,7 +58,7 @@
 # ----------------------------------------------------------
 gui:
   title: "&f<shift:-8>ꐒ"
-  size: 45   # Must be a multiple of 9 (9, 18, 27, 36, 45, 54)
+  size: 36   # Must be a multiple of 9 (9, 18, 27, 36, 45, 54)
 
   # Default click sound played when any item is clicked.
   # Individual items can override this.

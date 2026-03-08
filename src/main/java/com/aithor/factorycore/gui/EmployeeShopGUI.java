@@ -3,6 +3,7 @@ package com.aithor.factorycore.gui;
 import com.aithor.factorycore.FactoryCore;
 import com.aithor.factorycore.models.Factory;
 import com.aithor.factorycore.models.FactoryNPC;
+import com.aithor.factorycore.models.PlayerFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -223,7 +224,57 @@ public class EmployeeShopGUI {
             slot++;
         }
 
-        if (playerFactories.isEmpty()) {
+        if (plugin.getPlayerFactoryManager() != null) {
+            List<PlayerFactory> pfList = plugin.getPlayerFactoryManager().getFactoriesByOwner(player.getUniqueId());
+            for (PlayerFactory factory : pfList) {
+                if (slot >= 45)
+                    break;
+                FactoryNPC existing = plugin.getNPCManager().getAssignedNPCForFactory(factory.getId());
+                boolean hasEmployee = existing != null;
+
+                List<String> lore = new ArrayList<>();
+                lore.add("§7Factory: §e" + factory.getId());
+                lore.add("§7Type: " + factory.getType().getDisplayName());
+                lore.add("§7Level: §b" + factory.getLevel());
+                lore.add("§d§oPlayer-Created Factory");
+                lore.add("");
+                if (hasEmployee) {
+                    lore.add("§c✗ Already has an employee: §f" + existing.getName());
+                    lore.add("§7Remove the current employee first.");
+                } else {
+                    lore.add("§a✓ Available for assignment");
+                    lore.add("");
+                    lore.add("§eClick to assign §b" + npc.getName() + " §ehere!");
+                }
+
+                Material mat = hasEmployee ? Material.RED_CONCRETE : Material.LIME_CONCRETE;
+                ItemStack factoryItem = createItem(mat,
+                        (hasEmployee ? "§c" : "§a") + factory.getType().getDisplayName() + " §d[Player] §7- §e"
+                                + factory.getId(),
+                        lore);
+
+                if (!hasEmployee) {
+                    ItemMeta meta = factoryItem.getItemMeta();
+                    if (meta != null) {
+                        meta.getPersistentDataContainer().set(
+                                new NamespacedKey(plugin, "assign_factory_id"),
+                                PersistentDataType.STRING, factory.getId());
+                        meta.getPersistentDataContainer().set(
+                                new NamespacedKey(plugin, "assign_npc_id"),
+                                PersistentDataType.STRING, npcId);
+                        factoryItem.setItemMeta(meta);
+                    }
+                }
+
+                inv.setItem(slot, factoryItem);
+                slot++;
+            }
+        }
+
+        boolean hasPlayerFactories = plugin.getPlayerFactoryManager() != null
+                && !plugin.getPlayerFactoryManager().getFactoriesByOwner(player.getUniqueId()).isEmpty();
+
+        if (playerFactories.isEmpty() && !hasPlayerFactories) {
             inv.setItem(22, createItem(Material.BARRIER, "§c§lNo Factories",
                     Arrays.asList("§7You don't own any factories!")));
         }

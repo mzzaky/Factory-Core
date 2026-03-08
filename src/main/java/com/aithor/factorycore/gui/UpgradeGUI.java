@@ -26,10 +26,73 @@ public class UpgradeGUI {
         this.factoryId = factoryId;
     }
 
+    // ── Private helper to resolve level/price from either factory type ──────────
+
+    /**
+     * Returns the factory level regardless of factory type. Returns -1 if not
+     * found.
+     */
+    private int resolveLevel() {
+        Factory f = plugin.getFactoryManager().getFactory(factoryId);
+        if (f != null)
+            return f.getLevel();
+        if (plugin.getPlayerFactoryManager() != null) {
+            com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(factoryId);
+            if (pf != null)
+                return pf.getLevel();
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the factory price regardless of factory type. Returns 0 if not found.
+     */
+    private double resolvePrice() {
+        Factory f = plugin.getFactoryManager().getFactory(factoryId);
+        if (f != null)
+            return f.getPrice();
+        if (plugin.getPlayerFactoryManager() != null) {
+            com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(factoryId);
+            if (pf != null)
+                return pf.getPrice();
+        }
+        return 0;
+    }
+
+    /** Returns true if the factory is currently upgrading. */
+    private boolean resolveIsUpgrading() {
+        Factory f = plugin.getFactoryManager().getFactory(factoryId);
+        if (f != null)
+            return f.isUpgrading();
+        if (plugin.getPlayerFactoryManager() != null) {
+            com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(factoryId);
+            if (pf != null)
+                return pf.isUpgrading();
+        }
+        return false;
+    }
+
+    /** Returns time remaining for upgrade (seconds). */
+    private int resolveUpgradeRemainingSeconds() {
+        Factory f = plugin.getFactoryManager().getFactory(factoryId);
+        if (f != null)
+            return f.getUpgradeRemainingSeconds();
+        if (plugin.getPlayerFactoryManager() != null) {
+            com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(factoryId);
+            if (pf != null)
+                return pf.getUpgradeRemainingSeconds();
+        }
+        return 0;
+    }
+
     public void openUpgradeMenu() {
-        Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null)
+        // Resolve from either admin factory or player factory
+        boolean validFactory = resolveLevel() >= 0;
+        if (!validFactory)
             return;
+
+        int currentLevel = resolveLevel();
+        double factoryPrice = resolvePrice();
 
         player.getPersistentDataContainer().set(
                 new NamespacedKey(plugin, "current_factory_id"),
@@ -52,19 +115,19 @@ public class UpgradeGUI {
         currentLore.add("§7Current Level");
         currentLore.add("");
         currentLore.add("§aCost reduction: §e" +
-                (factory.getLevel() - 1) * plugin.getConfig().getDouble("factory.level-bonuses.cost-reduction") + "%");
+                (currentLevel - 1) * plugin.getConfig().getDouble("factory.level-bonuses.cost-reduction") + "%");
         currentLore.add("§aTime reduction: §e" +
-                (factory.getLevel() - 1) * plugin.getConfig().getDouble("factory.level-bonuses.time-reduction") + "%");
+                (currentLevel - 1) * plugin.getConfig().getDouble("factory.level-bonuses.time-reduction") + "%");
 
         inv.setItem(11, createItem(Material.DIAMOND,
-                "§6Level " + factory.getLevel(), currentLore));
+                "§6Level " + currentLevel, currentLore));
 
         // ── Next level panel ──────────────────────────────────────────────────
-        if (factory.getLevel() < maxLevel) {
+        if (currentLevel < maxLevel) {
 
             // ── Upgrading in progress ─────────────────────────────────────────
-            if (factory.isUpgrading()) {
-                int remaining = factory.getUpgradeRemainingSeconds();
+            if (resolveIsUpgrading()) {
+                int remaining = resolveUpgradeRemainingSeconds();
                 List<String> upgradingLore = new ArrayList<>();
                 upgradingLore.add("§eUpgrade in progress...");
                 upgradingLore.add("");
@@ -73,12 +136,12 @@ public class UpgradeGUI {
                 upgradingLore.add("§7Please wait until the upgrade is complete.");
 
                 inv.setItem(15, createItem(Material.CLOCK,
-                        "§e§lUpgrading to Level " + (factory.getLevel() + 1), upgradingLore));
+                        "§e§lUpgrading to Level " + (currentLevel + 1), upgradingLore));
 
             } else {
                 // ── Normal next-level panel ───────────────────────────────────
-                int nextLevel = factory.getLevel() + 1;
-                double upgradeCost = factory.getPrice() * 0.5 * factory.getLevel();
+                int nextLevel = currentLevel + 1;
+                double upgradeCost = factoryPrice * 0.5 * currentLevel;
                 int upgradeTimeSec = plugin.getConfig().getInt("factory.upgrade-time." + nextLevel, 60);
 
                 // Realtime nano_construction_framework buff calculation
@@ -152,12 +215,14 @@ public class UpgradeGUI {
      * Opens a confirmation GUI before the upgrade is actually started.
      */
     public void openUpgradeConfirm() {
-        Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null)
+        // Resolve from either admin factory or player factory
+        int currentLevel = resolveLevel();
+        if (currentLevel < 0)
             return;
+        double factoryPrice = resolvePrice();
 
-        int nextLevel = factory.getLevel() + 1;
-        double upgradeCost = factory.getPrice() * 0.5 * factory.getLevel();
+        int nextLevel = currentLevel + 1;
+        double upgradeCost = factoryPrice * 0.5 * currentLevel;
         int upgradeTimeSec = plugin.getConfig().getInt("factory.upgrade-time." + nextLevel, 60);
 
         // Realtime nano_construction_framework buff calculation

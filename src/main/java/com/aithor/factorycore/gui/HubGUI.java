@@ -650,13 +650,21 @@ public class HubGUI {
             lore.add(color("&eTotal Value: &6$" + localPh.get("{total_value}")));
 
             // Factory type breakdown
-            List<Factory> owned = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId());
-            if (!owned.isEmpty()) {
+            List<Factory> ownedAdmin = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId());
+            List<PlayerFactory> ownedPlayer = plugin.getPlayerFactoryManager() != null
+                    ? new ArrayList<>(plugin.getPlayerFactoryManager().getAllFactories()).stream()
+                            .filter(pf -> pf.getOwner().equals(player.getUniqueId())).toList()
+                    : new ArrayList<>();
+
+            if (!ownedAdmin.isEmpty() || !ownedPlayer.isEmpty()) {
                 lore.add("");
                 lore.add(color("&7Factory Types:"));
                 Map<FactoryType, Long> typeCounts = new HashMap<>();
-                for (Factory f : owned) {
+                for (Factory f : ownedAdmin) {
                     typeCounts.merge(f.getType(), 1L, Long::sum);
+                }
+                for (PlayerFactory pf : ownedPlayer) {
+                    typeCounts.merge(pf.getType(), 1L, Long::sum);
                 }
                 for (Map.Entry<FactoryType, Long> entry : typeCounts.entrySet()) {
                     lore.add(color("&7\u2022 " + entry.getKey().getDisplayName() + "&7: &e" + entry.getValue()));
@@ -674,15 +682,26 @@ public class HubGUI {
         Map<String, String> ph = new HashMap<>();
         ph.put("{player_name}", player.getName());
 
-        List<Factory> ownedFactories = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId());
-        long runningFactories = ownedFactories.stream().filter(f -> f.getStatus() == FactoryStatus.RUNNING).count();
-        long stoppedFactories = ownedFactories.size() - runningFactories;
+        List<Factory> ownedAdmin = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId());
+        long runningAdmin = ownedAdmin.stream().filter(f -> f.getStatus() == FactoryStatus.RUNNING).count();
+        double adminValue = ownedAdmin.stream().mapToDouble(Factory::getPrice).sum();
+
+        List<PlayerFactory> ownedPlayer = plugin.getPlayerFactoryManager() != null
+                ? new ArrayList<>(plugin.getPlayerFactoryManager().getAllFactories()).stream()
+                        .filter(pf -> pf.getOwner().equals(player.getUniqueId())).toList()
+                : new ArrayList<>();
+        long runningPlayer = ownedPlayer.stream().filter(pf -> pf.getStatus() == FactoryStatus.RUNNING).count();
+        double playerValue = ownedPlayer.stream().mapToDouble(PlayerFactory::getPrice).sum();
+
+        long runningFactories = runningAdmin + runningPlayer;
+        long totalOwned = ownedAdmin.size() + ownedPlayer.size();
+        long stoppedFactories = totalOwned - runningFactories;
         int availableFactories = (int) plugin.getFactoryManager().getAllFactories().stream()
                 .filter(f -> f.getOwner() == null).count();
-        double totalValue = ownedFactories.stream().mapToDouble(Factory::getPrice).sum();
+        double totalValue = adminValue + playerValue;
 
         ph.put("{factory_available_count}", String.valueOf(availableFactories));
-        ph.put("{factory_owned_count}", String.valueOf(ownedFactories.size()));
+        ph.put("{factory_owned_count}", String.valueOf(totalOwned));
         ph.put("{factory_running_count}", String.valueOf(runningFactories));
         ph.put("{factory_stopped_count}", String.valueOf(stoppedFactories));
         ph.put("{factory_total_value}", String.format("%.2f", totalValue));
@@ -763,12 +782,29 @@ public class HubGUI {
 
     private List<FactoryNPC> getPlayerNPCs() {
         List<FactoryNPC> playerNPCs = new ArrayList<>();
-        List<Factory> playerFactories = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId());
+        List<Factory> adminFactories = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId());
+
+        List<PlayerFactory> playerFactories = plugin.getPlayerFactoryManager() != null
+                ? new ArrayList<>(plugin.getPlayerFactoryManager().getAllFactories()).stream()
+                        .filter(pf -> pf.getOwner().equals(player.getUniqueId())).toList()
+                : new ArrayList<>();
 
         for (FactoryNPC npc : plugin.getNPCManager().getAllNPCs()) {
             if (npc.getFactoryId() == null)
                 continue;
-            for (Factory factory : playerFactories) {
+
+            boolean found = false;
+            for (Factory factory : adminFactories) {
+                if (npc.getFactoryId().equals(factory.getId())) {
+                    playerNPCs.add(npc);
+                    found = true;
+                    break;
+                }
+            }
+            if (found)
+                continue;
+
+            for (PlayerFactory factory : playerFactories) {
                 if (npc.getFactoryId().equals(factory.getId())) {
                     playerNPCs.add(npc);
                     break;

@@ -39,7 +39,21 @@ public class TaxCenterGUI {
         Inventory inv = Bukkit.createInventory(null, 54, "§c§lTax Center §8- §ePage " + (page + 1));
 
         TaxManager taxManager = plugin.getTaxManager();
-        List<Factory> playerFactories = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId());
+
+        // Combine admin and player factories into a single list using a wrapper record
+        List<FactoryEntry> allFactories = new ArrayList<>();
+        for (Factory f : plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId())) {
+            allFactories
+                    .add(new FactoryEntry(f.getId(), f.getType().getDisplayName(), f.getLevel(), f.getPrice(), false));
+        }
+        if (plugin.getPlayerFactoryManager() != null) {
+            for (com.aithor.factorycore.models.PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                if (pf.getOwner().equals(player.getUniqueId())) {
+                    allFactories.add(new FactoryEntry(pf.getId(), pf.getType().getDisplayName(), pf.getLevel(),
+                            pf.getPrice(), true));
+                }
+            }
+        }
 
         // Calculate totals
         double totalTaxDue = taxManager != null ? taxManager.getTotalTaxDue(player.getUniqueId()) : 0;
@@ -61,7 +75,7 @@ public class TaxCenterGUI {
         headerLore.add("§7Your tax overview");
         headerLore.add("");
         headerLore.add("§eTotal Tax Due: §6$" + String.format("%.2f", totalTaxDue));
-        headerLore.add("§eFactories Taxed: §e" + playerFactories.size());
+        headerLore.add("§eFactories Taxed: §e" + allFactories.size());
         if (overdueCount > 0) {
             headerLore.add("");
             headerLore.add("§c§lWARNING: " + overdueCount + " overdue taxes!");
@@ -94,16 +108,15 @@ public class TaxCenterGUI {
         // Tax info slots (slots 9-44)
         int slotsPerPage = 36;
         int startIndex = page * slotsPerPage;
-        int endIndex = Math.min(startIndex + slotsPerPage, playerFactories.size());
+        int endIndex = Math.min(startIndex + slotsPerPage, allFactories.size());
 
         int slot = 9;
         for (int i = startIndex; i < endIndex && slot < 45; i++) {
-            Factory factory = playerFactories.get(i);
-            inv.setItem(slot++, createFactoryTaxItem(factory));
+            inv.setItem(slot++, createFactoryEntryTaxItem(allFactories.get(i)));
         }
 
         // Show message if no factories
-        if (playerFactories.isEmpty()) {
+        if (allFactories.isEmpty()) {
             inv.setItem(22, createItem(Material.BARRIER, "§c§lNo Factories",
                     Arrays.asList(
                             "§7You don't own any factories!",
@@ -146,48 +159,71 @@ public class TaxCenterGUI {
         inv.setItem(49, createTaxRateInfoItem());
 
         // Page info (slot 50)
-        int totalPages = (int) Math.ceil((double) playerFactories.size() / slotsPerPage);
+        int totalPages = (int) Math.ceil((double) allFactories.size() / slotsPerPage);
         inv.setItem(50, createItem(Material.PAPER, "§e§lPage Info",
                 Arrays.asList(
                         "§7Page: §e" + (page + 1) + " / " + Math.max(1, totalPages),
-                        "§7Factories: §e" + playerFactories.size())));
+                        "§7Factories: §e" + allFactories.size())));
 
         // Back to hub (slot 51)
         inv.setItem(51, createItem(Material.DARK_OAK_DOOR, "§c§lBack to Hub",
                 Arrays.asList("§7Return to main menu")));
 
         // Next page (slot 53)
-        if (endIndex < playerFactories.size()) {
+        if (endIndex < allFactories.size()) {
             inv.setItem(53, createNavigationItem(Material.ARROW, "§e§lNext Page ►", page + 1));
         }
 
         player.openInventory(inv);
     }
 
-    private ItemStack createFactoryTaxItem(Factory factory) {
+    /** Lightweight data holder to unify admin Factory and PlayerFactory display. */
+    private static class FactoryEntry {
+        final String id;
+        final String typeName;
+        final int level;
+        final double price;
+        final boolean isPlayerFactory;
+
+        FactoryEntry(String id, String typeName, int level, double price, boolean isPlayerFactory) {
+            this.id = id;
+            this.typeName = typeName;
+            this.level = level;
+            this.price = price;
+            this.isPlayerFactory = isPlayerFactory;
+        }
+    }
+
+    /**
+     * Creates a tax item for the unified FactoryEntry (works for both admin and
+     * player factories).
+     */
+    private ItemStack createFactoryEntryTaxItem(FactoryEntry entry) {
         TaxManager taxManager = plugin.getTaxManager();
-        TaxManager.TaxRecord record = taxManager != null ? taxManager.getTaxRecord(factory.getId()) : null;
+        TaxManager.TaxRecord record = taxManager != null ? taxManager.getTaxRecord(entry.id) : null;
 
         double taxDue = record != null ? record.amountDue : 0;
-        double nextTax = taxManager != null ? taxManager.calculateTax(factory) : 0;
+        // Estimate next tax using the raw formula (no Factory object needed)
+        double baseRate = plugin.getConfig().getDouble("tax.rate", 5.0) / 100.0;
+        double levelMul = plugin.getConfig().getDouble("tax.level-multiplier", 2.5) / 100.0;
+        double totalRate = baseRate + levelMul * (entry.level - 1);
+        double nextTax = entry.price * totalRate;
+        if (plugin.getResearchManager() != null) {
+            double reduction = plugin.getResearchManager().getTaxReduction(player.getUniqueId());
+            if (reduction > 0)
+                nextTax *= (1 - reduction / 100.0);
+        }
         boolean isOverdue = record != null && record.overdue;
 
-        Material material;
-        if (isOverdue) {
-            material = Material.RED_CONCRETE;
-        } else if (taxDue > 0) {
-            material = Material.YELLOW_CONCRETE;
-        } else {
-            material = Material.LIME_CONCRETE;
-        }
+        Material material = isOverdue ? Material.RED_CONCRETE
+                : (taxDue > 0 ? Material.YELLOW_CONCRETE : Material.LIME_CONCRETE);
 
         List<String> lore = new ArrayList<>();
-        lore.add("§7Type: " + factory.getType().getDisplayName());
-        lore.add("§7Level: §e" + factory.getLevel());
-        lore.add("§7Value: §6$" + String.format("%.2f", factory.getPrice()));
+        lore.add("§7Type: " + entry.typeName + (entry.isPlayerFactory ? " §d(Player)" : " §8(Admin)"));
+        lore.add("§7Level: §e" + entry.level);
+        lore.add("§7Value: §6$" + String.format("%.2f", entry.price));
         lore.add("");
 
-        // Current tax status
         if (taxDue > 0) {
             lore.add("§eCurrent Tax Due: §6$" + String.format("%.2f", taxDue));
             if (isOverdue) {
@@ -201,49 +237,38 @@ public class TaxCenterGUI {
         }
 
         lore.add("");
-        double factoryTaxReduction = plugin.getResearchManager() != null
+        double taxReduc = plugin.getResearchManager() != null
                 ? plugin.getResearchManager().getTaxReduction(player.getUniqueId())
                 : 0;
-
-        if (factoryTaxReduction > 0 && nextTax > 0) {
-            double unbuffedTax = nextTax / (1 - (factoryTaxReduction / 100.0));
-            lore.add("§7Next Tax Assessment: §c§m$" + String.format("%.2f", unbuffedTax) + "§r §a$"
-                    + String.format("%.2f", nextTax) + " §d(-" + String.format("%.0f", factoryTaxReduction) + "%)");
+        if (taxReduc > 0 && nextTax > 0) {
+            double unbuffed = nextTax / (1 - taxReduc / 100.0);
+            lore.add("§7Next Tax: §c§m$" + String.format("%.2f", unbuffed) + "§r §a$"
+                    + String.format("%.2f", nextTax) + " §d(-" + String.format("%.0f", taxReduc) + "%)");
         } else {
             lore.add("§7Next Tax Assessment: §e$" + String.format("%.2f", nextTax));
         }
-
         lore.add("§7Tax Rate: §e" + String.format("%.1f", (plugin.getConfig().getDouble("tax.rate", 5.0) +
-                plugin.getConfig().getDouble("tax.level-multiplier", 2.5) * (factory.getLevel() - 1))) + "%");
+                plugin.getConfig().getDouble("tax.level-multiplier", 2.5) * (entry.level - 1))) + "%");
 
         if (taxDue > 0) {
             lore.add("");
-            boolean canPay = plugin.getEconomy().has(player, taxDue);
-            if (canPay) {
-                lore.add("§a§lClick to pay tax!");
-            } else {
-                lore.add("§c§lInsufficient funds!");
-            }
+            lore.add(plugin.getEconomy().has(player, taxDue) ? "§a§lClick to pay tax!" : "§c§lInsufficient funds!");
         }
 
-        String title = (isOverdue ? "§c§l⚠ " : "") + factory.getType().getDisplayName() + " §7- §e" + factory.getId();
+        String title = (isOverdue ? "§c§l⚠ " : "") + entry.typeName + " §7- §e" + entry.id;
         ItemStack item = createItem(material, title, lore);
 
-        // Store factory ID for click handling
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.getPersistentDataContainer().set(
                     new NamespacedKey(plugin, "tax_factory_id"),
-                    PersistentDataType.STRING,
-                    factory.getId());
+                    PersistentDataType.STRING, entry.id);
             item.setItemMeta(meta);
         }
-
         return item;
     }
 
     private ItemStack createTaxCalculatorItem() {
-        List<Factory> factories = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId());
         TaxManager taxManager = plugin.getTaxManager();
 
         List<String> lore = new ArrayList<>();
@@ -255,14 +280,31 @@ public class TaxCenterGUI {
         double taxReduc = plugin.getResearchManager() != null
                 ? plugin.getResearchManager().getTaxReduction(player.getUniqueId())
                 : 0;
+        double baseRate = plugin.getConfig().getDouble("tax.rate", 5.0) / 100.0;
+        double levelMul = plugin.getConfig().getDouble("tax.level-multiplier", 2.5) / 100.0;
 
-        for (Factory factory : factories) {
+        Map<String, Double> taxByType = new java.util.LinkedHashMap<>();
+
+        // Admin factories
+        for (Factory factory : plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId())) {
             double tax = taxManager != null ? taxManager.calculateTax(factory) : 0;
             totalNextTax += tax;
-            if (taxReduc > 0 && tax > 0) {
-                unbuffedTotalTax += tax / (1 - (taxReduc / 100.0));
-            } else {
-                unbuffedTotalTax += tax;
+            unbuffedTotalTax += (taxReduc > 0 && tax > 0) ? tax / (1 - taxReduc / 100.0) : tax;
+            taxByType.merge(factory.getType().getDisplayName() + " §8(Admin)", tax, Double::sum);
+        }
+
+        // Player factories
+        if (plugin.getPlayerFactoryManager() != null) {
+            for (com.aithor.factorycore.models.PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                if (!pf.getOwner().equals(player.getUniqueId()))
+                    continue;
+                double totalRate = baseRate + levelMul * (pf.getLevel() - 1);
+                double tax = pf.getPrice() * totalRate;
+                if (taxReduc > 0)
+                    tax *= (1 - taxReduc / 100.0);
+                totalNextTax += tax;
+                unbuffedTotalTax += (taxReduc > 0 && tax > 0) ? tax / (1 - taxReduc / 100.0) : tax;
+                taxByType.merge(pf.getType().getDisplayName() + " §d(Player)", tax, Double::sum);
             }
         }
 
@@ -274,16 +316,8 @@ public class TaxCenterGUI {
         }
         lore.add("");
         lore.add("§7Breakdown by factory type:");
-
-        // Group by type
-        Map<FactoryType, Double> taxByType = new HashMap<>();
-        for (Factory factory : factories) {
-            double tax = taxManager != null ? taxManager.calculateTax(factory) : 0;
-            taxByType.merge(factory.getType(), tax, Double::sum);
-        }
-
-        for (Map.Entry<FactoryType, Double> entry : taxByType.entrySet()) {
-            lore.add("§7• " + entry.getKey().getDisplayName() + "§7: §e$" + String.format("%.2f", entry.getValue()));
+        for (Map.Entry<String, Double> entry : taxByType.entrySet()) {
+            lore.add("§7• " + entry.getKey() + "§7: §e$" + String.format("%.2f", entry.getValue()));
         }
 
         return createItem(Material.GOLD_NUGGET, "§e§lTax Calculator", lore);

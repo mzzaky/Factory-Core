@@ -285,10 +285,14 @@ public class FactoryCore extends JavaPlugin {
             invoiceManager.generateSalaryInvoices();
         }, initialSalaryDelay, salaryInterval);
 
-        // Production + upgrade checker
+        // Production + upgrade checker (admin factories AND player factories)
         getServer().getScheduler().runTaskTimer(this, () -> {
             factoryManager.updateProduction();
             factoryManager.updateUpgrades();
+            if (playerFactoryManager != null) {
+                playerFactoryManager.updateProduction();
+                playerFactoryManager.updateUpgrades();
+            }
         }, 20L, 20L); // Every second
 
         // Tax overdue checker (every hour)
@@ -368,7 +372,8 @@ public class FactoryCore extends JavaPlugin {
                 "§7- §aDaily Quest System §8(" + dailyQuestManager.getTotalQuestCount() + " quests)");
         console.sendMessage("§7- §aNPC Workforce System §8(Active)");
         console.sendMessage("§7- §aInvoice & Storage System §8(Active)");
-        console.sendMessage("§7- §aPlayer Factory System §8(" + playerFactoryManager.getAllFactories().size() + " player factories)");
+        console.sendMessage("§7- §aPlayer Factory System §8(" + playerFactoryManager.getAllFactories().size()
+                + " player factories)");
         console.sendMessage("");
         console.sendMessage("§8========================================================");
         console.sendMessage("§a✔ Plugin successfully initialized and ready for use!");

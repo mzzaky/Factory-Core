@@ -837,24 +837,41 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
         String id = args[1];
 
+        // Try regular factory first
         Factory factory = plugin.getFactoryManager().getFactory(id);
-        if (factory == null) {
-            sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
+        if (factory != null) {
+            if (!player.getUniqueId().equals(factory.getOwner())) {
+                sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-owned"));
+                return true;
+            }
+            double sellPrice = factory.getPrice() * 0.5;
+            if (plugin.getFactoryManager().sellFactory(player, id)) {
+                sender.sendMessage(plugin.getLanguageManager().getMessage("factory-sold")
+                        .replace("{factory}", factory.getType().getDisplayName())
+                        .replace("{price}", String.valueOf(sellPrice)));
+            }
             return true;
         }
 
-        if (!player.getUniqueId().equals(factory.getOwner())) {
-            sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-owned"));
-            return true;
+        // Try player-created factory
+        if (plugin.getPlayerFactoryManager() != null) {
+            com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(id);
+            if (pf != null) {
+                if (!player.getUniqueId().equals(pf.getOwner())) {
+                    sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-owned"));
+                    return true;
+                }
+                double sellPrice = pf.getPrice() * plugin.getConfig().getDouble("factory.sell-price-multiplier", 0.5);
+                if (plugin.getPlayerFactoryManager().sellFactory(player, id)) {
+                    sender.sendMessage(plugin.getLanguageManager().getMessage("factory-sold")
+                            .replace("{factory}", pf.getType().getDisplayName())
+                            .replace("{price}", String.valueOf(sellPrice)));
+                }
+                return true;
+            }
         }
 
-        double sellPrice = factory.getPrice() * 0.5;
-        if (plugin.getFactoryManager().sellFactory(player, id)) {
-            sender.sendMessage(plugin.getLanguageManager().getMessage("factory-sold")
-                    .replace("{factory}", factory.getType().getDisplayName())
-                    .replace("{price}", String.valueOf(sellPrice)));
-        }
-
+        sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
         return true;
     }
 
@@ -1101,6 +1118,11 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                     Player player = (Player) sender;
                     plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId())
                             .forEach(f -> completions.add(f.getId()));
+                    // Also include player-created factories for sell/tp
+                    if (subCmd.equals("sell") && plugin.getPlayerFactoryManager() != null) {
+                        plugin.getPlayerFactoryManager().getFactoriesByOwner(player.getUniqueId())
+                                .forEach(pf -> completions.add(pf.getId()));
+                    }
                 }
             } else if (subCmd.equals("info")) {
                 plugin.getFactoryManager().getAllFactories()

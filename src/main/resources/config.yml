@@ -4,13 +4,22 @@
 
 # Database settings
 database:
-  type: YAML # YAML or MySQL (MySQL support coming soon)
+  type: YAML # YAML or MySQL
   mysql:
     host: localhost
     port: 3306
     database: factorycore
     username: root
     password: password
+
+# Backup settings
+backup:
+  # Maximum number of backups to keep (oldest are deleted when exceeded)
+  max-backups: 10
+  # Automatic backup configuration
+  auto-backup:
+    enabled: false # Set to true to enable automatic backups
+    interval-ticks: 1728000 # 24 hours (20 ticks * 60s * 60m * 24h)
 
 # Tax settings
 tax:

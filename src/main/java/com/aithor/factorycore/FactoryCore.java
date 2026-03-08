@@ -35,6 +35,8 @@ public class FactoryCore extends JavaPlugin {
     private AchievementManager achievementManager;
     private DailyQuestManager dailyQuestManager;
     private PlayerFactoryManager playerFactoryManager;
+    private DatabaseManager databaseManager;
+    private BackupManager backupManager;
 
     // Tasks
     private BorderParticleTask borderParticleTask;
@@ -81,8 +83,14 @@ public class FactoryCore extends JavaPlugin {
         // Initialize hooks (before managers, since managers may depend on hooks)
         initializeHooks();
 
+        // Initialize database manager (before other managers)
+        databaseManager = new DatabaseManager(this);
+
         // Initialize managers
         initializeManagers();
+
+        // Initialize backup manager (after other managers)
+        backupManager = new BackupManager(this);
 
         // Register commands
         registerCommands();
@@ -105,6 +113,11 @@ public class FactoryCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Shutdown backup manager
+        if (backupManager != null) {
+            backupManager.shutdown();
+        }
+
         // Shutdown NPC manager first (removes entities & holograms from world)
         if (npcManager != null) {
             npcManager.shutdown();
@@ -137,6 +150,11 @@ public class FactoryCore extends JavaPlugin {
         }
         if (playerFactoryManager != null) {
             playerFactoryManager.saveAll();
+        }
+
+        // Disconnect database
+        if (databaseManager != null) {
+            databaseManager.disconnect();
         }
 
         Logger.log("FactoryCore has been disabled!");
@@ -374,6 +392,14 @@ public class FactoryCore extends JavaPlugin {
         console.sendMessage("§7- §aInvoice & Storage System §8(Active)");
         console.sendMessage("§7- §aPlayer Factory System §8(" + playerFactoryManager.getAllFactories().size()
                 + " player factories)");
+        if (databaseManager != null) {
+            console.sendMessage("§7- " + databaseManager.getStatusInfo());
+        }
+        if (backupManager != null) {
+            console.sendMessage("§7- §aBackup System §8("
+                    + (backupManager.isAutoBackupRunning() ? "Auto-backup ON" : "Manual only") + ", "
+                    + backupManager.listBackups().size() + " backups)");
+        }
         console.sendMessage("");
         console.sendMessage("§8========================================================");
         console.sendMessage("§a✔ Plugin successfully initialized and ready for use!");
@@ -441,6 +467,14 @@ public class FactoryCore extends JavaPlugin {
 
     public PlayerFactoryManager getPlayerFactoryManager() {
         return playerFactoryManager;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public BackupManager getBackupManager() {
+        return backupManager;
     }
 
     public BorderParticleTask getBorderParticleTask() {

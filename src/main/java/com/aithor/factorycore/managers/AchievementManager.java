@@ -18,7 +18,8 @@ import java.util.*;
 /**
  * AchievementManager - Handles the achievement/badge system.
  * <p>
- * Tracks player progress toward achievements, awards them when thresholds are met,
+ * Tracks player progress toward achievements, awards them when thresholds are
+ * met,
  * and displays toast notifications with sound effects.
  * </p>
  */
@@ -70,7 +71,8 @@ public class AchievementManager {
      */
     public Set<String> getAchievementIds() {
         ConfigurationSection section = achievementConfig.getConfigurationSection("achievements");
-        if (section == null) return Collections.emptySet();
+        if (section == null)
+            return Collections.emptySet();
         return section.getKeys(false);
     }
 
@@ -103,7 +105,8 @@ public class AchievementManager {
      */
     public boolean hasAchievement(UUID playerId, String achievementId) {
         PlayerAchievementData data = playerData.get(playerId);
-        if (data == null) return false;
+        if (data == null)
+            return false;
         return data.unlockedAchievements.contains(achievementId);
     }
 
@@ -112,7 +115,8 @@ public class AchievementManager {
      */
     public double getProgress(UUID playerId, String achievementId) {
         PlayerAchievementData data = playerData.get(playerId);
-        if (data == null) return 0;
+        if (data == null)
+            return 0;
         return data.progressValues.getOrDefault(achievementId, 0.0);
     }
 
@@ -121,7 +125,8 @@ public class AchievementManager {
      */
     public Set<String> getUnlockedAchievements(UUID playerId) {
         PlayerAchievementData data = playerData.get(playerId);
-        if (data == null) return Collections.emptySet();
+        if (data == null)
+            return Collections.emptySet();
         return Collections.unmodifiableSet(data.unlockedAchievements);
     }
 
@@ -137,7 +142,8 @@ public class AchievementManager {
      */
     public int getUnlockedCount(UUID playerId) {
         PlayerAchievementData data = playerData.get(playerId);
-        if (data == null) return 0;
+        if (data == null)
+            return 0;
         return data.unlockedAchievements.size();
     }
 
@@ -148,10 +154,12 @@ public class AchievementManager {
      * Does nothing if already unlocked.
      */
     public void awardAchievement(Player player, String achievementId) {
-        if (!isEnabled()) return;
+        if (!isEnabled())
+            return;
         UUID playerId = player.getUniqueId();
 
-        if (hasAchievement(playerId, achievementId)) return;
+        if (hasAchievement(playerId, achievementId))
+            return;
 
         // Unlock
         PlayerAchievementData data = playerData.computeIfAbsent(playerId, k -> new PlayerAchievementData());
@@ -160,6 +168,7 @@ public class AchievementManager {
 
         saveAll();
         showAchievementToast(player, achievementId);
+        processRewards(playerId, achievementId, player);
     }
 
     /**
@@ -171,10 +180,12 @@ public class AchievementManager {
      * @param amount        The amount to add to progress
      */
     public void addProgress(Player player, String achievementId, double amount) {
-        if (!isEnabled()) return;
+        if (!isEnabled())
+            return;
         UUID playerId = player.getUniqueId();
 
-        if (hasAchievement(playerId, achievementId)) return;
+        if (hasAchievement(playerId, achievementId))
+            return;
 
         PlayerAchievementData data = playerData.computeIfAbsent(playerId, k -> new PlayerAchievementData());
         double currentProgress = data.progressValues.getOrDefault(achievementId, 0.0);
@@ -186,6 +197,7 @@ public class AchievementManager {
             data.unlockedAchievements.add(achievementId);
             data.unlockTimestamps.put(achievementId, System.currentTimeMillis());
             showAchievementToast(player, achievementId);
+            processRewards(playerId, achievementId, player);
         }
 
         saveAll();
@@ -196,8 +208,10 @@ public class AchievementManager {
      * Toast will not be shown; the player sees it next login via pending check.
      */
     public void addProgressOffline(UUID playerId, String achievementId, double amount) {
-        if (!isEnabled()) return;
-        if (hasAchievement(playerId, achievementId)) return;
+        if (!isEnabled())
+            return;
+        if (hasAchievement(playerId, achievementId))
+            return;
 
         PlayerAchievementData data = playerData.computeIfAbsent(playerId, k -> new PlayerAchievementData());
         double currentProgress = data.progressValues.getOrDefault(achievementId, 0.0);
@@ -208,6 +222,7 @@ public class AchievementManager {
         if (newProgress >= threshold) {
             data.unlockedAchievements.add(achievementId);
             data.unlockTimestamps.put(achievementId, System.currentTimeMillis());
+            processRewards(playerId, achievementId, null);
         }
 
         saveAll();
@@ -250,14 +265,59 @@ public class AchievementManager {
         }
     }
 
+    // ── Reward Processing ────────────────────────────────────────────────────
+
+    private void processRewards(UUID playerId, String achievementId, Player onlinePlayer) {
+        String basePath = "achievements." + achievementId + ".on-complete";
+        if (achievementConfig.contains(basePath)) {
+            // Process commands
+            if (achievementConfig.contains(basePath + ".command")) {
+                List<String> commands;
+                if (achievementConfig.isList(basePath + ".command")) {
+                    commands = achievementConfig.getStringList(basePath + ".command");
+                } else {
+                    commands = Collections.singletonList(achievementConfig.getString(basePath + ".command"));
+                }
+
+                String playerName = onlinePlayer != null ? onlinePlayer.getName()
+                        : Bukkit.getOfflinePlayer(playerId).getName();
+                if (playerName == null)
+                    playerName = "";
+
+                final String finalPlayerName = playerName;
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    for (String cmd : commands) {
+                        if (cmd == null || cmd.trim().isEmpty())
+                            continue;
+                        String finalCmd = cmd.replace("%player%", finalPlayerName);
+                        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), finalCmd);
+                    }
+                });
+            }
+
+            // Process sound
+            if (onlinePlayer != null && achievementConfig.contains(basePath + ".sound")) {
+                String soundName = achievementConfig.getString(basePath + ".sound");
+                if (soundName != null && !soundName.isEmpty()) {
+                    Sound sound = parseSound(soundName);
+                    if (sound != null) {
+                        onlinePlayer.playSound(onlinePlayer.getLocation(), sound, 1.0f, 1.0f);
+                    }
+                }
+            }
+        }
+    }
+
     // ── Persistence ─────────────────────────────────────────────────────────
 
     private void loadPlayerData() {
-        if (!dataFile.exists()) return;
+        if (!dataFile.exists())
+            return;
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
 
-        if (!config.contains("players")) return;
+        if (!config.contains("players"))
+            return;
 
         for (String uuidStr : config.getConfigurationSection("players").getKeys(false)) {
             try {
@@ -335,7 +395,8 @@ public class AchievementManager {
      */
     public long getUnlockTimestamp(UUID playerId, String achievementId) {
         PlayerAchievementData data = playerData.get(playerId);
-        if (data == null) return 0;
+        if (data == null)
+            return 0;
         return data.unlockTimestamps.getOrDefault(achievementId, 0L);
     }
 
@@ -346,11 +407,12 @@ public class AchievementManager {
         try {
             NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase());
             Sound s = Registry.SOUNDS.get(key);
-            if (s != null) return s;
+            if (s != null)
+                return s;
         } catch (Exception ignored) {
         }
         try {
-            return Sound.valueOf(name.toUpperCase());
+            return Sound.valueOf(name.toUpperCase().replace(".", "_"));
         } catch (Exception e) {
             return null;
         }

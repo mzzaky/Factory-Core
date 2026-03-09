@@ -44,6 +44,11 @@ achievements:
     sound: ENTITY_PLAYER_LEVELUP
     sound-volume: 1.0
     sound-pitch: 1.2
+    on-complete:
+      command:
+      - money give %player% 9999
+      - msg %player% you just receive money for completing achievement
+      sound: UI.TOAST.CHALLENGE_COMPLETE
 
   early_prototype:
     name: "&eEarly Prototype"

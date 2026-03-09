@@ -26,8 +26,18 @@ FactoryCore Update Log - v1.2.7
 - Fixed OutputStorageGUI so it can now be opened correctly by player-created factories. Previously, the GUI lookup strictly checked the admin FactoryManager, causing it to fail silently when a player factory's NPC was left-clicked. Items can now be safely withdrawn (including vanilla items).
 - Fully synchronized the crafting/production completion mechanism for player-created factories in PlayerFactoryManager. Completing production in a player factory now correctly awards the "early_prototype" and "mass_producer" achievements, adds progress to the "Industrial Hustle" daily quest, and triggers the configured completion sound and title notifications, exactly mirroring admin factories.
 - Improved MyFactoriesGUI item names and lore for better readability. Huge raw UUID values have been reformatted to display only the first 8 characters and are enclosed cleanly in parentheses (e.g. `Iron Smeltery (#a1b2c3d4)` instead of massive raw strings). The full ID remains functional for background event clicks.
-
+- Fixed an issue where the BossBar for player-created factories did not appear when production started. Production in player factories now properly creates, updates, and removes BossBars in the exact same manner as admin factories.
+- Fixed an issue where BossBars for both admin and player-created factories would disappear and fail to recreate if the server restarted while production was running, or if a player disconnected and reconnected. BossBars are now lazily recreated and correctly reattached to players upon reconnecting.
+- Fixed an issue where the "industrial_mastery" research buff (additional factory limit) was ignored when players attempted to create new player factories.
+- Fixed an issue in RecipeConfirmationGUI where production time and cost reductions from research buffs were not visually calculated and displayed in the confirmation lore.
 [New Features]
+
+== Achievement Rewards System ==
+- Added `on-complete` configuration block to `achievement.yml` to support custom rewards when an achievement is completed.
+- Supports executing one or multiple commands automatically (with `%player%` placeholder).
+- Supports playing custom sound effects alongside rewards (e.g., `sound: UI.TOAST.CHALLENGE_COMPLETE`).
+- Commands are processed properly even if the final achievement progress occurs while the player is offline.
+
 
 == MySQL Database Support ==
 - Implemented full MySQL database support as configured in config.yml (database.type: MYSQL).

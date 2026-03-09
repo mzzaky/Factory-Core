@@ -489,12 +489,28 @@ public class FactoryManager {
     private void updateProductionBossBar(Factory factory, ProductionTask task) {
         String factoryId = factory.getId();
         BossBar bossBar = productionBossBars.get(factoryId);
-        if (bossBar == null)
-            return;
-
         Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
+
         if (recipe == null)
             return;
+
+        Player owner = null;
+        if (factory.getOwner() != null) {
+            owner = Bukkit.getPlayer(factory.getOwner());
+        }
+
+        if (bossBar == null) {
+            if (plugin.getConfig().getBoolean("production.show-bossbar", true)) {
+                createProductionBossBar(factory, recipe);
+                bossBar = productionBossBars.get(factoryId);
+                if (bossBar == null)
+                    return;
+            } else {
+                return;
+            }
+        } else if (owner != null && !bossBar.getPlayers().contains(owner)) {
+            bossBar.addPlayer(owner);
+        }
 
         double progress = task.getProgress();
         int percent = (int) (progress * 100);

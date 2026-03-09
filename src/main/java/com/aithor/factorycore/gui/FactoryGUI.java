@@ -452,11 +452,7 @@ public class FactoryGUI {
             plugin.getFactoryManager().startProduction(factory, currentRecipeId);
         } else {
             // PlayerFactory production start (mirrors FactoryManager logic)
-            playerFactory.setCurrentProduction(
-                    new com.aithor.factorycore.models.ProductionTask(
-                            currentRecipeId, System.currentTimeMillis(), recipe.getProductionTime()));
-            playerFactory.setStatus(com.aithor.factorycore.models.FactoryStatus.RUNNING);
-            plugin.getPlayerFactoryManager().saveAll();
+            plugin.getPlayerFactoryManager().startProduction(playerFactory, currentRecipeId);
         }
 
         // Clear recipe ID after successful production start

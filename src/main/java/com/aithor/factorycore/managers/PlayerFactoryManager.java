@@ -7,6 +7,9 @@ import com.aithor.factorycore.models.PlayerFactory;
 import com.aithor.factorycore.models.ProductionTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -24,11 +27,13 @@ public class PlayerFactoryManager {
 
     private final FactoryCore plugin;
     private final Map<String, PlayerFactory> playerFactories;
+    private final Map<String, BossBar> productionBossBars;
     private final File dataFile;
 
     public PlayerFactoryManager(FactoryCore plugin) {
         this.plugin = plugin;
         this.playerFactories = new HashMap<>();
+        this.productionBossBars = new HashMap<>();
         File dataFolder = new File(plugin.getDataFolder(), "data");
         if (!dataFolder.exists())
             dataFolder.mkdirs();
@@ -161,15 +166,20 @@ public class PlayerFactoryManager {
         }
 
         // Check factory limit
-        int limit = plugin.getConfig().getInt("factory.max-factories-per-player", 3);
-        if (player.hasPermission("factorycore.bypass.factory-limit")) {
-            limit = Integer.MAX_VALUE;
-        }
-        int currentCount = getFactoryCountByOwner(player.getUniqueId());
-        if (currentCount >= limit) {
-            player.sendMessage(plugin.getLanguageManager().getMessage("player-factory-limit-reached")
-                    .replace("{limit}", String.valueOf(limit)));
-            return null;
+        if (!player.hasPermission("factorycore.bypass.factory-limit")) {
+            int limit = plugin.getConfig().getInt("factory.max-factories-per-player", 3);
+
+            // Apply Industrial Mastery research buff
+            if (plugin.getResearchManager() != null) {
+                limit += plugin.getResearchManager().getAdditionalFactoryLimit(player.getUniqueId());
+            }
+
+            int currentCount = getFactoryCountByOwner(player.getUniqueId());
+            if (currentCount >= limit) {
+                player.sendMessage(plugin.getLanguageManager().getMessage("player-factory-limit-reached")
+                        .replace("{limit}", String.valueOf(limit)));
+                return null;
+            }
         }
 
         // Get price from config
@@ -247,6 +257,12 @@ public class PlayerFactoryManager {
 
         // Clear storage
         plugin.getStorageManager().clearStorage(factoryId);
+
+        // Remove bossbar if exists
+        if (productionBossBars.containsKey(factoryId)) {
+            productionBossBars.get(factoryId).removeAll();
+            productionBossBars.remove(factoryId);
+        }
 
         saveAll();
         return true;
@@ -347,7 +363,11 @@ public class PlayerFactoryManager {
                 continue;
             }
             if (task.isComplete()) {
-                completeProduction(pf, task);
+                if (pf.getStatus() == com.aithor.factorycore.models.FactoryStatus.RUNNING) {
+                    completeProduction(pf, task);
+                }
+            } else {
+                updateProductionBossBar(pf, task);
             }
         }
     }
@@ -368,6 +388,14 @@ public class PlayerFactoryManager {
 
         pf.setCurrentProduction(null);
         pf.setStatus(com.aithor.factorycore.models.FactoryStatus.STOPPED);
+
+        // Remove bossbar immediately
+        String factoryId = pf.getId();
+        BossBar bossBar = productionBossBars.remove(factoryId);
+        if (bossBar != null) {
+            bossBar.removeAll();
+        }
+
         saveAll();
 
         // ── Achievements ────────────────────────────────────────────────────
@@ -415,5 +443,100 @@ public class PlayerFactoryManager {
                         10, 40, 10);
             }
         }
+    }
+
+    public void startProduction(PlayerFactory factory, String recipeId) {
+        com.aithor.factorycore.models.Recipe recipe = plugin.getRecipeManager().getRecipe(recipeId);
+        if (recipe == null)
+            return;
+
+        int duration = recipe.getProductionTime();
+
+        // Apply level bonuses
+        int level = factory.getLevel();
+        double timeReduction = plugin.getConfig()
+                .getDouble("factory.level-bonuses.time-reduction", 10.0);
+        duration = (int) (duration * (1 - (timeReduction * (level - 1) / 100.0)));
+
+        // Apply employee production-time-reduction buff
+        double employeeReduction = plugin.getNPCManager().getProductionTimeReductionForFactory(factory.getId());
+        if (employeeReduction > 0) {
+            duration = (int) (duration * (1 - (employeeReduction / 100.0)));
+        }
+
+        // Apply Advanced Machine Technology research buff
+        if (plugin.getResearchManager() != null && factory.getOwner() != null) {
+            double researchReduction = plugin.getResearchManager().getProductionTimeReduction(factory.getOwner());
+            if (researchReduction > 0) {
+                duration = (int) (duration * (1 - (researchReduction / 100.0)));
+            }
+        }
+
+        // Ensure minimum duration of 1 second
+        duration = Math.max(duration, 1);
+
+        ProductionTask task = new ProductionTask(recipeId, System.currentTimeMillis(), duration);
+        factory.setCurrentProduction(task);
+        factory.setStatus(FactoryStatus.RUNNING);
+
+        // Create bossbar
+        if (plugin.getConfig().getBoolean("production.show-bossbar", true)) {
+            createProductionBossBar(factory, recipe);
+        }
+
+        saveAll();
+    }
+
+    private void createProductionBossBar(PlayerFactory factory, com.aithor.factorycore.models.Recipe recipe) {
+        Player owner = Bukkit.getPlayer(factory.getOwner());
+        if (owner == null)
+            return;
+
+        String title = plugin.getLanguageManager().getMessage("bossbar.production")
+                .replace("{recipe}", recipe.getName())
+                .replace("{percent}", "0");
+
+        BossBar bossBar = Bukkit.createBossBar(
+                title,
+                BarColor.valueOf(plugin.getConfig().getString("production.bossbar-color", "BLUE")),
+                BarStyle.valueOf(plugin.getConfig().getString("production.bossbar-style", "SOLID")));
+
+        bossBar.addPlayer(owner);
+        bossBar.setProgress(0.0);
+        productionBossBars.put(factory.getId(), bossBar);
+    }
+
+    private void updateProductionBossBar(PlayerFactory factory, ProductionTask task) {
+        String factoryId = factory.getId();
+        BossBar bossBar = productionBossBars.get(factoryId);
+        com.aithor.factorycore.models.Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
+
+        if (recipe == null)
+            return;
+
+        Player owner = Bukkit.getPlayer(factory.getOwner());
+
+        if (bossBar == null) {
+            if (plugin.getConfig().getBoolean("production.show-bossbar", true)) {
+                createProductionBossBar(factory, recipe);
+                bossBar = productionBossBars.get(factoryId);
+                if (bossBar == null)
+                    return;
+            } else {
+                return;
+            }
+        } else if (owner != null && !bossBar.getPlayers().contains(owner)) {
+            bossBar.addPlayer(owner);
+        }
+
+        double progress = task.getProgress();
+        int percent = (int) (progress * 100);
+
+        String title = plugin.getLanguageManager().getMessage("bossbar.production")
+                .replace("{recipe}", recipe.getName())
+                .replace("{percent}", String.valueOf(percent));
+
+        bossBar.setTitle(title);
+        bossBar.setProgress(progress);
     }
 }

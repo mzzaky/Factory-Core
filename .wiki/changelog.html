@@ -668,7 +668,7 @@
         <h1>Factory-Core-Plugin Changelog</h1>
         <p>Track all updates, improvements, and bug fixes for Factory-Core-Plugin</p>
         <div class="current-version">
-            <span>Latest Version: v1.2.6</span>
+            <span>Latest Version: v1.2.7</span>
         </div>
     </div>
 
@@ -682,7 +682,8 @@
         <nav class="side-nav">
             <div class="nav-title">Version History</div>
             <ul class="nav-list">
-                <li><a href="#v1-2-6" class="active">v1.2.6 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-2-7" class="active">v1.2.7 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-2-6">v1.2.6</a></li>
                 <li><a href="#v1-2-5">v1.2.5</a></li>
                 <li><a href="#v1-2-0">v1.2.0</a></li>
                 <li><a href="#v1-1-5">v1.1.5</a></li>
@@ -692,6 +693,160 @@
         </nav>
 
         <main class="main-content">
+            <!-- Version 1.2.7 -->
+            <section class="version-section" id="v1-2-7">
+                <div class="version-header">
+                    <div class="version-header-left">
+                        <div class="version-title">
+                            <h2>Version 1.2.7</h2>
+                            <span class="version-type update">Update</span>
+                        </div>
+                        <div class="release-date">March 09, 2026</div>
+                    </div>
+                    <div class="version-toggle">
+                        <span class="version-toggle-icon">▼</span>
+                        <span class="version-toggle-text">Minimize</span>
+                    </div>
+                </div>
+
+                <div class="version-content">
+                    <div class="overview-box">
+                        <div class="overview-title">Release Overview</div>
+                        <div class="overview-grid">
+                            <div class="overview-stat">
+                                <div class="stat-label">Total Changes</div>
+                                <div class="stat-value">53</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Bug Fixes</div>
+                                <div class="stat-value">27</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">New Features</div>
+                                <div class="stat-value">20</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Config Changes</div>
+                                <div class="stat-value">6</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Type</div>
+                                <div class="stat-value">Update</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bug Fixes -->
+                    <div class="change-category">
+                        <div class="category-header fixed">
+                            <div class="category-icon fixed">✓</div>
+                            <div class="category-title">Bug Fixes</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">Fixed an issue where the "Factories Owned" counter in MyFactoriesGUI did not count player-created factories.</li>
+                            <li class="change-item">Fixed an issue in MyFactoriesGUI where it read the wrong config key for factory limit (<code>factory.max-ownership</code> instead of <code>factory.max-factories-per-player</code>).</li>
+                            <li class="change-item">Fixed an issue where the <code>/fc sell &lt;factory_id&gt;</code> command failed to work for player-created factories, as it only checked the admin FactoryManager.</li>
+                            <li class="change-item">Fixed tab-complete for <code>/fc sell</code>, <code>/fc tp</code>, and <code>/fc gui</code> to correctly include player-created factory IDs.</li>
+                            <li class="change-item">Fixed FactoryCore PlaceholderAPI placeholders (<code>%factorycore_factories_owned%</code>, <code>%factorycore_factories_running%</code>, <code>%factorycore_total_value%</code>, <code>%factorycore_highest_level%</code>) not including statistics from player-created factories.</li>
+                            <li class="change-item">Fixed an issue where player-created factories did not appear in the Employee Shop and Employees Center GUIs, preventing players from assigning employees to them.</li>
+                            <li class="change-item">Fixed an issue in MarketplaceGUI where clicking items in the player's inventory to register them for sale did not work due to hub GUI click prevention logic.</li>
+                            <li class="change-item">Fixed a critical core bug where production cycles and upgrade timers for player-created factories never progressed because their manager wasn't hooked into the central server scheduler.</li>
+                            <li class="change-item">Fixed a massive synchronization issue where multiple actions inside the Factory Menu (Start Production, Access Recipes, Upgrade, Manage Storage) refused to work or threw errors for player-created factories due to only checking the admin Factory manager.</li>
+                            <li class="change-item">Fixed an issue where the sell confirmation prompt in My Factories menu would fail to open/process for player-created factories.</li>
+                            <li class="change-item">Added full support for vanilla input materials to deposit and withdraw correctly from player-created factories, mirroring the behavior of admin factories.</li>
+                            <li class="change-item">Fixed an issue where internal Hub GUI placeholders (like <code>{factory_owned_count}</code>, <code>{factory_running_count}</code>, <code>{factory_total_value}</code>) and the "Assigned Employees" counter ignored player-created factories.</li>
+                            <li class="change-item">Fixed the Quick Stats breakdown menu in the Hub GUI to correctly include and display a player's admin factories and player-created factories together.</li>
+                            <li class="change-item">Fixed an issue where player-created factories were not assessed for taxes — TaxManager now calculates and tracks tax records for both admin and player-created factories.</li>
+                            <li class="change-item">Fixed an issue where player-created factories were not included when paying taxes individually, paying all taxes at once, or retrieving tax totals/records.</li>
+                            <li class="change-item">Fixed an issue where late fee notifications for overdue taxes only notified admins, not player-factory owners.</li>
+                            <li class="change-item">Fixed an issue where employee salary invoices were only generated for admin-created factories. PlayerFactory employees now also generate salary invoices on the same cycle, applying research salary reductions as expected.</li>
+                            <li class="change-item">Fixed an issue in InvoiceCenterGUI where invoice items from player-created factories always displayed "Unknown" as the factory name, as it only looked up the factory ID from the admin FactoryManager. Factory type (Admin/Player) is now also shown on each invoice item.</li>
+                            <li class="change-item">Fixed an issue in TaxCenterGUI where player-created factories were not listed in the Tax Center menu, not counted in the "Factories Taxed" header stat, and excluded from the Tax Calculator preview. The Tax Center now shows both admin and player factories side-by-side, with their type clearly labeled.</li>
+                            <li class="change-item">Fixed a critical issue in NPCManager where employees assigned to player-created factories caused a continuous "Respawning missing NPC" loop in the console. The root causes were: (1) spawnNPCWithTemplate() only validated factory IDs against the admin FactoryManager, causing NPC spawns for player factories to silently fail; (2) the respawn scheduler had no guard for orphaned NPC records whose factory no longer exists, causing it to retry respawning indefinitely. Additionally, a hotfix was implemented to automatically "unassign" any orphaned NPCs (returning them to the player's employee pool) if they are detected in a deleted/sold player factory. Player factories now also properly unassign NPCs immediately when the factory is sold.</li>
+                            <li class="change-item">Fixed OutputStorageGUI so it can now be opened correctly by player-created factories. Previously, the GUI lookup strictly checked the admin FactoryManager, causing it to fail silently when a player factory's NPC was left-clicked. Items can now be safely withdrawn (including vanilla items).</li>
+                            <li class="change-item">Fully synchronized the crafting/production completion mechanism for player-created factories in PlayerFactoryManager. Completing production in a player factory now correctly awards the "early_prototype" and "mass_producer" achievements, adds progress to the "Industrial Hustle" daily quest, and triggers the configured completion sound and title notifications, exactly mirroring admin factories.</li>
+                            <li class="change-item">Improved MyFactoriesGUI item names and lore for better readability. Huge raw UUID values have been reformatted to display only the first 8 characters and are enclosed cleanly in parentheses (e.g. <code>Iron Smeltery (#a1b2c3d4)</code> instead of massive raw strings). The full ID remains functional for background event clicks.</li>
+                            <li class="change-item">Fixed an issue where the BossBar for player-created factories did not appear when production started. Production in player factories now properly creates, updates, and removes BossBars in the exact same manner as admin factories.</li>
+                            <li class="change-item">Fixed an issue where BossBars for both admin and player-created factories would disappear and fail to recreate if the server restarted while production was running, or if a player disconnected and reconnected. BossBars are now lazily recreated and correctly reattached to players upon reconnecting.</li>
+                            <li class="change-item">Fixed an issue where the "industrial_mastery" research buff (additional factory limit) was ignored when players attempted to create new player factories.</li>
+                            <li class="change-item">Fixed an issue in RecipeConfirmationGUI where production time and cost reductions from research buffs were not visually calculated and displayed in the confirmation lore.</li>
+                        </ul>
+                    </div>
+
+                    <!-- New Features -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">New Features</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item"><strong>Achievement Rewards System:</strong>
+                                <ul>
+                                    <li class="sub-item">Added <code>on-complete</code> configuration block to <code>achievement.yml</code> to support custom rewards when an achievement is completed.</li>
+                                    <li class="sub-item">Supports executing one or multiple commands automatically (with <code>%player%</code> placeholder).</li>
+                                    <li class="sub-item">Supports playing custom sound effects alongside rewards (e.g., <code>sound: UI.TOAST.CHALLENGE_COMPLETE</code>).</li>
+                                    <li class="sub-item">Commands are processed properly even if the final achievement progress occurs while the player is offline.</li>
+                                </ul>
+                            </li>
+                            <li class="change-item"><strong>MySQL Database Support:</strong>
+                                <ul>
+                                    <li class="sub-item">Implemented full MySQL database support as configured in config.yml (<code>database.type: MYSQL</code>).</li>
+                                    <li class="sub-item">Added DatabaseManager that handles MySQL connections with auto-reconnect and connection validation.</li>
+                                    <li class="sub-item">When MySQL is enabled, all 11 data files (factories, player_factories, input-storage, output-storage, invoices, npcs, marketplace, taxes, achievements, daily-quests, research) can be stored in MySQL tables.</li>
+                                    <li class="sub-item">Added data migration commands to transfer data between YAML and MySQL:
+                                        <ul>
+                                            <li class="sub-item"><code>/fc admin database status</code> — View current database connection status (YAML or MySQL).</li>
+                                            <li class="sub-item"><code>/fc admin database migrate yaml-to-mysql</code> — Migrate all existing YAML data files into MySQL tables.</li>
+                                            <li class="sub-item"><code>/fc admin database migrate mysql-to-yaml</code> — Export all MySQL data back to YAML files.</li>
+                                        </ul>
+                                    </li>
+                                    <li class="sub-item">MySQL tables use InnoDB engine with utf8mb4 charset for full Unicode support.</li>
+                                    <li class="sub-item">Connection auto-recovery: if the MySQL connection drops, it automatically reconnects on next data operation.</li>
+                                    <li class="sub-item">Database status is displayed in the startup banner.</li>
+                                </ul>
+                            </li>
+                            <li class="change-item"><strong>Comprehensive Backup System:</strong>
+                                <ul>
+                                    <li class="sub-item">Added a full backup system for the plugin's data folder with ZIP compression.</li>
+                                    <li class="sub-item">Backups can be managed via <code>/fc admin backup &lt;event&gt;</code> commands:
+                                        <ul>
+                                            <li class="sub-item"><code>/fc admin backup start [label]</code> — Create a new backup (optional label for identification).</li>
+                                            <li class="sub-item"><code>/fc admin backup restore &lt;filename&gt;</code> — Restore a backup (automatically creates a safety backup before restoring).</li>
+                                            <li class="sub-item"><code>/fc admin backup list</code> — List all available backups with file size and date.</li>
+                                            <li class="sub-item"><code>/fc admin backup delete &lt;filename&gt;</code> — Delete a specific backup file.</li>
+                                            <li class="sub-item"><code>/fc admin backup auto</code> — Toggle automatic scheduled backups on/off.</li>
+                                            <li class="sub-item"><code>/fc admin backup status</code> — View backup system status (auto-backup state, interval, backup count).</li>
+                                        </ul>
+                                    </li>
+                                    <li class="sub-item">Automatic backup system with configurable toggle and interval in config.yml (<code>backup.auto-backup</code>).</li>
+                                    <li class="sub-item">Configurable maximum backup retention (<code>backup.max-backups</code>) — oldest backups are automatically deleted when the limit is exceeded.</li>
+                                    <li class="sub-item">Safety mechanism: restoring a backup always creates a pre-restore safety backup first, preventing accidental data loss.</li>
+                                    <li class="sub-item">All backup operations are logged to the FactoryCore log file.</li>
+                                    <li class="sub-item">Tab-completion support for all backup subcommands, including backup filenames for restore/delete.</li>
+                                    <li class="sub-item">Backup system status is displayed in the startup banner.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Config Changes -->
+                    <div class="change-category">
+                        <div class="category-header improved">
+                            <div class="category-icon improved">↑</div>
+                            <div class="category-title">Configuration Changes</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item"><strong>config.yml:</strong> Updated <code>database.type</code> comment — MySQL is now fully supported (no longer "coming soon").</li>
+                            <li class="change-item"><strong>config.yml:</strong> Added <code>backup</code> section with <code>max-backups</code>, <code>auto-backup.enabled</code>, and <code>auto-backup.interval-ticks</code>.</li>
+                            <li class="change-item"><strong>language.yml:</strong> Added backup messages (backup-created, backup-restored, backup-deleted, backup-failed, etc.).</li>
+                            <li class="change-item"><strong>language.yml:</strong> Added database messages (database-connected, database-migration-start, etc.).</li>
+                            <li class="change-item"><strong>language.yml:</strong> Added help entries for backup and database admin commands.</li>
+                            <li class="change-item"><strong>plugin.yml:</strong> Added <code>factorycore.admin.backup</code> and <code>factorycore.admin.database</code> permissions (default: op).</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
             <!-- Version 1.2.6 -->
             <section class="version-section" id="v1-2-6">
                 <div class="version-header">

@@ -1,6 +1,7 @@
 # Recipes Configuration
 # Format: recipe_id -> inputs & outputs
 # money-cost: money deducted from the player each time production starts (0 = free)
+# disable-item-output: true (optional) will prevent any items from going to the output storage, useful if you only want to give rewards via console-commands
 #
 # ==================== VANILLA INPUT PREFIX ====================
 # For Smeltery recipes, input keys prefixed with "vanilla:" refer to plain

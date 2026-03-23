@@ -28,7 +28,6 @@ public class FactoryGUI {
     private final RecipeSelectionGUI recipeSelectionGUI;
     private final RecipeConfirmationGUI recipeConfirmationGUI;
     private final StorageGUI storageGUI;
-    private final InvoiceGUI invoiceGUI;
     private final UpgradeGUI upgradeGUI;
 
     public FactoryGUI(FactoryCore plugin, Player player, String factoryId) {
@@ -41,7 +40,6 @@ public class FactoryGUI {
         this.recipeSelectionGUI = new RecipeSelectionGUI(plugin, player, factoryId);
         this.recipeConfirmationGUI = new RecipeConfirmationGUI(plugin, player, factoryId);
         this.storageGUI = new StorageGUI(plugin, player, factoryId);
-        this.invoiceGUI = new InvoiceGUI(plugin, player, factoryId);
         this.upgradeGUI = new UpgradeGUI(plugin, player, factoryId);
     }
 
@@ -70,10 +68,6 @@ public class FactoryGUI {
         storageGUI.openStorageMenu();
     }
 
-    // ==================== INVOICE MANAGEMENT GUI ====================
-    public void openInvoiceMenu() {
-        invoiceGUI.openInvoiceMenu();
-    }
 
     // ==================== UPGRADE FACTORY GUI ====================
     public void openUpgradeMenu() {
@@ -107,7 +101,7 @@ public class FactoryGUI {
             if (plugin.getConfig().getBoolean("debug.gui-debug", false)) {
                 plugin.getLogger().info("Handling main menu click");
             }
-            handleMainMenuClick(clicked);
+            handleMainMenuClick(event, clicked);
         }
         // Recipe selection clicks
         else if (title.toLowerCase().contains("select") || title.contains("Production Recipe")) {
@@ -129,13 +123,6 @@ public class FactoryGUI {
                 plugin.getLogger().info("Handling storage click");
             }
             handleStorageClick(event);
-        }
-        // Invoice clicks
-        else if (title.contains("Invoice")) {
-            if (plugin.getConfig().getBoolean("debug.gui-debug", false)) {
-                plugin.getLogger().info("Handling invoice click");
-            }
-            handleInvoiceClick(clicked);
         }
         // Upgrade Factory (info panel) clicks
         else if (title.contains("Upgrade Factory")) {
@@ -173,22 +160,78 @@ public class FactoryGUI {
         return item.getType() == Material.ARROW && item.getItemMeta().getDisplayName().contains("Back");
     }
 
-    private void handleMainMenuClick(ItemStack clicked) {
-        String name = clicked.getItemMeta().getDisplayName();
+    private void handleMainMenuClick(InventoryClickEvent event, ItemStack clicked) {
+        if (!clicked.hasItemMeta()) return;
+        ItemMeta meta = clicked.getItemMeta();
+        String name = meta.getDisplayName();
 
+        // Back → return to My Factories
         if (name.contains("Back")) {
-            new HubGUI(plugin, player).openHubMenu();
+            new MyFactoriesGUI(plugin, player).openMyFactoriesMenu();
             return;
         }
 
+        // Check PDC action tag first (for tagged buttons)
+        String mainAction = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "main_menu_action"), PersistentDataType.STRING);
+
+        if ("sell_factory".equals(mainAction)) {
+            // Open sell confirmation via MyFactoriesGUI (reuses existing dialog)
+            new MyFactoriesGUI(plugin, player).openSellConfirmation(currentFactoryId);
+            return;
+        }
+
+        if ("set_icon".equals(mainAction)) {
+            if (event.getClick().isRightClick()) {
+                // Reset to default icon
+                Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+                com.aithor.factorycore.models.PlayerFactory pf =
+                        plugin.getPlayerFactoryManager() != null
+                                ? plugin.getPlayerFactoryManager().getFactory(currentFactoryId)
+                                : null;
+                if (factory != null) {
+                    factory.setCustomIcon(null);
+                    plugin.getFactoryManager().saveAll();
+                } else if (pf != null) {
+                    pf.setCustomIcon(null);
+                    plugin.getPlayerFactoryManager().saveAll();
+                }
+                player.sendMessage("§aFactory icon reset to default!");
+                openMainMenu();
+            } else {
+                // Prompt chat input
+                player.closeInventory();
+                player.getPersistentDataContainer().set(
+                        new NamespacedKey(plugin, "pending_action"),
+                        PersistentDataType.STRING, "set_icon:" + currentFactoryId);
+                player.sendMessage("§eType the §bMaterial ID §efor the icon (e.g. §bDIAMOND§e), or type §ccancel§e to abort.");
+            }
+            return;
+        }
+
+        // Standard name-based routing
         if (name.contains("Start Production")) {
             openRecipeMenu();
-        } else if (name.contains("Manage Invoices")) {
-            openInvoiceMenu();
         } else if (name.contains("Factory Storage")) {
-            openStorageMenu();
+            if (event.getClick().isRightClick()) {
+                if (!plugin.getNPCManager().factoryHasEmployee(currentFactoryId)) {
+                    player.sendMessage("§c§lStorage Blocked! §cThis factory has no employee assigned.");
+                    player.sendMessage("§7Go to §bEmployees Center §7→ §6Employee Shop §7to hire an employee.");
+                    player.closeInventory();
+                    return;
+                }
+                plugin.getOutputStorageGUI(player, currentFactoryId).openOutputStorage();
+            } else {
+                openStorageMenu();
+            }
         } else if (name.contains("Upgrade Factory")) {
             openUpgradeMenu();
+        } else if (name.contains("Set Display Name")) {
+            player.closeInventory();
+            player.getPersistentDataContainer().set(
+                    new NamespacedKey(plugin, "pending_action"),
+                    PersistentDataType.STRING, "set_name:" + currentFactoryId);
+            player.sendMessage("§eType the new §bdisplay name §efor this factory, or type §ccancel§e to abort.");
         } else if (name.contains("Toggle Border")) {
             // Toggle border particle visualization
             if (plugin.getBorderParticleTask() != null) {
@@ -201,8 +244,7 @@ public class FactoryGUI {
                                     plugin.getConfig().getString("notifications.sound.border-toggle",
                                             "BLOCK_NOTE_BLOCK_PLING"),
                                     1.0f, 1.5f);
-                        } catch (Exception ignored) {
-                        }
+                        } catch (Exception ignored) {}
                     }
                     if (plugin.getConfig().getBoolean("notifications.titles.enabled")) {
                         player.sendTitle(
@@ -218,8 +260,7 @@ public class FactoryGUI {
                                     plugin.getConfig().getString("notifications.sound.border-toggle",
                                             "BLOCK_NOTE_BLOCK_PLING"),
                                     1.0f, 0.5f);
-                        } catch (Exception ignored) {
-                        }
+                        } catch (Exception ignored) {}
                     }
                     if (plugin.getConfig().getBoolean("notifications.titles.enabled")) {
                         player.sendTitle(
@@ -261,14 +302,12 @@ public class FactoryGUI {
                 return;
             }
 
-            // Check if fast travel location is set
             if (factory.getFastTravelLocation() == null) {
                 player.sendMessage("§cFast travel location not set for this factory!");
                 player.sendMessage("§7Contact an admin to set the fast travel location.");
                 return;
             }
 
-            // Teleport player to factory
             if (plugin.getFactoryManager().teleportPlayer(player, currentFactoryId)) {
                 player.sendMessage("§aSuccessfully teleported to the factory!");
             } else {
@@ -798,63 +837,6 @@ public class FactoryGUI {
         openStorageMenu();
     }
 
-    private void handleInvoiceClick(ItemStack clicked) {
-        String name = clicked.getItemMeta().getDisplayName();
-
-        if (name.contains("Back")) {
-            openMainMenu();
-            return;
-        }
-
-        // Get invoice ID from item
-        ItemMeta meta = clicked.getItemMeta();
-        if (meta == null)
-            return;
-
-        String invoiceId = meta.getPersistentDataContainer().get(new NamespacedKey(plugin, "invoice_id"),
-                PersistentDataType.STRING);
-        if (invoiceId == null)
-            return;
-
-        if (plugin.getInvoiceManager().payInvoice(player, invoiceId)) {
-            // Extract amount safely from lore with better error handling
-            String amount = extractAmountFromLore(clicked.getItemMeta().getLore());
-            player.sendMessage(plugin.getLanguageManager().getMessage("invoice-paid")
-                    .replace("{amount}", amount));
-            openInvoiceMenu(); // Refresh
-        } else {
-            // Extract amount safely from lore with better error handling
-            String amount = extractAmountFromLore(clicked.getItemMeta().getLore());
-            player.sendMessage(plugin.getLanguageManager().getMessage("insufficient-funds")
-                    .replace("{amount}", amount));
-        }
-    }
-
-    private String extractAmountFromLore(List<String> lore) {
-        if (lore == null || lore.isEmpty()) {
-            return "0.00";
-        }
-
-        // Find the line that contains "Amount:" and extract the value
-        for (String line : lore) {
-            if (line.contains("Amount:")) {
-                try {
-                    // Extract number after "$" symbol
-                    String[] parts = line.split("\\$");
-                    if (parts.length > 1) {
-                        // Get the number part and parse it
-                        String numberStr = parts[1].replaceAll("[^0-9\\\\.]", "");
-                        return numberStr;
-                    }
-                } catch (Exception e) {
-                    // If parsing fails, return default
-                    break;
-                }
-            }
-        }
-
-        return "0.00";
-    }
 
     private void handleUpgradeClick(ItemStack clicked) {
         String name = clicked.getItemMeta().getDisplayName();

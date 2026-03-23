@@ -43,6 +43,7 @@ public class InventoryClickListener implements Listener {
                 title.toLowerCase().contains("select") ||
                 title.contains("Confirm:") ||
                 title.contains("Confirm Upgrade") ||
+                title.contains("Confirm Sale") ||
                 title.contains("Storage") ||
                 title.contains("Invoice") ||
                 title.contains("Upgrade Factory") ||

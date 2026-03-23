@@ -33,6 +33,8 @@ public class PlayerFactory {
     // Upgrade timer
     private long upgradeStartTime = -1;
     private int upgradeDurationSeconds = 0;
+    private String displayName;   // player-defined custom name (nullable)
+    private String customIcon;    // material name for icon override (nullable)
 
     public PlayerFactory(String id, UUID owner, FactoryType type, double price,
                          String worldName,
@@ -127,4 +129,10 @@ public class PlayerFactory {
     public double getCenterZ() { return centerZ; }
     public float getCenterYaw() { return centerYaw; }
     public float getCenterPitch() { return centerPitch; }
+
+    // ── Display name & icon ───────────────────────────────────────────────────
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
+    public String getCustomIcon() { return customIcon; }
+    public void setCustomIcon(String customIcon) { this.customIcon = customIcon; }
 }

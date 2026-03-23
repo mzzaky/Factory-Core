@@ -278,6 +278,9 @@ public class FactoryCore extends JavaPlugin {
 
         // Register player factory protection listener
         getServer().getPluginManager().registerEvents(new PlayerFactoryProtectionListener(this), this);
+
+        // Register factory chat listener (for rename / icon input prompts)
+        getServer().getPluginManager().registerEvents(new FactoryChatListener(this), this);
     }
 
     private void startSchedulers() {

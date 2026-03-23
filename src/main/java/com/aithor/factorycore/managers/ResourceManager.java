@@ -50,8 +50,12 @@ public class ResourceManager {
 
             ResourceItem item = new ResourceItem(key, type, material);
             item.setName(resourceConfig.getString(path + ".name", "§fUnnamed").replace("&", "§"));
+            
+            String rarity = resourceConfig.getString(path + ".rarity", "common");
+            item.setRarity(rarity);
+            
             item.setLore(resourceConfig.getStringList(path + ".lore").stream()
-                    .map(s -> s.replace("&", "§"))
+                    .map(s -> s.replace("&", "§").replace("%rarity%", getRarityDisplay(rarity)))
                     .collect(java.util.stream.Collectors.toList()));
             item.setCustomModelData(resourceConfig.getInt(path + ".custom-model-data", 0));
             item.setGlow(resourceConfig.getBoolean(path + ".glow", false));
@@ -259,6 +263,17 @@ public class ResourceManager {
 
     public Map<String, ResourceItem> getAllResources() {
         return new HashMap<>(resources);
+    }
+    
+    private String getRarityDisplay(String rarity) {
+        if (rarity == null) return "§fCommon";
+        switch (rarity.toLowerCase()) {
+            case "uncommon": return "§aUncommon";
+            case "rare": return "§9Rare";
+            case "epic": return "§5Epic";
+            case "common":
+            default: return "§fCommon";
+        }
     }
 
     // ==================== VANILLA INPUT HELPERS ====================

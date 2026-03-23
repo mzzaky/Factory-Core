@@ -12,6 +12,7 @@ public class Recipe {
     private Map<String, Integer> outputs;
     private List<String> consoleCommands;
     private String icon;
+    private boolean disableItemOutput;
 
     public Recipe(String id, String name, String factoryType, int productionTime) {
         this.id = id;
@@ -62,6 +63,14 @@ public class Recipe {
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public boolean isDisableItemOutput() {
+        return disableItemOutput;
+    }
+
+    public void setDisableItemOutput(boolean disableItemOutput) {
+        this.disableItemOutput = disableItemOutput;
     }
 
     public void setMoneyCost(double cost) {

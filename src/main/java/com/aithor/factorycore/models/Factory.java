@@ -15,6 +15,8 @@ public class Factory {
     private ProductionTask currentProduction;
     private Location fastTravelLocation;
     private Map<String, Integer> outputStorage;
+    private String displayName;   // player-defined custom name (nullable)
+    private String customIcon;    // material name for icon override (nullable)
 
     // ── Upgrade timer ─────────────────────────────────────────────────────────
     private long upgradeStartTime = -1; // epoch ms, -1 = not upgrading
@@ -153,4 +155,10 @@ public class Factory {
     public int getOutputStorageSize() {
         return outputStorage.size();
     }
+
+    // ── Display name & icon ───────────────────────────────────────────────────
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
+    public String getCustomIcon() { return customIcon; }
+    public void setCustomIcon(String customIcon) { this.customIcon = customIcon; }
 }

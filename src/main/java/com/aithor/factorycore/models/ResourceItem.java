@@ -21,6 +21,9 @@ public class ResourceItem {
     private boolean executableItem;
     private String executableItemsId;
 
+    // Rarity
+    private String rarity;
+
     public ResourceItem(String id, ResourceType type, String material) {
         this.id = id;
         this.type = type;
@@ -34,6 +37,7 @@ public class ResourceItem {
         this.mmoItemsId = null;
         this.executableItem = false;
         this.executableItemsId = null;
+        this.rarity = "common";
     }
 
     public String getId() { return id; }
@@ -63,4 +67,8 @@ public class ResourceItem {
     public void setExecutableItem(boolean executableItem) { this.executableItem = executableItem; }
     public String getExecutableItemsId() { return executableItemsId; }
     public void setExecutableItemsId(String executableItemsId) { this.executableItemsId = executableItemsId; }
+
+    // Rarity getter & setter
+    public String getRarity() { return rarity; }
+    public void setRarity(String rarity) { this.rarity = rarity; }
 }

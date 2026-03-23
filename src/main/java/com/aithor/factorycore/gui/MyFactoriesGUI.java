@@ -184,16 +184,17 @@ public class MyFactoriesGUI {
     }
 
     private ItemStack createFactoryItem(Factory factory) {
+        // Icon material: custom override or status-based default
         Material material;
-        switch (factory.getStatus()) {
-            case RUNNING:
-                material = Material.LIME_CONCRETE;
-                break;
-            case NO_PARTS:
-                material = Material.YELLOW_CONCRETE;
-                break;
-            default:
-                material = Material.RED_CONCRETE;
+        if (factory.getCustomIcon() != null) {
+            Material custom = Material.matchMaterial(factory.getCustomIcon());
+            material = (custom != null) ? custom : Material.LIME_CONCRETE;
+        } else {
+            switch (factory.getStatus()) {
+                case RUNNING: material = Material.LIME_CONCRETE; break;
+                case NO_PARTS: material = Material.YELLOW_CONCRETE; break;
+                default: material = Material.RED_CONCRETE;
+            }
         }
 
         String shortId = factory.getId().length() > 8 ? factory.getId().substring(0, 8) : factory.getId();
@@ -226,8 +227,12 @@ public class MyFactoriesGUI {
         lore.add("§eRight Click: §7Quick Teleport");
         lore.add("§eShift + Right Click: §7Sell Factory");
 
-        ItemStack item = createItem(material, "§f" + factory.getType().getDisplayName() + " §7(§e#" + shortId + "§7)",
-                lore);
+        // Title: use displayName if available
+        String title = factory.getDisplayName() != null && !factory.getDisplayName().isBlank()
+                ? "§f" + factory.getDisplayName() + " §8(" + factory.getType().getDisplayName() + ")"
+                : "§f" + factory.getType().getDisplayName();
+
+        ItemStack item = createItem(material, title, lore);
 
         // Store factory ID for click handling
         ItemMeta meta = item.getItemMeta();
@@ -243,13 +248,13 @@ public class MyFactoriesGUI {
     }
 
     private ItemStack createPlayerFactoryItem(PlayerFactory pf) {
+        // Icon material: custom override or status-based default
         Material material;
-        switch (pf.getStatus()) {
-            case RUNNING:
-                material = Material.LIME_CONCRETE;
-                break;
-            default:
-                material = Material.RED_CONCRETE;
+        if (pf.getCustomIcon() != null) {
+            Material custom = Material.matchMaterial(pf.getCustomIcon());
+            material = (custom != null) ? custom : Material.LIME_CONCRETE;
+        } else {
+            material = pf.getStatus() == FactoryStatus.RUNNING ? Material.LIME_CONCRETE : Material.RED_CONCRETE;
         }
 
         String shortId = pf.getId().length() > 8 ? pf.getId().substring(0, 8) : pf.getId();
@@ -281,8 +286,12 @@ public class MyFactoriesGUI {
         lore.add("§eRight Click: §7Quick Teleport");
         lore.add("§eShift + Right Click: §7Sell Factory");
 
-        ItemStack item = createItem(material,
-                "§f" + pf.getType().getDisplayName() + " §d[Player] §7(§e#" + shortId + "§7)", lore);
+        // Title: use displayName if available
+        String title = pf.getDisplayName() != null && !pf.getDisplayName().isBlank()
+                ? "§f" + pf.getDisplayName()
+                : "§f" + pf.getType().getDisplayName();
+
+        ItemStack item = createItem(material, title, lore);
 
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {

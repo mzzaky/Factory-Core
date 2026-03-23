@@ -1,0 +1,16 @@
+v1.2.8 Update Log
+
+- [Removed] Menghapus sistem Invoice Management dan InvoiceGUI dari menu utama serta sistem GUI factory.
+- [Update] Meningkatkan kapasitas Main Menu GUI menjadi 54 slot dengan layout yang lebih rapi dan intuitif.
+- [Update] Mengubah fungsi tombol "Back" di Main Menu agar langsung kembali ke My Factories GUI alih-alih Hub.
+- [New] Fitur "Set Display Name" untuk mengubah nama tampilan pabrik secara custom melalui chat input.
+- [New] Fitur "Set Factory Icon" untuk mengganti material ikon pabrik di menu My Factories (dengan dukungan reset ke default melalui klik kanan).
+- [New] Sistem "Sell Factory" terintegrasi dengan mekanisme konfirmasi keamanan (GUI Confirm Sale) sebelum menjual pabrik ke sistem.
+- [Update] Integrasi FactoryChatListener untuk menangani input teks pemain secara real-time saat melakukan renaming atau pergantian material ikon.
+- [Update] Pembaruan model Factory dan PlayerFactory untuk menyimpan data nama tampilan (Display Name) dan ikon kustom (Custom Icon).
+- [Update] Pembaruan MyFactoriesGUI agar dapat menampilkan nama kustom dan ikon yang telah dipersonalisasi oleh pemain, serta menyederhanakan tampilan item name dengan menghapus short ID dan tag [Player].
+- [New] Menambahkan fungsi left-click untuk membuka Input Storage dan right-click untuk membuka Output Storage pada tombol Factory Storage di Main Menu GUI, dilengkapi validasi kepemilikan NPC employee untuk akses output.
+- [New] Menambahkan fitur "disable-item-output" pada resep (recipes.yml) untuk menonaktifkan output item, sehingga reward dapat sepenuhnya dikontrol melalui console-commands.
+- [New] Menambahkan sistem "Rarity" pada resource dengan empat tingkatan: Common, Uncommon, Rare, dan Epic.
+- [Update] Fitur placeholder `%rarity%` pada lore item agar dapat menampilkan raritas item secara otomatis dengan format warna yang sesuai.
+- [Update] Pembaruan seluruh item bawaan pada `resources.yml` dengan penentuan raritas yang unik untuk setiap kategori resource.

@@ -86,6 +86,9 @@ public class RecipeManager {
             List<String> commands = recipeConfig.getStringList(path + ".console-commands");
             commands.forEach(recipe::addConsoleCommand);
 
+            // Load disable item output flag
+            recipe.setDisableItemOutput(recipeConfig.getBoolean(path + ".disable-item-output", false));
+
             // Load money cost
             recipe.setMoneyCost(recipeConfig.getDouble(path + ".money-cost", 0.0));
 

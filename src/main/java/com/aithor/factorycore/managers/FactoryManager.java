@@ -389,8 +389,10 @@ public class FactoryManager {
 
         if (recipe != null) {
             // Add outputs to output storage
-            for (Map.Entry<String, Integer> output : recipe.getOutputs().entrySet()) {
-                plugin.getStorageManager().addOutputItem(factory.getId(), output.getKey(), output.getValue());
+            if (!recipe.isDisableItemOutput()) {
+                for (Map.Entry<String, Integer> output : recipe.getOutputs().entrySet()) {
+                    plugin.getStorageManager().addOutputItem(factory.getId(), output.getKey(), output.getValue());
+                }
             }
 
             // Execute console commands

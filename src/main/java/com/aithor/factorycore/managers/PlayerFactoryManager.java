@@ -375,8 +375,10 @@ public class PlayerFactoryManager {
     private void completeProduction(PlayerFactory pf, com.aithor.factorycore.models.ProductionTask task) {
         com.aithor.factorycore.models.Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
         if (recipe != null) {
-            for (java.util.Map.Entry<String, Integer> output : recipe.getOutputs().entrySet()) {
-                plugin.getStorageManager().addOutputItem(pf.getId(), output.getKey(), output.getValue());
+            if (!recipe.isDisableItemOutput()) {
+                for (java.util.Map.Entry<String, Integer> output : recipe.getOutputs().entrySet()) {
+                    plugin.getStorageManager().addOutputItem(pf.getId(), output.getKey(), output.getValue());
+                }
             }
             // Execute console commands
             for (String cmd : recipe.getConsoleCommands()) {

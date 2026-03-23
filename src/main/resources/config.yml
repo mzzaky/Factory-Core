@@ -159,6 +159,7 @@ notifications:
     level-up: ENTITY_PLAYER_LEVELUP
     factory-upgrade: ENTITY_PLAYER_LEVELUP
     # NEW: Additional sounds
+    distribution-request: BLOCK_NOTE_BLOCK_BELL
     tax-due: BLOCK_NOTE_BLOCK_BASS
     marketplace-sale: ENTITY_EXPERIENCE_ORB_PICKUP
     factory-created: ENTITY_PLAYER_LEVELUP
@@ -182,6 +183,22 @@ gui:
     show-player-head: true
     show-quick-stats: true
     title: "§6§lFactoryCore §8- §eMain Hub"
+
+# ==================== NEW: DISTRIBUTION CENTER SETTINGS ====================
+distribution:
+  enabled: true
+  # Tax rate deducted from distribution center payouts (%)
+  tax_distribution_rate: 25.0
+  # Maximum number of active requests per player
+  max-active-requests: 3
+  # Interval in ticks between distribution event spawn checks (6000 = 5 minutes)
+  spawn-interval-ticks: 6000
+  # Minimum time between new request spawns per player (in seconds)
+  min-spawn-cooldown: 300
+  # Whether to notify all online players when a new request appears
+  broadcast-new-requests: true
+  # Allow requests to spawn while player is offline
+  allow-offline-spawning: false
 
 # Debug settings
 debug:

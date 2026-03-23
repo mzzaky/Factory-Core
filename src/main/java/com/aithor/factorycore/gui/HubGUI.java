@@ -797,6 +797,11 @@ public class HubGUI {
         ph.put("{quest_total_count}", String.valueOf(totalQuests));
         ph.put("{quest_reset_time}", resetTime);
 
+        int distributionActiveCount = plugin.getDistributionManager() != null
+                ? plugin.getDistributionManager().getActiveRequestCount(player.getUniqueId())
+                : 0;
+        ph.put("{distribution_active_count}", String.valueOf(distributionActiveCount));
+
         return ph;
     }
 

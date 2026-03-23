@@ -137,6 +137,8 @@ public class HubClickListener implements Listener {
             handleDailyQuestClick(player, clicked, meta, name);
         } else if (title.contains("Recipes Wiki")) {
             handleRecipesWikiClick(player, clicked, meta, name, event.getClick());
+        } else if (title.contains("Distribution Center") || title.contains("Request:")) {
+            handleDistributionCenterClick(player, clicked, meta, name);
         } else if (title.contains("Create Factory") && title.contains("Select Type")) {
             handleFactoryTypeSelectClick(player, clicked, meta, name);
         } else if (title.contains("Confirm Factory Creation")) {
@@ -176,7 +178,9 @@ public class HubClickListener implements Listener {
                 title.contains("Daily Quests") ||
                 title.contains("Create Factory") ||
                 title.contains("Confirm Factory Creation") ||
-                title.contains("Recipes Wiki");
+                title.contains("Recipes Wiki") ||
+                title.contains("Distribution Center") ||
+                title.contains("Request:");
     }
 
     // ==================== HUB MAIN MENU ====================
@@ -267,6 +271,12 @@ public class HubClickListener implements Listener {
                     RecipesWikiGUI wikiGui = new RecipesWikiGUI(plugin, player);
                     recipesWikiGUIs.put(player.getUniqueId(), wikiGui);
                     wikiGui.openWikiMenu();
+                    break;
+                }
+                case "distribution_center": {
+                    playHubSound(player, "distribution_center");
+                    DistributionCenterGUI distGui = new DistributionCenterGUI(plugin, player);
+                    distGui.openDistributionCenter();
                     break;
                 }
                 case "close_button": {
@@ -415,6 +425,11 @@ public class HubClickListener implements Listener {
                 RecipesWikiGUI wikiGui = new RecipesWikiGUI(plugin, player);
                 recipesWikiGUIs.put(player.getUniqueId(), wikiGui);
                 wikiGui.openWikiMenu();
+                return true;
+            }
+            case "open_gui_distribution_center": {
+                playHubSound(player, "distribution_center");
+                new DistributionCenterGUI(plugin, player).openDistributionCenter();
                 return true;
             }
             default:
@@ -1124,6 +1139,127 @@ public class HubClickListener implements Listener {
             } else {
                 gui.openRecipeDetail(resourceId);
             }
+        }
+    }
+
+    // ==================== DISTRIBUTION CENTER ====================
+    private void handleDistributionCenterClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
+        // Back to Hub
+        if (name.contains("Back to Hub")) {
+            openHub(player);
+            return;
+        }
+
+        // Back to Distribution Center (from detail view)
+        if (name.contains("Back to Distribution Center")) {
+            new DistributionCenterGUI(plugin, player).openDistributionCenter();
+            return;
+        }
+
+        // Click on a request item (open detail view)
+        String requestId = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "dist_request_id"),
+                PersistentDataType.STRING);
+
+        if (requestId != null) {
+            com.aithor.factorycore.managers.DistributionManager distManager = plugin.getDistributionManager();
+            java.util.List<com.aithor.factorycore.models.ActiveDistributionRequest> requests =
+                    distManager.getActiveRequests(player.getUniqueId());
+
+            for (com.aithor.factorycore.models.ActiveDistributionRequest request : requests) {
+                if (request.getRequestId().equals(requestId)) {
+                    new DistributionCenterGUI(plugin, player).openRequestDetail(request);
+                    return;
+                }
+            }
+            player.sendMessage("\u00a7cThis request is no longer active.");
+            new DistributionCenterGUI(plugin, player).openDistributionCenter();
+            return;
+        }
+
+        // Deliver a specific resource
+        String demandResource = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "dist_demand_resource"),
+                PersistentDataType.STRING);
+        String demandRequest = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "dist_demand_request"),
+                PersistentDataType.STRING);
+
+        if (demandResource != null && demandRequest != null) {
+            com.aithor.factorycore.managers.DistributionManager distManager = plugin.getDistributionManager();
+            boolean success = distManager.deliverResource(player, demandRequest, demandResource);
+
+            if (success) {
+                player.sendMessage("\u00a7a\u2714 Resource delivered successfully!");
+                try {
+                    player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.2f);
+                } catch (Exception ignored) {}
+
+                // Refresh the detail view
+                java.util.List<com.aithor.factorycore.models.ActiveDistributionRequest> requests =
+                        distManager.getActiveRequests(player.getUniqueId());
+                for (com.aithor.factorycore.models.ActiveDistributionRequest request : requests) {
+                    if (request.getRequestId().equals(demandRequest)) {
+                        new DistributionCenterGUI(plugin, player).openRequestDetail(request);
+                        return;
+                    }
+                }
+                // If request was completed and removed, go back to main
+                new DistributionCenterGUI(plugin, player).openDistributionCenter();
+            } else {
+                player.sendMessage("\u00a7c\u2716 You don't have this resource in your inventory!");
+                try {
+                    player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+                } catch (Exception ignored) {}
+            }
+            return;
+        }
+
+        // Deliver All button
+        String deliverAllId = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "dist_deliver_all"),
+                PersistentDataType.STRING);
+
+        if (deliverAllId != null) {
+            com.aithor.factorycore.managers.DistributionManager distManager = plugin.getDistributionManager();
+            java.util.List<com.aithor.factorycore.models.ActiveDistributionRequest> requests =
+                    distManager.getActiveRequests(player.getUniqueId());
+
+            for (com.aithor.factorycore.models.ActiveDistributionRequest request : requests) {
+                if (request.getRequestId().equals(deliverAllId)) {
+                    int delivered = 0;
+                    for (String resourceId : new java.util.ArrayList<>(request.getDeliveredResources().keySet())) {
+                        if (!request.isResourceDelivered(resourceId)) {
+                            if (distManager.deliverResource(player, deliverAllId, resourceId)) {
+                                delivered++;
+                            }
+                        }
+                    }
+
+                    if (delivered > 0) {
+                        player.sendMessage("\u00a7a\u2714 Delivered " + delivered + " resource(s)!");
+                        try {
+                            player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.2f);
+                        } catch (Exception ignored) {}
+                    } else {
+                        player.sendMessage("\u00a7cNo resources could be delivered. Check your inventory!");
+                    }
+
+                    // Refresh view
+                    requests = distManager.getActiveRequests(player.getUniqueId());
+                    for (com.aithor.factorycore.models.ActiveDistributionRequest req : requests) {
+                        if (req.getRequestId().equals(deliverAllId)) {
+                            new DistributionCenterGUI(plugin, player).openRequestDetail(req);
+                            return;
+                        }
+                    }
+                    new DistributionCenterGUI(plugin, player).openDistributionCenter();
+                    return;
+                }
+            }
+            player.sendMessage("\u00a7cThis request is no longer active.");
+            new DistributionCenterGUI(plugin, player).openDistributionCenter();
+            return;
         }
     }
 

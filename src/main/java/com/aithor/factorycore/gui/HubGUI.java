@@ -260,6 +260,26 @@ public class HubGUI {
                                     "",
                                     "&7Click to learn more!")));
 
+        // ── Recipes Wiki ─────────────────────────────────────────────────────
+        if (isItemEnabled(cfg, "recipes_wiki")) {
+            Map<String, String> wikiPh = new HashMap<>(globalPh);
+            int resourceCount = plugin.getResourceManager().getAllResources().size();
+            int recipeCount = plugin.getRecipeManager().getAllRecipes().size();
+            wikiPh.put("{resource_count}", String.valueOf(resourceCount));
+            wikiPh.put("{recipe_count}", String.valueOf(recipeCount));
+            setItems(inv, parseSlots(cfg, "items.recipes_wiki.slot", 39),
+                    buildItem(cfg, "recipes_wiki", wikiPh,
+                            Material.KNOWLEDGE_BOOK, "&6&lRecipes Wiki",
+                            Arrays.asList(
+                                    "&7Browse all resources and",
+                                    "&7their crafting recipes",
+                                    "",
+                                    "&eResources: &6" + wikiPh.get("{resource_count}"),
+                                    "&eRecipes: &6" + wikiPh.get("{recipe_count}"),
+                                    "",
+                                    "&7Click to browse!")));
+        }
+
         // ── Quick Stats ───────────────────────────────────────────────────────
         if (isItemEnabled(cfg, "quick_stats"))
             setItems(inv, parseSlots(cfg, "items.quick_stats.slot", 49), createQuickStatsItem(cfg, globalPh));
@@ -276,8 +296,8 @@ public class HubGUI {
             List<String> coreKeys = Arrays.asList(
                     "player_info", "factory_browse", "my_factories", "invoice_center",
                     "tax_center", "employees_center", "marketplace", "achievements",
-                    "research_center", "daily_quests", "help_info", "quick_stats",
-                    "close_button");
+                    "research_center", "daily_quests", "help_info", "recipes_wiki",
+                    "quick_stats", "close_button");
             for (String key : cfg.getConfigurationSection("items").getKeys(false)) {
                 if (!coreKeys.contains(key) && isItemEnabled(cfg, key)) {
                     if (cfg.contains("items." + key + ".slot")) {

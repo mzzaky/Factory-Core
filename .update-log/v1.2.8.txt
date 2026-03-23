@@ -1,16 +1,25 @@
 v1.2.8 Update Log
 
-- [Removed] Menghapus sistem Invoice Management dan InvoiceGUI dari menu utama serta sistem GUI factory.
-- [Update] Meningkatkan kapasitas Main Menu GUI menjadi 54 slot dengan layout yang lebih rapi dan intuitif.
-- [Update] Mengubah fungsi tombol "Back" di Main Menu agar langsung kembali ke My Factories GUI alih-alih Hub.
-- [New] Fitur "Set Display Name" untuk mengubah nama tampilan pabrik secara custom melalui chat input.
-- [New] Fitur "Set Factory Icon" untuk mengganti material ikon pabrik di menu My Factories (dengan dukungan reset ke default melalui klik kanan).
-- [New] Sistem "Sell Factory" terintegrasi dengan mekanisme konfirmasi keamanan (GUI Confirm Sale) sebelum menjual pabrik ke sistem.
-- [Update] Integrasi FactoryChatListener untuk menangani input teks pemain secara real-time saat melakukan renaming atau pergantian material ikon.
-- [Update] Pembaruan model Factory dan PlayerFactory untuk menyimpan data nama tampilan (Display Name) dan ikon kustom (Custom Icon).
-- [Update] Pembaruan MyFactoriesGUI agar dapat menampilkan nama kustom dan ikon yang telah dipersonalisasi oleh pemain, serta menyederhanakan tampilan item name dengan menghapus short ID dan tag [Player].
-- [New] Menambahkan fungsi left-click untuk membuka Input Storage dan right-click untuk membuka Output Storage pada tombol Factory Storage di Main Menu GUI, dilengkapi validasi kepemilikan NPC employee untuk akses output.
-- [New] Menambahkan fitur "disable-item-output" pada resep (recipes.yml) untuk menonaktifkan output item, sehingga reward dapat sepenuhnya dikontrol melalui console-commands.
-- [New] Menambahkan sistem "Rarity" pada resource dengan empat tingkatan: Common, Uncommon, Rare, dan Epic.
-- [Update] Fitur placeholder `%rarity%` pada lore item agar dapat menampilkan raritas item secara otomatis dengan format warna yang sesuai.
-- [Update] Pembaruan seluruh item bawaan pada `resources.yml` dengan penentuan raritas yang unik untuk setiap kategori resource.
+- [Removed] Removed Invoice Management and InvoiceGUI from the main menu and factory GUI system.
+- [Update] Increased Main Menu GUI capacity to 54 slots with a cleaner and more intuitive layout.
+- [Update] Changed the "Back" button in Main Menu to return directly to My Factories GUI instead of the Hub.
+- [New] "Set Display Name" feature to customize factory display names via chat input.
+- [New] "Set Factory Icon" feature to change factory material icon in the My Factories menu (with right-click support to reset to default).
+- [New] "Sell Factory" system integrated with a security confirmation mechanism (Confirm Sale GUI) before selling a factory to the system.
+- [Update] Integrated FactoryChatListener for real-time player text input handling during renaming or icon material changes.
+- [Update] Updated Factory and PlayerFactory models to store display name (Display Name) and custom icon (Custom Icon) data.
+- [Update] Updated MyFactoriesGUI to display custom names and icons personalized by players, and simplified item name display by removing short ID and [Player] tag.
+- [New] Added left-click to open Input Storage and right-click to open Output Storage on the Factory Storage button in Main Menu GUI, with NPC employee ownership validation for output access.
+- [New] Added "disable-item-output" feature in recipes (recipes.yml) to disable item output, allowing rewards to be fully controlled via console-commands.
+- [New] Added "Rarity" system for resources with four tiers: Common, Uncommon, Rare, and Epic.
+- [Update] Added `%rarity%` placeholder in item lore to automatically display item rarity with appropriate color formatting.
+- [Update] Updated all default items in `resources.yml` with unique rarity assignments for each resource category.
+- [New] Added "Recipes Wiki" GUI — a comprehensive in-game encyclopedia accessible from the main hub menu. Features include:
+  - Automatically lists all registered resources from resources.yml (no code edits needed).
+  - Left-click on any resource to view its crafting recipe (inputs, outputs, production time, cost).
+  - Right-click on any resource to view all recipes that use it as an ingredient.
+  - Detailed item information panel showing rarity, type, price, source factory, and production time.
+  - Sort buttons to organize resources by Name, Price, Rarity, Type, or Source factory.
+  - Paginated display supporting unlimited resources.
+  - Data refreshes automatically on `/fc admin reload`.
+  - Integrated into the main hub menu with configurable slot, material, and lore via `custom_gui/main_menu.yml`.

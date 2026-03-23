@@ -43,6 +43,7 @@ public class HubClickListener implements Listener {
     private final Map<UUID, ResearchGUI> researchGUIs = new HashMap<>();
     private final Map<UUID, AchievementGUI> achievementGUIs = new HashMap<>();
     private final Map<UUID, DailyQuestGUI> dailyQuestGUIs = new HashMap<>();
+    private final Map<UUID, RecipesWikiGUI> recipesWikiGUIs = new HashMap<>();
 
     public HubClickListener(FactoryCore plugin) {
         this.plugin = plugin;
@@ -134,6 +135,8 @@ public class HubClickListener implements Listener {
             handleAchievementsClick(player, clicked, meta, name);
         } else if (title.contains("Daily Quests")) {
             handleDailyQuestClick(player, clicked, meta, name);
+        } else if (title.contains("Recipes Wiki")) {
+            handleRecipesWikiClick(player, clicked, meta, name, event.getClick());
         } else if (title.contains("Create Factory") && title.contains("Select Type")) {
             handleFactoryTypeSelectClick(player, clicked, meta, name);
         } else if (title.contains("Confirm Factory Creation")) {
@@ -172,7 +175,8 @@ public class HubClickListener implements Listener {
                 title.contains("Achievements") ||
                 title.contains("Daily Quests") ||
                 title.contains("Create Factory") ||
-                title.contains("Confirm Factory Creation");
+                title.contains("Confirm Factory Creation") ||
+                title.contains("Recipes Wiki");
     }
 
     // ==================== HUB MAIN MENU ====================
@@ -256,6 +260,13 @@ public class HubClickListener implements Listener {
                     HelpInfoGUI gui = new HelpInfoGUI(plugin, player);
                     helpInfoGUIs.put(player.getUniqueId(), gui);
                     gui.openHelpMenu();
+                    break;
+                }
+                case "recipes_wiki": {
+                    playHubSound(player, "recipes_wiki");
+                    RecipesWikiGUI wikiGui = new RecipesWikiGUI(plugin, player);
+                    recipesWikiGUIs.put(player.getUniqueId(), wikiGui);
+                    wikiGui.openWikiMenu();
                     break;
                 }
                 case "close_button": {
@@ -397,6 +408,13 @@ public class HubClickListener implements Listener {
                 HelpInfoGUI helpGui = new HelpInfoGUI(plugin, player);
                 helpInfoGUIs.put(player.getUniqueId(), helpGui);
                 helpGui.openHelpMenu();
+                return true;
+            }
+            case "open_gui_recipes_wiki": {
+                playHubSound(player, "recipes_wiki");
+                RecipesWikiGUI wikiGui = new RecipesWikiGUI(plugin, player);
+                recipesWikiGUIs.put(player.getUniqueId(), wikiGui);
+                wikiGui.openWikiMenu();
                 return true;
             }
             default:
@@ -1059,6 +1077,56 @@ public class HubClickListener implements Listener {
         }
     }
 
+    // ==================== RECIPES WIKI ====================
+    private void handleRecipesWikiClick(Player player, ItemStack clicked, ItemMeta meta, String name,
+            ClickType clickType) {
+        RecipesWikiGUI gui = recipesWikiGUIs.getOrDefault(player.getUniqueId(),
+                new RecipesWikiGUI(plugin, player));
+        recipesWikiGUIs.put(player.getUniqueId(), gui);
+
+        // Check for wiki_action PDC tag
+        String action = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "wiki_action"),
+                PersistentDataType.STRING);
+
+        if (action != null) {
+            switch (action) {
+                case "sort":
+                    gui.cycleSortMode();
+                    gui.openWikiMenu(gui.getCurrentPage());
+                    return;
+                case "prev_page":
+                    gui.openWikiMenu(gui.getCurrentPage() - 1);
+                    return;
+                case "next_page":
+                    gui.openWikiMenu(gui.getCurrentPage() + 1);
+                    return;
+                case "back_to_hub":
+                    openHub(player);
+                    return;
+                case "back_to_wiki":
+                    gui.openWikiMenu(gui.getCurrentPage());
+                    return;
+                case "close":
+                    player.closeInventory();
+                    return;
+            }
+        }
+
+        // Check for resource click (left = recipe, right = usage)
+        String resourceId = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "wiki_resource_id"),
+                PersistentDataType.STRING);
+
+        if (resourceId != null) {
+            if (clickType == ClickType.RIGHT || clickType == ClickType.SHIFT_RIGHT) {
+                gui.openUsageDetail(resourceId);
+            } else {
+                gui.openRecipeDetail(resourceId);
+            }
+        }
+    }
+
     // ==================== FACTORY TYPE SELECT (Create Factory)
     // ====================
     private void handleFactoryTypeSelectClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
@@ -1320,5 +1388,6 @@ public class HubClickListener implements Listener {
         researchGUIs.remove(playerId);
         achievementGUIs.remove(playerId);
         dailyQuestGUIs.remove(playerId);
+        recipesWikiGUIs.remove(playerId);
     }
 }

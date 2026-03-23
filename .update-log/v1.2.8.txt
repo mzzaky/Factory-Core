@@ -34,3 +34,26 @@ v1.2.8 Update Log
   - Organized control row: Back, Deposit All, Info, and Withdraw All.
   - Consistent design style with Output Storage for a premium experience.
 - [Update] Updated UpgradeGUI to show storage capacity bonuses for both current level and next level in the upgrade panel and confirmation dialog.
+- [New] Added "Distribution Center" feature — a complete delivery request system where companies request materials from players. Features include:
+  - Virtual company entities loaded from `company.yml` with detailed info (name, industry, CEO, HQ, reputation stars, lore).
+  - Distribution events loaded from `event.yml` with weighted random selection, time limits, and configurable demands.
+  - 15 sample companies across 7 industries: Heavy Industry, Mining, Technology, Energy, Military & Defense, Luxury & Commerce, Engineering, and Construction.
+  - 25 sample events ranging from basic (common ore deliveries) to elite (multi-resource legendary contracts).
+  - Custom Distribution Center GUI accessible from the main hub menu with clean, modern design.
+  - Request detail view showing company info, timer with color-coded status, reward breakdown, and clickable resource delivery.
+  - "Deliver All" button to submit all demanded resources from inventory at once.
+  - Speed bonus system: completing requests quickly (configurable % of time remaining) awards a multiplier on the payout.
+  - Multi-resource requests: events can demand multiple different resources in a single delivery.
+  - Command execution on request appear and completion (supports %player% placeholder).
+  - Automatic request expiration with cleanup.
+  - Periodic event spawning via configurable scheduler interval.
+  - Data persistence for active requests and tax records via YAML.
+  - Full reload support via `/fc admin reload`.
+- [New] Added "TAX_DISTRIBUTION" as a new InvoiceType data type representing tax deducted from distribution center payouts.
+- [New] Added `distribution` section to `config.yml` with settings: enabled, tax_distribution_rate (default 25%), max-active-requests, spawn-interval-ticks, min-spawn-cooldown, broadcast-new-requests, allow-offline-spawning.
+- [New] Added Distribution Center item to the main hub menu (`custom_gui/main_menu.yml`) with `{distribution_active_count}` placeholder.
+- [New] Added `open_gui_distribution_center` as a supported on_click action in main_menu.yml.
+- [New] Added `/fc distribution` (alias `/fc dist`) command to open the Distribution Center GUI directly.
+- [New] Added `distribution-request` notification sound in config.yml.
+- [New] Added PlaceholderAPI placeholders: `%factorycore_distribution_active%`, `%factorycore_distribution_tax_paid%`.
+- [New] Distribution Center status displayed in the startup banner (company count, event count).

@@ -37,6 +37,7 @@ public class FactoryCore extends JavaPlugin {
     private PlayerFactoryManager playerFactoryManager;
     private DatabaseManager databaseManager;
     private BackupManager backupManager;
+    private DistributionManager distributionManager;
 
     // Tasks
     private BorderParticleTask borderParticleTask;
@@ -76,6 +77,7 @@ public class FactoryCore extends JavaPlugin {
         createAchievementConfig();
         createDailyQuestConfig();
         createMainMenuConfig();
+        createDistributionConfigs();
 
         // Initialize logger
         com.aithor.factorycore.utils.Logger.init(this);
@@ -151,6 +153,9 @@ public class FactoryCore extends JavaPlugin {
         if (playerFactoryManager != null) {
             playerFactoryManager.saveAll();
         }
+        if (distributionManager != null) {
+            distributionManager.saveAll();
+        }
 
         // Disconnect database
         if (databaseManager != null) {
@@ -219,6 +224,15 @@ public class FactoryCore extends JavaPlugin {
         }
     }
 
+    private void createDistributionConfigs() {
+        if (!new java.io.File(getDataFolder(), "company.yml").exists()) {
+            saveResource("company.yml", false);
+        }
+        if (!new java.io.File(getDataFolder(), "event.yml").exists()) {
+            saveResource("event.yml", false);
+        }
+    }
+
     private void createMainMenuConfig() {
         // Create the custom_gui directory if needed
         java.io.File guiDir = new java.io.File(getDataFolder(), "custom_gui");
@@ -259,6 +273,7 @@ public class FactoryCore extends JavaPlugin {
         achievementManager = new AchievementManager(this);
         dailyQuestManager = new DailyQuestManager(this);
         playerFactoryManager = new PlayerFactoryManager(this);
+        distributionManager = new DistributionManager(this);
     }
 
     private void registerCommands() {
@@ -337,6 +352,14 @@ public class FactoryCore extends JavaPlugin {
             }
         }, 200L, 200L); // Every 10 seconds
 
+        // Distribution event spawner
+        int distributionInterval = getConfig().getInt("distribution.spawn-interval-ticks", 6000);
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            if (distributionManager != null) {
+                distributionManager.tickDistributionEvents();
+            }
+        }, distributionInterval, distributionInterval);
+
         // Border particle task
         borderParticleTask = new BorderParticleTask(this);
         int particleInterval = getConfig().getInt("player-factory.border-particle-interval", 10);
@@ -395,6 +418,8 @@ public class FactoryCore extends JavaPlugin {
         console.sendMessage("§7- §aInvoice & Storage System §8(Active)");
         console.sendMessage("§7- §aPlayer Factory System §8(" + playerFactoryManager.getAllFactories().size()
                 + " player factories)");
+        console.sendMessage("§7- §aDistribution Center §8(" + distributionManager.getTotalCompanyCount()
+                + " companies, " + distributionManager.getTotalEventCount() + " events)");
         if (databaseManager != null) {
             console.sendMessage("§7- " + databaseManager.getStatusInfo());
         }
@@ -478,6 +503,10 @@ public class FactoryCore extends JavaPlugin {
 
     public BackupManager getBackupManager() {
         return backupManager;
+    }
+
+    public DistributionManager getDistributionManager() {
+        return distributionManager;
     }
 
     public BorderParticleTask getBorderParticleTask() {

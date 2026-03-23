@@ -43,6 +43,7 @@
 #                         open_gui_daily_quests     — open Daily Quests GUI
 #                         open_gui_help_info        — open Help & Info GUI
 #                         open_gui_recipes_wiki     — open Recipes Wiki GUI
+#                         open_gui_distribution_center — open Distribution Center GUI
 #
 #                       Example (open Invoice Center on click):
 #                         on_click: open_gui_invoice_center
@@ -67,7 +68,7 @@
 #      player_info, factory_browse, my_factories, invoice_center,
 #      tax_center, employees_center, marketplace, achievements,
 #      research_center, daily_quests, help_info, quick_stats,
-#      close_button
+#      distribution_center, close_button
 #
 #  COLOR CODES: Use & followed by a color code character.
 #    Example: &6&lHello &7World
@@ -391,6 +392,30 @@ items:
       - "&eResets in: &b{reset_time}"
       - ""
       - "&7Click to view quests!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Distribution Center ──────────────────────────────────
+  # GUI ID  : distribution_center
+  # on_click: open_gui_distribution_center
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {distribution_active_count} - active distribution requests
+  distribution_center:
+    enabled: true
+    slot: 40
+    material: "CHEST_MINECART"
+    custom_model_data: 0
+    name: "&6&lDistribution Center"
+    lore:
+      - "&7Fulfill delivery requests from"
+      - "&7companies for money rewards!"
+      - ""
+      - "&eActive Requests: &6{distribution_active_count}"
+      - ""
+      - "&7Click to open!"
     sound:
       enabled: true
       sound: "UI_BUTTON_CLICK"

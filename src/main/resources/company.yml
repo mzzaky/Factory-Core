@@ -1,0 +1,249 @@
+# ============================================================
+#  FactoryCore - Distribution Center: Company Configuration
+#  File: company.yml
+# ============================================================
+#
+#  This file defines virtual company entities that act as
+#  consumers in the Distribution Center system. Companies
+#  will request materials/resources from players via events.
+#
+#  FORMAT:
+#    <company_id>:
+#      name: "Display name of the company"
+#      description: "Brief description of what this company does"
+#      icon: <Bukkit Material>        # Icon shown in GUI
+#      industry: "Industry category"
+#      ceo: "CEO name (flavor text)"
+#      headquarters: "HQ location (flavor text)"
+#      reputation: <1-5>              # Star rating displayed in GUI
+#      lore:
+#        - "Additional lore lines"
+#        - "shown in company tooltip"
+#
+# ============================================================
+
+companies:
+
+  # ==================== HEAVY INDUSTRY ====================
+
+  ironforge_industries:
+    name: "&7&lIronForge Industries"
+    description: "A massive steel and iron processing corporation"
+    icon: IRON_BLOCK
+    industry: "Heavy Industry"
+    ceo: "Magnus Ironhand"
+    headquarters: "Northern Industrial District"
+    reputation: 4
+    lore:
+      - "&7Leading manufacturer of industrial"
+      - "&7steel products and raw metal processing."
+      - ""
+      - "&8\"Building the backbone of civilization.\""
+
+  titan_metalworks:
+    name: "&6&lTitan Metalworks"
+    description: "Premium metal alloy manufacturer and exporter"
+    icon: GOLD_BLOCK
+    industry: "Heavy Industry"
+    ceo: "Helena Steelcrest"
+    headquarters: "Eastern Forge Complex"
+    reputation: 5
+    lore:
+      - "&7Specializes in high-grade alloys"
+      - "&7and precious metal refinement."
+      - ""
+      - "&8\"Forging excellence since the First Age.\""
+
+  deepmine_corp:
+    name: "&8&lDeepMine Corporation"
+    description: "Global mining and mineral extraction conglomerate"
+    icon: DIAMOND_ORE
+    industry: "Mining & Extraction"
+    ceo: "Dorin Rockshatter"
+    headquarters: "Underground Mining Hub"
+    reputation: 3
+    lore:
+      - "&7Operates the largest mining network"
+      - "&7on the continent. Always hungry for ore."
+      - ""
+      - "&8\"We dig deeper so you don't have to.\""
+
+  # ==================== TECHNOLOGY ====================
+
+  voltex_electronics:
+    name: "&b&lVoltex Electronics"
+    description: "High-tech electronics and circuit board manufacturer"
+    icon: COMPARATOR
+    industry: "Technology"
+    ceo: "Dr. Elara Spark"
+    headquarters: "Silicon Bay Research Park"
+    reputation: 5
+    lore:
+      - "&7Pioneers in electronic component"
+      - "&7manufacturing and circuit design."
+      - ""
+      - "&8\"Powering tomorrow's innovations today.\""
+
+  nexus_technologies:
+    name: "&3&lNexus Technologies"
+    description: "Advanced computing and automation systems provider"
+    icon: REDSTONE_LAMP
+    industry: "Technology"
+    ceo: "Viktor Nexus III"
+    headquarters: "Central Tech Tower"
+    reputation: 4
+    lore:
+      - "&7Leading provider of automated"
+      - "&7factory systems and smart machines."
+      - ""
+      - "&8\"Connect. Automate. Dominate.\""
+
+  sparkwire_solutions:
+    name: "&e&lSparkWire Solutions"
+    description: "Electrical wiring and redstone component supplier"
+    icon: REDSTONE
+    industry: "Technology"
+    ceo: "Lina Copperfield"
+    headquarters: "Redstone Valley"
+    reputation: 3
+    lore:
+      - "&7Manufactures wiring, switches, and"
+      - "&7redstone-based power solutions."
+      - ""
+      - "&8\"Every great machine starts with a spark.\""
+
+  # ==================== ENERGY ====================
+
+  blazecore_energy:
+    name: "&c&lBlazeCore Energy"
+    description: "Fuel refinement and energy solutions provider"
+    icon: BLAZE_POWDER
+    industry: "Energy"
+    ceo: "Ignis Flameheart"
+    headquarters: "Nether Industrial Zone"
+    reputation: 4
+    lore:
+      - "&7The largest fuel producer and"
+      - "&7energy supplier in the region."
+      - ""
+      - "&8\"Fueling progress, one blaze at a time.\""
+
+  solaris_power:
+    name: "&e&lSolaris Power Co."
+    description: "Renewable energy research and fuel alternatives"
+    icon: GLOWSTONE
+    industry: "Energy"
+    ceo: "Aurora Sunweaver"
+    headquarters: "Solaris Research Campus"
+    reputation: 4
+    lore:
+      - "&7Invests in cleaner and more efficient"
+      - "&7energy sources for factory operations."
+      - ""
+      - "&8\"A brighter future starts here.\""
+
+  # ==================== MILITARY & DEFENSE ====================
+
+  aegis_defense:
+    name: "&4&lAegis Defense Corp"
+    description: "Military-grade weapons and armor manufacturer"
+    icon: DIAMOND_SWORD
+    industry: "Military & Defense"
+    ceo: "General Rex Ironwall"
+    headquarters: "Fortified Defense Campus"
+    reputation: 5
+    lore:
+      - "&7Produces the finest weapons and"
+      - "&7armor for defense and security."
+      - ""
+      - "&8\"Strength through superior firepower.\""
+
+  guardian_armory:
+    name: "&9&lGuardian Armory"
+    description: "Specialist in protective gear and defensive equipment"
+    icon: DIAMOND_CHESTPLATE
+    industry: "Military & Defense"
+    ceo: "Ser Aldric Shieldborn"
+    headquarters: "Castle Ward Armory"
+    reputation: 4
+    lore:
+      - "&7Crafts the most reliable protective"
+      - "&7equipment for guards and soldiers."
+      - ""
+      - "&8\"Your safety is our mission.\""
+
+  # ==================== LUXURY & COMMERCE ====================
+
+  golden_crown_trading:
+    name: "&6&lGolden Crown Trading Co."
+    description: "Luxury goods merchant and rare commodity trader"
+    icon: GOLD_INGOT
+    industry: "Luxury & Commerce"
+    ceo: "Lord Cassius Goldweave"
+    headquarters: "Royal Market Square"
+    reputation: 5
+    lore:
+      - "&7Deals exclusively in premium goods"
+      - "&7and rare materials for the elite."
+      - ""
+      - "&8\"Only the finest for our clientele.\""
+
+  emerald_exchange:
+    name: "&2&lEmerald Exchange Ltd."
+    description: "General commodity trading and wholesale distribution"
+    icon: EMERALD
+    industry: "Luxury & Commerce"
+    ceo: "Merchant Thalia Greenstone"
+    headquarters: "Central Bazaar"
+    reputation: 3
+    lore:
+      - "&7Buys and resells a wide variety"
+      - "&7of materials at competitive rates."
+      - ""
+      - "&8\"Fair trades, honest deals.\""
+
+  # ==================== ENGINEERING & MANUFACTURING ====================
+
+  cogsworth_engineering:
+    name: "&6&lCogsworth Engineering"
+    description: "Precision machinery and gear manufacturing"
+    icon: PISTON
+    industry: "Engineering"
+    ceo: "Professor Gideon Cogsworth"
+    headquarters: "Clockwork Factory District"
+    reputation: 4
+    lore:
+      - "&7Master craftsmen of gears, pistons,"
+      - "&7and complex mechanical assemblies."
+      - ""
+      - "&8\"Precision is not optional.\""
+
+  hydraulix_systems:
+    name: "&1&lHydrauliX Systems"
+    description: "Hydraulic and pneumatic systems manufacturer"
+    icon: HEAVY_WEIGHTED_PRESSURE_PLATE
+    industry: "Engineering"
+    ceo: "Eng. Petra Pressfield"
+    headquarters: "Waterworks Industrial Park"
+    reputation: 4
+    lore:
+      - "&7Builds high-pressure hydraulic systems"
+      - "&7for heavy-duty factory applications."
+      - ""
+      - "&8\"Power under pressure.\""
+
+  # ==================== CONSTRUCTION & MATERIALS ====================
+
+  bedrock_construction:
+    name: "&8&lBedrock Construction Inc."
+    description: "Large-scale construction and building materials"
+    icon: BRICKS
+    industry: "Construction"
+    ceo: "Foreman Drak Stonelayer"
+    headquarters: "Builder's Row"
+    reputation: 3
+    lore:
+      - "&7Handles major construction projects"
+      - "&7and bulk building material orders."
+      - ""
+      - "&8\"We build what others can only dream.\""

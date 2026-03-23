@@ -213,6 +213,18 @@ public class FactoryCorePlaceholder extends PlaceholderExpansion {
             return String.valueOf(count);
         }
 
+        // %factorycore_distribution_active%
+        if (params.equals("distribution_active")) {
+            if (plugin.getDistributionManager() == null) return "0";
+            return String.valueOf(plugin.getDistributionManager().getActiveRequestCount(player.getUniqueId()));
+        }
+
+        // %factorycore_distribution_tax_paid%
+        if (params.equals("distribution_tax_paid")) {
+            if (plugin.getDistributionManager() == null) return "0.00";
+            return String.format("%.2f", plugin.getDistributionManager().getTotalTaxPaid(player.getUniqueId()));
+        }
+
         return null;
     }
 }

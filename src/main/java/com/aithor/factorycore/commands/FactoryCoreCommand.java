@@ -96,6 +96,10 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             case "quest":
                 return handleDailyQuest(sender);
 
+            case "distribution":
+            case "dist":
+                return handleDistribution(sender);
+
             case "help":
                 sendHelp(sender);
                 return true;
@@ -201,6 +205,17 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         Player player = (Player) sender;
         DailyQuestGUI gui = new DailyQuestGUI(plugin, player);
         gui.openDailyQuestMenu();
+        return true;
+    }
+
+    private boolean handleDistribution(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(plugin.getLanguageManager().getMessage("player-only"));
+            return true;
+        }
+
+        Player player = (Player) sender;
+        new com.aithor.factorycore.gui.DistributionCenterGUI(plugin, player).openDistributionCenter();
         return true;
     }
 
@@ -392,9 +407,12 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             plugin.getRecipeManager().reload();
             plugin.getNPCManager().reload();
             plugin.reloadMainMenuConfig();
+            if (plugin.getDistributionManager() != null) {
+                plugin.getDistributionManager().reload();
+            }
 
             sender.sendMessage("§a§l✅ Reload Successful!");
-            sender.sendMessage("§7Reloaded all configurations (including custom_gui/main_menu.yml).");
+            sender.sendMessage("§7Reloaded all configurations (including custom_gui/main_menu.yml, company.yml, event.yml).");
 
             Logger.logAdminCommand(sender.getName(), "reload all configurations");
             return true;
@@ -1184,6 +1202,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage("§6/fc employees §7- View employees center");
         sender.sendMessage("§6/fc market §7- Open marketplace");
         sender.sendMessage("§6/fc dailyquest §7- View daily quests");
+        sender.sendMessage("§6/fc distribution §7- Open distribution center");
         sender.sendMessage("");
         sender.sendMessage("§e§lFactory Commands:");
         sender.sendMessage("§6/fc buy <id> §7- Purchase a factory");
@@ -1217,7 +1236,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             completions.addAll(Arrays.asList("hub", "browse", "my", "invoices", "taxes", "employees", "market",
-                    "dailyquest", "buy", "sell", "info", "gui", "tp", "version", "help"));
+                    "dailyquest", "distribution", "buy", "sell", "info", "gui", "tp", "version", "help"));
             if (sender.hasPermission("factorycore.admin")) {
                 completions.add("admin");
             }

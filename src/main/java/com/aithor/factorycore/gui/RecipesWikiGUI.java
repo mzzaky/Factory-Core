@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
  * Recipes Wiki GUI - Displays all registered resources with sorting,
  * filtering, and detailed recipe/usage info via sub-menus.
  * <p>
- * Data is read live from {@link ResourceManager} and {@link com.aithor.factorycore.managers.RecipeManager},
+ * Data is read live from {@link ResourceManager} and
+ * {@link com.aithor.factorycore.managers.RecipeManager},
  * so it automatically refreshes after {@code /fc admin reload}.
  */
 public class RecipesWikiGUI {
@@ -47,8 +48,13 @@ public class RecipesWikiGUI {
             this.icon = icon;
         }
 
-        public String getDisplay() { return display; }
-        public Material getIcon() { return icon; }
+        public String getDisplay() {
+            return display;
+        }
+
+        public Material getIcon() {
+            return icon;
+        }
     }
 
     // Rarity order for sorting
@@ -77,10 +83,14 @@ public class RecipesWikiGUI {
 
         // Border
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 9; i++) inv.setItem(i, border);
-        for (int i = 45; i < 54; i++) inv.setItem(i, border);
-        for (int i = 9; i < 45; i += 9) inv.setItem(i, border);
-        for (int i = 17; i < 45; i += 9) inv.setItem(i, border);
+        for (int i = 0; i < 9; i++)
+            inv.setItem(i, border);
+        for (int i = 45; i < 54; i++)
+            inv.setItem(i, border);
+        for (int i = 9; i < 45; i += 9)
+            inv.setItem(i, border);
+        for (int i = 17; i < 45; i += 9)
+            inv.setItem(i, border);
 
         // Header info
         ItemStack header = createItem(Material.KNOWLEDGE_BOOK, "&6&lRecipes Wiki",
@@ -91,15 +101,16 @@ public class RecipesWikiGUI {
                         "&e Left Click &7- View how to craft",
                         "&e Right Click &7- View what it crafts",
                         "",
-                        "&7Total Resources: &e" + plugin.getResourceManager().getAllResources().size()
-                ));
+                        "&7Total Resources: &e" + plugin.getResourceManager().getAllResources().size()));
         inv.setItem(4, header);
 
         // Get sorted resources
         List<ResourceItem> sortedResources = getSortedResources();
         int totalPages = Math.max(1, (int) Math.ceil(sortedResources.size() / 21.0));
-        if (page >= totalPages) this.currentPage = totalPages - 1;
-        if (this.currentPage < 0) this.currentPage = 0;
+        if (page >= totalPages)
+            this.currentPage = totalPages - 1;
+        if (this.currentPage < 0)
+            this.currentPage = 0;
 
         // Content slots: 7 per row, 3 rows (slots 10-16, 19-25, 28-34)
         int[] contentSlots = {
@@ -117,7 +128,7 @@ public class RecipesWikiGUI {
             }
         }
 
-        // Sort button (slot 37)
+        // Sort button (slot 47)
         ItemStack sortButton = createItem(sortMode.getIcon(),
                 "&e&lSort: &f" + sortMode.getDisplay(),
                 Arrays.asList(
@@ -130,12 +141,11 @@ public class RecipesWikiGUI {
                         "&d\u25B6 Type" + (sortMode == SortMode.TYPE ? " &7(Selected)" : ""),
                         "&c\u25B6 Source" + (sortMode == SortMode.SOURCE ? " &7(Selected)" : ""),
                         "",
-                        "&eClick to cycle sort mode!"
-                ));
+                        "&eClick to cycle sort mode!"));
         stampPDC(sortButton, "wiki_action", "sort");
-        inv.setItem(37, sortButton);
+        inv.setItem(47, sortButton);
 
-        // Stats/Info (slot 38)
+        // Stats/Info (slot 51)
         ItemStack statsItem = createItem(Material.PAPER, "&b&lStatistics",
                 Arrays.asList(
                         "",
@@ -143,9 +153,8 @@ public class RecipesWikiGUI {
                         "&7Recipes: &e" + plugin.getRecipeManager().getAllRecipes().size(),
                         "&7Page: &e" + (this.currentPage + 1) + "&7/&e" + totalPages,
                         "",
-                        "&7Sort: &e" + sortMode.getDisplay()
-                ));
-        inv.setItem(38, statsItem);
+                        "&7Sort: &e" + sortMode.getDisplay()));
+        inv.setItem(51, statsItem);
 
         // Navigation
         if (this.currentPage > 0) {
@@ -190,7 +199,8 @@ public class RecipesWikiGUI {
      */
     public void openRecipeDetail(String resourceId) {
         ResourceItem resource = plugin.getResourceManager().getResource(resourceId);
-        if (resource == null) return;
+        if (resource == null)
+            return;
 
         Inventory inv = Bukkit.createInventory(null, 54,
                 ChatColor.translateAlternateColorCodes('&',
@@ -198,10 +208,14 @@ public class RecipesWikiGUI {
 
         // Border
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 9; i++) inv.setItem(i, border);
-        for (int i = 45; i < 54; i++) inv.setItem(i, border);
-        for (int i = 9; i < 45; i += 9) inv.setItem(i, border);
-        for (int i = 17; i < 45; i += 9) inv.setItem(i, border);
+        for (int i = 0; i < 9; i++)
+            inv.setItem(i, border);
+        for (int i = 45; i < 54; i++)
+            inv.setItem(i, border);
+        for (int i = 9; i < 45; i += 9)
+            inv.setItem(i, border);
+        for (int i = 17; i < 45; i += 9)
+            inv.setItem(i, border);
 
         // Header: the resource itself
         ItemStack headerItem = createResourceInfoItem(resource);
@@ -214,8 +228,7 @@ public class RecipesWikiGUI {
                         "",
                         "&7Resource ID: &e" + resourceId,
                         "&7Type: &e" + formatType(resource.getType()),
-                        "&7Rarity: " + getRarityColor(resource.getRarity()) + capitalize(resource.getRarity())
-                ));
+                        "&7Rarity: " + getRarityColor(resource.getRarity()) + capitalize(resource.getRarity())));
         inv.setItem(2, titleItem);
 
         // Find recipes that output this resource
@@ -225,15 +238,15 @@ public class RecipesWikiGUI {
             ItemStack noRecipe = createItem(Material.BARRIER, "&c&lNo Recipes Found",
                     Arrays.asList(
                             "&7This resource has no crafting recipe.",
-                            "&7It may be obtained through other means."
-                    ));
+                            "&7It may be obtained through other means."));
             inv.setItem(22, noRecipe);
         } else {
-            int[] recipeSlots = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
+            int[] recipeSlots = { 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34 };
             int slotIdx = 0;
 
             for (Recipe recipe : recipes) {
-                if (slotIdx >= recipeSlots.length) break;
+                if (slotIdx >= recipeSlots.length)
+                    break;
                 inv.setItem(recipeSlots[slotIdx], createRecipeItem(recipe, resourceId));
                 slotIdx++;
             }
@@ -260,7 +273,8 @@ public class RecipesWikiGUI {
      */
     public void openUsageDetail(String resourceId) {
         ResourceItem resource = plugin.getResourceManager().getResource(resourceId);
-        if (resource == null) return;
+        if (resource == null)
+            return;
 
         Inventory inv = Bukkit.createInventory(null, 54,
                 ChatColor.translateAlternateColorCodes('&',
@@ -268,10 +282,14 @@ public class RecipesWikiGUI {
 
         // Border
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 9; i++) inv.setItem(i, border);
-        for (int i = 45; i < 54; i++) inv.setItem(i, border);
-        for (int i = 9; i < 45; i += 9) inv.setItem(i, border);
-        for (int i = 17; i < 45; i += 9) inv.setItem(i, border);
+        for (int i = 0; i < 9; i++)
+            inv.setItem(i, border);
+        for (int i = 45; i < 54; i++)
+            inv.setItem(i, border);
+        for (int i = 9; i < 45; i += 9)
+            inv.setItem(i, border);
+        for (int i = 17; i < 45; i += 9)
+            inv.setItem(i, border);
 
         // Header: the resource itself
         ItemStack headerItem = createResourceInfoItem(resource);
@@ -284,8 +302,7 @@ public class RecipesWikiGUI {
                         "",
                         "&7Resource ID: &e" + resourceId,
                         "&7Type: &e" + formatType(resource.getType()),
-                        "&7Rarity: " + getRarityColor(resource.getRarity()) + capitalize(resource.getRarity())
-                ));
+                        "&7Rarity: " + getRarityColor(resource.getRarity()) + capitalize(resource.getRarity())));
         inv.setItem(2, titleItem);
 
         // Find recipes that use this resource as input
@@ -296,15 +313,15 @@ public class RecipesWikiGUI {
                     Arrays.asList(
                             "&7This resource is not used as",
                             "&7input in any recipe.",
-                            "&7It may be a final product."
-                    ));
+                            "&7It may be a final product."));
             inv.setItem(22, noUsage);
         } else {
-            int[] recipeSlots = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34};
+            int[] recipeSlots = { 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34 };
             int slotIdx = 0;
 
             for (Recipe recipe : recipes) {
-                if (slotIdx >= recipeSlots.length) break;
+                if (slotIdx >= recipeSlots.length)
+                    break;
                 inv.setItem(recipeSlots[slotIdx], createRecipeItem(recipe, null));
                 slotIdx++;
             }
@@ -335,22 +352,22 @@ public class RecipesWikiGUI {
         sortMode = modes[next];
     }
 
-    public SortMode getSortMode() { return sortMode; }
+    public SortMode getSortMode() {
+        return sortMode;
+    }
 
     private List<ResourceItem> getSortedResources() {
         List<ResourceItem> resources = new ArrayList<>(plugin.getResourceManager().getAllResources().values());
 
         switch (sortMode) {
             case NAME:
-                resources.sort(Comparator.comparing(r ->
-                        ChatColor.stripColor(r.getName()).toLowerCase()));
+                resources.sort(Comparator.comparing(r -> ChatColor.stripColor(r.getName()).toLowerCase()));
                 break;
             case PRICE:
                 resources.sort(Comparator.comparingDouble(ResourceItem::getSellPrice).reversed());
                 break;
             case RARITY:
-                resources.sort(Comparator.comparingInt(r ->
-                        RARITY_ORDER.getOrDefault(r.getRarity().toLowerCase(), 0)));
+                resources.sort(Comparator.comparingInt(r -> RARITY_ORDER.getOrDefault(r.getRarity().toLowerCase(), 0)));
                 break;
             case TYPE:
                 resources.sort(Comparator.comparing(r -> r.getType().name()));
@@ -574,36 +591,50 @@ public class RecipesWikiGUI {
 
     private String formatType(ResourceType type) {
         switch (type) {
-            case RAW_RESOURCES: return "Raw Resources";
-            case ADVANCED_RESOURCES: return "Advanced Resources";
-            case FINAL_RESOURCES: return "Final Resources";
-            case FUEL: return "Fuel";
-            case MACHINE_PARTS: return "Machine Parts";
-            default: return type.name();
+            case RAW_RESOURCES:
+                return "Raw Resources";
+            case ADVANCED_RESOURCES:
+                return "Advanced Resources";
+            case FINAL_RESOURCES:
+                return "Final Resources";
+            case FUEL:
+                return "Fuel";
+            case MACHINE_PARTS:
+                return "Machine Parts";
+            default:
+                return type.name();
         }
     }
 
     private String formatTime(int seconds) {
-        if (seconds < 60) return seconds + "s";
+        if (seconds < 60)
+            return seconds + "s";
         int minutes = seconds / 60;
         int secs = seconds % 60;
-        if (secs == 0) return minutes + "m";
+        if (secs == 0)
+            return minutes + "m";
         return minutes + "m " + secs + "s";
     }
 
     private String getRarityColor(String rarity) {
-        if (rarity == null) return "&f";
+        if (rarity == null)
+            return "&f";
         switch (rarity.toLowerCase()) {
-            case "uncommon": return "&a";
-            case "rare": return "&9";
-            case "epic": return "&5";
+            case "uncommon":
+                return "&a";
+            case "rare":
+                return "&9";
+            case "epic":
+                return "&5";
             case "common":
-            default: return "&f";
+            default:
+                return "&f";
         }
     }
 
     private String capitalize(String s) {
-        if (s == null || s.isEmpty()) return "Common";
+        if (s == null || s.isEmpty())
+            return "Common";
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 
@@ -635,5 +666,7 @@ public class RecipesWikiGUI {
         }
     }
 
-    public int getCurrentPage() { return currentPage; }
+    public int getCurrentPage() {
+        return currentPage;
+    }
 }

@@ -64,6 +64,7 @@ factory:
   level-bonuses:
     cost-reduction: 5.0 # % reduction per level
     time-reduction: 10.0 # % reduction per level
+    slots-per-level: 9 # additional slots per level for output storage
 
   # Resource requirements to upgrade to each level
   # Keys are the target level (e.g. '2' = upgrading FROM level 1 TO level 2)

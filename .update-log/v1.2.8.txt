@@ -23,3 +23,14 @@ v1.2.8 Update Log
   - Paginated display supporting unlimited resources.
   - Data refreshes automatically on `/fc admin reload`.
   - Integrated into the main hub menu with configurable slot, material, and lore via `custom_gui/main_menu.yml`.
+- [New] Dynamic Storage Slot Scaling system: Factory storage capacity now grows with every level increase.
+- [Update] Added `slots-per-level` (default: 9) in `config.yml` to specify additional slots per factory level for both Input and Output storage.
+- [Update] Total storage calculation: `Base Slots (9) + (Level - 1) * Bonus Slots`. (Level 5 reaches 45 storage slots).
+- [Update] Redesigned OutputStorageGUI with a cleaner layout:
+  - Added "Collect All" button (Chest) to withdraw all items into player inventory in one click.
+  - Added "Back" button (Arrow) to return to previous menu.
+  - Added "Storage Info" (Book) displaying current capacity and stored items count.
+- [Update] Redesigned StorageGUI (Input) with a cleaner layout:
+  - Organized control row: Back, Deposit All, Info, and Withdraw All.
+  - Consistent design style with Output Storage for a premium experience.
+- [Update] Updated UpgradeGUI to show storage capacity bonuses for both current level and next level in the upgrade panel and confirmation dialog.

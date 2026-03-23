@@ -118,6 +118,8 @@ public class UpgradeGUI {
                 (currentLevel - 1) * plugin.getConfig().getDouble("factory.level-bonuses.cost-reduction") + "%");
         currentLore.add("§aTime reduction: §e" +
                 (currentLevel - 1) * plugin.getConfig().getDouble("factory.level-bonuses.time-reduction") + "%");
+        currentLore.add("§aStorage slots: §e" +
+                (plugin.getConfig().getInt("factory.base-storage-slots", 9) + (currentLevel - 1) * plugin.getConfig().getInt("factory.level-bonuses.slots-per-level", 9)));
 
         inv.setItem(11, createItem(Material.DIAMOND,
                 "§6Level " + currentLevel, currentLore));
@@ -172,6 +174,8 @@ public class UpgradeGUI {
                         plugin.getConfig().getDouble("factory.level-bonuses.cost-reduction") + "%");
                 nextLore.add("§a+ Time reduction: §e" +
                         plugin.getConfig().getDouble("factory.level-bonuses.time-reduction") + "%");
+                nextLore.add("§a+ Output storage: §e" +
+                        plugin.getConfig().getInt("factory.level-bonuses.slots-per-level", 9) + " slots");
                 nextLore.add("§c+ Additional tax: §e" +
                         plugin.getConfig().getDouble("tax.level-multiplier") + "%");
 
@@ -258,6 +262,7 @@ public class UpgradeGUI {
             summaryLore.add("§7Time: §b" + formatTime(upgradeTimeSec));
         }
 
+        summaryLore.add("§7Bonus: §a+" + plugin.getConfig().getInt("factory.level-bonuses.slots-per-level", 9) + " Storage Slots");
         summaryLore.add("");
 
         // Show required resources

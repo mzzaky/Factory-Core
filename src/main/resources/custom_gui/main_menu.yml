@@ -42,6 +42,7 @@
 #                         open_gui_research_center  — open Research Center GUI
 #                         open_gui_daily_quests     — open Daily Quests GUI
 #                         open_gui_help_info        — open Help & Info GUI
+#                         open_gui_recipes_wiki     — open Recipes Wiki GUI
 #
 #                       Example (open Invoice Center on click):
 #                         on_click: open_gui_invoice_center
@@ -414,6 +415,32 @@ items:
       - "&7• Tips & tricks"
       - ""
       - "&7Click to learn more!"
+    sound:
+      enabled: true
+      sound: "UI_BUTTON_CLICK"
+      volume: 0.6
+      pitch: 1.0
+
+  # ── Recipes Wiki ────────────────────────────────────────
+  # GUI ID  : recipes_wiki
+  # on_click: open_gui_recipes_wiki
+  # Delete this section or set enabled: false to hide it.
+  # Placeholders: {resource_count} - total registered resources
+  #               {recipe_count}   - total registered recipes
+  recipes_wiki:
+    enabled: true
+    slot: 39
+    material: "KNOWLEDGE_BOOK"
+    custom_model_data: 0
+    name: "&6&lRecipes Wiki"
+    lore:
+      - "&7Browse all resources and"
+      - "&7their crafting recipes"
+      - ""
+      - "&eResources: &6{resource_count}"
+      - "&eRecipes: &6{recipe_count}"
+      - ""
+      - "&7Click to browse!"
     sound:
       enabled: true
       sound: "UI_BUTTON_CLICK"

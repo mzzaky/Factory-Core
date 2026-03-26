@@ -463,6 +463,13 @@ public class ResearchManager {
         return getBuffValue(playerId, "task_productivity_booster");
     }
 
+    /**
+     * Get the distribution tax reduction percentage (from distribution_logistics_optimization)
+     */
+    public double getDistributionTaxReduction(UUID playerId) {
+        return getBuffValue(playerId, "distribution_logistics_optimization");
+    }
+
     // ── Persistence ─────────────────────────────────────────────────────────
 
     private void loadPlayerData() {

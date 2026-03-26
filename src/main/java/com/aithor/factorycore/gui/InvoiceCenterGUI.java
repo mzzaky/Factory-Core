@@ -274,9 +274,13 @@ public class InvoiceCenterGUI {
         }
 
         if (factory != null) {
-            lore.add("§7Factory: §e" + factory.getId() + " §8(Admin)");
+            String customName = factory.getDisplayName();
+            String name = (customName != null && !customName.isBlank()) ? customName : factory.getType().getDisplayName();
+            lore.add("§7Factory: §e" + name + " §8(Admin)");
         } else if (playerFactory != null) {
-            lore.add("§7Factory: §e" + playerFactory.getId() + " §d(Player)");
+            String customName = playerFactory.getDisplayName();
+            String name = (customName != null && !customName.isBlank()) ? customName : playerFactory.getType().getDisplayName();
+            lore.add("§7Factory: §e" + name + " §d(Player)");
         } else {
             lore.add("§7Factory: §eUnknown");
         }

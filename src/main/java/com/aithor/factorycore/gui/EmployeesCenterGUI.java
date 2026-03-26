@@ -214,7 +214,12 @@ public class EmployeesCenterGUI {
             lore.add("§eClick: §7Open Employee Shop");
         }
 
-        String title = (hasEmployee ? "§a" : "§7") + factory.getType().getDisplayName() + " §7- §e" + factory.getId();
+        String color = hasEmployee ? "§a" : "§7";
+        String customName = factory.getDisplayName();
+        String namePart = (customName != null && !customName.isBlank())
+                ? customName + " §8(" + factory.getType().getDisplayName() + ")"
+                : factory.getType().getDisplayName();
+        String title = color + namePart;
         ItemStack item = createItem(material, title, lore);
 
         // Store factory ID for click handling
@@ -299,8 +304,12 @@ public class EmployeesCenterGUI {
             lore.add("§eClick: §7Open Employee Shop");
         }
 
-        String title = (hasEmployee ? "§a" : "§7") + factory.getType().getDisplayName() + " §d[Player] §7- §e"
-                + factory.getId();
+        String color = hasEmployee ? "§a" : "§7";
+        String customName = factory.getDisplayName();
+        String namePart = (customName != null && !customName.isBlank())
+                ? customName
+                : factory.getType().getDisplayName();
+        String title = color + namePart;
         ItemStack item = createItem(material, title, lore);
 
         ItemMeta meta = item.getItemMeta();

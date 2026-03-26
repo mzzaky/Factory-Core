@@ -668,7 +668,7 @@
         <h1>Factory-Core-Plugin Changelog</h1>
         <p>Track all updates, improvements, and bug fixes for Factory-Core-Plugin</p>
         <div class="current-version">
-            <span>Latest Version: v1.2.7</span>
+            <span>Latest Version: v1.2.8</span>
         </div>
     </div>
 
@@ -682,7 +682,8 @@
         <nav class="side-nav">
             <div class="nav-title">Version History</div>
             <ul class="nav-list">
-                <li><a href="#v1-2-7" class="active">v1.2.7 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-2-8" class="active">v1.2.8 <span class="version-badge">Latest</span></a></li>
+                <li><a href="#v1-2-7">v1.2.7</a></li>
                 <li><a href="#v1-2-6">v1.2.6</a></li>
                 <li><a href="#v1-2-5">v1.2.5</a></li>
                 <li><a href="#v1-2-0">v1.2.0</a></li>
@@ -693,6 +694,189 @@
         </nav>
 
         <main class="main-content">
+            <!-- Version 1.2.8 -->
+            <section class="version-section" id="v1-2-8">
+                <div class="version-header">
+                    <div class="version-header-left">
+                        <div class="version-title">
+                            <h2>Version 1.2.8</h2>
+                            <span class="version-type update">Update</span>
+                        </div>
+                        <div class="release-date">March 25, 2026</div>
+                    </div>
+                    <div class="version-toggle">
+                        <span class="version-toggle-icon">▼</span>
+                        <span class="version-toggle-text">Minimize</span>
+                    </div>
+                </div>
+
+                <div class="version-content">
+                    <div class="overview-box">
+                        <div class="overview-title">Release Overview</div>
+                        <div class="overview-grid">
+                            <div class="overview-stat">
+                                <div class="stat-label">Total Changes</div>
+                                <div class="stat-value">116</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">New Content</div>
+                                <div class="stat-value">55+</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">New Features</div>
+                                <div class="stat-value">22</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Improvements</div>
+                                <div class="stat-value">34</div>
+                            </div>
+                            <div class="overview-stat">
+                                <div class="stat-label">Type</div>
+                                <div class="stat-value">Major Update</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Features -->
+                    <div class="change-category">
+                        <div class="category-header added">
+                            <div class="category-icon added">+</div>
+                            <div class="category-title">New Features</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item"><strong>Distribution Center System:</strong> A complete delivery request system for global logistics.
+                                <ul>
+                                    <li class="sub-item"><strong>Company Entities:</strong> 21 sample companies across 7 industries with unique lore and reputation stars.</li>
+                                    <li class="sub-item"><strong>Dynamic Events:</strong> 82 sample events with weighted selection, time limits, and multi-resource demands.</li>
+                                    <li class="sub-item"><strong>Interactive GUI:</strong> Modern design showing company info, real-time timers, and progress.</li>
+                                    <li class="sub-item"><strong>Functionality:</strong> Deliver All button, Speed Bonuses, and command execution on start/completion.</li>
+                                    <li class="sub-item"><strong>Timer Reminders:</strong> Real-time BossBar countdown for active requests (toggable by player in Slot 31).</li>
+                                    <li class="sub-item"><strong>Status Toggles:</strong> Ability to enable/disable new delivery offers via the GUI.</li>
+                                    <li class="sub-item"><strong>Customization:</strong> Dedicated <code>distribution</code> section in <code>config.yml</code> and configurable localization in <code>language.yml</code>.</li>
+                                    <li class="sub-item"><strong>Commands:</strong> Implementation of <code>command-on-leave</code> for expiration, <code>/fc distribution</code>, and admin event triggers.</li>
+                                    <li class="sub-item"><strong>Startup Info:</strong> Automated status reporting in the console banner showing company and event counts.</li>
+                                </ul>
+                            </li>
+                            <li class="change-item"><strong>Recipes Wiki System:</strong> A comprehensive in-game encyclopedia for all production processes.
+                                <ul>
+                                    <li class="sub-item"><strong>Dynamic Listing:</strong> Automatically parses all <code>resources.yml</code> entries.</li>
+                                    <li class="sub-item"><strong>Crafting Table View:</strong> Visual 3x3 layout for recipes including inputs, outputs, time, and costs.</li>
+                                    <li class="sub-item"><strong>Filtering & Sorting:</strong> Sort by Name, Price, Rarity, Type, or Source Factory.</li>
+                                    <li class="sub-item"><strong>Dual Lookup:</strong> Left-click to see how to craft, Right-click to see what it's used for.</li>
+                                </ul>
+                            </li>
+                            <li class="change-item"><strong>Dynamic Storage Scaling:</strong> Factory capacity now grows with level (<code>Base 9 + (Level-1) * Bonus</code>).</li>
+                            <li class="change-item"><strong>Resource Rarity System:</strong> Added Common, Uncommon, Rare, and Epic tiers with <code>%rarity%</code> placeholder support.</li>
+                            <li class="change-item"><strong>Factory Personalization:</strong>
+                                <ul>
+                                    <li class="sub-item"><strong>Custom Names:</strong> Set factory display names via chat input.</li>
+                                    <li class="sub-item"><strong>Custom Icons:</strong> Select any material icon for your factory in menus (with reset-to-default support).</li>
+                                </ul>
+                            </li>
+                            <li class="change-item"><strong>Advanced Recipe Logic:</strong> Added <code>disable-item-output</code> to allow purely command-based rewards.</li>
+                            <li class="change-item"><strong>Security & Sales:</strong> "Sell Factory" system with a secure confirmation GUI.</li>
+                            <li class="change-item"><strong>Progression Expansion:</strong>
+                                <ul>
+                                    <li class="sub-item">"Distribution Master" daily quest and "Distribution Tycoon" achievement.</li>
+                                    <li class="sub-item">"Distribution Logistics Optimization" research for tax reduction.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Improvements -->
+                    <div class="change-category">
+                        <div class="category-header improved">
+                            <div class="category-icon improved">↑</div>
+                            <div class="category-title">Improvements & Updates</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item"><strong>Dynamic Factory Registry:</strong> Refactored <code>FactoryType</code> from hardcoded Enum to a flexible config-driven system.</li>
+                            <li class="change-item"><strong>GUI Overhaul:</strong> 
+                                <ul>
+                                    <li class="sub-item">Main Menu expanded to 54 slots with intuitive category reorganization.</li>
+                                    <li class="sub-item">Redesigned Storage GUIs with NPC ownership validation for output access, "Collect/Deposit All" buttons, and capacity info panels.</li>
+                                    <li class="sub-item">Enhanced Storage access: <strong>Left-click for Input</strong>, <strong>Right-click for Output</strong> from the Main Menu.</li>
+                                    <li class="sub-item">Simplified display names across all menus (removing redundant IDs and [Player] tags).</li>
+                                    <li class="sub-item">Main Menu Back Button now returns to <strong>My Factories GUI</strong> instead of the Hub.</li>
+                                </ul>
+                            </li>
+                            <li class="change-item"><strong>Economic Rebalance:</strong>
+                                <ul>
+                                    <li class="sub-item">Updated resource IDs to <code>industrial_</code> prefix for better compatibility.</li>
+                                    <li class="sub-item">Adjusted default tax rate from 25% to 5% with real-life daily intervals.</li>
+                                    <li class="sub-item">Refreshed all default items in <code>resources.yml</code> with rarity assignments.</li>
+                                </ul>
+                            </li>
+                            <li class="change-item"><strong>Core Logic & Admin:</strong>
+                                <ul>
+                                    <li class="sub-item">Integrated <strong>FactoryChatListener</strong> for real-time text input handling.</li>
+                                    <li class="sub-item">Centralized Daily Quest settings into <code>config.yml</code>.</li>
+                                    <li class="sub-item">Refactored research and tax commands to be player-centric.</li>
+                                    <li class="sub-item">Enhanced UpgradeGUI to visually show storage capacity bonuses per level.</li>
+                                    <li class="sub-item">Updated <code>/fc admin tax assess</code> to support assessing specific factory IDs.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Bug Fixes -->
+                    <div class="change-category">
+                        <div class="category-header fixed">
+                            <div class="category-icon fixed">✓</div>
+                            <div class="category-title">Bug Fixes</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item">Fixed Distribution Center BossBar timer not disappearing immediately upon request expiration.</li>
+                            <li class="change-item">Fixed visibility issues for newer factory categories (like Aerospace Foundry) in the creation menu.</li>
+                        </ul>
+                    </div>
+
+                    <!-- New Content -->
+                    <div class="change-category">
+                        <div class="category-header enhanced">
+                            <div class="category-icon enhanced">⚡</div>
+                            <div class="category-title">Content Expansion</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item"><strong>New Factory Tiers:</strong> Added support for 4 new Tier III factory types.</li>
+                            <li class="change-item"><strong>Resource Pack:</strong> Added 47+ new resources including:
+                                <ul>
+                                    <li class="sub-item">Refinery Resources (3 new types)</li>
+                                    <li class="sub-item">Steel Mill Materials (12 new types)</li>
+                                    <li class="sub-item">Workshop Components (11 new types)</li>
+                                    <li class="sub-item">Advanced Products for Military, Electronics, Automotive, and Aerospace (21 new types).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Changes & Removals -->
+                    <div class="change-category">
+                        <div class="category-header fixed">
+                            <div class="category-icon fixed">×</div>
+                            <div class="category-title">Changes & Removals</div>
+                        </div>
+                        <ul class="change-list">
+                            <li class="change-item"><strong>Interface Streamlining:</strong>
+                                <ul>
+                                    <li class="sub-item">Removed <strong>Invoice Management</strong> and <strong>InvoiceGUI</strong> from the main menu and factory GUI system.</li>
+                                    <li class="sub-item">Removed <strong>Tax Center</strong> button from the Main Menu; Slot 23 now houses the <strong>Distribution Center</strong>.</li>
+                                    <li class="sub-item">Moved <strong>Recipes Wiki</strong> button to Slot 40 in the Main Menu GUI.</li>
+                                </ul>
+                            </li>
+                            <li class="change-item"><strong>Codebase Cleanup:</strong>
+                                <ul>
+                                    <li class="sub-item">Pruned <code>MoneyFormatter.java</code> and removed unused <code>economy.currency-symbol</code> and <code>economy.decimal-places</code> settings.</li>
+                                    <li class="sub-item">Renamed raw resource IDs to <code>industrial_</code> prefix (e.g., <code>industrial_iron_ore</code>) to prevent vanilla material conflicts.</li>
+                                </ul>
+                            </li>
+                            <li class="change-item"><strong>Logic Updates:</strong> Adjusted default tax rate from 25% to 5% and assessment interval from 3 Minecraft days to 1 real-life day.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
             <!-- Version 1.2.7 -->
             <section class="version-section" id="v1-2-7">
                 <div class="version-header">

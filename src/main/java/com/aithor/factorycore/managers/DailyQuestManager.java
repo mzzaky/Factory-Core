@@ -118,15 +118,15 @@ public class DailyQuestManager {
 
     // Bonus reward config
     public boolean isBonusEnabled() {
-        return questConfig.getBoolean("all-complete-bonus.enabled", true);
+        return plugin.getConfig().getBoolean("daily-quest.all-complete-bonus.enabled", true);
     }
 
     public int getBonusExp() {
-        return questConfig.getInt("all-complete-bonus.exp", 500);
+        return plugin.getConfig().getInt("daily-quest.all-complete-bonus.exp", 500);
     }
 
     public double getBonusMoney() {
-        return questConfig.getDouble("all-complete-bonus.money", 25000.0);
+        return plugin.getConfig().getDouble("daily-quest.all-complete-bonus.money", 25000.0);
     }
 
     // ── Player Data Access ───────────────────────────────────────────────────
@@ -316,18 +316,18 @@ public class DailyQuestManager {
         }
 
         // Play all-complete sound
-        String soundName = questConfig.getString("sound.all-complete", "UI_TOAST_CHALLENGE_COMPLETE");
-        float volume = (float) questConfig.getDouble("sound.all-complete-volume", 1.0);
-        float pitch = (float) questConfig.getDouble("sound.all-complete-pitch", 1.0);
+        String soundName = plugin.getConfig().getString("daily-quest.sound.all-complete", "UI_TOAST_CHALLENGE_COMPLETE");
+        float volume = (float) plugin.getConfig().getDouble("daily-quest.sound.all-complete-volume", 1.0);
+        float pitch = (float) plugin.getConfig().getDouble("daily-quest.sound.all-complete-pitch", 1.0);
         Sound sound = parseSound(soundName);
         if (sound != null) {
             player.playSound(player.getLocation(), sound, volume, pitch);
         }
 
         // Show all-complete notification
-        int fadeIn = questConfig.getInt("notifications.toast-fade-in", 10);
-        int stay = questConfig.getInt("notifications.toast-stay", 60);
-        int fadeOut = questConfig.getInt("notifications.toast-fade-out", 20);
+        int fadeIn = plugin.getConfig().getInt("daily-quest.notifications.toast-fade-in", 10);
+        int stay = plugin.getConfig().getInt("daily-quest.notifications.toast-stay", 60);
+        int fadeOut = plugin.getConfig().getInt("daily-quest.notifications.toast-fade-out", 20);
 
         player.sendTitle(
                 "§6§lALL QUESTS COMPLETED!",
@@ -416,9 +416,9 @@ public class DailyQuestManager {
         String name = getQuestName(questId);
 
         // Title toast
-        int fadeIn = questConfig.getInt("notifications.toast-fade-in", 10);
-        int stay = questConfig.getInt("notifications.toast-stay", 60);
-        int fadeOut = questConfig.getInt("notifications.toast-fade-out", 20);
+        int fadeIn = plugin.getConfig().getInt("daily-quest.notifications.toast-fade-in", 10);
+        int stay = plugin.getConfig().getInt("daily-quest.notifications.toast-stay", 60);
+        int fadeOut = plugin.getConfig().getInt("daily-quest.notifications.toast-fade-out", 20);
 
         player.sendTitle(
                 "§a§lQUEST COMPLETED!",
@@ -435,9 +435,9 @@ public class DailyQuestManager {
         player.sendMessage("");
 
         // Sound effect
-        String soundName = questConfig.getString("sound.quest-complete", "ENTITY_PLAYER_LEVELUP");
-        float volume = (float) questConfig.getDouble("sound.quest-complete-volume", 1.0);
-        float pitch = (float) questConfig.getDouble("sound.quest-complete-pitch", 1.5);
+        String soundName = plugin.getConfig().getString("daily-quest.sound.quest-complete", "ENTITY_PLAYER_LEVELUP");
+        float volume = (float) plugin.getConfig().getDouble("daily-quest.sound.quest-complete-volume", 1.0);
+        float pitch = (float) plugin.getConfig().getDouble("daily-quest.sound.quest-complete-pitch", 1.5);
         Sound sound = parseSound(soundName);
         if (sound != null) {
             player.playSound(player.getLocation(), sound, volume, pitch);

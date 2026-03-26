@@ -143,19 +143,20 @@ public class HubGUI {
                                     "&7Click to manage!")));
         }
 
-        // ── Tax Center ────────────────────────────────────────────────────────
-        if (isItemEnabled(cfg, "tax_center")) {
+        // ── Distribution Center ───────────────────────────────────────────────
+        if (isItemEnabled(cfg, "distribution_center")) {
             Map<String, String> ph = new HashMap<>(globalPh);
-            setItems(inv, parseSlots(cfg, "items.tax_center.slot", 23),
-                    buildItem(cfg, "tax_center", ph,
-                            Material.GOLD_INGOT, "&c&lTax Center",
+            ph.put("{active_count}", globalPh.get("{distribution_active_count}"));
+            setItems(inv, parseSlots(cfg, "items.distribution_center.slot", 23),
+                    buildItem(cfg, "distribution_center", ph,
+                            Material.CHEST_MINECART, "&6&lDistribution Center",
                             Arrays.asList(
-                                    "&7View and pay taxes",
+                                    "&7Fulfill delivery requests from",
+                                    "&7companies for money rewards!",
                                     "",
-                                    "&eTax Due: &6$" + ph.get("{tax_due}"),
-                                    "&eTax Rate: &e" + ph.get("{tax_rate}") + "%",
+                                    "&eActive Requests: &6" + ph.get("{active_count}"),
                                     "",
-                                    "&7Click to manage!")));
+                                    "&7Click to open!")));
         }
 
         // ── Employees Center ──────────────────────────────────────────────────
@@ -267,7 +268,7 @@ public class HubGUI {
             int recipeCount = plugin.getRecipeManager().getAllRecipes().size();
             wikiPh.put("{resource_count}", String.valueOf(resourceCount));
             wikiPh.put("{recipe_count}", String.valueOf(recipeCount));
-            setItems(inv, parseSlots(cfg, "items.recipes_wiki.slot", 39),
+            setItems(inv, parseSlots(cfg, "items.recipes_wiki.slot", 40),
                     buildItem(cfg, "recipes_wiki", wikiPh,
                             Material.KNOWLEDGE_BOOK, "&6&lRecipes Wiki",
                             Arrays.asList(
@@ -295,7 +296,7 @@ public class HubGUI {
         if (cfg.contains("items")) {
             List<String> coreKeys = Arrays.asList(
                     "player_info", "factory_browse", "my_factories", "invoice_center",
-                    "tax_center", "employees_center", "marketplace", "achievements",
+                    "distribution_center", "employees_center", "marketplace", "achievements",
                     "research_center", "daily_quests", "help_info", "recipes_wiki",
                     "quick_stats", "close_button");
             for (String key : cfg.getConfigurationSection("items").getKeys(false)) {
@@ -357,16 +358,16 @@ public class HubGUI {
         defaults.put("factory_browse", 20);
         defaults.put("my_factories", 21);
         defaults.put("invoice_center", 22);
-        defaults.put("tax_center", 23);
+        defaults.put("distribution_center", 23);
         defaults.put("employees_center", 24);
         defaults.put("marketplace", 29);
         defaults.put("achievements", 30);
         defaults.put("research_center", 31);
         defaults.put("daily_quests", 32);
         defaults.put("help_info", 33);
+        defaults.put("recipes_wiki", 40);
         defaults.put("quick_stats", 49);
         defaults.put("close_button", 53);
-
         int fallback = defaults.getOrDefault(itemKey, -1);
         List<Integer> slots = parseSlots(plugin.getMainMenuConfig(), "items." + itemKey + ".slot", fallback);
         return slots.isEmpty() ? fallback : slots.get(0);

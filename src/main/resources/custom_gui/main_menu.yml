@@ -245,25 +245,24 @@ items:
       volume: 0.6
       pitch: 1.0
 
-  # ── Tax Center ───────────────────────────────────────────
-  # GUI ID  : tax_center
-  # on_click: open_gui_tax_center
+  # ── Distribution Center ──────────────────────────────────
+  # GUI ID  : distribution_center
+  # on_click: open_gui_distribution_center
   # Delete this section or set enabled: false to hide it.
-  # Placeholders: {tax_due}  - total tax owed (formatted, 2 decimals)
-  #               {tax_rate} - current tax rate percentage from config
-  tax_center:
+  # Placeholders: {distribution_active_count} - active distribution requests
+  distribution_center:
     enabled: true
     slot: 23
-    material: "GOLD_INGOT"
+    material: "CHEST_MINECART"
     custom_model_data: 0
-    name: "&c&lTax Center"
+    name: "&6&lDistribution Center"
     lore:
-      - "&7View and pay taxes"
+      - "&7Fulfill delivery requests from"
+      - "&7companies for money rewards!"
       - ""
-      - "&eTax Due: &6${tax_due}"
-      - "&eTax Rate: &e{tax_rate}%"
+      - "&eActive Requests: &6{distribution_active_count}"
       - ""
-      - "&7Click to manage!"
+      - "&7Click to open!"
     sound:
       enabled: true
       sound: "UI_BUTTON_CLICK"
@@ -398,29 +397,6 @@ items:
       volume: 0.6
       pitch: 1.0
 
-  # ── Distribution Center ──────────────────────────────────
-  # GUI ID  : distribution_center
-  # on_click: open_gui_distribution_center
-  # Delete this section or set enabled: false to hide it.
-  # Placeholders: {distribution_active_count} - active distribution requests
-  distribution_center:
-    enabled: true
-    slot: 40
-    material: "CHEST_MINECART"
-    custom_model_data: 0
-    name: "&6&lDistribution Center"
-    lore:
-      - "&7Fulfill delivery requests from"
-      - "&7companies for money rewards!"
-      - ""
-      - "&eActive Requests: &6{distribution_active_count}"
-      - ""
-      - "&7Click to open!"
-    sound:
-      enabled: true
-      sound: "UI_BUTTON_CLICK"
-      volume: 0.6
-      pitch: 1.0
 
   # ── Help & Info ──────────────────────────────────────────
   # GUI ID  : help_info
@@ -454,7 +430,7 @@ items:
   #               {recipe_count}   - total registered recipes
   recipes_wiki:
     enabled: true
-    slot: 39
+    slot: 40
     material: "KNOWLEDGE_BOOK"
     custom_model_data: 0
     name: "&6&lRecipes Wiki"

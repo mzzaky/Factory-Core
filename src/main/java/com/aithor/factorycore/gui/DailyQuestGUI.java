@@ -23,8 +23,13 @@ public class DailyQuestGUI {
     private final FactoryCore plugin;
     private final Player player;
 
-    // Quest display slots (centered in row 2, columns 1-5)
-    private static final int[] QUEST_SLOTS = { 20, 21, 22, 23, 24 };
+    // Quest display slots (centered starting in row 3, columns 1-7)
+    private static final int[] QUEST_SLOTS = {
+            20, 21, 22, 23, 24, 19, 25, // Row 3
+            11, 12, 13, 14, 15, 10, 16, // Row 2
+            29, 30, 32, 33, 28, 34,     // Row 4 (excluding 31)
+            38, 39, 41, 42, 37, 43      // Row 5 (excluding 40)
+    };
 
     public DailyQuestGUI(FactoryCore plugin, Player player) {
         this.plugin = plugin;

@@ -1,249 +1,350 @@
 # ============================================================
-#  FactoryCore - Distribution Center: Company Configuration
-#  File: company.yml
+#  Company Configuration — Virtual Entities
 # ============================================================
-#
-#  This file defines virtual company entities that act as
-#  consumers in the Distribution Center system. Companies
-#  will request materials/resources from players via events.
+#  These companies act as NPC buyers that generate product
+#  requests (events) for players to fulfill.
 #
 #  FORMAT:
 #    <company_id>:
 #      name: "Display name of the company"
 #      description: "Brief description of what this company does"
-#      icon: <Bukkit Material>        # Icon shown in GUI
+#      icon: <Bukkit Material>
 #      industry: "Industry category"
 #      ceo: "CEO name (flavor text)"
 #      headquarters: "HQ location (flavor text)"
-#      reputation: <1-5>              # Star rating displayed in GUI
+#      reputation: <1-5>
 #      lore:
 #        - "Additional lore lines"
 #        - "shown in company tooltip"
-#
 # ============================================================
 
 companies:
 
-  # ==================== HEAVY INDUSTRY ====================
+  # ==================== DEFENSE & MILITARY ====================
 
-  ironforge_industries:
-    name: "&7&lIronForge Industries"
-    description: "A massive steel and iron processing corporation"
-    icon: IRON_BLOCK
-    industry: "Heavy Industry"
-    ceo: "Magnus Ironhand"
-    headquarters: "Northern Industrial District"
-    reputation: 4
-    lore:
-      - "&7Leading manufacturer of industrial"
-      - "&7steel products and raw metal processing."
-      - ""
-      - "&8\"Building the backbone of civilization.\""
-
-  titan_metalworks:
-    name: "&6&lTitan Metalworks"
-    description: "Premium metal alloy manufacturer and exporter"
-    icon: GOLD_BLOCK
-    industry: "Heavy Industry"
-    ceo: "Helena Steelcrest"
-    headquarters: "Eastern Forge Complex"
+  ironclad_defense:
+    name: "Ironclad Defense Corp"
+    description: "Premier military defense contractor specializing in armored systems"
+    icon: SHIELD
+    industry: "Defense & Military"
+    ceo: "General Marcus Hale"
+    headquarters: "Fort Bastion, Northern Territories"
     reputation: 5
     lore:
-      - "&7Specializes in high-grade alloys"
-      - "&7and precious metal refinement."
+      - "§7Founded during the Great Frontier War"
+      - "§7Ironclad supplies 60% of all military hardware"
+      - "§7to allied nations across the continent."
       - ""
-      - "&8\"Forging excellence since the First Age.\""
+      - "§e'Strength Through Steel'"
 
-  deepmine_corp:
-    name: "&8&lDeepMine Corporation"
-    description: "Global mining and mineral extraction conglomerate"
-    icon: DIAMOND_ORE
-    industry: "Mining & Extraction"
-    ceo: "Dorin Rockshatter"
-    headquarters: "Underground Mining Hub"
+  obsidian_security:
+    name: "Obsidian Security Group"
+    description: "Elite private military and security services provider"
+    icon: IRON_CHESTPLATE
+    industry: "Private Security"
+    ceo: "Viktor Kross"
+    headquarters: "Blacksite Alpha, Eastern Reach"
+    reputation: 4
+    lore:
+      - "§7A shadowy private security firm known"
+      - "§7for operating in the most dangerous regions."
+      - "§7Their contracts pay well — and ask few questions."
+      - ""
+      - "§e'Silent. Swift. Certain.'"
+
+  valkyrie_munitions:
+    name: "Valkyrie Munitions Ltd"
+    description: "Specialized weapons and ordnance manufacturer"
+    icon: CROSSBOW
+    industry: "Weapons Manufacturing"
+    ceo: "Helena Dietrich"
+    headquarters: "Stormpoint Arsenal, Western Bluffs"
     reputation: 3
     lore:
-      - "&7Operates the largest mining network"
-      - "&7on the continent. Always hungry for ore."
+      - "§7From infantry rifles to guided warheads,"
+      - "§7Valkyrie crafts the tools of modern warfare."
+      - "§7Banned in three nations. Beloved in twelve."
       - ""
-      - "&8\"We dig deeper so you don't have to.\""
+      - "§e'Precision is Power'"
 
-  # ==================== TECHNOLOGY ====================
+  # ==================== ELECTRONICS & TECHNOLOGY ====================
 
-  voltex_electronics:
-    name: "&b&lVoltex Electronics"
-    description: "High-tech electronics and circuit board manufacturer"
+  nexgen_electronics:
+    name: "NexGen Electronics"
+    description: "Consumer electronics giant producing cutting-edge devices"
+    icon: REDSTONE_TORCH
+    industry: "Consumer Electronics"
+    ceo: "Yuki Tanaka"
+    headquarters: "Silicon Harbor, Coastal District"
+    reputation: 5
+    lore:
+      - "§7The world's leading producer of smartphones,"
+      - "§7laptops, and personal computing devices."
+      - "§7Their annual product launch draws millions."
+      - ""
+      - "§e'Tomorrow, Today.'"
+
+  arclight_comm:
+    name: "ArcLight Communications"
+    description: "Global telecommunications infrastructure company"
+    icon: END_ROD
+    industry: "Telecommunications"
+    ceo: "Samuel Okafor"
+    headquarters: "Signal Tower, Central Metroplex"
+    reputation: 4
+    lore:
+      - "§7ArcLight built the backbone of the global"
+      - "§7communications network. Every call, every byte"
+      - "§7of data — chances are it passes through their grid."
+      - ""
+      - "§e'Connecting Every Corner'"
+
+  circuitbay_tech:
+    name: "CircuitBay Technologies"
+    description: "Enterprise server solutions and cloud infrastructure"
     icon: COMPARATOR
-    industry: "Technology"
-    ceo: "Dr. Elara Spark"
-    headquarters: "Silicon Bay Research Park"
-    reputation: 5
+    industry: "Enterprise IT"
+    ceo: "Diana Chen"
+    headquarters: "Datacore Campus, Innovation Valley"
+    reputation: 4
     lore:
-      - "&7Pioneers in electronic component"
-      - "&7manufacturing and circuit design."
+      - "§7CircuitBay runs the servers behind the world's"
+      - "§7largest banks, hospitals, and governments."
+      - "§7Downtime is not in their vocabulary."
       - ""
-      - "&8\"Powering tomorrow's innovations today.\""
+      - "§e'Always On. Always Secure.'"
 
-  nexus_technologies:
-    name: "&3&lNexus Technologies"
-    description: "Advanced computing and automation systems provider"
+  redstone_dynamics:
+    name: "Redstone Dynamics R&D"
+    description: "Advanced research and development laboratory"
     icon: REDSTONE_LAMP
-    industry: "Technology"
-    ceo: "Viktor Nexus III"
-    headquarters: "Central Tech Tower"
-    reputation: 4
-    lore:
-      - "&7Leading provider of automated"
-      - "&7factory systems and smart machines."
-      - ""
-      - "&8\"Connect. Automate. Dominate.\""
-
-  sparkwire_solutions:
-    name: "&e&lSparkWire Solutions"
-    description: "Electrical wiring and redstone component supplier"
-    icon: REDSTONE
-    industry: "Technology"
-    ceo: "Lina Copperfield"
-    headquarters: "Redstone Valley"
+    industry: "Research & Development"
+    ceo: "Dr. Elara Voss"
+    headquarters: "The Crucible, Underground Labs"
     reputation: 3
     lore:
-      - "&7Manufactures wiring, switches, and"
-      - "&7redstone-based power solutions."
+      - "§7Bleeding-edge research that pushes the limits"
+      - "§7of what's possible. Their experiments are"
+      - "§7classified — and occasionally explosive."
       - ""
-      - "&8\"Every great machine starts with a spark.\""
+      - "§e'Beyond the Known'"
 
-  # ==================== ENERGY ====================
+  # ==================== AUTOMOTIVE & TRANSPORT ====================
 
-  blazecore_energy:
-    name: "&c&lBlazeCore Energy"
-    description: "Fuel refinement and energy solutions provider"
-    icon: BLAZE_POWDER
-    industry: "Energy"
-    ceo: "Ignis Flameheart"
-    headquarters: "Nether Industrial Zone"
-    reputation: 4
-    lore:
-      - "&7The largest fuel producer and"
-      - "&7energy supplier in the region."
-      - ""
-      - "&8\"Fueling progress, one blaze at a time.\""
-
-  solaris_power:
-    name: "&e&lSolaris Power Co."
-    description: "Renewable energy research and fuel alternatives"
-    icon: GLOWSTONE
-    industry: "Energy"
-    ceo: "Aurora Sunweaver"
-    headquarters: "Solaris Research Campus"
-    reputation: 4
-    lore:
-      - "&7Invests in cleaner and more efficient"
-      - "&7energy sources for factory operations."
-      - ""
-      - "&8\"A brighter future starts here.\""
-
-  # ==================== MILITARY & DEFENSE ====================
-
-  aegis_defense:
-    name: "&4&lAegis Defense Corp"
-    description: "Military-grade weapons and armor manufacturer"
-    icon: DIAMOND_SWORD
-    industry: "Military & Defense"
-    ceo: "General Rex Ironwall"
-    headquarters: "Fortified Defense Campus"
+  titan_automotive:
+    name: "Titan Automotive Group"
+    description: "Luxury and performance vehicle manufacturer"
+    icon: MINECART
+    industry: "Automotive"
+    ceo: "Alessandro Moretti"
+    headquarters: "Motor City, Southern Industrial Zone"
     reputation: 5
     lore:
-      - "&7Produces the finest weapons and"
-      - "&7armor for defense and security."
+      - "§7From supercar engines to armored transports,"
+      - "§7Titan's vehicles dominate every road and track."
+      - "§7Their V8 engine note is unmistakable."
       - ""
-      - "&8\"Strength through superior firepower.\""
+      - "§e'Engineered to Dominate'"
 
-  guardian_armory:
-    name: "&9&lGuardian Armory"
-    description: "Specialist in protective gear and defensive equipment"
-    icon: DIAMOND_CHESTPLATE
-    industry: "Military & Defense"
-    ceo: "Ser Aldric Shieldborn"
-    headquarters: "Castle Ward Armory"
+  vanguard_motors:
+    name: "Vanguard Motors"
+    description: "Electric and hybrid vehicle pioneer"
+    icon: CHEST_MINECART
+    industry: "Electric Vehicles"
+    ceo: "Priya Mehta"
+    headquarters: "GreenDrive Campus, Riverside"
     reputation: 4
     lore:
-      - "&7Crafts the most reliable protective"
-      - "&7equipment for guards and soldiers."
+      - "§7Leading the charge in sustainable transport."
+      - "§7Vanguard's electric powertrains are rewriting"
+      - "§7what it means to drive clean and fast."
       - ""
-      - "&8\"Your safety is our mission.\""
+      - "§e'Drive the Future'"
 
-  # ==================== LUXURY & COMMERCE ====================
-
-  golden_crown_trading:
-    name: "&6&lGolden Crown Trading Co."
-    description: "Luxury goods merchant and rare commodity trader"
-    icon: GOLD_INGOT
-    industry: "Luxury & Commerce"
-    ceo: "Lord Cassius Goldweave"
-    headquarters: "Royal Market Square"
-    reputation: 5
-    lore:
-      - "&7Deals exclusively in premium goods"
-      - "&7and rare materials for the elite."
-      - ""
-      - "&8\"Only the finest for our clientele.\""
-
-  emerald_exchange:
-    name: "&2&lEmerald Exchange Ltd."
-    description: "General commodity trading and wholesale distribution"
-    icon: EMERALD
-    industry: "Luxury & Commerce"
-    ceo: "Merchant Thalia Greenstone"
-    headquarters: "Central Bazaar"
+  horizon_logistics:
+    name: "Horizon Logistics International"
+    description: "Global freight and supply chain management"
+    icon: HOPPER_MINECART
+    industry: "Logistics & Shipping"
+    ceo: "Captain Zhou Wei"
+    headquarters: "Port Meridian, Docklands"
     reputation: 3
     lore:
-      - "&7Buys and resells a wide variety"
-      - "&7of materials at competitive rates."
+      - "§7If it needs to get somewhere, Horizon moves it."
+      - "§7Their fleet spans air, sea, and land — delivering"
+      - "§7cargo to the most remote corners of the world."
       - ""
-      - "&8\"Fair trades, honest deals.\""
+      - "§e'From Anywhere, To Everywhere'"
 
-  # ==================== ENGINEERING & MANUFACTURING ====================
+  # ==================== AEROSPACE & SPACE ====================
 
-  cogsworth_engineering:
-    name: "&6&lCogsworth Engineering"
-    description: "Precision machinery and gear manufacturing"
-    icon: PISTON
-    industry: "Engineering"
-    ceo: "Professor Gideon Cogsworth"
-    headquarters: "Clockwork Factory District"
+  stellar_aerospace:
+    name: "Stellar Aerospace Industries"
+    description: "Spacecraft and satellite systems manufacturer"
+    icon: BEACON
+    industry: "Aerospace & Space"
+    ceo: "Commander Jens Eriksson"
+    headquarters: "Launch Complex Zeta, Highland Plateau"
+    reputation: 5
+    lore:
+      - "§7The premier name in space exploration."
+      - "§7Stellar has launched over 200 satellites and"
+      - "§7built the engines that took humanity to orbit."
+      - ""
+      - "§e'Per Aspera Ad Astra'"
+
+  orbital_solutions:
+    name: "Orbital Solutions Inc"
+    description: "Commercial satellite services and space station modules"
+    icon: END_CRYSTAL
+    industry: "Space Technology"
+    ceo: "Dr. Naomi Park"
+    headquarters: "Skyreach Tower, Desert Spaceport"
     reputation: 4
     lore:
-      - "&7Master craftsmen of gears, pistons,"
-      - "&7and complex mechanical assemblies."
+      - "§7Orbital Solutions handles the business side"
+      - "§7of space — comm satellites, GPS arrays, and"
+      - "§7the logistics of living beyond atmosphere."
       - ""
-      - "&8\"Precision is not optional.\""
+      - "§e'Your Window to Orbit'"
 
-  hydraulix_systems:
-    name: "&1&lHydrauliX Systems"
-    description: "Hydraulic and pneumatic systems manufacturer"
-    icon: HEAVY_WEIGHTED_PRESSURE_PLATE
-    industry: "Engineering"
-    ceo: "Eng. Petra Pressfield"
-    headquarters: "Waterworks Industrial Park"
+  # ==================== HEAVY INDUSTRY & ENERGY ====================
+
+  vulcan_industries:
+    name: "Vulcan Heavy Industries"
+    description: "Large-scale steel and structural manufacturing"
+    icon: ANVIL
+    industry: "Heavy Industry"
+    ceo: "Bjorn Haraldsson"
+    headquarters: "The Forge Works, Mountain Basin"
     reputation: 4
     lore:
-      - "&7Builds high-pressure hydraulic systems"
-      - "&7for heavy-duty factory applications."
+      - "§7Where raw metal becomes civilization."
+      - "§7Vulcan's foundries produce the steel beams,"
+      - "§7plates, and alloys that build empires."
       - ""
-      - "&8\"Power under pressure.\""
+      - "§e'Forged in Fire'"
 
-  # ==================== CONSTRUCTION & MATERIALS ====================
+  meridian_energy:
+    name: "Meridian Energy Solutions"
+    description: "Renewable and conventional power generation"
+    icon: SEA_LANTERN
+    industry: "Energy"
+    ceo: "Dr. Clara Whitfield"
+    headquarters: "Suncore Station, Arid Plateau"
+    reputation: 4
+    lore:
+      - "§7From solar arrays to diesel generators,"
+      - "§7Meridian keeps the lights on everywhere."
+      - "§7They're betting big on clean energy futures."
+      - ""
+      - "§e'Power Without Compromise'"
 
-  bedrock_construction:
-    name: "&8&lBedrock Construction Inc."
-    description: "Large-scale construction and building materials"
+  cobalt_mining:
+    name: "Cobalt Mining Consortium"
+    description: "Industrial-scale mining and ore processing"
+    icon: IRON_PICKAXE
+    industry: "Mining & Extraction"
+    ceo: "Hector Delgado"
+    headquarters: "Deep Shaft Complex, The Undercroft"
+    reputation: 3
+    lore:
+      - "§7They dig deeper than anyone else dares."
+      - "§7Cobalt's mines supply the raw materials"
+      - "§7that fuel the entire industrial economy."
+      - ""
+      - "§e'From the Depths, We Rise'"
+
+  blackrock_foundry:
+    name: "Blackrock Foundry Co."
+    description: "Specialist alloy smelting and exotic metallurgy"
+    icon: BLAST_FURNACE
+    industry: "Metallurgy"
+    ceo: "Ingrid Thornwall"
+    headquarters: "The Crucible Pits, Volcanic Shelf"
+    reputation: 3
+    lore:
+      - "§7Blackrock works with metals others won't touch."
+      - "§7Titanium, tungsten, carbon composites —"
+      - "§7the hardest materials demand the hardest workers."
+      - ""
+      - "§e'Where Others Melt, We Forge'"
+
+  # ==================== CONSTRUCTION & MANUFACTURING ====================
+
+  atlas_construction:
+    name: "Atlas Construction Co."
+    description: "Infrastructure and megaproject engineering firm"
     icon: BRICKS
     industry: "Construction"
-    ceo: "Foreman Drak Stonelayer"
-    headquarters: "Builder's Row"
+    ceo: "Frank Castellano"
+    headquarters: "Ironbeam Tower, Downtown Core"
+    reputation: 4
+    lore:
+      - "§7Bridges, skyscrapers, dams — if it's massive,"
+      - "§7Atlas built it. Their engineers have shaped"
+      - "§7the skyline of every major city."
+      - ""
+      - "§e'Building the Impossible'"
+
+  pinnacle_mfg:
+    name: "Pinnacle Manufacturing Corp"
+    description: "Precision parts and components for all industries"
+    icon: SMITHING_TABLE
+    industry: "General Manufacturing"
+    ceo: "Robert Langley"
+    headquarters: "Assembly Row, Industrial Quarter"
     reputation: 3
     lore:
-      - "&7Handles major construction projects"
-      - "&7and bulk building material orders."
+      - "§7The unsung hero of industry. Pinnacle's gears,"
+      - "§7bearings, and valves keep every machine running."
+      - "§7Without them, the world grinds to a halt."
       - ""
-      - "&8\"We build what others can only dream.\""
+      - "§e'Precision in Every Part'"
+
+  # ==================== SPECIALIZED ====================
+
+  cryotech_industries:
+    name: "CryoTech Industries"
+    description: "Advanced thermal management and cooling systems"
+    icon: PACKED_ICE
+    industry: "Thermal Engineering"
+    ceo: "Dr. Katya Volkov"
+    headquarters: "Frostcore Labs, Tundra Research Station"
+    reputation: 3
+    lore:
+      - "§7Keeping the world's hottest machines ice-cold."
+      - "§7CryoTech's cooling solutions power everything"
+      - "§7from server farms to rocket engines."
+      - ""
+      - "§e'Absolute Zero Tolerance'"
+
+  quantum_optics:
+    name: "Quantum Optics Ltd"
+    description: "High-precision optical instruments and lenses"
+    icon: SPYGLASS
+    industry: "Optics & Photonics"
+    ceo: "Prof. Aldric Beaumont"
+    headquarters: "Clearlight Observatory, Crystal Ridge"
+    reputation: 4
+    lore:
+      - "§7The finest lenses in the known world."
+      - "§7Quantum Optics crafts the eyes of satellites,"
+      - "§7microscopes, and military targeting systems."
+      - ""
+      - "§e'Seeing Beyond Sight'"
+
+  pacific_naval:
+    name: "Pacific Naval Systems"
+    description: "Naval vessel components and maritime defense"
+    icon: OAK_BOAT
+    industry: "Naval Defense"
+    ceo: "Admiral Rei Yamamoto"
+    headquarters: "Deepwater Dock, Southern Archipelago"
+    reputation: 4
+    lore:
+      - "§7Ruling the waves through superior engineering."
+      - "§7Pacific Naval builds the ships, engines, and"
+      - "§7weapon systems that patrol every ocean."
+      - ""
+      - "§e'Dominion of the Deep'"

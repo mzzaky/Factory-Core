@@ -146,70 +146,81 @@ public class TaxManager {
      * Assess taxes for all owned factories
      */
     public void assessTaxes() {
+        // Assess admin factories
+        for (Factory factory : plugin.getFactoryManager().getAllFactories()) {
+            if (factory.getOwner() != null) {
+                assessTaxForFactory(factory.getId());
+            }
+        }
+
+        // Assess player factories
+        if (plugin.getPlayerFactoryManager() != null) {
+            for (PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                if (pf.getOwner() != null) {
+                    assessTaxForFactory(pf.getId());
+                }
+            }
+        }
+
+        lastTaxCollection = System.currentTimeMillis();
+        saveAll();
+    }
+
+    /**
+     * Assess tax for a specific factory ID
+     * @param factoryId ID of the factory (admin or player created)
+     * @return true if successful, false if factory not found or has no owner
+     */
+    public boolean assessTaxForFactory(String factoryId) {
         long currentTime = System.currentTimeMillis();
         long taxDueDays = plugin.getConfig().getLong("tax.due-days", 7);
         long dueDate = currentTime + (taxDueDays * 24 * 60 * 60 * 1000);
 
-        // ── Admin factories ──────────────────────────────────────────────────
-        for (Factory factory : plugin.getFactoryManager().getAllFactories()) {
-            if (factory.getOwner() == null)
-                continue;
+        Factory adminFactory = plugin.getFactoryManager().getFactory(factoryId);
+        PlayerFactory playerFactory = (plugin.getPlayerFactoryManager() != null)
+                ? plugin.getPlayerFactoryManager().getFactory(factoryId)
+                : null;
 
-            double taxAmount = calculateTax(factory);
+        if (adminFactory != null && adminFactory.getOwner() != null) {
+            double taxAmount = calculateTax(adminFactory);
+            applyTaxAssessment(adminFactory.getId(), adminFactory.getOwner(), taxAmount, currentTime, dueDate);
+            return true;
+        } else if (playerFactory != null && playerFactory.getOwner() != null) {
+            // Manual calculation for player factories since calculateTax takes Factory model
+            double baseRate = plugin.getConfig().getDouble("tax.rate", 5.0) / 100.0;
+            double levelMultiplier = plugin.getConfig().getDouble("tax.level-multiplier", 2.5) / 100.0;
+            double totalRate = baseRate + (levelMultiplier * (playerFactory.getLevel() - 1));
+            double taxAmount = playerFactory.getPrice() * totalRate;
 
-            TaxRecord record = taxRecords.getOrDefault(factory.getId(),
-                    new TaxRecord(factory.getId(), 0, 0, 0, false));
-
-            record.amountDue += taxAmount;
-            record.lastAssessment = currentTime;
-            record.dueDate = dueDate;
-
-            taxRecords.put(factory.getId(), record);
-
-            Player owner = Bukkit.getPlayer(factory.getOwner());
-            if (owner != null) {
-                owner.sendMessage(plugin.getLanguageManager().getMessage("tax-assessed")
-                        .replace("{factory}", factory.getId())
-                        .replace("{amount}", String.format("%.2f", taxAmount)));
+            if (plugin.getResearchManager() != null) {
+                double reduction = plugin.getResearchManager().getTaxReduction(playerFactory.getOwner());
+                if (reduction > 0)
+                    taxAmount *= (1 - (reduction / 100.0));
             }
+
+            applyTaxAssessment(playerFactory.getId(), playerFactory.getOwner(), taxAmount, currentTime, dueDate);
+            return true;
         }
 
-        // ── Player factories ─────────────────────────────────────────────────
-        if (plugin.getPlayerFactoryManager() != null) {
-            for (PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
-                if (pf.getOwner() == null)
-                    continue;
+        return false;
+    }
 
-                double baseRate = plugin.getConfig().getDouble("tax.rate", 5.0) / 100.0;
-                double levelMultiplier = plugin.getConfig().getDouble("tax.level-multiplier", 2.5) / 100.0;
-                double totalRate = baseRate + (levelMultiplier * (pf.getLevel() - 1));
-                double taxAmount = pf.getPrice() * totalRate;
+    private void applyTaxAssessment(String factoryId, UUID ownerId, double taxAmount, long currentTime, long dueDate) {
+        TaxRecord record = taxRecords.getOrDefault(factoryId,
+                new TaxRecord(factoryId, 0, 0, 0, false));
 
-                if (plugin.getResearchManager() != null) {
-                    double reduction = plugin.getResearchManager().getTaxReduction(pf.getOwner());
-                    if (reduction > 0)
-                        taxAmount *= (1 - (reduction / 100.0));
-                }
+        record.amountDue += taxAmount;
+        record.lastAssessment = currentTime;
+        record.dueDate = dueDate;
 
-                TaxRecord record = taxRecords.getOrDefault(pf.getId(),
-                        new TaxRecord(pf.getId(), 0, 0, 0, false));
+        taxRecords.put(factoryId, record);
 
-                record.amountDue += taxAmount;
-                record.lastAssessment = currentTime;
-                record.dueDate = dueDate;
-
-                taxRecords.put(pf.getId(), record);
-
-                Player owner = Bukkit.getPlayer(pf.getOwner());
-                if (owner != null) {
-                    owner.sendMessage(plugin.getLanguageManager().getMessage("tax-assessed")
-                            .replace("{factory}", pf.getId())
-                            .replace("{amount}", String.format("%.2f", taxAmount)));
-                }
-            }
+        Player owner = Bukkit.getPlayer(ownerId);
+        if (owner != null) {
+            owner.sendMessage(plugin.getLanguageManager().getMessage("tax-assessed")
+                    .replace("{factory}", factoryId)
+                    .replace("{amount}", String.format("%.2f", taxAmount)));
         }
-
-        lastTaxCollection = currentTime;
         saveAll();
     }
 

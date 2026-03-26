@@ -1,0 +1,442 @@
+# ============================================================
+#  FactoryCore - Distribution Center: Event Configuration
+#  File: event.yml
+# ============================================================
+#
+#  This file defines request events for the Distribution Center.
+#  The system randomly selects events based on their chance value
+#  and presents them to players as material delivery requests.
+#
+#  FORMAT:
+#    <event_id>:
+#      name: "Display name of the request"
+#      lore:
+#        - "Description line 1"
+#        - "Description line 2"
+#      chance: <0.0-100.0>            # Chance this event is selected (weight)
+#      time: <seconds>                # Time limit to complete the request
+#      company: <company_id>          # Company from company.yml
+#      demand:                        # List of resource IDs from resources.yml
+#        - <resource_id> <value>
+#        - <resource_id> <value>
+#      price_offer: <amount>          # Base money reward
+#      bonus: <multiplier>            # Bonus multiplier (e.g. 1.5 = 150%)
+#      bonus_condition: <percentage>  # % of time remaining to qualify for bonus
+#      command-on-appear:             # Commands run when request appears
+#        - "<command>"
+#      command-on-complete:           # Commands run when player completes request
+#        - "<command>"                # Use %player% for player name placeholder
+#      command-on-leave:              # Commands run when event expires (not fulfilled)
+#        - "<command>"                # Use %player% for player name placeholder
+#
+# ============================================================
+# ECONOMY BALANCING NOTES:
+#   price_offer = (suggested_price × qty) × multiplier
+#   - BASIC  requests: multiplier 1.2–1.3  (slightly above market)
+#   - INTER  requests: multiplier 1.3–1.4
+#   - RARE   requests: multiplier 1.4–1.5
+#   - ELITE  requests: multiplier 1.5–1.6
+#   - MULTI  requests: multiplier 1.2–1.4  (logistic bonus pooled)
+#
+#   Suggested prices used (from resources.yml):
+#     industrial_iron_ore=12, industrial_coal_ore=8, industrial_copper_ore=15, industrial_redstone_dust=12,
+#     industrial_gold_ore=40, industrial_diamond_ore=150
+#     steel_ingot=80, refined_copper=60, gold_alloy=180, carbon_fiber=250
+#     advanced_weapon=3500, advanced_armor=3200, electronic_component=2000, luxury_item=7000
+#     basic_fuel=18, refined_fuel=50, premium_fuel=120
+#     basic_gear=25, advanced_gear=90, engine_part=180, circuit_board=350, hydraulic_system=500
+# ============================================================
+
+events:
+
+  # ==================== BASIC REQUESTS (Common) ====================
+  # Small quantities of raw materials — easy, frequent, low reward
+
+  iron_shipment:
+    name: "§7Iron Ore Shipment"
+    lore:
+      - "§7IronForge Industries needs a batch"
+      - "§7of iron ore for their smelting line."
+      - "§8A standard supply contract."
+    chance: 15.0
+    time: 600
+    company: ironforge_industries
+    demand:
+      - industrial_iron_ore 50                # 50 × $12 = $600 market value
+    price_offer: 750.0             # 1.25× market
+    bonus: 1.5
+    bonus_condition: 70
+
+  coal_delivery:
+    name: "§8Coal Supply Run"
+    lore:
+      - "§7BlazeCore Energy requires coal ore"
+      - "§7to keep their furnaces running."
+      - "§8Quick and easy delivery."
+    chance: 18.0
+    time: 480
+    company: blazecore_energy
+    demand:
+      - industrial_coal_ore 64                # 64 × $8 = $512 market value
+    price_offer: 640.0             # 1.25× market
+    bonus: 1.3
+    bonus_condition: 65
+
+  copper_order:
+    name: "§6Copper Wire Materials"
+    lore:
+      - "§7SparkWire Solutions needs copper ore"
+      - "§7for their wiring production line."
+      - "§8Standard electrical supply order."
+    chance: 14.0
+    time: 540
+    company: sparkwire_solutions
+    demand:
+      - industrial_copper_ore 45              # 45 × $15 = $675 market value
+    price_offer: 850.0             # 1.26× market
+    bonus: 1.4
+    bonus_condition: 70
+
+  redstone_supply:
+    name: "§cRedstone Component Order"
+    lore:
+      - "§7Nexus Technologies needs redstone dust"
+      - "§7for their automation systems."
+      - "§8Electronic component materials."
+    chance: 12.0
+    time: 600
+    company: nexus_technologies
+    demand:
+      - industrial_redstone_dust 100          # 100 × $12 = $1,200 market value
+    price_offer: 1500.0            # 1.25× market
+    bonus: 1.4
+    bonus_condition: 65
+
+  # ==================== INTERMEDIATE REQUESTS (Uncommon) ====================
+  # Processed materials — moderate quantity, decent reward
+
+  steel_production_order:
+    name: "§7Steel Ingot Contract"
+    lore:
+      - "§7Titan Metalworks has placed an order"
+      - "§7for processed steel ingots."
+      - "§eA profitable intermediate contract."
+    chance: 10.0
+    time: 900
+    company: titan_metalworks
+    demand:
+      - steel_ingot 30             # 30 × $80 = $2,400 market value
+    price_offer: 3200.0            # 1.33× market
+    bonus: 1.6
+    bonus_condition: 60
+
+  refined_copper_batch:
+    name: "§6Refined Copper Delivery"
+    lore:
+      - "§7Voltex Electronics requests refined"
+      - "§7copper for circuit board production."
+      - "§eHigh-quality materials required."
+    chance: 10.0
+    time: 900
+    company: voltex_electronics
+    demand:
+      - refined_copper 40          # 40 × $60 = $2,400 market value
+    price_offer: 3100.0            # 1.29× market
+    bonus: 1.5
+    bonus_condition: 60
+
+  gold_alloy_shipment:
+    name: "§eGold Alloy Consignment"
+    lore:
+      - "§7Golden Crown Trading Co. requests"
+      - "§7gold alloy for luxury goods production."
+      - "§eA lucrative trading opportunity."
+    chance: 8.0
+    time: 1200
+    company: golden_crown_trading
+    demand:
+      - gold_alloy 25              # 25 × $180 = $4,500 market value
+    price_offer: 6000.0            # 1.33× market
+    bonus: 1.7
+    bonus_condition: 55
+
+  fuel_resupply:
+    name: "§8Basic Fuel Resupply"
+    lore:
+      - "§7BlazeCore Energy is running low on"
+      - "§7processed fuel for their generators."
+      - "§eKeep the power flowing!"
+    chance: 12.0
+    time: 720
+    company: blazecore_energy
+    demand:
+      - basic_fuel 40              # 40 × $18 = $720 market value
+    price_offer: 950.0             # 1.32× market
+    bonus: 1.4
+    bonus_condition: 65
+
+  gear_parts_order:
+    name: "§7Gear Component Request"
+    lore:
+      - "§7Cogsworth Engineering needs basic gears"
+      - "§7for their machinery production."
+      - "§8Keep the cogs turning!"
+    chance: 11.0
+    time: 600
+    company: cogsworth_engineering
+    demand:
+      - basic_gear 35              # 35 × $25 = $875 market value
+    price_offer: 1100.0            # 1.26× market
+    bonus: 1.4
+    bonus_condition: 65
+
+  # ==================== ADVANCED REQUESTS (Rare) ====================
+  # Rare/valuable materials — harder to source, good reward
+
+  carbon_fiber_rush:
+    name: "§8Carbon Fiber Express"
+    lore:
+      - "§7Aegis Defense Corp urgently needs"
+      - "§7carbon fiber for armor plating."
+      - "§c§lURGENT - Time-sensitive order!"
+    chance: 6.0
+    time: 600
+    company: aegis_defense
+    demand:
+      - carbon_fiber 20            # 20 × $250 = $5,000 market value
+    price_offer: 7000.0            # 1.40× market
+    bonus: 2.0
+    bonus_condition: 70
+
+  advanced_gear_contract:
+    name: "§eAdvanced Gear Contract"
+    lore:
+      - "§7HydrauliX Systems needs advanced gears"
+      - "§7for their high-pressure machinery."
+      - "§6Premium quality components required."
+    chance: 7.0
+    time: 1200
+    company: hydraulix_systems
+    demand:
+      - advanced_gear 15           # 15 × $90 = $1,350 market value
+    price_offer: 1900.0            # 1.41× market
+    bonus: 1.6
+    bonus_condition: 55
+
+  engine_parts_delivery:
+    name: "§6Engine Component Shipment"
+    lore:
+      - "§7Cogsworth Engineering needs engine parts"
+      - "§7for their latest factory models."
+      - "§6High-value engineering contract."
+    chance: 6.0
+    time: 1500
+    company: cogsworth_engineering
+    demand:
+      - engine_part 10             # 10 × $180 = $1,800 market value
+    price_offer: 2600.0            # 1.44× market
+    bonus: 1.8
+    bonus_condition: 50
+
+  premium_fuel_order:
+    name: "§ePremium Fuel Contract"
+    lore:
+      - "§7Solaris Power Co. is testing premium fuel"
+      - "§7for their next-gen power systems."
+      - "§6High-efficiency fuel required."
+    chance: 5.0
+    time: 1200
+    company: solaris_power
+    demand:
+      - premium_fuel 20            # 20 × $120 = $2,400 market value
+    price_offer: 3400.0            # 1.42× market
+    bonus: 1.7
+    bonus_condition: 55
+
+  # ==================== ELITE REQUESTS (Epic) ====================
+  # Final products — top-tier contracts, highest payout, very rare
+
+  weapons_contract:
+    name: "§5§lElite Weapons Contract"
+    lore:
+      - "§7Aegis Defense Corp has commissioned"
+      - "§7advanced weapons for their elite forces."
+      - "§5§lELITE CONTRACT - Massive reward!"
+    chance: 3.0
+    time: 1800
+    company: aegis_defense
+    demand:
+      - advanced_weapon 5          # 5 × $3,500 = $17,500 market value
+    price_offer: 26000.0           # 1.49× market
+    bonus: 2.0
+    bonus_condition: 50
+
+  armor_commission:
+    name: "§5§lArmor Manufacturing Deal"
+    lore:
+      - "§7Guardian Armory needs advanced armor"
+      - "§7for a major military procurement."
+      - "§5§lELITE CONTRACT - Top-tier reward!"
+    chance: 3.0
+    time: 1800
+    company: guardian_armory
+    demand:
+      - advanced_armor 5           # 5 × $3,200 = $16,000 market value
+    price_offer: 23000.0           # 1.44× market
+    bonus: 2.0
+    bonus_condition: 50
+
+  electronics_bulk_order:
+    name: "§b§lBulk Electronics Order"
+    lore:
+      - "§7Voltex Electronics has a massive order"
+      - "§7for electronic components."
+      - "§5§lELITE CONTRACT - Premium payout!"
+    chance: 3.5
+    time: 1500
+    company: voltex_electronics
+    demand:
+      - electronic_component 64    # 64 × $2,000 = $128,000 market value
+    price_offer: 192000.0          # 1.50× market (bulk qty — very rare event payoff)
+    bonus: 1.8
+    bonus_condition: 55
+
+  luxury_goods_order:
+    name: "§6§lLuxury Goods Commission"
+    lore:
+      - "§7Golden Crown Trading Co. commissions"
+      - "§7luxury items for their VIP clients."
+      - "§5§lELITE CONTRACT - Legendary payout!"
+    chance: 2.0
+    time: 2400
+    company: golden_crown_trading
+    demand:
+      - luxury_item 10             # 10 × $7,000 = $70,000 market value
+    price_offer: 105000.0          # 1.50× market
+    bonus: 2.5
+    bonus_condition: 45
+
+  # ==================== MULTI-RESOURCE REQUESTS ====================
+  # Combined deliveries — more variety, pooled reward
+
+  circuit_assembly_kit:
+    name: "§bCircuit Assembly Package"
+    lore:
+      - "§7Voltex Electronics needs a mixed package"
+      - "§7of redstone dust and refined copper"
+      - "§7for their circuit assembly line."
+    chance: 7.0
+    time: 1200
+    company: voltex_electronics
+    demand:
+      - industrial_redstone_dust 150          # 150 × $12 = $1,800
+      - refined_copper 50          # 50  × $60 = $3,000
+                                   # Total market: $4,800
+    price_offer: 6200.0            # 1.29× market
+    bonus: 1.6
+    bonus_condition: 60
+
+  construction_materials_bundle:
+    name: "§8Construction Materials Bundle"
+    lore:
+      - "§7Bedrock Construction needs iron ore"
+      - "§7and basic gears for a building project."
+      - "§7A solid construction contract."
+    chance: 9.0
+    time: 900
+    company: bedrock_construction
+    demand:
+      - industrial_iron_ore 128               # 128 × $12 = $1,536
+      - basic_gear 32              # 32  × $25 = $800
+                                   # Total market: $2,336
+    price_offer: 3000.0            # 1.28× market
+    bonus: 1.5
+    bonus_condition: 60
+
+  military_supply_package:
+    name: "§4§lMilitary Supply Crate"
+    lore:
+      - "§7Aegis Defense Corp requires steel ingots"
+      - "§7and carbon fiber for weapons manufacturing."
+      - "§c§lHigh-priority military order!"
+    chance: 4.0
+    time: 1500
+    company: aegis_defense
+    demand:
+      - steel_ingot 50             # 50 × $80  = $4,000
+      - carbon_fiber 25            # 25 × $250 = $6,250
+                                   # Total market: $10,250
+    price_offer: 14000.0           # 1.37× market
+    bonus: 2.0
+    bonus_condition: 55
+
+  energy_starter_kit:
+    name: "§ePower Plant Starter Kit"
+    lore:
+      - "§7Solaris Power Co. needs coal ore and"
+      - "§7basic fuel to start a new generator."
+      - "§7Help them get the power flowing!"
+    chance: 10.0
+    time: 720
+    company: solaris_power
+    demand:
+      - industrial_coal_ore 128               # 128 × $8  = $1,024
+      - basic_fuel 32              # 32  × $18 = $576
+                                   # Total market: $1,600
+    price_offer: 2000.0            # 1.25× market
+    bonus: 1.5
+    bonus_condition: 65
+
+  machinery_overhaul_package:
+    name: "§6§lMachinery Overhaul Package"
+    lore:
+      - "§7Cogsworth Engineering needs advanced gears,"
+      - "§7engine parts, and a hydraulic system"
+      - "§7for a complete machinery overhaul."
+      - "§5§lELITE - Triple resource delivery!"
+    chance: 2.5
+    time: 2400
+    company: cogsworth_engineering
+    demand:
+      - advanced_gear 20           # 20 × $90  = $1,800
+      - engine_part 15             # 15 × $180 = $2,700
+      - hydraulic_system 5         # 5  × $500 = $2,500
+                                   # Total market: $7,000
+    price_offer: 10000.0           # 1.43× market
+    bonus: 2.5
+    bonus_condition: 45
+
+  deep_mining_supply:
+    name: "§8Deep Mining Equipment Order"
+    lore:
+      - "§7DeepMine Corporation needs iron ore,"
+      - "§7gold ore, and diamond ore for their"
+      - "§7deep excavation operations."
+    chance: 4.0
+    time: 1800
+    company: deepmine_corp
+    demand:
+      - industrial_iron_ore 128               # 128 × $12  = $1,536
+      - industrial_gold_ore 64                # 64  × $40  = $2,560
+      - industrial_diamond_ore 10             # 10  × $150 = $1,500
+                                   # Total market: $5,596
+    price_offer: 7500.0            # 1.34× market
+    bonus: 1.8
+    bonus_condition: 50
+
+  emerald_trade_deal:
+    name: "§2Emerald Exchange Bulk Deal"
+    lore:
+      - "§7Emerald Exchange needs a variety of"
+      - "§7raw ores for their wholesale operation."
+      - "§7A standard commodity deal."
+    chance: 8.0
+    time: 900
+    company: emerald_exchange
+    demand:
+      - industrial_iron_ore 64                # 64 × $12 = $768
+      - industrial_copper_ore 64              # 64 × $15 = $960
+                                   # Total market: $1,728
+    price_offer: 2150.0            # 1.24× market
+    bonus: 1.4
+    bonus_condition: 60

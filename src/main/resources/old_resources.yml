@@ -1,0 +1,539 @@
+# Resources Configuration
+# All items used in FactoryCore plugin
+
+# Resource Types:
+# 1. RAW_RESOURCES     - Raw plugin materials (produced by the Smeltery from vanilla inputs)
+# 2. ADVANCED_RESOURCES - Processed materials (produced by Steel Mill)
+# 3. FINAL_RESOURCES   - Finished products (produced by Advanced Factory)
+# 4. FUEL              - Fuel (produced by Refinery)
+# 5. MACHINE_PARTS     - Machine parts (produced by Workshop)
+#
+# ==================== Smeltery — Vanilla Input Note ====================
+# The Smeltery factory type accepts REAL vanilla materials that players
+# mine or obtain naturally in the world (e.g. raw IRON_ORE from mining).
+# These inputs are stored in factory input-storage under a "vanilla:" prefix
+# key (e.g. "vanilla:IRON_ORE") so the engine can match by Bukkit Material
+# name only — custom-model-data items are explicitly rejected as substitutes.
+# Smeltery recipes convert these vanilla inputs into the plugin-tracked
+# RAW_RESOURCES listed below.
+#
+# ==================== MMOItems Integration ====================
+# You can connect resources with items from the MMOItems plugin.
+# Add the 'mmoitems-type' and 'mmoitems-id' fields to the resource.
+# If MMOItems is available, the plugin will use items from MMOItems.
+# If MMOItems is unavailable, the plugin will fallback to vanilla items (material/name/lore).
+#
+# Format:
+#   resource_id:
+#     type: <RESOURCE_TYPE>
+#     material: <VANILLA_MATERIAL>        # Used as fallback
+#     name: "<Display Name>"              # Used as fallback
+#     lore:                               # Used as fallback
+#       - "<lore line>"
+#     custom-model-data: <number>         # Used as fallback
+#     glow: <true/false>                  # Used as fallback
+#     suggested_price: <price>
+#     mmoitems-type: "<MMOItems Type>"    # Example: SWORD, ARMOR, MATERIAL, CONSUMABLE, etc.
+#     mmoitems-id: "<MMOItems Item ID>"   # Item ID registered in MMOItems
+#
+# ==================== ExecutableItems Integration ====================
+# You can connect resources with items from the ExecutableItems plugin.
+# Simply add the 'executable-items-id' field to the resource.
+# If ExecutableItems is available, the plugin will use items from ExecutableItems.
+# If ExecutableItems is unavailable, the plugin will fallback to vanilla items (material/name/lore).
+#
+# Format:
+#   resource_id:
+#     type: <RESOURCE_TYPE>
+#     material: <VANILLA_MATERIAL>        # Used as fallback
+#     name: "<Display Name>"              # Used as fallback
+#     lore:                               # Used as fallback
+#       - "<lore line>"
+#     custom-model-data: <number>         # Used as fallback
+#     glow: <true/false>                  # Used as fallback
+#     suggested_price: <price>
+#     executable-items-id: "<EI Item ID>" # Item ID registered in ExecutableItems
+#
+
+resources:
+  # ==================== RAW RESOURCES ====================
+  # Tier 1 — Entry-level materials produced by Smeltery
+  # Price range: $8 – $25 per unit
+  industrial_iron_ore:
+    rarity: "common"
+    type: RAW_RESOURCES
+    material: IRON_ORE
+    name: "§fIron Ore"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Raw iron ore"
+      - "§7Can be processed into iron"
+    custom-model-data: 1001
+    glow: false
+    suggested_price: 12.0
+
+  industrial_coal_ore:
+    rarity: "common"
+    type: RAW_RESOURCES
+    material: COAL_ORE
+    name: "§8Coal Ore"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Coal ore"
+      - "§7Fuel raw material"
+    custom-model-data: 1002
+    glow: false
+    suggested_price: 8.0
+
+  industrial_copper_ore:
+    rarity: "common"
+    type: RAW_RESOURCES
+    material: COPPER_ORE
+    name: "§6Copper Ore"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Copper ore"
+      - "§7Conductive material"
+    custom-model-data: 1003
+    glow: false
+    suggested_price: 15.0
+
+  industrial_gold_ore:
+    rarity: "uncommon"
+    type: RAW_RESOURCES
+    material: GOLD_ORE
+    name: "§eGold Ore"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Gold ore"
+      - "§7Valuable material"
+    custom-model-data: 1004
+    glow: false
+    suggested_price: 40.0
+
+  industrial_diamond_ore:
+    rarity: "rare"
+    type: RAW_RESOURCES
+    material: DIAMOND_ORE
+    name: "§bDiamond Ore"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Diamond ore"
+      - "§7Very rare material"
+    custom-model-data: 1005
+    glow: true
+    suggested_price: 150.0
+
+  industrial_redstone_dust:
+    rarity: "uncommon"
+    type: RAW_RESOURCES
+    material: REDSTONE
+    name: "§cRedstone Dust"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Redstone dust"
+      - "§7Electronic component"
+    custom-model-data: 1006
+    glow: false
+    suggested_price: 12.0
+
+  # ==================== ADVANCED RESOURCES ====================
+  # Tier 2 — Processed materials produced by Steel Mill / Advanced Factory
+  # Price range: $80 – $300 per unit
+  steel_ingot:
+    rarity: "uncommon"
+    type: ADVANCED_RESOURCES
+    material: IRON_INGOT
+    name: "§7Steel Ingot"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7High-quality steel ingot"
+      - "§7Processed from Steel Mill"
+    custom-model-data: 2001
+    glow: false
+    suggested_price: 80.0
+
+  refined_copper:
+    rarity: "uncommon"
+    type: ADVANCED_RESOURCES
+    material: COPPER_INGOT
+    name: "§6Refined Copper"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Pure copper"
+      - "§7For electronic components"
+    custom-model-data: 2002
+    glow: false
+    suggested_price: 60.0
+
+  gold_alloy:
+    rarity: "rare"
+    type: ADVANCED_RESOURCES
+    material: GOLD_INGOT
+    name: "§eGold Alloy"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7High-quality gold alloy"
+      - "§7Premium material"
+    custom-model-data: 2003
+    glow: true
+    suggested_price: 180.0
+
+  carbon_fiber:
+    rarity: "epic"
+    type: ADVANCED_RESOURCES
+    material: STRING
+    name: "§8Carbon Fiber"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Strong carbon fiber"
+      - "§7Lightweight and strong material"
+    custom-model-data: 2004
+    glow: false
+    suggested_price: 250.0
+
+  # ==================== FINAL RESOURCES ====================
+  # Tier 3 — Finished products from Advanced Factory
+  # Price range: $2,000 – $8,000 per unit
+  advanced_weapon:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: DIAMOND_SWORD
+    name: "§5Advanced Weapon"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Advanced weapon"
+      - "§7High-value product"
+      - ""
+      - "§eSell Price: §6$3,500"
+    custom-model-data: 3001
+    glow: true
+    suggested_price: 3500.0
+
+  advanced_armor:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: DIAMOND_CHESTPLATE
+    name: "§5Advanced Armor"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Advanced armor"
+      - "§7Maximum protection"
+      - ""
+      - "§eSell Price: §6$3,200"
+    custom-model-data: 3002
+    glow: true
+    suggested_price: 3200.0
+
+  electronic_component:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: REPEATER
+    name: "§bElectronic Component"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Electronic component"
+      - "§7High technology"
+      - ""
+      - "§eSell Price: §6$2,000"
+    custom-model-data: 3003
+    glow: true
+    suggested_price: 2000.0
+
+  luxury_item:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: NETHER_STAR
+    name: "§6Luxury Item"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Luxury item"
+      - "§7Very valuable"
+      - ""
+      - "§eSell Price: §6$7,000"
+    custom-model-data: 3004
+    glow: true
+    suggested_price: 7000.0
+
+  # ==================== FUEL ====================
+  # Support tier — consumed by factories as processing fuel
+  # Price range: $18 – $120 per unit
+  basic_fuel:
+    rarity: "common"
+    type: FUEL
+    material: COAL
+    name: "§8Basic Fuel"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Basic fuel"
+      - "§7From Refinery"
+    custom-model-data: 4001
+    glow: false
+    suggested_price: 18.0
+
+  refined_fuel:
+    rarity: "uncommon"
+    type: FUEL
+    material: LAVA_BUCKET
+    name: "§6Refined Fuel"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7High-quality fuel"
+      - "§7High efficiency"
+    custom-model-data: 4002
+    glow: false
+    suggested_price: 50.0
+
+  premium_fuel:
+    rarity: "rare"
+    type: FUEL
+    material: BLAZE_POWDER
+    name: "§ePremium Fuel"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Premium fuel"
+      - "§7Maximum efficiency"
+    custom-model-data: 4003
+    glow: true
+    suggested_price: 120.0
+
+  # ==================== MACHINE PARTS ====================
+  # Support tier — components used in factory recipes
+  # Price range: $25 – $500 per unit
+  basic_gear:
+    rarity: "common"
+    type: MACHINE_PARTS
+    material: IRON_INGOT
+    name: "§7Basic Gear"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Basic gear"
+      - "§7Machine component"
+    custom-model-data: 5001
+    glow: false
+    suggested_price: 25.0
+
+  advanced_gear:
+    rarity: "uncommon"
+    type: MACHINE_PARTS
+    material: GOLD_INGOT
+    name: "§eAdvanced Gear"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Advanced gear"
+      - "§7Quality component"
+    custom-model-data: 5002
+    glow: false
+    suggested_price: 90.0
+
+  engine_part:
+    rarity: "rare"
+    type: MACHINE_PARTS
+    material: PISTON
+    name: "§6Engine Part"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Engine component"
+      - "§7For production"
+    custom-model-data: 5003
+    glow: false
+    suggested_price: 180.0
+
+  circuit_board:
+    rarity: "epic"
+    type: MACHINE_PARTS
+    material: COMPARATOR
+    name: "§bCircuit Board"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Circuit board"
+      - "§7Electronic component"
+    custom-model-data: 5004
+    glow: true
+    suggested_price: 350.0
+
+  hydraulic_system:
+    rarity: "epic"
+    type: MACHINE_PARTS
+    material: HEAVY_WEIGHTED_PRESSURE_PLATE
+    name: "§9Hydraulic System"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Hydraulic system"
+      - "§7High-precision component"
+    custom-model-data: 5005
+    glow: true
+    suggested_price: 500.0
+
+  # ==================== MMOItems RESOURCES (EXAMPLE) ====================
+  # Uncomment and adjust to the MMOItems items available on your server.
+  # Make sure the MMOItems plugin is installed and the following items are registered.
+
+  # Example: Raw material from MMOItems
+  #mmo_raw_mythril:
+  #  type: RAW_RESOURCES
+  #  material: PRISMARINE_SHARD
+  #  name: "§bMythril Ore"
+  #  lore:
+  #    - "§7Rare mythril ore"
+  #    - "§7Material from MMOItems"
+  #  custom-model-data: 1101
+  #  glow: true
+  #  suggested_price: 500.0
+  #  mmoitems-type: "MATERIAL"
+  #  mmoitems-id: "MYTHRIL_ORE"
+
+  # Example: Advanced resource from MMOItems
+  #mmo_enchanted_steel:
+  #  type: ADVANCED_RESOURCES
+  #  material: IRON_INGOT
+  #  name: "§dEnchanted Steel"
+  #  lore:
+  #    - "§7Enchanted steel"
+  #    - "§7Material from MMOItems"
+  #  custom-model-data: 2101
+  #  glow: true
+  #  suggested_price: 800.0
+  #  mmoitems-type: "MATERIAL"
+  #  mmoitems-id: "ENCHANTED_STEEL"
+
+  # Example: Final product weapon from MMOItems
+  #mmo_legendary_sword:
+  #  type: FINAL_RESOURCES
+  #  material: DIAMOND_SWORD
+  #  name: "§6Legendary Sword"
+  #  lore:
+  #    - "§7Legendary sword"
+  #    - "§7Weapon from MMOItems"
+  #    - ""
+  #    - "§eSell Price: §6$15,000"
+  #  custom-model-data: 3101
+  #  glow: true
+  #  suggested_price: 15000.0
+  #  mmoitems-type: "SWORD"
+  #  mmoitems-id: "LEGENDARY_SWORD"
+
+  # Example: Final product armor from MMOItems
+  #mmo_dragon_armor:
+  #  type: FINAL_RESOURCES
+  #  material: DIAMOND_CHESTPLATE
+  #  name: "§cDragon Armor"
+  #  lore:
+  #    - "§7Armor made from dragon scales"
+  #    - "§7Armor from MMOItems"
+  #    - ""
+  #    - "§eSell Price: §6$20,000"
+  #  custom-model-data: 3102
+  #  glow: true
+  #  suggested_price: 20000.0
+  #  mmoitems-type: "ARMOR"
+  #  mmoitems-id: "DRAGON_CHESTPLATE"
+
+  # Example: Consumable from MMOItems
+  #mmo_healing_potion:
+  #  type: FINAL_RESOURCES
+  #  material: POTION
+  #  name: "§aSuper Healing Potion"
+  #  lore:
+  #    - "§7Super healing potion"
+  #    - "§7Consumable from MMOItems"
+  #    - ""
+  #    - "§eSell Price: §6$2,000"
+  #  custom-model-data: 3103
+  #  glow: false
+  #  suggested_price: 2000.0
+  #  mmoitems-type: "CONSUMABLE"
+  #  mmoitems-id: "SUPER_HEALING_POTION"
+
+  # ==================== ExecutableItems RESOURCES (EXAMPLE) ====================
+  # Uncomment and adjust to the ExecutableItems items available on your server.
+  # Make sure the ExecutableItems plugin is installed and the following items are registered.
+
+  # Example: Raw material from ExecutableItems
+  #ei_magic_dust:
+  #  type: RAW_RESOURCES
+  #  material: GLOWSTONE_DUST
+  #  name: "§dMagic Dust"
+  #  lore:
+  #    - "§7Rare magic dust"
+  #    - "§7Item from ExecutableItems"
+  #  custom-model-data: 1201
+  #  glow: true
+  #  suggested_price: 350.0
+  #  executable-items-id: "MAGIC_DUST"
+
+  # Example: Advanced resource from ExecutableItems
+  #ei_enchanted_crystal:
+  #  type: ADVANCED_RESOURCES
+  #  material: AMETHYST_SHARD
+  #  name: "§5Enchanted Crystal"
+  #  lore:
+  #    - "§7Enchanted crystal"
+  #    - "§7Item from ExecutableItems"
+  #  custom-model-data: 2201
+  #  glow: true
+  #  suggested_price: 750.0
+  #  executable-items-id: "ENCHANTED_CRYSTAL"
+
+  # Example: Final product from ExecutableItems
+  #ei_thunder_blade:
+  #  type: FINAL_RESOURCES
+  #  material: DIAMOND_SWORD
+  #  name: "§6Thunder Blade"
+  #  lore:
+  #    - "§7Sword with lightning power"
+  #    - "§7Weapon from ExecutableItems"
+  #    - ""
+  #    - "§eSell Price: §6$12,000"
+  #  custom-model-data: 3201
+  #  glow: true
+  #  suggested_price: 12000.0
+  #  executable-items-id: "THUNDER_BLADE"
+
+  # Example: Fuel from ExecutableItems
+  #ei_arcane_fuel:
+  #  type: FUEL
+  #  material: MAGMA_CREAM
+  #  name: "§cArcane Fuel"
+  #  lore:
+  #    - "§7Magic energy fuel"
+  #    - "§7Fuel from ExecutableItems"
+  #  custom-model-data: 4201
+  #  glow: true
+  #  suggested_price: 200.0
+  #  executable-items-id: "ARCANE_FUEL"
+
+  # Example: Machine part from ExecutableItems
+  #ei_magic_core:
+  #  type: MACHINE_PARTS
+  #  material: HEART_OF_THE_SEA
+  #  name: "§bMagic Core"
+  #  lore:
+  #    - "§7Magic core for machines"
+  #    - "§7Component from ExecutableItems"
+  #  custom-model-data: 5201
+  #  glow: true
+  #  suggested_price: 900.0
+  #  executable-items-id: "MAGIC_CORE"

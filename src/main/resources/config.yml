@@ -24,8 +24,8 @@ backup:
 # Tax settings
 tax:
   enabled: true
-  rate: 25.0 # Percentage of factory price
-  interval-ticks: 144000 # 3 days in Minecraft (72000 ticks = 1 day)
+  rate: 5.0 # Percentage of factory price
+  interval-ticks: 41472000 # 1 days in Real Life
   level-multiplier: 2.5 # Additional tax per level (%)
   # NEW: Tax Center settings
   due-days: 7 # Days until tax is considered overdue
@@ -37,7 +37,7 @@ tax:
 salary:
   enabled: true
   rate: 1.0 # Percentage of factory price
-  interval-ticks: 24000 # 1 day in Minecraft
+  interval-ticks: 41472000 # 1 day in Real Life
 
 # ==================== NEW: MARKETPLACE SETTINGS ====================
 marketplace:
@@ -90,35 +90,54 @@ factory:
 
 # Factory types configuration
 factory-types:
+
+# TIER I
   smeltery:
     name: "§aSmeltery"
     description: "§7Processes vanilla materials into raw resources"
-    base-price: 50000.0
+    base-price: 1000.0
     icon: BLAST_FURNACE
 
+# TIER II
   steel_mill:
     name: "§6Steel Mill"
     description: "§7Transforms raw resources into advanced resources"
-    base-price: 100000.0
+    base-price: 25000.0
     icon: IRON_BLOCK
     
   refinery:
     name: "§eRefinery"
     description: "§7Produces fuel for factories"
-    base-price: 150000.0
+    base-price: 25000.0
     icon: FURNACE
-    
+
   workshop:
     name: "§bWorkshop"
     description: "§7Produces machine parts"
-    base-price: 200000.0
+    base-price: 25000.0
     icon: ANVIL
-    
-  advanced_factory:
-    name: "§5Advanced Factory"
-    description: "§7Produces high-value final resources"
+
+# TIER III
+  military_factory:
+    name: "§5Military Factory"
+    description: "§7Produces military equipment"
+    base-price: 100000.0
+    icon: TNT
+  electronics_assembly:
+    name: "§5Electronic Assembly Factory"
+    description: "§7Produces consumer & enterprise electronics"
+    base-price: 125000.0
+    icon: COMPARATOR
+  automotive_plant:
+    name: "§5Automotive Plant Factory"
+    description: "§7Produces vehicle components — heavy industry"
+    base-price: 150000.0
+    icon: MINECART
+  aerospace_foundry:
+    name: "§5Aerospace Foundry Factory"
+    description: "§7Produces aircraft & spacecraft components"
     base-price: 250000.0
-    icon: NETHER_STAR
+    icon: ENDER_CHEST
 
 # ==================== PLAYER FACTORY CREATION ====================
 # Allows players to create their own factory regions without admin or WorldGuard
@@ -135,10 +154,10 @@ player-factory:
   region-height-down: 5
   # Creation prices per factory type (overrides base-price for player creation)
   creation-prices:
-    smeltery: 50000.0
-    steel_mill: 100000.0
-    refinery: 150000.0
-    workshop: 200000.0
+    smeltery: 1000.0
+    steel_mill: 25000.0
+    refinery: 25000.0
+    workshop: 25000.0
     advanced_factory: 250000.0
   # Region protection settings
   protection:
@@ -187,6 +206,10 @@ gui:
 # ==================== NEW: DISTRIBUTION CENTER SETTINGS ====================
 distribution:
   enabled: true
+  bossbar:
+    color: BLUE
+    style: SOLID
+    title: "{event_name} &8- &e{time}"
   # Tax rate deducted from distribution center payouts (%)
   tax_distribution_rate: 25.0
   # Maximum number of active requests per player
@@ -196,7 +219,7 @@ distribution:
   # Minimum time between new request spawns per player (in seconds)
   min-spawn-cooldown: 300
   # Whether to notify all online players when a new request appears
-  broadcast-new-requests: true
+  broadcast-new-requests: false
   # Allow requests to spawn while player is offline
   allow-offline-spawning: false
 
@@ -226,11 +249,29 @@ production:
   bossbar-color: BLUE
   bossbar-style: SOLID
 
-# Economy settings
-economy:
-  currency-symbol: "$"
-  decimal-places: 2
-
 # Placeholder settings
 placeholders:
   update-interval: 100 # ticks
+
+# ==================== DAILY QUEST SETTINGS ====================
+daily-quest:
+  # Bonus reward when ALL daily quests are completed
+  all-complete-bonus:
+    enabled: true
+    exp: 500
+    money: 25000.0
+
+  # Sound effects for quest completion
+  sound:
+    quest-complete: ENTITY_PLAYER_LEVELUP
+    quest-complete-volume: 1.0
+    quest-complete-pitch: 1.5
+    all-complete: UI_TOAST_CHALLENGE_COMPLETE
+    all-complete-volume: 1.0
+    all-complete-pitch: 1.0
+
+  # Notification settings
+  notifications:
+    toast-fade-in: 10
+    toast-stay: 60
+    toast-fade-out: 20

@@ -82,6 +82,9 @@ public class FactoryCore extends JavaPlugin {
         // Initialize logger
         com.aithor.factorycore.utils.Logger.init(this);
 
+        // Load factory types from config
+        com.aithor.factorycore.models.FactoryType.load(getConfig());
+
         // Initialize hooks (before managers, since managers may depend on hooks)
         initializeHooks();
 
@@ -359,6 +362,13 @@ public class FactoryCore extends JavaPlugin {
                 distributionManager.tickDistributionEvents();
             }
         }, distributionInterval, distributionInterval);
+
+        // Distribution bossbar updater
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            if (distributionManager != null) {
+                distributionManager.updateBossbars();
+            }
+        }, 20L, 20L);
 
         // Border particle task
         borderParticleTask = new BorderParticleTask(this);

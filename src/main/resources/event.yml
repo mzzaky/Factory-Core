@@ -1,11 +1,15 @@
 # ============================================================
-#  FactoryCore - Distribution Center: Event Configuration
-#  File: event.yml
+#  Event Configuration — Company Product Requests
 # ============================================================
+#  Virtual companies request resources from players.
+#  Pricing is calibrated to suggested_price values in resources.yml
+#  with a 10-25% markup to provide fair profit without breaking economy.
 #
-#  This file defines request events for the Distribution Center.
-#  The system randomly selects events based on their chance value
-#  and presents them to players as material delivery requests.
+#  Tier Guide:
+#    RAW orders       → short time, low payout
+#    ADVANCED/PARTS   → medium time, medium payout
+#    FINAL products   → long time, high payout
+#    MIXED orders     → varied, balanced payout
 #
 #  FORMAT:
 #    <event_id>:
@@ -13,510 +17,1357 @@
 #      lore:
 #        - "Description line 1"
 #        - "Description line 2"
-#      chance: <0.0-100.0>            # Chance this event is selected (weight)
-#      time: <seconds>                # Time limit to complete the request
-#      company: <company_id>          # Company from company.yml
-#      demand:                        # List of resource IDs from resources.yml
-#        - <resource_id>
-#        - <resource_id>
-#      price_offer: <amount>          # Base money reward
-#      bonus: <multiplier>            # Bonus multiplier (e.g. 1.5 = 150%)
-#      bonus_condition: <percentage>  # % of time remaining to qualify for bonus
-#      command-on-appear:             # Commands run when request appears
-#        - "<command>"
-#      command-on-complete:           # Commands run when player completes request
-#        - "<command>"                # Use %player% for player name placeholder
-#
+#      chance: <0.0-100.0>
+#      time: <seconds>
+#      company: <company_id>
+#      demand:
+#        - <resource_id> <value>
+#      price_offer: <amount>
+#      bonus: <multiplier>
+#      bonus_condition: <percentage>
 # ============================================================
 
 events:
 
-  # ==================== BASIC REQUESTS (Common) ====================
+  # ================================================================
+  #  RAW RESOURCE ORDERS — Tier 1
+  #  Short deadlines, bulk quantities, small payouts
+  #  Markup: ~18-22% over suggested_price
+  # ================================================================
 
-  iron_shipment:
-    name: "&7Iron Ore Shipment"
+  cobalt_iron_shipment:
+    name: "Iron Ore Bulk Shipment"
     lore:
-      - "&7IronForge Industries needs a batch"
-      - "&7of iron ore for their smelting line."
-      - "&8A standard supply contract."
-    chance: 15.0
-    time: 600
-    company: ironforge_industries
+      - "§7Cobalt Mining needs a large batch of iron ore"
+      - "§7to keep their processing plants running."
+    chance: 8.0
+    time: 400
+    company: cobalt_mining
     demand:
-      - iron_ore
-    price_offer: 500.0
-    bonus: 1.5
-    bonus_condition: 70
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA new delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &ecompleted a delivery for &7IronForge Industries&e!"
-
-  coal_delivery:
-    name: "&8Coal Supply Run"
-    lore:
-      - "&7BlazeCore Energy requires coal ore"
-      - "&7to keep their furnaces running."
-      - "&8Quick and easy delivery."
-    chance: 18.0
-    time: 480
-    company: blazecore_energy
-    demand:
-      - coal_ore
-    price_offer: 350.0
+      - industrial_iron_ore 32
+    price_offer: 460
+    # value: 32×$12 = $384 | markup: ~20%
     bonus: 1.3
-    bonus_condition: 65
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA new delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &edelivered coal to &cBlazeCore Energy&e!"
-
-  copper_order:
-    name: "&6Copper Wire Materials"
-    lore:
-      - "&7SparkWire Solutions needs copper ore"
-      - "&7for their wiring production line."
-      - "&8Standard electrical supply order."
-    chance: 14.0
-    time: 540
-    company: sparkwire_solutions
-    demand:
-      - copper_ore
-    price_offer: 600.0
-    bonus: 1.4
-    bonus_condition: 70
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA new delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &esupplied copper to &eSparkWire Solutions&e!"
-
-  redstone_supply:
-    name: "&cRedstone Component Order"
-    lore:
-      - "&7Nexus Technologies needs redstone dust"
-      - "&7for their automation systems."
-      - "&8Electronic component materials."
-    chance: 12.0
-    time: 600
-    company: nexus_technologies
-    demand:
-      - redstone_dust
-    price_offer: 550.0
-    bonus: 1.4
-    bonus_condition: 65
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA new delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &edelivered redstone to &3Nexus Technologies&e!"
-
-  # ==================== INTERMEDIATE REQUESTS (Uncommon) ====================
-
-  steel_production_order:
-    name: "&7Steel Ingot Contract"
-    lore:
-      - "&7Titan Metalworks has placed an order"
-      - "&7for processed steel ingots."
-      - "&eA profitable intermediate contract."
-    chance: 10.0
-    time: 900
-    company: titan_metalworks
-    demand:
-      - steel_ingot
-    price_offer: 1500.0
-    bonus: 1.6
     bonus_condition: 60
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &6A premium delivery request is available! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &efulfilled a steel contract for &6Titan Metalworks&e!"
 
-  refined_copper_batch:
-    name: "&6Refined Copper Delivery"
+  cobalt_coal_resupply:
+    name: "Coal Ore Emergency Resupply"
     lore:
-      - "&7Voltex Electronics requests refined"
-      - "&7copper for circuit board production."
-      - "&eHigh-quality materials required."
-    chance: 10.0
-    time: 900
-    company: voltex_electronics
-    demand:
-      - refined_copper
-    price_offer: 1200.0
-    bonus: 1.5
-    bonus_condition: 60
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &6A premium delivery request is available! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &esupplied refined copper to &bVoltex Electronics&e!"
-
-  gold_alloy_shipment:
-    name: "&eGold Alloy Consignment"
-    lore:
-      - "&7Golden Crown Trading Co. requests"
-      - "&7gold alloy for luxury goods production."
-      - "&eA lucrative trading opportunity."
+      - "§7The mines are running low on fuel stock."
+      - "§7Cobalt needs coal ore delivered fast."
     chance: 8.0
-    time: 1200
-    company: golden_crown_trading
+    time: 350
+    company: cobalt_mining
     demand:
-      - gold_alloy
-    price_offer: 2500.0
-    bonus: 1.7
+      - industrial_coal_ore 40
+    price_offer: 385
+    # value: 40×$8 = $320 | markup: ~20%
+    bonus: 1.3
     bonus_condition: 55
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &6A premium delivery request is available! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &edelivered gold alloy to &6Golden Crown Trading&e!"
-      - "give %player% gold_ingot 2"
 
-  fuel_resupply:
-    name: "&8Basic Fuel Resupply"
+  vulcan_copper_procurement:
+    name: "Copper Ore Procurement"
     lore:
-      - "&7BlazeCore Energy is running low on"
-      - "&7processed fuel for their generators."
-      - "&eKeep the power flowing!"
-    chance: 12.0
-    time: 720
-    company: blazecore_energy
-    demand:
-      - basic_fuel
-    price_offer: 800.0
-    bonus: 1.4
-    bonus_condition: 65
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA new delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &eresupplied fuel to &cBlazeCore Energy&e!"
-
-  gear_parts_order:
-    name: "&7Gear Component Request"
-    lore:
-      - "&7Cogsworth Engineering needs basic gears"
-      - "&7for their machinery production."
-      - "&8Keep the cogs turning!"
-    chance: 11.0
-    time: 600
-    company: cogsworth_engineering
-    demand:
-      - basic_gear
-    price_offer: 900.0
-    bonus: 1.4
-    bonus_condition: 65
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA new delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &edelivered gears to &6Cogsworth Engineering&e!"
-
-  # ==================== ADVANCED REQUESTS (Rare) ====================
-
-  carbon_fiber_rush:
-    name: "&8Carbon Fiber Express"
-    lore:
-      - "&7Aegis Defense Corp urgently needs"
-      - "&7carbon fiber for armor plating."
-      - "&c&lURGENT - Time-sensitive order!"
-    chance: 6.0
-    time: 600
-    company: aegis_defense
-    demand:
-      - carbon_fiber
-    price_offer: 3500.0
-    bonus: 2.0
-    bonus_condition: 70
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &c&lURGENT delivery request! &eCheck your distribution center immediately!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &ecompleted an urgent order for &4Aegis Defense&e!"
-      - "give %player% diamond 3"
-
-  advanced_gear_contract:
-    name: "&eAdvanced Gear Contract"
-    lore:
-      - "&7HydrauliX Systems needs advanced gears"
-      - "&7for their high-pressure machinery."
-      - "&6Premium quality components required."
+      - "§7Vulcan's wire mills are demanding more copper."
+      - "§7Standard procurement order — fill it promptly."
     chance: 7.0
-    time: 1200
-    company: hydraulix_systems
+    time: 420
+    company: vulcan_industries
     demand:
-      - advanced_gear
-    price_offer: 2000.0
-    bonus: 1.6
-    bonus_condition: 55
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &6A rare delivery request is available! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &edelivered advanced gears to &1HydrauliX Systems&e!"
+      - industrial_copper_ore 24
+    price_offer: 430
+    # value: 24×$15 = $360 | markup: ~19%
+    bonus: 1.25
+    bonus_condition: 60
 
-  engine_parts_delivery:
-    name: "&6Engine Component Shipment"
+  blackrock_gold_requisition:
+    name: "Gold Ore Requisition"
     lore:
-      - "&7Cogsworth Engineering needs engine parts"
-      - "&7for their latest factory models."
-      - "&6High-value engineering contract."
-    chance: 6.0
-    time: 1500
-    company: cogsworth_engineering
-    demand:
-      - engine_part
-    price_offer: 3000.0
-    bonus: 1.8
-    bonus_condition: 50
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &6A rare delivery request is available! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &edelivered engine parts to &6Cogsworth Engineering&e!"
-
-  premium_fuel_order:
-    name: "&ePremium Fuel Contract"
-    lore:
-      - "&7Solaris Power Co. is testing premium fuel"
-      - "&7for their next-gen power systems."
-      - "&6High-efficiency fuel required."
+      - "§7Blackrock's alloy furnaces require gold ore"
+      - "§7for their latest exotic metal blend."
     chance: 5.0
-    time: 1200
-    company: solaris_power
+    time: 500
+    company: blackrock_foundry
     demand:
-      - premium_fuel
-    price_offer: 2800.0
-    bonus: 1.7
+      - industrial_gold_ore 12
+    price_offer: 575
+    # value: 12×$40 = $480 | markup: ~20%
+    bonus: 1.3
     bonus_condition: 55
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &6A rare delivery request is available! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &esupplied premium fuel to &eSolaris Power&e!"
 
-  # ==================== ELITE REQUESTS (Epic) ====================
-
-  weapons_contract:
-    name: "&5&lElite Weapons Contract"
+  blackrock_diamond_rush:
+    name: "Diamond Ore Priority Order"
     lore:
-      - "&7Aegis Defense Corp has commissioned"
-      - "&7advanced weapons for their elite forces."
-      - "&5&lELITE CONTRACT - Massive reward!"
+      - "§7Rare diamond ore needed for composite synthesis."
+      - "§7Blackrock is paying premium for fast delivery."
     chance: 3.0
-    time: 1800
-    company: aegis_defense
+    time: 600
+    company: blackrock_foundry
     demand:
-      - advanced_weapon
-    price_offer: 8000.0
-    bonus: 2.0
-    bonus_condition: 50
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &5&lELITE CONTRACT available! &eCheck your distribution center for massive rewards!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &ecompleted an &5ELITE &econtract for &4Aegis Defense&e! Incredible!"
-      - "give %player% diamond 5"
-      - "give %player% emerald 10"
-
-  armor_commission:
-    name: "&5&lArmor Manufacturing Deal"
-    lore:
-      - "&7Guardian Armory needs advanced armor"
-      - "&7for a major military procurement."
-      - "&5&lELITE CONTRACT - Top-tier reward!"
-    chance: 3.0
-    time: 1800
-    company: guardian_armory
-    demand:
-      - advanced_armor
-    price_offer: 7500.0
-    bonus: 2.0
-    bonus_condition: 50
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &5&lELITE CONTRACT available! &eCheck your distribution center for massive rewards!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &ecompleted an &5ELITE &econtract for &9Guardian Armory&e!"
-      - "give %player% diamond 5"
-      - "give %player% emerald 8"
-
-  electronics_bulk_order:
-    name: "&b&lBulk Electronics Order"
-    lore:
-      - "&7Voltex Electronics has a massive order"
-      - "&7for electronic components."
-      - "&5&lELITE CONTRACT - Premium payout!"
-    chance: 3.5
-    time: 1500
-    company: voltex_electronics
-    demand:
-      - electronic_component
-    price_offer: 6000.0
-    bonus: 1.8
-    bonus_condition: 55
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &5&lELITE CONTRACT available! &eCheck your distribution center for massive rewards!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &efulfilled a bulk order for &bVoltex Electronics&e!"
-      - "give %player% emerald 5"
-
-  luxury_goods_order:
-    name: "&6&lLuxury Goods Commission"
-    lore:
-      - "&7Golden Crown Trading Co. commissions"
-      - "&7luxury items for their VIP clients."
-      - "&5&lELITE CONTRACT - Legendary payout!"
-    chance: 2.0
-    time: 2400
-    company: golden_crown_trading
-    demand:
-      - luxury_item
-    price_offer: 15000.0
-    bonus: 2.5
-    bonus_condition: 45
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &6&lLEGENDARY CONTRACT available! &eThis is a once-in-a-lifetime opportunity!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &edelivered a &6LEGENDARY &eorder to &6Golden Crown Trading&e! Phenomenal!"
-      - "give %player% diamond 10"
-      - "give %player% emerald 20"
-      - "give %player% nether_star 1"
-
-  # ==================== MULTI-RESOURCE REQUESTS ====================
-
-  circuit_assembly_kit:
-    name: "&bCircuit Assembly Package"
-    lore:
-      - "&7Voltex Electronics needs a mixed package"
-      - "&7of redstone dust and refined copper"
-      - "&7for their circuit assembly line."
-    chance: 7.0
-    time: 1200
-    company: voltex_electronics
-    demand:
-      - redstone_dust
-      - refined_copper
-    price_offer: 2200.0
-    bonus: 1.6
-    bonus_condition: 60
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA multi-resource delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &edelivered a circuit assembly kit to &bVoltex Electronics&e!"
-
-  construction_materials_bundle:
-    name: "&8Construction Materials Bundle"
-    lore:
-      - "&7Bedrock Construction needs iron ore"
-      - "&7and basic gears for a building project."
-      - "&7A solid construction contract."
-    chance: 9.0
-    time: 900
-    company: bedrock_construction
-    demand:
-      - iron_ore
-      - basic_gear
-    price_offer: 1400.0
-    bonus: 1.5
-    bonus_condition: 60
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA new delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &esupplied materials to &8Bedrock Construction&e!"
-
-  military_supply_package:
-    name: "&4&lMilitary Supply Crate"
-    lore:
-      - "&7Aegis Defense Corp requires steel ingots"
-      - "&7and carbon fiber for weapons manufacturing."
-      - "&c&lHigh-priority military order!"
-    chance: 4.0
-    time: 1500
-    company: aegis_defense
-    demand:
-      - steel_ingot
-      - carbon_fiber
-    price_offer: 5500.0
-    bonus: 2.0
-    bonus_condition: 55
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &c&lHigh-priority military supply request! &eCheck your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &edelivered military supplies to &4Aegis Defense&e! Outstanding!"
-      - "give %player% diamond 4"
-
-  energy_starter_kit:
-    name: "&ePower Plant Starter Kit"
-    lore:
-      - "&7Solaris Power Co. needs coal ore and"
-      - "&7basic fuel to start a new generator."
-      - "&7Help them get the power flowing!"
-    chance: 10.0
-    time: 720
-    company: solaris_power
-    demand:
-      - coal_ore
-      - basic_fuel
-    price_offer: 1100.0
-    bonus: 1.5
-    bonus_condition: 65
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA new delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &esupplied a starter kit to &eSolaris Power&e!"
-
-  machinery_overhaul_package:
-    name: "&6&lMachinery Overhaul Package"
-    lore:
-      - "&7Cogsworth Engineering needs advanced gears,"
-      - "&7engine parts, and a hydraulic system"
-      - "&7for a complete machinery overhaul."
-      - "&5&lELITE - Triple resource delivery!"
-    chance: 2.5
-    time: 2400
-    company: cogsworth_engineering
-    demand:
-      - advanced_gear
-      - engine_part
-      - hydraulic_system
-    price_offer: 10000.0
-    bonus: 2.5
-    bonus_condition: 45
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &5&lELITE multi-resource contract available! &eCheck your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &ecompleted a massive overhaul order for &6Cogsworth Engineering&e! Legendary!"
-      - "give %player% diamond 8"
-      - "give %player% emerald 15"
-
-  deep_mining_supply:
-    name: "&8Deep Mining Equipment Order"
-    lore:
-      - "&7DeepMine Corporation needs iron ore,"
-      - "&7gold ore, and diamond ore for their"
-      - "&7deep excavation operations."
-    chance: 4.0
-    time: 1800
-    company: deepmine_corp
-    demand:
-      - iron_ore
-      - gold_ore
-      - diamond_ore
-    price_offer: 4500.0
-    bonus: 1.8
-    bonus_condition: 50
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &6A multi-resource mining contract is available! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &esupplied deep mining materials to &8DeepMine Corp&e!"
-      - "give %player% diamond 3"
-
-  emerald_trade_deal:
-    name: "&2Emerald Exchange Bulk Deal"
-    lore:
-      - "&7Emerald Exchange needs a variety of"
-      - "&7raw ores for their wholesale operation."
-      - "&7A standard commodity deal."
-    chance: 8.0
-    time: 900
-    company: emerald_exchange
-    demand:
-      - iron_ore
-      - copper_ore
-    price_offer: 1000.0
+      - industrial_diamond_ore 4
+    price_offer: 720
+    # value: 4×$150 = $600 | markup: ~20%
     bonus: 1.4
+    bonus_condition: 50
+
+  redstone_dust_stockpile:
+    name: "Redstone Dust Stockpile"
+    lore:
+      - "§7R&D labs are burning through redstone reserves."
+      - "§7Redstone Dynamics needs a fresh supply."
+    chance: 7.0
+    time: 380
+    company: redstone_dynamics
+    demand:
+      - industrial_redstone_dust 28
+    price_offer: 400
+    # value: 28×$12 = $336 | markup: ~19%
+    bonus: 1.25
     bonus_condition: 60
-    command-on-appear:
-      - "broadcast &6[Distribution Center] &eA new delivery request has appeared! Check your distribution center!"
-    command-on-complete:
-      - "broadcast &6[Distribution Center] &a%player% &ecompleted a trade deal with &2Emerald Exchange&e!"
+
+  cobalt_mixed_ore_haul:
+    name: "Mixed Ore Haul Contract"
+    lore:
+      - "§7Cobalt Mining needs a mixed delivery of ores"
+      - "§7to restock multiple processing lines at once."
+    chance: 5.0
+    time: 500
+    company: cobalt_mining
+    demand:
+      - industrial_iron_ore 16
+      - industrial_coal_ore 20
+      - industrial_copper_ore 10
+    price_offer: 600
+    # value: 16×12 + 20×8 + 10×15 = 192+160+150 = $502 | markup: ~19%
+    bonus: 1.2
+    bonus_condition: 60
+
+  # ================================================================
+  #  FUEL ORDERS — Tier 2 Support
+  #  Moderate time, fuel is a consumable so steady demand
+  #  Markup: ~18-22%
+  # ================================================================
+
+  horizon_diesel_contract:
+    name: "Diesel Fuel Supply Contract"
+    lore:
+      - "§7Horizon's truck fleet is running on fumes."
+      - "§7They need high speed diesel — yesterday."
+    chance: 6.0
+    time: 500
+    company: horizon_logistics
+    demand:
+      - high_speed_diesel 16
+    price_offer: 345
+    # value: 16×$18 = $288 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 60
+
+  pacific_marine_fuel_order:
+    name: "Marine Fuel Oil Requisition"
+    lore:
+      - "§7Pacific Naval's destroyer fleet requires"
+      - "§7marine-grade fuel for upcoming sea trials."
+    chance: 4.5
+    time: 600
+    company: pacific_naval
+    demand:
+      - marine_fuel_oil 8
+    price_offer: 480
+    # value: 8×$50 = $400 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 55
+
+  meridian_biosolar_purchase:
+    name: "Bio-Solar Fuel Purchase"
+    lore:
+      - "§7Meridian is expanding their green energy program."
+      - "§7They need bio-solar fuel for prototype testing."
+    chance: 3.0
+    time: 700
+    company: meridian_energy
+    demand:
+      - biosolar 5
+    price_offer: 720
+    # value: 5×$120 = $600 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 50
+
+  horizon_mixed_fuel_depot:
+    name: "Fuel Depot Restocking"
+    lore:
+      - "§7Horizon's regional fuel depots are running dry."
+      - "§7Multiple fuel types needed to resume operations."
+    chance: 4.0
+    time: 650
+    company: horizon_logistics
+    demand:
+      - high_speed_diesel 10
+      - marine_fuel_oil 4
+    price_offer: 460
+    # value: 10×18 + 4×50 = 180+200 = $380 | markup: ~21%
+    bonus: 1.25
+    bonus_condition: 55
+
+  # ================================================================
+  #  ADVANCED RESOURCE ORDERS — Tier 2
+  #  Medium deadlines, processed materials
+  #  Markup: ~15-22%
+  # ================================================================
+
+  vulcan_steel_contract:
+    name: "Steel Ingot Supply Contract"
+    lore:
+      - "§7Vulcan's construction division needs steel ingots"
+      - "§7for a major bridge-building project."
+    chance: 6.0
+    time: 600
+    company: vulcan_industries
+    demand:
+      - steel_ingot 12
+    price_offer: 500
+    # value: 12×$35 = $420 | markup: ~19%
+    bonus: 1.25
+    bonus_condition: 60
+
+  arclight_copper_wire_order:
+    name: "Copper Wiring Order"
+    lore:
+      - "§7ArcLight is wiring a new cell tower network."
+      - "§7They need quality copper wiring, lots of it."
+    chance: 6.0
+    time: 550
+    company: arclight_comm
+    demand:
+      - copper_wire 14
+    price_offer: 470
+    # value: 14×$28 = $392 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 60
+
+  atlas_reinforced_plate_order:
+    name: "Reinforced Plate Delivery"
+    lore:
+      - "§7Atlas is reinforcing a high-rise core structure."
+      - "§7Heavy-duty plates needed for load-bearing walls."
+    chance: 5.0
+    time: 650
+    company: atlas_construction
+    demand:
+      - reinforced_plate 8
+    price_offer: 575
+    # value: 8×$60 = $480 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 55
+
+  blackrock_gold_alloy_batch:
+    name: "Gold Alloy Batch Order"
+    lore:
+      - "§7Blackrock's precision foundry needs gold alloy"
+      - "§7for high-conductivity electronic contacts."
+    chance: 4.5
+    time: 650
+    company: blackrock_foundry
+    demand:
+      - gold_alloy 6
+    price_offer: 505
+    # value: 6×$70 = $420 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 55
+
+  nexgen_circuit_supply:
+    name: "Electronic Circuit Supply"
+    lore:
+      - "§7NexGen's assembly lines are hungry for circuits."
+      - "§7Production halts without a steady supply."
+    chance: 5.5
+    time: 600
+    company: nexgen_electronics
+    demand:
+      - electronic_circuit 6
+    price_offer: 610
+    # value: 6×$85 = $510 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 60
+
+  stellar_carbon_composite_order:
+    name: "Carbon Composite Requisition"
+    lore:
+      - "§7Aerospace-grade carbon composite is critical"
+      - "§7for Stellar's next-gen airframe program."
+    chance: 3.5
+    time: 750
+    company: stellar_aerospace
+    demand:
+      - carbon_composite 4
+    price_offer: 625
+    # value: 4×$130 = $520 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  blackrock_titanium_plate_order:
+    name: "Titanium Plate Forging Order"
+    lore:
+      - "§7Heat-resistant titanium plates are in demand"
+      - "§7for Blackrock's turbine housing project."
+    chance: 4.0
+    time: 700
+    company: blackrock_foundry
+    demand:
+      - titanium_plate 5
+    price_offer: 600
+    # value: 5×$100 = $500 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 55
+
+  circuitbay_silicon_wafer_order:
+    name: "Silicon Wafer Shipment"
+    lore:
+      - "§7CircuitBay's chip fabrication plant needs"
+      - "§7high-purity silicon wafers for CPU production."
+    chance: 5.0
+    time: 600
+    company: circuitbay_tech
+    demand:
+      - silicon_wafer 8
+    price_offer: 530
+    # value: 8×$55 = $440 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 60
+
+  atlas_aluminum_sheet_order:
+    name: "Aluminum Sheet Requisition"
+    lore:
+      - "§7Atlas needs lightweight aluminum panels"
+      - "§7for exterior cladding on the new terminal."
+    chance: 6.0
+    time: 550
+    company: atlas_construction
+    demand:
+      - aluminum_sheet 12
+    price_offer: 575
+    # value: 12×$40 = $480 | markup: ~20%
+    bonus: 1.2
+    bonus_condition: 60
+
+  blackrock_tungsten_rod_order:
+    name: "Tungsten Rod Procurement"
+    lore:
+      - "§7Ultra-dense tungsten rods required for"
+      - "§7Blackrock's industrial drill bit production."
+    chance: 4.0
+    time: 700
+    company: blackrock_foundry
+    demand:
+      - tungsten_rod 5
+    price_offer: 570
+    # value: 5×$95 = $475 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 55
+
+  arclight_fiber_optic_order:
+    name: "Fiber Optic Cable Installation"
+    lore:
+      - "§7ArcLight is deploying high-speed internet"
+      - "§7to a new residential district. Fiber needed."
+    chance: 5.0
+    time: 650
+    company: arclight_comm
+    demand:
+      - fiber_optic_cable 6
+    price_offer: 540
+    # value: 6×$75 = $450 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 55
+
+  quantum_tempered_glass_order:
+    name: "Tempered Glass Panel Order"
+    lore:
+      - "§7Quantum Optics needs impact-resistant glass"
+      - "§7for their new telescope housing project."
+    chance: 6.0
+    time: 500
+    company: quantum_optics
+    demand:
+      - tempered_glass 10
+    price_offer: 540
+    # value: 10×$45 = $450 | markup: ~20%
+    bonus: 1.2
+    bonus_condition: 60
+
+  vulcan_structural_materials:
+    name: "Structural Materials Bundle"
+    lore:
+      - "§7Vulcan needs a mixed shipment of processed metals"
+      - "§7for their new industrial complex framework."
+    chance: 4.0
+    time: 750
+    company: vulcan_industries
+    demand:
+      - steel_ingot 8
+      - reinforced_plate 4
+      - aluminum_sheet 6
+    price_offer: 890
+    # value: 8×35 + 4×60 + 6×40 = 280+240+240 = $760 | markup: ~17%
+    bonus: 1.2
+    bonus_condition: 55
+
+  # ================================================================
+  #  MACHINE PARTS ORDERS — Tier 2
+  #  Medium-long deadlines, specialized components
+  #  Markup: ~18-22%
+  # ================================================================
+
+  pinnacle_basic_gear_order:
+    name: "Basic Gear Batch Order"
+    lore:
+      - "§7Pinnacle's assembly lines need standard gears"
+      - "§7for their general-purpose machinery catalog."
+    chance: 6.5
+    time: 550
+    company: pinnacle_mfg
+    demand:
+      - basic_gear 8
+    price_offer: 430
+    # value: 8×$45 = $360 | markup: ~19%
+    bonus: 1.2
+    bonus_condition: 60
+
+  pinnacle_advanced_gear_order:
+    name: "Advanced Gear Precision Order"
+    lore:
+      - "§7High-tolerance gears needed for Pinnacle's"
+      - "§7premium machine tool product line."
+    chance: 4.5
+    time: 650
+    company: pinnacle_mfg
+    demand:
+      - advanced_gear 4
+    price_offer: 530
+    # value: 4×$110 = $440 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 55
+
+  titan_hydraulic_piston_order:
+    name: "Hydraulic Piston Requisition"
+    lore:
+      - "§7Titan's heavy press department is waiting"
+      - "§7on replacement hydraulic pistons."
+    chance: 5.0
+    time: 600
+    company: titan_automotive
+    demand:
+      - hydraulic_piston 5
+    price_offer: 540
+    # value: 5×$90 = $450 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 60
+
+  vanguard_electric_motor_order:
+    name: "Electric Motor Supply"
+    lore:
+      - "§7Vanguard's EV production line requires"
+      - "§7compact electric motors for the new model."
+    chance: 4.5
+    time: 650
+    company: vanguard_motors
+    demand:
+      - electric_motor 4
+    price_offer: 575
+    # value: 4×$120 = $480 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 55
+
+  quantum_precision_lens_order:
+    name: "Precision Lens Commission"
+    lore:
+      - "§7Quantum Optics has a government contract"
+      - "§7requiring their finest diamond-polished lenses."
+    chance: 3.0
+    time: 750
+    company: quantum_optics
+    demand:
+      - precision_lens 3
+    price_offer: 900
+    # value: 3×$250 = $750 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 50
+
+  pinnacle_ball_bearing_order:
+    name: "Ball Bearing Bulk Delivery"
+    lore:
+      - "§7Every machine needs bearings. Pinnacle keeps"
+      - "§7a massive inventory — time to restock."
+    chance: 6.5
+    time: 500
+    company: pinnacle_mfg
+    demand:
+      - ball_bearing 8
+    price_offer: 530
+    # value: 8×$55 = $440 | markup: ~20%
+    bonus: 1.2
+    bonus_condition: 60
+
+  titan_fuel_injector_order:
+    name: "Fuel Injector Set Order"
+    lore:
+      - "§7Titan's engine testing facility needs"
+      - "§7calibrated fuel injectors for dyno runs."
+    chance: 5.0
+    time: 600
+    company: titan_automotive
+    demand:
+      - fuel_injector 5
+    price_offer: 480
+    # value: 5×$80 = $400 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 60
+
+  redstone_servo_motor_order:
+    name: "Servo Motor R&D Order"
+    lore:
+      - "§7Redstone Dynamics is prototyping new robotic"
+      - "§7arms. High-precision servos are essential."
+    chance: 4.0
+    time: 700
+    company: redstone_dynamics
+    demand:
+      - servo_motor 3
+    price_offer: 505
+    # value: 3×$140 = $420 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 55
+
+  cryotech_pressure_valve_order:
+    name: "Pressure Valve Shipment"
+    lore:
+      - "§7CryoTech's coolant systems depend on reliable"
+      - "§7pressure regulation. Valves needed urgently."
+    chance: 5.0
+    time: 550
+    company: cryotech_industries
+    demand:
+      - pressure_valve 6
+    price_offer: 505
+    # value: 6×$70 = $420 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 60
+
+  cryotech_cooling_fan_order:
+    name: "Cooling Fan Unit Order"
+    lore:
+      - "§7Server farms are overheating. CryoTech needs"
+      - "§7high-RPM cooling fans for emergency deployment."
+    chance: 5.5
+    time: 550
+    company: cryotech_industries
+    demand:
+      - cooling_fan 6
+    price_offer: 470
+    # value: 6×$65 = $390 | markup: ~21%
+    bonus: 1.25
+    bonus_condition: 60
+
+  stellar_turbine_blade_order:
+    name: "Turbine Blade Special Order"
+    lore:
+      - "§7Stellar's jet engine program demands blades"
+      - "§7rated for extreme RPM. No compromises."
+    chance: 3.0
+    time: 800
+    company: stellar_aerospace
+    demand:
+      - turbine_blade 3
+    price_offer: 720
+    # value: 3×$200 = $600 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 50
+
+  pinnacle_mechanical_kit:
+    name: "Mechanical Parts Kit"
+    lore:
+      - "§7Pinnacle needs a mixed set of mechanical parts"
+      - "§7for their factory maintenance program."
+    chance: 4.0
+    time: 700
+    company: pinnacle_mfg
+    demand:
+      - basic_gear 4
+      - ball_bearing 4
+      - pressure_valve 3
+    price_offer: 680
+    # value: 4×45 + 4×55 + 3×70 = 180+220+210 = $610 | markup: ~11%
+    bonus: 1.2
+    bonus_condition: 55
+
+  # ================================================================
+  #  FINAL PRODUCT ORDERS — Tier 3
+  #  Long deadlines, highest payouts
+  #  Markup: ~12-18% (already high-value items)
+  # ================================================================
+
+  # ---------- MILITARY FINAL PRODUCTS ----------
+
+  ironclad_vest_contract:
+    name: "Tactical Vest Contract"
+    lore:
+      - "§7Ironclad Defense has a military contract"
+      - "§7for body armor. Tactical vests needed."
+    chance: 3.5
+    time: 1200
+    company: ironclad_defense
+    demand:
+      - tactical_vest 2
+    price_offer: 2040
+    # value: 2×$850 = $1700 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  ironclad_rifle_procurement:
+    name: "Combat Rifle Procurement"
+    lore:
+      - "§7The army needs new standard-issue rifles."
+      - "§7Ironclad is fulfilling the defense ministry order."
+    chance: 3.5
+    time: 1200
+    company: ironclad_defense
+    demand:
+      - combat_rifle 2
+    price_offer: 2160
+    # value: 2×$900 = $1800 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  ironclad_armored_vehicle_order:
+    name: "Armored Vehicle Delivery"
+    lore:
+      - "§7A foreign ally has requested armored transports."
+      - "§7Ironclad needs vehicles ready for deployment."
+    chance: 2.0
+    time: 1500
+    company: ironclad_defense
+    demand:
+      - armored_vehicle 1
+    price_offer: 2160
+    # value: 1×$1800 = $1800 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 45
+
+  valkyrie_missile_contract:
+    name: "Guided Missile Production Order"
+    lore:
+      - "§7Valkyrie Munitions has a classified contract"
+      - "§7for precision-guided munitions. Top priority."
+    chance: 1.5
+    time: 1600
+    company: valkyrie_munitions
+    demand:
+      - guided_missile 1
+    price_offer: 2640
+    # value: 1×$2200 = $2200 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 40
+
+  obsidian_nvg_order:
+    name: "Night Vision Equipment Order"
+    lore:
+      - "§7Obsidian's field operatives need upgraded"
+      - "§7night vision goggles for covert operations."
+    chance: 4.0
+    time: 1000
+    company: obsidian_security
+    demand:
+      - night_vision_goggles 2
+    price_offer: 1560
+    # value: 2×$650 = $1300 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 55
+
+  ironclad_infantry_package:
+    name: "Infantry Equipment Package"
+    lore:
+      - "§7Full infantry loadout needed for a new battalion."
+      - "§7Vests, rifles, and night optics — the works."
+    chance: 2.0
+    time: 1800
+    company: ironclad_defense
+    demand:
+      - tactical_vest 1
+      - combat_rifle 1
+      - night_vision_goggles 1
+    price_offer: 2880
+    # value: 850+900+650 = $2400 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 45
+
+  valkyrie_arms_deal:
+    name: "Arms Deal Fulfillment"
+    lore:
+      - "§7A lucrative arms deal requires mixed military"
+      - "§7hardware. Valkyrie needs it ready for export."
+    chance: 1.5
+    time: 1800
+    company: valkyrie_munitions
+    demand:
+      - combat_rifle 2
+      - guided_missile 1
+    price_offer: 4800
+    # value: 2×900 + 2200 = $4000 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 40
+
+  # ---------- ELECTRONICS FINAL PRODUCTS ----------
+
+  nexgen_smartphone_batch:
+    name: "Smartphone Production Batch"
+    lore:
+      - "§7NexGen's flagship launch is around the corner."
+      - "§7Smartphones must be ready for retail shelves."
+    chance: 4.0
+    time: 1000
+    company: nexgen_electronics
+    demand:
+      - smartphone 2
+    price_offer: 1800
+    # value: 2×$750 = $1500 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 55
+
+  circuitbay_server_rack_order:
+    name: "Server Rack Data Center Order"
+    lore:
+      - "§7CircuitBay is expanding their cloud capacity."
+      - "§7New server racks needed for the data center."
+    chance: 2.5
+    time: 1400
+    company: circuitbay_tech
+    demand:
+      - server_rack 1
+    price_offer: 1800
+    # value: 1×$1500 = $1500 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 50
+
+  nexgen_laptop_order:
+    name: "Laptop Computer Shipment"
+    lore:
+      - "§7A major university ordered laptops in bulk."
+      - "§7NexGen needs units assembled and shipped."
+    chance: 3.0
+    time: 1200
+    company: nexgen_electronics
+    demand:
+      - laptop_computer 2
+    price_offer: 2880
+    # value: 2×$1200 = $2400 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  redstone_drone_controller_order:
+    name: "Drone Controller Development"
+    lore:
+      - "§7Redstone Dynamics is testing autonomous drones."
+      - "§7Ground control stations are the missing piece."
+    chance: 3.0
+    time: 1100
+    company: redstone_dynamics
+    demand:
+      - drone_controller 2
+    price_offer: 2280
+    # value: 2×$950 = $1900 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  meridian_solar_panel_order:
+    name: "Solar Panel Installation Order"
+    lore:
+      - "§7Meridian is building a solar farm in the desert."
+      - "§7Photovoltaic arrays needed for Phase 1 deployment."
+    chance: 2.5
+    time: 1400
+    company: meridian_energy
+    demand:
+      - solar_panel 1
+    price_offer: 2160
+    # value: 1×$1800 = $1800 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 50
+
+  obsidian_radar_contract:
+    name: "Radar System Deployment"
+    lore:
+      - "§7Obsidian is setting up a perimeter surveillance"
+      - "§7network. Long-range radar systems required."
+    chance: 2.0
+    time: 1400
+    company: obsidian_security
+    demand:
+      - radar_system 1
+    price_offer: 2400
+    # value: 1×$2000 = $2000 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 45
+
+  nexgen_consumer_bundle:
+    name: "Consumer Electronics Bundle"
+    lore:
+      - "§7Holiday season is approaching. NexGen needs"
+      - "§7smartphones and laptops for retail bundles."
+    chance: 2.0
+    time: 1500
+    company: nexgen_electronics
+    demand:
+      - smartphone 2
+      - laptop_computer 1
+    price_offer: 3240
+    # value: 2×750 + 1200 = $2700 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  circuitbay_data_center_kit:
+    name: "Data Center Infrastructure Kit"
+    lore:
+      - "§7A government agency contracted CircuitBay"
+      - "§7for a turnkey data center deployment."
+    chance: 1.5
+    time: 1800
+    company: circuitbay_tech
+    demand:
+      - server_rack 1
+      - drone_controller 1
+      - radar_system 1
+    price_offer: 5340
+    # value: 1500+950+2000 = $4450 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 40
+
+  # ---------- AUTOMOTIVE FINAL PRODUCTS ----------
+
+  titan_engine_block_order:
+    name: "Engine Block Manufacturing Order"
+    lore:
+      - "§7Titan's performance division needs V8 engines"
+      - "§7for their new sports car lineup."
+    chance: 3.0
+    time: 1200
+    company: titan_automotive
+    demand:
+      - engine_block 2
+    price_offer: 2400
+    # value: 2×$1000 = $2000 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  titan_vehicle_chassis_order:
+    name: "Vehicle Chassis Production"
+    lore:
+      - "§7Chassis frames are the backbone of every vehicle."
+      - "§7Titan needs them welded and ready for assembly."
+    chance: 3.0
+    time: 1200
+    company: titan_automotive
+    demand:
+      - vehicle_chassis 2
+    price_offer: 2640
+    # value: 2×$1100 = $2200 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  titan_turbocharger_order:
+    name: "Turbocharger Performance Order"
+    lore:
+      - "§7Racing season is coming. Titan needs turbos"
+      - "§7for their competition engine program."
+    chance: 3.5
+    time: 1100
+    company: titan_automotive
+    demand:
+      - turbocharger 2
+    price_offer: 1920
+    # value: 2×$800 = $1600 | markup: ~20%
+    bonus: 1.25
+    bonus_condition: 55
+
+  vanguard_transmission_order:
+    name: "Transmission System Order"
+    lore:
+      - "§7Vanguard's hybrid vehicles need new-gen"
+      - "§78-speed transmission systems installed."
+    chance: 2.5
+    time: 1300
+    company: vanguard_motors
+    demand:
+      - transmission_system 1
+    price_offer: 1680
+    # value: 1×$1400 = $1400 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  vanguard_battery_order:
+    name: "Electric Battery Pack Order"
+    lore:
+      - "§7Vanguard's EV factory is scaling up production."
+      - "§7Lithium-ion battery packs are the bottleneck."
+    chance: 2.5
+    time: 1400
+    company: vanguard_motors
+    demand:
+      - electric_battery 1
+    price_offer: 1920
+    # value: 1×$1600 = $1600 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  titan_complete_powertrain:
+    name: "Complete Powertrain Package"
+    lore:
+      - "§7Titan needs a full powertrain assembly —"
+      - "§7engine, turbo, and transmission together."
+    chance: 1.5
+    time: 1800
+    company: titan_automotive
+    demand:
+      - engine_block 1
+      - turbocharger 1
+      - transmission_system 1
+    price_offer: 3840
+    # value: 1000+800+1400 = $3200 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 40
+
+  vanguard_ev_package:
+    name: "Electric Vehicle Component Set"
+    lore:
+      - "§7Vanguard is assembling their flagship EV."
+      - "§7Battery, motor-related chassis, the full setup."
+    chance: 1.5
+    time: 1800
+    company: vanguard_motors
+    demand:
+      - electric_battery 1
+      - vehicle_chassis 1
+      - transmission_system 1
+    price_offer: 4920
+    # value: 1600+1100+1400 = $4100 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 40
+
+  # ---------- AEROSPACE FINAL PRODUCTS ----------
+
+  stellar_jet_engine_order:
+    name: "Jet Engine Fabrication Order"
+    lore:
+      - "§7Stellar's next-generation fighter program"
+      - "§7demands turbofan engines of the highest caliber."
+    chance: 2.0
+    time: 1500
+    company: stellar_aerospace
+    demand:
+      - jet_engine 1
+    price_offer: 3000
+    # value: 1×$2500 = $2500 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 45
+
+  orbital_satellite_order:
+    name: "Satellite Module Commission"
+    lore:
+      - "§7Orbital Solutions won a satellite constellation"
+      - "§7contract. Modules needed for orbital deployment."
+    chance: 1.5
+    time: 1600
+    company: orbital_solutions
+    demand:
+      - satellite_module 1
+    price_offer: 3600
+    # value: 1×$3000 = $3000 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 40
+
+  stellar_rocket_booster_order:
+    name: "Rocket Booster Fabrication"
+    lore:
+      - "§7The launch window is approaching. Stellar needs"
+      - "§7solid-fuel rocket boosters for the heavy lifter."
+    chance: 1.0
+    time: 1800
+    company: stellar_aerospace
+    demand:
+      - rocket_booster 1
+    price_offer: 4200
+    # value: 1×$3500 = $3500 | markup: ~20%
+    bonus: 1.5
+    bonus_condition: 40
+
+  orbital_navigation_order:
+    name: "Navigation System Contract"
+    lore:
+      - "§7Orbital's spacecraft need INS/GPS navigation"
+      - "§7systems for autonomous orbital maneuvers."
+    chance: 1.5
+    time: 1500
+    company: orbital_solutions
+    demand:
+      - navigation_system 1
+    price_offer: 3360
+    # value: 1×$2800 = $2800 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 45
+
+  orbital_space_suit_order:
+    name: "Space Suit Production Order"
+    lore:
+      - "§7Orbital's crew expansion program requires"
+      - "§7EVA-rated space suits for station personnel."
+    chance: 2.0
+    time: 1400
+    company: orbital_solutions
+    demand:
+      - space_suit 1
+    price_offer: 2400
+    # value: 1×$2000 = $2000 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 45
+
+  stellar_launch_vehicle_package:
+    name: "Launch Vehicle Assembly"
+    lore:
+      - "§7Stellar is assembling a complete launch vehicle."
+      - "§7Engines, boosters, and navigation — all of it."
+    chance: 0.8
+    time: 2400
+    company: stellar_aerospace
+    demand:
+      - jet_engine 1
+      - rocket_booster 1
+      - navigation_system 1
+    price_offer: 10560
+    # value: 2500+3500+2800 = $8800 | markup: ~20%
+    bonus: 1.5
+    bonus_condition: 35
+
+  orbital_full_satellite_kit:
+    name: "Complete Satellite Deployment Kit"
+    lore:
+      - "§7Full satellite package for a geostationary"
+      - "§7communications relay. Everything included."
+    chance: 0.8
+    time: 2200
+    company: orbital_solutions
+    demand:
+      - satellite_module 1
+      - solar_panel 1
+      - navigation_system 1
+    price_offer: 9120
+    # value: 3000+1800+2800 = $7600 | markup: ~20%
+    bonus: 1.5
+    bonus_condition: 35
+
+  # ================================================================
+  #  MIXED / CROSS-TIER ORDERS
+  #  Companies requesting items from multiple tiers
+  #  Creates interesting supply chain challenges
+  # ================================================================
+
+  pacific_naval_refit:
+    name: "Naval Vessel Refit Package"
+    lore:
+      - "§7Pacific Naval is refitting a destroyer."
+      - "§7Steel, fuel, and engine components all needed."
+    chance: 3.0
+    time: 1000
+    company: pacific_naval
+    demand:
+      - steel_ingot 6
+      - reinforced_plate 4
+      - marine_fuel_oil 4
+      - hydraulic_piston 2
+    price_offer: 1020
+    # value: 6×35+4×60+4×50+2×90 = 210+240+200+180 = $830 | markup: ~23%
+    bonus: 1.3
+    bonus_condition: 50
+
+  atlas_construction_site_supply:
+    name: "Construction Site Materials"
+    lore:
+      - "§7Atlas has a new project breaking ground."
+      - "§7Raw and processed materials needed on-site."
+    chance: 4.0
+    time: 800
+    company: atlas_construction
+    demand:
+      - industrial_iron_ore 20
+      - steel_ingot 6
+      - basic_gear 4
+    price_offer: 755
+    # value: 20×12+6×35+4×45 = 240+210+180 = $630 | markup: ~20%
+    bonus: 1.2
+    bonus_condition: 55
+
+  horizon_fleet_maintenance:
+    name: "Fleet Maintenance Supplies"
+    lore:
+      - "§7Horizon's vehicle fleet needs routine maintenance."
+      - "§7Fuel, parts, and lubricants required."
+    chance: 4.0
+    time: 800
+    company: horizon_logistics
+    demand:
+      - high_speed_diesel 8
+      - basic_gear 4
+      - ball_bearing 6
+      - fuel_injector 3
+    price_offer: 1070
+    # value: 8×18+4×45+6×55+3×80 = 144+180+330+240 = $894 | markup: ~20%
+    bonus: 1.2
+    bonus_condition: 55
+
+  cryotech_cooling_system_package:
+    name: "Industrial Cooling System"
+    lore:
+      - "§7CryoTech is deploying cooling infrastructure"
+      - "§7for a new semiconductor fabrication plant."
+    chance: 3.0
+    time: 900
+    company: cryotech_industries
+    demand:
+      - cooling_fan 4
+      - pressure_valve 3
+      - copper_wire 6
+      - aluminum_sheet 4
+    price_offer: 900
+    # value: 4×65+3×70+6×28+4×40 = 260+210+168+160 = $798 | markup: ~13%
+    bonus: 1.25
+    bonus_condition: 55
+
+  arclight_network_infrastructure:
+    name: "Network Infrastructure Build"
+    lore:
+      - "§7ArcLight is building a new comms backbone."
+      - "§7Fiber, circuits, and server hardware needed."
+    chance: 2.5
+    time: 1200
+    company: arclight_comm
+    demand:
+      - fiber_optic_cable 4
+      - electronic_circuit 3
+      - silicon_wafer 4
+      - server_rack 1
+    price_offer: 2520
+    # value: 4×75+3×85+4×55+1×1500 = 300+255+220+1500 = $2275 | markup: ~11%
+    bonus: 1.25
+    bonus_condition: 50
+
+  obsidian_field_operations_kit:
+    name: "Field Operations Kit"
+    lore:
+      - "§7Obsidian is deploying a new field team."
+      - "§7Full equipment kit — optics, comms, and armor."
+    chance: 2.0
+    time: 1500
+    company: obsidian_security
+    demand:
+      - night_vision_goggles 1
+      - drone_controller 1
+      - tactical_vest 1
+      - combat_rifle 1
+    price_offer: 4080
+    # value: 650+950+850+900 = $3350 | markup: ~22%
+    bonus: 1.35
+    bonus_condition: 45
+
+  redstone_prototype_materials:
+    name: "R&D Prototype Materials"
+    lore:
+      - "§7Redstone Dynamics is building experimental"
+      - "§7prototypes. Exotic materials and parts required."
+    chance: 2.5
+    time: 1000
+    company: redstone_dynamics
+    demand:
+      - electronic_circuit 4
+      - servo_motor 2
+      - gold_alloy 3
+      - carbon_composite 2
+    price_offer: 1310
+    # value: 4×85+2×140+3×70+2×130 = 340+280+210+260 = $1090 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  meridian_power_plant_components:
+    name: "Power Plant Components"
+    lore:
+      - "§7Meridian is commissioning a hybrid power plant."
+      - "§7Turbines, generators, and fuel systems needed."
+    chance: 2.0
+    time: 1400
+    company: meridian_energy
+    demand:
+      - turbine_blade 2
+      - electric_motor 2
+      - biosolar 3
+      - solar_panel 1
+    price_offer: 3360
+    # value: 2×200+2×120+3×120+1×1800 = 400+240+360+1800 = $2800 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 45
+
+  pacific_weapons_system:
+    name: "Naval Weapons System Package"
+    lore:
+      - "§7Pacific Naval is arming a new frigate."
+      - "§7Missiles, radar, and targeting systems needed."
+    chance: 1.5
+    time: 1800
+    company: pacific_naval
+    demand:
+      - guided_missile 1
+      - radar_system 1
+      - precision_lens 2
+    price_offer: 5280
+    # value: 2200+2000+2×250 = $4700 | markup: ~12%
+    bonus: 1.35
+    bonus_condition: 40
+
+  quantum_optical_suite:
+    name: "Advanced Optical Suite"
+    lore:
+      - "§7Quantum Optics is assembling a complete optical"
+      - "§7system for a deep-space telescope project."
+    chance: 2.0
+    time: 1200
+    company: quantum_optics
+    demand:
+      - precision_lens 2
+      - tempered_glass 6
+      - fiber_optic_cable 4
+    price_offer: 1200
+    # value: 2×250+6×45+4×75 = 500+270+300 = $1070 | markup: ~12%
+    bonus: 1.3
+    bonus_condition: 50
+
+  vulcan_industrial_overhaul:
+    name: "Industrial Machine Overhaul"
+    lore:
+      - "§7Vulcan's heavy machinery fleet needs a complete"
+      - "§7overhaul. Structural and mechanical parts needed."
+    chance: 3.0
+    time: 1000
+    company: vulcan_industries
+    demand:
+      - reinforced_plate 4
+      - tungsten_rod 3
+      - advanced_gear 2
+      - hydraulic_piston 3
+    price_offer: 1200
+    # value: 4×60+3×95+2×110+3×90 = 240+285+220+270 = $1015 | markup: ~18%
+    bonus: 1.25
+    bonus_condition: 50
+
+  stellar_eva_mission_prep:
+    name: "EVA Mission Preparation"
+    lore:
+      - "§7Stellar is preparing for an extravehicular"
+      - "§7mission. Space suit and navigation required."
+    chance: 1.5
+    time: 1600
+    company: stellar_aerospace
+    demand:
+      - space_suit 1
+      - navigation_system 1
+      - satellite_module 1
+    price_offer: 9360
+    # value: 2000+2800+3000 = $7800 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 40
+
+  vanguard_factory_expansion:
+    name: "Factory Line Expansion"
+    lore:
+      - "§7Vanguard is adding a new production line."
+      - "§7Electric motors, batteries, and wiring needed."
+    chance: 2.0
+    time: 1400
+    company: vanguard_motors
+    demand:
+      - electric_motor 3
+      - electric_battery 1
+      - copper_wire 8
+      - cooling_fan 4
+    price_offer: 2760
+    # value: 3×120+1600+8×28+4×65 = 360+1600+224+260 = $2444 | markup: ~13%
+    bonus: 1.25
+    bonus_condition: 50
+
+  blackrock_exotic_metals_order:
+    name: "Exotic Metals Bulk Order"
+    lore:
+      - "§7Blackrock is stockpiling rare metals for"
+      - "§7an upcoming government defense contract."
+    chance: 2.0
+    time: 1000
+    company: blackrock_foundry
+    demand:
+      - titanium_plate 4
+      - tungsten_rod 3
+      - carbon_composite 3
+      - gold_alloy 4
+    price_offer: 1560
+    # value: 4×100+3×95+3×130+4×70 = 400+285+390+280 = $1355 | markup: ~15%
+    bonus: 1.3
+    bonus_condition: 50
+
+  cobalt_raw_material_megaorder:
+    name: "Raw Material Mega-Order"
+    lore:
+      - "§7Cobalt's processing facilities are expanding."
+      - "§7They need massive quantities of raw materials."
+    chance: 2.0
+    time: 900
+    company: cobalt_mining
+    demand:
+      - industrial_iron_ore 24
+      - industrial_coal_ore 32
+      - industrial_copper_ore 16
+      - industrial_redstone_dust 12
+    price_offer: 1115
+    # value: 24×12+32×8+16×15+12×12 = 288+256+240+144 = $928 | markup: ~20%
+    bonus: 1.2
+    bonus_condition: 55
+
+  ironclad_forward_base_supply:
+    name: "Forward Base Supply Drop"
+    lore:
+      - "§7Ironclad is establishing a forward operating base."
+      - "§7Complete military supply package required."
+    chance: 1.0
+    time: 2400
+    company: ironclad_defense
+    demand:
+      - armored_vehicle 1
+      - combat_rifle 2
+      - tactical_vest 2
+      - night_vision_goggles 2
+      - radar_system 1
+      - high_speed_diesel 10
+    price_offer: 10540
+    # value: 1800+1800+1700+1300+2000+180 = $8780 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 35
+
+  meridian_green_energy_initiative:
+    name: "Green Energy Initiative"
+    lore:
+      - "§7Meridian's flagship sustainability project needs"
+      - "§7solar panels, batteries, and bio-fuel reserves."
+    chance: 1.5
+    time: 1800
+    company: meridian_energy
+    demand:
+      - solar_panel 1
+      - electric_battery 1
+      - biosolar 4
+    price_offer: 4560
+    # value: 1800+1600+4×120 = 1800+1600+480 = $3880 | markup: ~18%
+    bonus: 1.3
+    bonus_condition: 40

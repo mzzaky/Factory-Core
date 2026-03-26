@@ -174,14 +174,15 @@ public class FactoryBrowseGUI {
     }
 
     private Material getFactoryMaterial(FactoryType type) {
-        switch (type) {
-            case STEEL_MILL:
+        if (type == null) return Material.FURNACE;
+        switch (type.getId()) {
+            case "steel_mill":
                 return Material.IRON_BLOCK;
-            case REFINERY:
+            case "refinery":
                 return Material.BLAST_FURNACE;
-            case WORKSHOP:
+            case "workshop":
                 return Material.CRAFTING_TABLE;
-            case ADVANCED_FACTORY:
+            case "advanced_factory":
                 return Material.DIAMOND_BLOCK;
             default:
                 return Material.FURNACE;
@@ -312,13 +313,14 @@ public class FactoryBrowseGUI {
 
     public void cycleFilter() {
         if (filterType == null) {
-            filterType = FactoryType.values()[0];
+            filterType = FactoryType.values().iterator().next();
         } else {
-            int currentIndex = filterType.ordinal();
-            if (currentIndex + 1 >= FactoryType.values().length) {
+            List<FactoryType> typesList = new ArrayList<>(FactoryType.values());
+            int currentIndex = typesList.indexOf(filterType);
+            if (currentIndex == -1 || currentIndex + 1 >= typesList.size()) {
                 filterType = null; // Back to all
             } else {
-                filterType = FactoryType.values()[currentIndex + 1];
+                filterType = typesList.get(currentIndex + 1);
             }
         }
     }

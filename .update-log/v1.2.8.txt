@@ -37,8 +37,8 @@ v1.2.8 Update Log
 - [New] Added "Distribution Center" feature — a complete delivery request system where companies request materials from players. Features include:
   - Virtual company entities loaded from `company.yml` with detailed info (name, industry, CEO, HQ, reputation stars, lore).
   - Distribution events loaded from `event.yml` with weighted random selection, time limits, and configurable demands.
-  - 15 sample companies across 7 industries: Heavy Industry, Mining, Technology, Energy, Military & Defense, Luxury & Commerce, Engineering, and Construction.
-  - 25 sample events ranging from basic (common ore deliveries) to elite (multi-resource legendary contracts).
+  - 21 sample companies across 7 industries: Heavy Industry, Mining, Technology, Energy, Military & Defense, Luxury & Commerce, Engineering, and Construction.
+  - 82 sample events ranging from basic (common ore deliveries) to elite (multi-resource contracts).
   - Custom Distribution Center GUI accessible from the main hub menu with clean, modern design.
   - Request detail view showing company info, timer with color-coded status, reward breakdown, and clickable resource delivery.
   - "Deliver All" button to submit all demanded resources from inventory at once.
@@ -57,3 +57,60 @@ v1.2.8 Update Log
 - [New] Added `distribution-request` notification sound in config.yml.
 - [New] Added PlaceholderAPI placeholders: `%factorycore_distribution_active%`, `%factorycore_distribution_tax_paid%`.
 - [New] Distribution Center status displayed in the startup banner (company count, event count).
+- [New] Added admin command /fc admin event <id> [player] to force-spawn distribution events (ignores spawn chance and interval/cooldown settings) with full tab completion support for event IDs and player names.
+- [Removed] Removed unused 'economy.currency-symbol' and 'economy.decimal-places' settings from config.yml and pruned MoneyFormatter.java to clean up the codebase.
+- [New] Added "command-on-leave" configuration to distribution events (event.yml). When a player's delivery request expires without being fulfilled, the configured commands will be executed automatically.
+- [Update] Removed "Tax Center" button from Main Menu and moved "Distribution Center" into its previous slot (Slot 23).
+- [Update] Moved "Recipes Wiki" button to Slot 40 in the Main Menu GUI.
+- [Update] Refactored factory display names in Employees Center GUI to remove factory IDs and [Player] tags from titles, favoring custom display names.
+- [Update] Refactored factory display in Invoice Center GUI lore to use custom display names (or type names) instead of raw IDs.
+- [Update] Added support for item quantities in Distribution Center demands (format: resource_id amount).
+- [Update] Refreshed all sample events in event.yml with balanced resource quantities and payout offers.
+- [Update] Updated DistributionCenterGUI and DistributionManager to correctly parse and display these resource quantities.
+- [New] Added "Timer Reminder BossBar" system for active distribution requests:
+  - Displays a real-time countdown bossbar for each active delivery request.
+  - Added `distribution.bossbar` configuration in `config.yml` to fully control the bossbar color (e.g., BLUE), style (e.g., SOLID), and title format (supports `{event_name}` and `{time}`).
+  - Added "Toggle Timer Reminder" button (Clock) at Slot 31 in the Distribution Center GUI.
+  - Feature is disabled by default; player toggle state is saved across sessions.
+  - Dynamic update: Bossbars will appear/disappear immediately when the feature is toggled, even for pre-existing active requests.
+  - Automatic cleanup of bossbars when requests expire or are completed.
+- [Change] change default tax rate from 25% to 5% and default tax interval from 3 days minecraft to 1 day real life.
+- [New] Added configurable distribution event messages in `language.yml` (spawn, complete, leave) with support for {player}, {company}, and {event} placeholders for personalized player notifications.
+- [New] Added "Distribution Master" daily quest - Complete 20 delivery requests from the Distribution Center to earn 150 EXP and $10,000.
+- [Update] Refactored Daily Quest configuration: Moved bonus reward, sound effects, and notification settings from `daily-quest.yml` to `config.yml` under the `daily-quest` section for more centralized management.
+- [Update] Updated DailyQuestManager to dynamically read these settings from the main configuration file.
+- [New] Added "Distribution Tycoon" achievement - Earn a total of $500,000 from distribution center events.
+- [New] Added "Distribution Logistics Optimization" research to `research.yml` which reduces the distribution tax rate per level.
+- [Update] Modified `DistributionManager` tax calculation: the research reduces the *percentage points* of the default tax rate (e.g., if default is 25% and research reduction is 5%, the new rate becomes 20%).
+- [Update] Refactored admin research commands: `/fc admin research <upgrade|set>` now uses `<player>` instead of `<factory_id>` to match the global-player nature of research buffs. Includes improved tab completion for players and research IDs.
+- [Update] Updated `/fc admin tax assess` to support an optional `<factory_id>` argument, allowing admins to manually assess taxes for a specific factory (works for both admin-created and player-created factories).
+- [Bugfix] Fixed Distribution Center BossBar timer not disappearing immediately upon request expiration (now updates every second).
+- [Change] Renamed raw resource IDs (iron_ore, coal_ore, copper_ore, gold_ore, diamond_ore, redstone_dust) to `industrial_` prefix (e.g., `industrial_iron_ore`) to avoid confusion with vanilla materials.
+- [Update] Synchronized all recipe inputs/outputs, Smeltery recipe IDs, and distribution event demands to match the new resource ID naming convention.
+- [Update] Overhauled Factory System to be fully dynamic:
+  - Refactored `FactoryType` from a hardcoded Enum to a flexible registry class.
+  - All factory types are now loaded dynamically from the `factory-types` section in `config.yml`.
+  - Admin can now add new factory categories (e.g. Assembly Plant, Robotics Complex) without any Java code modifications.
+  - Integrated dynamic loading into `/fc admin reload`, allowing for real-time category updates.
+  - Expanded `FactoryTypeSelectGUI` from 27 to 54 slots, increasing selection menu capacity to 28 factory types.
+  - [Bugfix] Fixed an issue where newer factory categories (like Aerospace Foundry) were not visible in the creation menu.
+  - [Change] Updated default icons for Automotive Plant (MINECART) and Aerospace Foundry (ENDER_CHEST) in config.yml.
+  - Successfully validated build with a clean Maven package cycle.
+- [Update] Redesigned Recipes Wiki Detail View with a "Crafting Table" style layout:
+  - Visual 3x3 input grid, arrow, and output slot for a more intuitive crafting experience.
+  - Consolidates multiple recipes into interactive pages with "Previous Recipe" and "Next Recipe" navigation.
+  - Enhanced item lore in the detail view showing amounts, rarities, and unit prices for all ingredients.
+  - Recipe metadata (factory, time, cost) now displayed on the central arrow and info panel.
+- [New] Additional "Distribution Offers" toggle:
+  - Added a new toggle in the Distribution Center GUI (Slot 13, Ender Pearl) to enable or disable new delivery requests.
+  - When disabled, the system will not generate or send new `event.yml` offers to the player.
+  - Player toggle state is persisted in `distribution.yml` under the `distribution-toggles` section.
+  - Integrated with HubClickListener for real-time menu updates and auditory feedback.
+- [New] removing nearly all types of resources including the recipes, replacing them with new resources (more balanced), and add 4 new TIER III Factory
+  - added 3 new resources for refinery factory
+  - added 12 new resources for steel mill factory
+  - added 11 new resources for workshop factory
+  - added 5 new final resources for military factory
+  - added 6 new final resources for Electronics Assembly factory
+  - added 5 new final resource for Automotive Plant factory
+  - added 5 new final resources for Aerospace Foundry

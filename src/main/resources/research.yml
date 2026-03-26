@@ -256,3 +256,31 @@ research:
     buff-per-level: 10
     buff-type: "percentage"
     buff-description: "§a+{value}% §7quest money"
+
+  # ── 10. Distribution Logistics Optimization ──────────────────────────────
+  # Reduces the tax rate for distribution payouts.
+  distribution_logistics_optimization:
+    name: "§6Distribution Logistics Optimization"
+    description:
+      - "§7Streamline your distribution"
+      - "§7network to reduce government"
+      - "§7taxes on your payouts."
+      - ""
+      - "§eBuff: §aReduces distribution tax"
+    icon: MINECART
+    max-level: 5
+    cost:
+      1: 55000.0
+      2: 130000.0
+      3: 260000.0
+      4: 520000.0
+      5: 1050000.0
+    duration:
+      1: 1440
+      2: 2880
+      3: 4320
+      4: 5760
+      5: 7200
+    buff-per-level: 2.5
+    buff-type: "percentage"
+    buff-description: "§a-{value}% §7dist. tax rate"

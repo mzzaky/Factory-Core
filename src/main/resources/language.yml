@@ -363,6 +363,12 @@ messages:
       title: "§c§lBORDER HIDDEN"
       subtitle: "§7Factory borders are now hidden"
 
+  # ==================== NEW: DISTRIBUTION EVENT MESSAGES ====================
+  distribution-event-spawn: "&6[Distribution Center] &eA new delivery request for &7{company} &ehas appeared! Check your distribution center!"
+  distribution-event-complete: "&6[Distribution Center] &a{player} &ecompleted a delivery for &7{company}&e!"
+  distribution-event-leave: "&6[Distribution Center] &cThe delivery request for &7{company} &chas expired!"
+  # placeholder {player}, {company}, and {event}
+
   # Bossbar messages
   bossbar:
     production: "§6Producing §e{recipe} §6- §e{percent}%"

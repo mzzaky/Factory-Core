@@ -1,0 +1,430 @@
+# Recipes Configuration
+# Format: recipe_id -> inputs & outputs
+# money-cost: money deducted from the player each time production starts (0 = free)
+# disable-item-output: true (optional) will prevent any items from going to the output storage, useful if you only want to give rewards via console-commands
+#
+# ==================== VANILLA INPUT PREFIX ====================
+# For Smeltery recipes, input keys prefixed with "vanilla:" refer to plain
+# vanilla Minecraft materials obtained from the world (e.g. "vanilla:IRON_ORE").
+# The engine matches these by Bukkit Material name rather than a plugin resource ID,
+# so custom-model-data items with the same material are NOT accepted as substitutes.
+# All other input keys (no prefix) refer to plugin-tracked resources in resources.yml.
+
+recipes:
+  # ==================== SMELTERY RECIPES ====================
+  # The Smeltery is the ENTRY-POINT factory: it accepts real vanilla materials
+  # mined / gathered by players and converts them into plugin-tracked raw resources.
+  #
+  # Balancing note:
+  #   money-cost  = small operating fee (~5-15% of output value)
+  #   eco reward  = ~10% of output value (suggested_price × qty_output)
+  #   Output value reference → resources.yml suggested_price
+
+  smelt_industrial_iron_ore:
+    name: "§fIron Ore Processing"
+    factory-type: smeltery
+    production-time: 120 # seconds
+    money-cost: 15.0
+    inputs:
+      vanilla:IRON_ORE: 4          # 4x Iron Ore block (mined from world)
+      vanilla:COAL: 2              # 2x Coal (natural fuel)
+    outputs:
+      industrial_iron_ore: 8                  # yields plugin-tracked industrial_iron_ore (8 × $12 = $96 - 15 = $81)
+    icon: IRON_ORE
+
+  smelt_coal_ore:
+    name: "§8Coal Ore Processing"
+    factory-type: smeltery
+    production-time: 90
+    money-cost: 8.0
+    inputs:
+      vanilla:COAL_ORE: 4          # 4x Coal Ore block
+    outputs:
+      industrial_coal_ore: 8                  # 8 × $8 = $64
+    icon: COAL_ORE
+
+  smelt_industrial_copper_ore:
+    name: "§6Copper Ore Processing"
+    factory-type: smeltery
+    production-time: 120
+    money-cost: 18.0
+    inputs:
+      vanilla:COPPER_ORE: 4        # 4x Copper Ore block
+      vanilla:COAL: 2
+    outputs:
+      industrial_copper_ore: 8                # 8 × $15 = $120
+    icon: COPPER_ORE
+
+  smelt_industrial_gold_ore:
+    name: "§eGold Ore Processing"
+    factory-type: smeltery
+    production-time: 180
+    money-cost: 40.0
+    inputs:
+      vanilla:GOLD_ORE: 4          # 4x Gold Ore block
+      vanilla:COAL: 4
+    outputs:
+      industrial_gold_ore: 6                  # 6 × $40 = $240
+    icon: GOLD_ORE
+
+  smelt_industrial_diamond_ore:
+    name: "§bDiamond Ore Processing"
+    factory-type: smeltery
+    production-time: 300
+    money-cost: 100.0
+    inputs:
+      vanilla:DIAMOND_ORE: 2       # 2x Diamond Ore block
+      vanilla:COAL: 6
+    outputs:
+      industrial_diamond_ore: 4               # 4 × $150 = $600
+    icon: DIAMOND_ORE
+
+  smelt_redstone_ore:
+    name: "§cRedstone Ore Processing"
+    factory-type: smeltery
+    production-time: 120
+    money-cost: 12.0
+    inputs:
+      vanilla:REDSTONE_ORE: 4      # 4x Redstone Ore block
+    outputs:
+      industrial_redstone_dust: 12            # 12 × $12 = $144
+    icon: REDSTONE_ORE
+
+  smelt_deepslate_iron:
+    name: "§7Deepslate Iron Processing"
+    factory-type: smeltery
+    production-time: 150
+    money-cost: 20.0
+    inputs:
+      vanilla:DEEPSLATE_IRON_ORE: 4  # 4x Deepslate Iron Ore (better yield reward)
+      vanilla:COAL: 2
+    outputs:
+      industrial_iron_ore: 10                   # 10 × $12 = $120 (bonus yield vs surface ore)
+    icon: DEEPSLATE_IRON_ORE
+
+  smelt_deepslate_gold:
+    name: "§eDeepslate Gold Processing"
+    factory-type: smeltery
+    production-time: 210
+    money-cost: 55.0
+    inputs:
+      vanilla:DEEPSLATE_GOLD_ORE: 4
+      vanilla:COAL: 4
+    outputs:
+      industrial_gold_ore: 8                    # 8 × $40 = $320
+    icon: DEEPSLATE_GOLD_ORE
+
+  smelt_deepslate_diamond:
+    name: "§bDeepslate Diamond Processing"
+    factory-type: smeltery
+    production-time: 360
+    money-cost: 130.0
+    inputs:
+      vanilla:DEEPSLATE_DIAMOND_ORE: 2
+      vanilla:COAL: 8
+    outputs:
+      industrial_diamond_ore: 6                 # 6 × $150 = $900
+    icon: DEEPSLATE_DIAMOND_ORE
+
+  smelt_raw_iron_batch:
+    name: "§fRaw Iron Batch Smelting"
+    factory-type: smeltery
+    production-time: 200
+    money-cost: 25.0
+    inputs:
+      vanilla:RAW_IRON: 16         # 16x Raw Iron (Fortune pickaxe drops)
+      vanilla:COAL: 4
+    outputs:
+      industrial_iron_ore: 20                 # 20 × $12 = $240
+    icon: RAW_IRON
+
+  smelt_raw_copper_batch:
+    name: "§6Raw Copper Batch Smelting"
+    factory-type: smeltery
+    production-time: 200
+    money-cost: 30.0
+    inputs:
+      vanilla:RAW_COPPER: 16
+      vanilla:COAL: 4
+    outputs:
+      industrial_copper_ore: 18               # 18 × $15 = $270
+    icon: RAW_COPPER
+
+  smelt_raw_gold_batch:
+    name: "§eRaw Gold Batch Smelting"
+    factory-type: smeltery
+    production-time: 240
+    money-cost: 65.0
+    inputs:
+      vanilla:RAW_GOLD: 12
+      vanilla:COAL: 6
+    outputs:
+      industrial_gold_ore: 10                 # 10 × $40 = $400
+    icon: RAW_GOLD
+
+
+  # ==================== STEEL MILL RECIPES ====================
+  # Tier 2 — produces ADVANCED_RESOURCES from RAW inputs
+  # money-cost escalates with material value; reward ~10-12% output value
+
+  steel_production:
+    name: "§7Steel Ingot Production"
+    factory-type: steel_mill
+    production-time: 300 # seconds
+    money-cost: 60.0
+    inputs:
+      industrial_iron_ore: 5                  # 5 × $12 = $60
+      industrial_coal_ore: 2                  # 2 × $8  = $16
+      basic_fuel: 1                # 1 × $18 = $18
+      basic_gear: 1                # 1 × $25 = $25
+    outputs:
+      steel_ingot: 1              # 1 × $80 = $80
+    icon: IRON_INGOT
+
+  carbon_fiber_production:
+    name: "§8Carbon Fiber Production"
+    factory-type: steel_mill
+    production-time: 450
+    money-cost: 100.0
+    inputs:
+      industrial_coal_ore: 10                 # 10 × $8  = $80
+      industrial_iron_ore: 3                  # 3  × $12 = $36
+      refined_fuel: 2              # 2  × $50 = $100
+      advanced_gear: 1             # 1  × $90 = $90
+    outputs:
+      carbon_fiber: 1              # 8 × $250 = $2,000
+    #console-commands:
+      #- "eco give {player} 200"   # ~10% of $2,000
+    icon: STRING
+
+  # ==================== REFINERY RECIPES ====================
+  # Tier 2 — produces FUEL from RAW inputs
+  # Fuel is a support resource so costs are moderate
+
+  basic_fuel_production:
+    name: "§8Basic Fuel Production"
+    factory-type: refinery
+    production-time: 200
+    money-cost: 25.0
+    inputs:
+      industrial_coal_ore: 8                  # 8 × $8 = $64
+      basic_gear: 1                # 1 × $25 = $25
+    outputs:
+      basic_fuel: 16               # 16 × $18 = $288
+    icon: COAL
+
+  refined_fuel_production:
+    name: "§6Refined Fuel Production"
+    factory-type: refinery
+    production-time: 350
+    money-cost: 55.0
+    inputs:
+      industrial_coal_ore: 12                 # 12 × $8  = $96
+      industrial_iron_ore: 4                  # 4  × $12 = $48
+      advanced_gear: 1             # 1  × $90 = $90
+    outputs:
+      refined_fuel: 10             # 10 × $50 = $500
+    icon: LAVA_BUCKET
+
+  premium_fuel_production:
+    name: "§ePremium Fuel Production"
+    factory-type: refinery
+    production-time: 500
+    money-cost: 90.0
+    inputs:
+      industrial_coal_ore: 20                 # 20 × $8  = $160
+      industrial_gold_ore: 5                  # 5  × $40 = $200
+      circuit_board: 1             # 1  × $350 = $350
+    outputs:
+      premium_fuel: 8              # 8 × $120 = $960
+    icon: BLAZE_POWDER
+
+  # ==================== WORKSHOP RECIPES ====================
+  # Tier 2 — produces MACHINE_PARTS from RAW inputs
+  # Parts are support items, valued between Fuel and Advanced resources
+
+  basic_gear_production:
+    name: "§7Basic Gear Production"
+    factory-type: workshop
+    production-time: 250
+    money-cost: 40.0
+    inputs:
+      industrial_iron_ore: 8                  # 8 × $12 = $96
+      industrial_redstone_dust: 4             # 4 × $12 = $48
+      basic_fuel: 2                # 2 × $18 = $36
+      basic_gear: 1                # 1 × $25 = $25 (seed component) TOTAL = 205
+    outputs:
+      basic_gear: 6                # 6 × $25 = $150
+    icon: IRON_INGOT
+
+  advanced_gear_production:
+    name: "§eAdvanced Gear Production"
+    factory-type: workshop
+    production-time: 400
+    money-cost: 80.0
+    inputs:
+      industrial_gold_ore: 6                  # 6 × $40 = $240
+      industrial_redstone_dust: 8             # 8 × $12 = $96
+      refined_fuel: 3              # 3 × $50 = $150
+      advanced_gear: 1             # 1 × $90 = $90 (seed component)
+    outputs:
+      advanced_gear: 5             # 5 × $90 = $450
+    #console-commands:
+      #- "eco give {player} 45"    # ~10% of $450
+    icon: GOLD_INGOT
+
+  engine_part_production:
+    name: "§6Engine Part Production"
+    factory-type: workshop
+    production-time: 350
+    money-cost: 70.0
+    inputs:
+      industrial_iron_ore: 10                 # 10 × $12 = $120
+      industrial_copper_ore: 5                # 5  × $15 = $75
+      industrial_redstone_dust: 6             # 6  × $12 = $72
+      basic_fuel: 3                # 3  × $18 = $54
+      engine_part: 1               # 1  × $180 = $180 (seed component)
+    outputs:
+      engine_part: 4               # 4 × $180 = $720
+    #console-commands:
+      #- "eco give {player} 72"    # ~10% of $720
+    icon: PISTON
+
+  circuit_board_production:
+    name: "§bCircuit Board Production"
+    factory-type: workshop
+    production-time: 450
+    money-cost: 110.0
+    inputs:
+      industrial_copper_ore: 12               # 12 × $15 = $180
+      industrial_gold_ore: 4                  # 4  × $40 = $160
+      industrial_redstone_dust: 10            # 10 × $12 = $120
+      refined_fuel: 4              # 4  × $50 = $200
+      circuit_board: 1             # 1  × $350 = $350 (seed component)
+    outputs:
+      circuit_board: 3             # 3 × $350 = $1,050
+    #console-commands:
+      #- "eco give {player} 100"   # ~10% of $1,050
+    icon: COMPARATOR
+
+  hydraulic_system_production:
+    name: "§9Hydraulic System Production"
+    factory-type: workshop
+    production-time: 600
+    money-cost: 150.0
+    inputs:
+      industrial_iron_ore: 15                 # 15 × $12 = $180
+      industrial_diamond_ore: 2               # 2  × $150 = $300
+      industrial_redstone_dust: 12            # 12 × $12 = $144
+      premium_fuel: 3              # 3  × $120 = $360
+      hydraulic_system: 1          # 1  × $500 = $500 (seed component)
+    outputs:
+      hydraulic_system: 2          # 2 × $500 = $1,000
+    #console-commands:
+      #- "eco give {player} 100"   # ~10% of $1,000
+    icon: HEAVY_WEIGHTED_PRESSURE_PLATE
+
+  # ==================== ADVANCED FACTORY RECIPES ====================
+  # Tier 3 — produces FINAL_RESOURCES, the highest-value items
+  # High cost, long time, generous eco reward
+
+  advanced_weapon_production:
+    name: "§5Advanced Weapon"
+    factory-type: advanced_factory
+    production-time: 600
+    money-cost: 300.0
+    inputs:
+      steel_ingot: 8               # 8 × $80  = $640
+      carbon_fiber: 4              # 4 × $250 = $1,000
+      refined_copper: 6            # 6 × $60  = $360
+      premium_fuel: 3              # 3 × $120 = $360
+      circuit_board: 2             # 2 × $350 = $700
+    outputs:
+      advanced_weapon: 1           # 1 × $3,500 = $3,500
+    #console-commands:
+      #- "eco give {player} 350"   # ~10% of $3,500
+    icon: DIAMOND_SWORD
+
+  advanced_armor_production:
+    name: "§5Advanced Armor"
+    factory-type: advanced_factory
+    production-time: 650
+    money-cost: 280.0
+    inputs:
+      steel_ingot: 12              # 12 × $80  = $960
+      carbon_fiber: 6              # 6  × $250 = $1,500
+      gold_alloy: 4                # 4  × $180 = $720
+      premium_fuel: 4              # 4  × $120 = $480
+      hydraulic_system: 1          # 1  × $500 = $500
+    outputs:
+      advanced_armor: 1            # 1 × $3,200 = $3,200
+    #console-commands:
+      #- "eco give {player} 320"   # ~10% of $3,200
+    icon: DIAMOND_CHESTPLATE
+
+  electronic_component_production:
+    name: "§bElectronic Component"
+    factory-type: advanced_factory
+    production-time: 500
+    money-cost: 200.0
+    inputs:
+      refined_copper: 10           # 10 × $60  = $600
+      gold_alloy: 5                # 5  × $180 = $900
+      carbon_fiber: 3              # 3  × $250 = $750
+      refined_fuel: 3              # 3  × $50  = $150
+      circuit_board: 3             # 3  × $350 = $1,050
+    outputs:
+      electronic_component: 2      # 2 × $2,000 = $4,000
+    #console-commands:
+      #- "eco give {player} 400"   # ~10% of $4,000
+    icon: REPEATER
+
+  luxury_item_production:
+    name: "§6Luxury Item"
+    factory-type: advanced_factory
+    production-time: 800
+    money-cost: 600.0
+    inputs:
+      gold_alloy: 15               # 15 × $180 = $2,700
+      steel_ingot: 10              # 10 × $80  = $800
+      carbon_fiber: 8              # 8  × $250 = $2,000
+      refined_copper: 12           # 12 × $60  = $720
+      premium_fuel: 5              # 5  × $120 = $600
+      hydraulic_system: 2          # 2  × $500 = $1,000
+      circuit_board: 3             # 3  × $350 = $1,050
+    outputs:
+      luxury_item: 1               # 1 × $7,000 = $7,000
+    #console-commands:
+      #- "eco give {player} 700"   # ~10% of $7,000
+    icon: NETHER_STAR
+
+  refined_copper_production:
+    name: "§6Refined Copper"
+    factory-type: advanced_factory
+    production-time: 300
+    money-cost: 65.0
+    inputs:
+      industrial_copper_ore: 10               # 10 × $15 = $150
+      basic_fuel: 2                # 2  × $18 = $36
+      engine_part: 1               # 1  × $180 = $180
+    outputs:
+      refined_copper: 8            # 8 × $60 = $480
+    #console-commands:
+      #- "eco give {player} 48"    # ~10% of $480
+    icon: COPPER_INGOT
+
+  gold_alloy_production:
+    name: "§eGold Alloy"
+    factory-type: advanced_factory
+    production-time: 400
+    money-cost: 100.0
+    inputs:
+      industrial_gold_ore: 8                  # 8 × $40  = $320
+      industrial_iron_ore: 4                  # 4 × $12  = $48
+      refined_fuel: 3              # 3 × $50  = $150
+      advanced_gear: 2             # 2 × $90  = $180
+    outputs:
+      gold_alloy: 6                # 6 × $180 = $1,080
+    #console-commands:
+      #- "eco give {player} 108"   # ~10% of $1,080
+    icon: GOLD_INGOT

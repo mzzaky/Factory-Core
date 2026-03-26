@@ -29,13 +29,14 @@ public class FactoryTypeSelectGUI {
     }
 
     public void open() {
-        Inventory inv = Bukkit.createInventory(null, 27, "§6§lCreate Factory §8- §eSelect Type");
+        // Expanded to 54 slots (6 rows) to accommodate more factory types
+        Inventory inv = Bukkit.createInventory(null, 54, "§6§lCreate Factory §8- §eSelect Type");
 
-        // Fill borders
+        // Fill borders & background
         Material borderMat = Material.matchMaterial(
                 plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
         ItemStack border = createItem(borderMat != null ? borderMat : Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int i = 0; i < 27; i++) inv.setItem(i, border);
+        for (int i = 0; i < 54; i++) inv.setItem(i, border);
 
         // Header
         inv.setItem(4, createItem(Material.ANVIL, "§6§lSelect Factory Type",
@@ -46,11 +47,17 @@ public class FactoryTypeSelectGUI {
                         "§7The factory region will be",
                         "§7created at your current position.")));
 
-        // Factory types
-        int[] slots = {10, 11, 12, 13, 14};
-        FactoryType[] types = FactoryType.values();
-        for (int i = 0; i < types.length && i < slots.length; i++) {
-            FactoryType type = types[i];
+        // Factory selection slots (Rows 2, 3, 4, 5)
+        int[] slots = {
+                10, 11, 12, 13, 14, 15, 16,
+                19, 20, 21, 22, 23, 24, 25,
+                28, 29, 30, 31, 32, 33, 34,
+                37, 38, 39, 40, 41, 42, 43
+        };
+
+        List<FactoryType> types = new ArrayList<>(FactoryType.values());
+        for (int i = 0; i < types.size() && i < slots.length; i++) {
+            FactoryType type = types.get(i);
             String typeId = type.getId();
 
             double price = plugin.getConfig().getDouble("player-factory.creation-prices." + typeId,
@@ -88,7 +95,7 @@ public class FactoryTypeSelectGUI {
         }
 
         // Back button
-        inv.setItem(22, createItem(Material.ARROW, "§c§lBack",
+        inv.setItem(49, createItem(Material.ARROW, "§c§lBack",
                 Arrays.asList("§7Return to Factory Browse")));
 
         player.playSound(player.getLocation(), Sound.BLOCK_CHEST_OPEN, 0.5f, 1.2f);

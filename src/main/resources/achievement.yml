@@ -159,3 +159,13 @@ achievements:
     sound: UI_TOAST_CHALLENGE_COMPLETE
     sound-volume: 1.0
     sound-pitch: 1.0
+
+  distribution_tycoon:
+    name: "&aDistribution Tycoon"
+    description: "Earn $500,000 from distribution events"
+    icon: MAP
+    type: CUMULATIVE_DISTRIBUTION_EARNINGS
+    threshold: 500000
+    sound: UI_TOAST_CHALLENGE_COMPLETE
+    sound-volume: 1.0
+    sound-pitch: 1.0

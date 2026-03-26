@@ -14,434 +14,829 @@ recipes:
   # ==================== SMELTERY RECIPES ====================
   # The Smeltery is the ENTRY-POINT factory: it accepts real vanilla materials
   # mined / gathered by players and converts them into plugin-tracked raw resources.
+  #
+  # Balancing note:
+  #   money-cost  = small operating fee (~5-15% of output value)
+  #   eco reward  = ~10% of output value (suggested_price × qty_output)
+  #   Output value reference → resources.yml suggested_price
 
-  smelt_iron_ore:
+  smelt_industrial_iron_ore:
     name: "§fIron Ore Processing"
     factory-type: smeltery
     production-time: 120 # seconds
-    money-cost: 10.0
+    money-cost: 15.0
     inputs:
       vanilla:IRON_ORE: 4          # 4x Iron Ore block (mined from world)
       vanilla:COAL: 2              # 2x Coal (natural fuel)
     outputs:
-      iron_ore: 8                  # yields plugin-tracked iron_ore raw resource
-    console-commands:
-      - "eco give {player} 20"
+      industrial_iron_ore: 4                  # industrial_iron_ore (4 × $12 = $48 - 15 = profit $33)
     icon: IRON_ORE
 
   smelt_coal_ore:
     name: "§8Coal Ore Processing"
     factory-type: smeltery
     production-time: 90
-    money-cost: 5.0
+    money-cost: 8.0
     inputs:
       vanilla:COAL_ORE: 4          # 4x Coal Ore block
     outputs:
-      coal_ore: 8
-    console-commands:
-      - "eco give {player} 10"
+      industrial_coal_ore: 4                  # 4 × $8 = $32 - 8 = profit $24
     icon: COAL_ORE
 
-  smelt_copper_ore:
+  smelt_industrial_copper_ore:
     name: "§6Copper Ore Processing"
     factory-type: smeltery
     production-time: 120
-    money-cost: 12.0
+    money-cost: 18.0
     inputs:
       vanilla:COPPER_ORE: 4        # 4x Copper Ore block
       vanilla:COAL: 2
     outputs:
-      copper_ore: 8
-    console-commands:
-      - "eco give {player} 25"
+      industrial_copper_ore: 4                # 4 × $15 = $60 - 18 = profit $42
     icon: COPPER_ORE
 
-  smelt_gold_ore:
+  smelt_industrial_gold_ore:
     name: "§eGold Ore Processing"
     factory-type: smeltery
     production-time: 180
-    money-cost: 30.0
+    money-cost: 40.0
     inputs:
       vanilla:GOLD_ORE: 4          # 4x Gold Ore block
       vanilla:COAL: 4
     outputs:
-      gold_ore: 6
-    console-commands:
-      - "eco give {player} 60"
+      industrial_gold_ore: 4                  # 4 × $40 = $160 - 40 = profit $120
     icon: GOLD_ORE
 
-  smelt_diamond_ore:
+  smelt_industrial_diamond_ore:
     name: "§bDiamond Ore Processing"
     factory-type: smeltery
     production-time: 300
-    money-cost: 80.0
+    money-cost: 100.0
     inputs:
       vanilla:DIAMOND_ORE: 2       # 2x Diamond Ore block
       vanilla:COAL: 6
     outputs:
-      diamond_ore: 4
-    console-commands:
-      - "eco give {player} 150"
+      industrial_diamond_ore: 2               # 2 × $150 = $300 - 100 = profit $200
     icon: DIAMOND_ORE
 
   smelt_redstone_ore:
     name: "§cRedstone Ore Processing"
     factory-type: smeltery
     production-time: 120
-    money-cost: 8.0
+    money-cost: 12.0
     inputs:
       vanilla:REDSTONE_ORE: 4      # 4x Redstone Ore block
     outputs:
-      redstone_dust: 12
-    console-commands:
-      - "eco give {player} 18"
+      industrial_redstone_dust: 4            # 4 × $12 = $48 - 12 = profit $36
     icon: REDSTONE_ORE
 
   smelt_deepslate_iron:
     name: "§7Deepslate Iron Processing"
     factory-type: smeltery
     production-time: 150
-    money-cost: 15.0
+    money-cost: 20.0
     inputs:
       vanilla:DEEPSLATE_IRON_ORE: 4  # 4x Deepslate Iron Ore (better yield reward)
       vanilla:COAL: 2
     outputs:
-      iron_ore: 10                   # bonus yield vs surface ore
-    console-commands:
-      - "eco give {player} 28"
+      industrial_iron_ore: 8                   # 8 × $12 = $96 - 20 = profit $76
     icon: DEEPSLATE_IRON_ORE
 
   smelt_deepslate_gold:
     name: "§eDeepslate Gold Processing"
     factory-type: smeltery
     production-time: 210
-    money-cost: 40.0
+    money-cost: 55.0
     inputs:
       vanilla:DEEPSLATE_GOLD_ORE: 4
       vanilla:COAL: 4
     outputs:
-      gold_ore: 8
-    console-commands:
-      - "eco give {player} 75"
+      industrial_gold_ore: 8                    # 8 × $40 = $320 - 55 = profit $265
     icon: DEEPSLATE_GOLD_ORE
 
   smelt_deepslate_diamond:
     name: "§bDeepslate Diamond Processing"
     factory-type: smeltery
     production-time: 360
-    money-cost: 100.0
+    money-cost: 130.0
     inputs:
       vanilla:DEEPSLATE_DIAMOND_ORE: 2
       vanilla:COAL: 8
     outputs:
-      diamond_ore: 6
-    console-commands:
-      - "eco give {player} 200"
+      industrial_diamond_ore: 4                 # 4 × $150 = $600 - 130 = profit $470
     icon: DEEPSLATE_DIAMOND_ORE
 
   smelt_raw_iron_batch:
     name: "§fRaw Iron Batch Smelting"
     factory-type: smeltery
     production-time: 200
-    money-cost: 20.0
+    money-cost: 25.0
     inputs:
       vanilla:RAW_IRON: 16         # 16x Raw Iron (Fortune pickaxe drops)
       vanilla:COAL: 4
     outputs:
-      iron_ore: 20
-    console-commands:
-      - "eco give {player} 40"
+      industrial_iron_ore: 20                 # 20 × $12 = $240
     icon: RAW_IRON
 
   smelt_raw_copper_batch:
     name: "§6Raw Copper Batch Smelting"
     factory-type: smeltery
     production-time: 200
-    money-cost: 22.0
+    money-cost: 30.0
     inputs:
       vanilla:RAW_COPPER: 16
       vanilla:COAL: 4
     outputs:
-      copper_ore: 18
-    console-commands:
-      - "eco give {player} 44"
+      industrial_copper_ore: 18               # 18 × $15 = $270
     icon: RAW_COPPER
 
   smelt_raw_gold_batch:
     name: "§eRaw Gold Batch Smelting"
     factory-type: smeltery
     production-time: 240
-    money-cost: 50.0
+    money-cost: 65.0
     inputs:
       vanilla:RAW_GOLD: 12
       vanilla:COAL: 6
     outputs:
-      gold_ore: 10
-    console-commands:
-      - "eco give {player} 90"
+      industrial_gold_ore: 10                 # 10 × $40 = $400
     icon: RAW_GOLD
 
 
   # ==================== STEEL MILL RECIPES ====================
-  steel_production:
-    name: "§7Steel Ingot Production"
+  # Tier 2 — produces ADVANCED_RESOURCES from RAW inputs
+  # money-cost escalates with material value
+
+  produce_steel_ingot:
+    name: "§7Steel Ingot Forging"
     factory-type: steel_mill
-    production-time: 300 # seconds
-    money-cost: 50.0
+    production-time: 180
+    money-cost: 15.0
     inputs:
-      iron_ore: 5
-      coal_ore: 2
-      basic_fuel: 1
-      basic_gear: 1
+      industrial_iron_ore: 6               # 6 × $12 = $72
+      industrial_coal_ore: 4               # 4 × $8  = $32
     outputs:
-      steel_ingot: 10
-    console-commands:
-      - "eco give {player} 100"
+      steel_ingot: 4                       # 4 × $35 = $140  (input $104 + fee $15 = $119 cost)
     icon: IRON_INGOT
-    
-  carbon_fiber_production:
-    name: "§8Carbon Fiber Production"
+
+  produce_copper_wire:
+    name: "§6Copper Wire Drawing"
     factory-type: steel_mill
-    production-time: 450
-    money-cost: 80.0
+    production-time: 150
+    money-cost: 12.0
     inputs:
-      coal_ore: 10
-      iron_ore: 3
-      refined_fuel: 2
-      advanced_gear: 1
+      industrial_copper_ore: 6             # 6 × $15 = $90
+      industrial_coal_ore: 2               # 2 × $8  = $16
     outputs:
-      carbon_fiber: 8
-    console-commands:
-      - "eco give {player} 150"
+      copper_wire: 6                       # 6 × $28 = $168  (input $106 + fee $12 = $118 cost)
     icon: STRING
 
-  # ==================== REFINERY RECIPES ====================
-  basic_fuel_production:
-    name: "§8Basic Fuel Production"
-    factory-type: refinery
-    production-time: 200
+  produce_reinforced_plate:
+    name: "§8Reinforced Plate Pressing"
+    factory-type: steel_mill
+    production-time: 240
+    money-cost: 20.0
+    inputs:
+      industrial_iron_ore: 8               # 8 × $12 = $96
+      industrial_coal_ore: 6               # 6 × $8  = $48
+      industrial_copper_ore: 2             # 2 × $15 = $30
+    outputs:
+      reinforced_plate: 4                  # 4 × $60 = $240  (input $174 + fee $20 = $194 cost)
+    icon: IRON_BLOCK
+
+  produce_gold_alloy:
+    name: "§eGold Alloy Smelting"
+    factory-type: steel_mill
+    production-time: 250
     money-cost: 30.0
     inputs:
-      coal_ore: 8
-      basic_gear: 1
+      industrial_gold_ore: 4               # 4 × $40 = $160
+      industrial_iron_ore: 2               # 2 × $12 = $24
+      industrial_coal_ore: 2               # 2 × $8  = $16
     outputs:
-      basic_fuel: 16
-    console-commands:
-      - "eco give {player} 80"
+      gold_alloy: 4                        # 4 × $70 = $280  (input $200 + fee $30 = $230 cost)
+    icon: GOLD_INGOT
+
+  produce_electronic_circuit:
+    name: "§aElectronic Circuit Assembly"
+    factory-type: steel_mill
+    production-time: 300
+    money-cost: 25.0
+    inputs:
+      industrial_redstone_dust: 4          # 4 × $12 = $48
+      industrial_copper_ore: 3             # 3 × $15 = $45
+      industrial_gold_ore: 2               # 2 × $40 = $80
+    outputs:
+      electronic_circuit: 3                # 3 × $85 = $255  (input $173 + fee $25 = $198 cost)
+    icon: COMPARATOR
+
+  produce_carbon_composite:
+    name: "§3Carbon Composite Synthesis"
+    factory-type: steel_mill
+    production-time: 400
+    money-cost: 50.0
+    inputs:
+      industrial_coal_ore: 10              # 10 × $8  = $80
+      industrial_diamond_ore: 2            # 2  × $150 = $300
+    outputs:
+      carbon_composite: 4                  # 4 × $130 = $520  (input $380 + fee $50 = $430 cost)
+    icon: NETHERITE_SCRAP
+
+  produce_titanium_plate:
+    name: "§9Titanium Plate Forging"
+    factory-type: steel_mill
+    production-time: 350
+    money-cost: 40.0
+    inputs:
+      industrial_iron_ore: 4               # 4 × $12  = $48
+      industrial_diamond_ore: 1            # 1 × $150 = $150
+      industrial_coal_ore: 6               # 6 × $8   = $48
+    outputs:
+      titanium_plate: 4                    # 4 × $100 = $400  (input $246 + fee $40 = $286 cost)
+    icon: NETHERITE_INGOT
+
+  produce_silicon_wafer:
+    name: "§fSilicon Wafer Fabrication"
+    factory-type: steel_mill
+    production-time: 200
+    money-cost: 15.0
+    inputs:
+      industrial_redstone_dust: 6          # 6 × $12 = $72
+      industrial_coal_ore: 4               # 4 × $8  = $32
+    outputs:
+      silicon_wafer: 3                     # 3 × $55 = $165  (input $104 + fee $15 = $119 cost)
+    icon: GLASS_PANE
+
+  produce_aluminum_sheet:
+    name: "§7Aluminum Sheet Rolling"
+    factory-type: steel_mill
+    production-time: 160
+    money-cost: 12.0
+    inputs:
+      industrial_copper_ore: 4             # 4 × $15 = $60
+      industrial_iron_ore: 2               # 2 × $12 = $24
+      industrial_coal_ore: 2               # 2 × $8  = $16
+    outputs:
+      aluminum_sheet: 4                    # 4 × $40 = $160  (input $100 + fee $12 = $112 cost)
+    icon: IRON_TRAPDOOR
+
+  produce_tungsten_rod:
+    name: "§8Tungsten Rod Extrusion"
+    factory-type: steel_mill
+    production-time: 300
+    money-cost: 28.0
+    inputs:
+      industrial_iron_ore: 4               # 4 × $12 = $48
+      industrial_gold_ore: 2               # 2 × $40 = $80
+      industrial_coal_ore: 4               # 4 × $8  = $32
+    outputs:
+      tungsten_rod: 3                      # 3 × $95 = $285  (input $160 + fee $28 = $188 cost)
+    icon: LIGHTNING_ROD
+
+  produce_fiber_optic_cable:
+    name: "§eFiber Optic Cable Drawing"
+    factory-type: steel_mill
+    production-time: 280
+    money-cost: 22.0
+    inputs:
+      industrial_redstone_dust: 4          # 4 × $12  = $48
+      industrial_diamond_ore: 1            # 1 × $150 = $150
+    outputs:
+      fiber_optic_cable: 4                 # 4 × $75 = $300  (input $198 + fee $22 = $220 cost)
+    icon: LEAD
+
+  produce_tempered_glass:
+    name: "§fTempered Glass Casting"
+    factory-type: steel_mill
+    production-time: 140
+    money-cost: 10.0
+    inputs:
+      industrial_redstone_dust: 2          # 2 × $12 = $24
+      industrial_coal_ore: 3               # 3 × $8  = $24
+      industrial_iron_ore: 2               # 2 × $12 = $24
+    outputs:
+      tempered_glass: 3                    # 3 × $45 = $135  (input $72 + fee $10 = $82 cost)
+    icon: TINTED_GLASS
+
+
+  # ==================== REFINERY RECIPES ====================
+  # Tier 2 — produces FUEL from RAW inputs
+  # Fuel is a support resource so costs are moderate
+
+  high_speed_diesel_production:
+    name: "§8High Speed Diesel Production"
+    factory-type: refinery
+    production-time: 200
+    money-cost: 25.0
+    inputs:
+      industrial_coal_ore: 8                  # 8 × $8 = $64
+      basic_gear: 1                # 1 × $25 = $25
+    outputs:
+      high_speed_diesel: 7               # 7 × $18 = $126 (input $89 + fee $25 = $114 cost)
     icon: COAL
-    
-  refined_fuel_production:
-    name: "§6Refined Fuel Production"
+
+  marine_fuel_oil_production:
+    name: "§6Marine Fuel Oil Production"
     factory-type: refinery
     production-time: 350
-    money-cost: 60.0
+    money-cost: 55.0
     inputs:
-      coal_ore: 12
-      iron_ore: 4
-      advanced_gear: 1
+      industrial_coal_ore: 12                 # 12 × $8  = $96
+      industrial_iron_ore: 4                  # 4  × $12 = $48
+      advanced_gear: 1             # 1  × $90 = $90
     outputs:
-      refined_fuel: 10
-    console-commands:
-      - "eco give {player} 120"
+      marine_fuel_oil: 6             # 6 × $50 = $300 (input $234 + fee $55 = $289 cost)
     icon: LAVA_BUCKET
-    
-  premium_fuel_production:
-    name: "§ePremium Fuel Production"
+
+  biosolar_production:
+    name: "§eBio Solar Production"
     factory-type: refinery
     production-time: 500
-    money-cost: 100.0
+    money-cost: 90.0
     inputs:
-      coal_ore: 20
-      gold_ore: 5
-      circuit_board: 1
+      industrial_coal_ore: 20                 # 20 × $8  = $160
+      industrial_gold_ore: 5                  # 5  × $40 = $200
     outputs:
-      premium_fuel: 8
-    console-commands:
-      - "eco give {player} 200"
+      biosolar: 4              # 4 × $120 = $480 (input $360 + fee $90 = $450 cost)
     icon: BLAZE_POWDER
 
   # ==================== WORKSHOP RECIPES ====================
-  basic_gear_production:
-    name: "§7Basic Gear Production"
+  # Tier 2 — produces MACHINE_PARTS from RAW inputs
+  # Parts are support items, valued between Fuel and Advanced resources
+
+  produce_basic_gear:
+    name: "§7Basic Gear Machining"
     factory-type: workshop
-    production-time: 250
-    money-cost: 40.0
+    production-time: 150
+    money-cost: 8.0
     inputs:
-      iron_ore: 8
-      redstone_dust: 4
-      basic_fuel: 2
-      basic_gear: 1
+      industrial_iron_ore: 4               # 4 × $12 = $48
+      industrial_coal_ore: 2               # 2 × $8  = $16
     outputs:
-      basic_gear: 6
-    console-commands:
-      - "eco give {player} 90"
-    icon: IRON_INGOT
-    
-  advanced_gear_production:
-    name: "§eAdvanced Gear Production"
+      basic_gear: 2                        # 2 × $45 = $90   (input $64 + fee $8 = $72 cost)
+    icon: CLOCK
+
+  produce_advanced_gear:
+    name: "§bAdvanced Gear Machining"
+    factory-type: workshop
+    production-time: 280
+    money-cost: 20.0
+    inputs:
+      industrial_iron_ore: 6               # 6 × $12 = $72
+      industrial_copper_ore: 4             # 4 × $15 = $60
+      industrial_coal_ore: 3               # 3 × $8  = $24
+    outputs:
+      advanced_gear: 2                     # 2 × $110 = $220 (input $156 + fee $20 = $176 cost)
+    icon: COMPASS
+
+  produce_hydraulic_piston:
+    name: "§6Hydraulic Piston Casting"
+    factory-type: workshop
+    production-time: 220
+    money-cost: 18.0
+    inputs:
+      industrial_iron_ore: 6               # 6 × $12 = $72
+      industrial_copper_ore: 4             # 4 × $15 = $60
+    outputs:
+      hydraulic_piston: 2                  # 2 × $90 = $180  (input $132 + fee $18 = $150 cost)
+    icon: PISTON
+
+  produce_electric_motor:
+    name: "§cElectric Motor Winding"
+    factory-type: workshop
+    production-time: 300
+    money-cost: 22.0
+    inputs:
+      industrial_copper_ore: 4             # 4 × $15 = $60
+      industrial_redstone_dust: 6          # 6 × $12 = $72
+      industrial_iron_ore: 2               # 2 × $12 = $24
+    outputs:
+      electric_motor: 2                    # 2 × $120 = $240 (input $156 + fee $22 = $178 cost)
+    icon: REDSTONE_LAMP
+
+  produce_precision_lens:
+    name: "§dPrecision Lens Grinding"
     factory-type: workshop
     production-time: 400
-    money-cost: 70.0
+    money-cost: 45.0
     inputs:
-      gold_ore: 6
-      redstone_dust: 8
-      refined_fuel: 3
-      advanced_gear: 1
+      industrial_diamond_ore: 2            # 2 × $150 = $300
+      industrial_redstone_dust: 4          # 4 × $12  = $48
     outputs:
-      advanced_gear: 5
-    console-commands:
-      - "eco give {player} 140"
-    icon: GOLD_INGOT
-    
-  engine_part_production:
-    name: "§6Engine Part Production"
-    factory-type: workshop
-    production-time: 350
-    money-cost: 60.0
-    inputs:
-      iron_ore: 10
-      copper_ore: 5
-      redstone_dust: 6
-      basic_fuel: 3
-      engine_part: 1
-    outputs:
-      engine_part: 4
-    console-commands:
-      - "eco give {player} 130"
-    icon: PISTON
-    
-  circuit_board_production:
-    name: "§bCircuit Board Production"
-    factory-type: workshop
-    production-time: 450
-    money-cost: 90.0
-    inputs:
-      copper_ore: 12
-      gold_ore: 4
-      redstone_dust: 10
-      refined_fuel: 4
-      circuit_board: 1
-    outputs:
-      circuit_board: 3
-    console-commands:
-      - "eco give {player} 180"
-    icon: COMPARATOR
-    
-  hydraulic_system_production:
-    name: "§9Hydraulic System Production"
-    factory-type: workshop
-    production-time: 600
-    money-cost: 125.0
-    inputs:
-      iron_ore: 15
-      diamond_ore: 2
-      redstone_dust: 12
-      premium_fuel: 3
-      hydraulic_system: 1
-    outputs:
-      hydraulic_system: 2
-    console-commands:
-      - "eco give {player} 250"
-    icon: HEAVY_WEIGHTED_PRESSURE_PLATE
+      precision_lens: 2                    # 2 × $250 = $500 (input $348 + fee $45 = $393 cost)
+    icon: SPYGLASS
 
-  # ==================== ADVANCED FACTORY RECIPES ====================
-  advanced_weapon_production:
-    name: "§5Advanced Weapon"
-    factory-type: advanced_factory
+  produce_ball_bearing:
+    name: "§7Ball Bearing Turning"
+    factory-type: workshop
+    production-time: 140
+    money-cost: 8.0
+    inputs:
+      industrial_iron_ore: 4               # 4 × $12 = $48
+      industrial_copper_ore: 2             # 2 × $15 = $30
+    outputs:
+      ball_bearing: 2                      # 2 × $55 = $110  (input $78 + fee $8 = $86 cost)
+    icon: IRON_NUGGET
+
+  produce_fuel_injector:
+    name: "§6Fuel Injector Milling"
+    factory-type: workshop
+    production-time: 220
+    money-cost: 15.0
+    inputs:
+      industrial_copper_ore: 4             # 4 × $15 = $60
+      industrial_redstone_dust: 2          # 2 × $12 = $24
+      industrial_iron_ore: 2               # 2 × $12 = $24
+    outputs:
+      fuel_injector: 2                     # 2 × $80 = $160  (input $108 + fee $15 = $123 cost)
+    icon: DROPPER
+
+  produce_servo_motor:
+    name: "§dServo Motor Assembly"
+    factory-type: workshop
+    production-time: 340
+    money-cost: 30.0
+    inputs:
+      industrial_copper_ore: 4             # 4 × $15 = $60
+      industrial_redstone_dust: 4          # 4 × $12 = $48
+      industrial_gold_ore: 2               # 2 × $40 = $80
+    outputs:
+      servo_motor: 2                       # 2 × $140 = $280 (input $188 + fee $30 = $218 cost)
+    icon: DAYLIGHT_DETECTOR
+
+  produce_pressure_valve:
+    name: "§6Pressure Valve Forging"
+    factory-type: workshop
+    production-time: 200
+    money-cost: 14.0
+    inputs:
+      industrial_iron_ore: 4               # 4 × $12 = $48
+      industrial_gold_ore: 1               # 1 × $40 = $40
+    outputs:
+      pressure_valve: 2                    # 2 × $70 = $140  (input $88 + fee $14 = $102 cost)
+    icon: TRIPWIRE_HOOK
+
+  produce_cooling_fan:
+    name: "§bCooling Fan Fabrication"
+    factory-type: workshop
+    production-time: 180
+    money-cost: 10.0
+    inputs:
+      industrial_copper_ore: 3             # 3 × $15 = $45
+      industrial_iron_ore: 3               # 3 × $12 = $36
+      industrial_coal_ore: 2               # 2 × $8  = $16
+    outputs:
+      cooling_fan: 2                       # 2 × $65 = $130  (input $97 + fee $10 = $107 cost)
+    icon: HOPPER
+
+  produce_turbine_blade:
+    name: "§3Turbine Blade Forging"
+    factory-type: workshop
+    production-time: 380
+    money-cost: 38.0
+    inputs:
+      industrial_iron_ore: 6               # 6 × $12  = $72
+      industrial_diamond_ore: 1            # 1 × $150 = $150
+      industrial_coal_ore: 4               # 4 × $8   = $32
+    outputs:
+      turbine_blade: 2                     # 2 × $200 = $400 (input $254 + fee $38 = $292 cost)
+    icon: DIAMOND_AXE
+
+
+  # ==================== FINAL PRODUCT FACTORY RECIPES ====================
+  # Tier 3 — produces FINAL_RESOURCES, the highest-value items
+  # High cost, long time, generous eco reward
+  # Uses ADVANCED_RESOURCES + MACHINE_PARTS + FUEL from Tier 2
+  # Factory types: military_factory, electronics_assembly,
+  #                automotive_plant, aerospace_foundry
+
+  # ---------- MILITARY FACTORY ----------
+  # Produces military equipment — mid-high value, moderate time
+  # Requires: reinforced_plate, carbon_composite, steel_ingot, gears, fuel
+
+  produce_tactical_vest:
+    name: "§4Tactical Vest Production"
+    factory-type: military_factory
     production-time: 600
-    money-cost: 250.0
+    money-cost: 80.0
     inputs:
-      steel_ingot: 8
-      carbon_fiber: 4
-      refined_copper: 6
-      premium_fuel: 3
-      circuit_board: 2
+      reinforced_plate: 4                  # 4 × $60  = $240  (Advanced)
+      carbon_composite: 2                  # 2 × $130 = $260  (Advanced)
+      basic_gear: 2                        # 2 × $45  = $90   (Parts)
+      high_speed_diesel: 1                 # 1 × $18  = $18   (Fuel)
     outputs:
-      advanced_weapon: 1
-    console-commands:
-      - "eco give {player} 500"
-    icon: DIAMOND_SWORD
-    
-  advanced_armor_production:
-    name: "§5Advanced Armor"
-    factory-type: advanced_factory
+      tactical_vest: 1                     # 1 × $850 = $850  (input $608 + fee $80 = $688 cost)
+    icon: LEATHER_CHESTPLATE
+
+  produce_combat_rifle:
+    name: "§4Combat Rifle Assembly"
+    factory-type: military_factory
     production-time: 650
-    money-cost: 240.0
+    money-cost: 75.0
     inputs:
-      steel_ingot: 12
-      carbon_fiber: 6
-      gold_alloy: 4
-      premium_fuel: 4
-      hydraulic_system: 1
+      steel_ingot: 3                       # 3 × $35  = $105  (Advanced)
+      advanced_gear: 2                     # 2 × $110 = $220  (Parts)
+      precision_lens: 1                    # 1 × $250 = $250  (Parts)
+      high_speed_diesel: 1                 # 1 × $18  = $18   (Fuel)
     outputs:
-      advanced_armor: 1
-    console-commands:
-      - "eco give {player} 480"
-    icon: DIAMOND_CHESTPLATE
-    
-  electronic_component_production:
-    name: "§bElectronic Component"
-    factory-type: advanced_factory
+      combat_rifle: 1                      # 1 × $900 = $900  (input $593 + fee $75 = $668 cost)
+    icon: CROSSBOW
+
+  produce_armored_vehicle:
+    name: "§4Armored Vehicle Assembly"
+    factory-type: military_factory
+    production-time: 900
+    money-cost: 150.0
+    inputs:
+      reinforced_plate: 6                  # 6 × $60  = $360  (Advanced)
+      titanium_plate: 3                    # 3 × $100 = $300  (Advanced)
+      hydraulic_piston: 2                  # 2 × $90  = $180  (Parts)
+      advanced_gear: 2                     # 2 × $110 = $220  (Parts)
+      marine_fuel_oil: 1                   # 1 × $50  = $50   (Fuel)
+    outputs:
+      armored_vehicle: 1                   # 1 × $1800 = $1800 (input $1110 + fee $150 = $1260 cost)
+    icon: IRON_HORSE_ARMOR
+
+  produce_guided_missile:
+    name: "§4Guided Missile Production"
+    factory-type: military_factory
+    production-time: 1000
+    money-cost: 180.0
+    inputs:
+      titanium_plate: 3                    # 3 × $100 = $300  (Advanced)
+      carbon_composite: 2                  # 2 × $130 = $260  (Advanced)
+      servo_motor: 2                       # 2 × $140 = $280  (Parts)
+      precision_lens: 1                    # 1 × $250 = $250  (Parts)
+      biosolar: 1                          # 1 × $120 = $120  (Fuel)
+    outputs:
+      guided_missile: 1                    # 1 × $2200 = $2200 (input $1210 + fee $180 = $1390 cost)
+    icon: FIREWORK_ROCKET
+
+  produce_night_vision_goggles:
+    name: "§2Night Vision Goggles Build"
+    factory-type: military_factory
     production-time: 500
-    money-cost: 175.0
-    inputs:
-      refined_copper: 10
-      gold_alloy: 5
-      carbon_fiber: 3
-      refined_fuel: 3
-      circuit_board: 3
-    outputs:
-      electronic_component: 2
-    console-commands:
-      - "eco give {player} 350"
-    icon: REPEATER
-    
-  luxury_item_production:
-    name: "§6Luxury Item"
-    factory-type: advanced_factory
-    production-time: 800
-    money-cost: 500.0
-    inputs:
-      gold_alloy: 15
-      steel_ingot: 10
-      carbon_fiber: 8
-      refined_copper: 12
-      premium_fuel: 5
-      hydraulic_system: 2
-      circuit_board: 3
-    outputs:
-      luxury_item: 1
-    console-commands:
-      - "eco give {player} 1000"
-    icon: NETHER_STAR
-    
-  refined_copper_production:
-    name: "§6Refined Copper"
-    factory-type: advanced_factory
-    production-time: 300
     money-cost: 55.0
     inputs:
-      copper_ore: 10
-      basic_fuel: 2
-      engine_part: 1
+      electronic_circuit: 2                # 2 × $85  = $170  (Advanced)
+      tempered_glass: 2                    # 2 × $45  = $90   (Advanced)
+      precision_lens: 1                    # 1 × $250 = $250  (Parts)
+      high_speed_diesel: 1                 # 1 × $18  = $18   (Fuel)
     outputs:
-      refined_copper: 8
-    console-commands:
-      - "eco give {player} 120"
-    icon: COPPER_INGOT
-    
-  gold_alloy_production:
-    name: "§eGold Alloy"
-    factory-type: advanced_factory
-    production-time: 400
+      night_vision_goggles: 1              # 1 × $650 = $650  (input $528 + fee $55 = $583 cost)
+    icon: LEATHER_HELMET
+
+  # ---------- ELECTRONICS ASSEMBLY ----------
+  # Produces consumer & enterprise electronics
+  # Requires: electronic_circuit, copper_wire, precision_lens, fuel
+
+  produce_smartphone:
+    name: "§fSmartphone Assembly"
+    factory-type: electronics_assembly
+    production-time: 500
+    money-cost: 65.0
+    inputs:
+      electronic_circuit: 2                # 2 × $85  = $170  (Advanced)
+      copper_wire: 2                       # 2 × $28  = $56   (Advanced)
+      precision_lens: 1                    # 1 × $250 = $250  (Parts)
+      high_speed_diesel: 1                 # 1 × $18  = $18   (Fuel)
+    outputs:
+      smartphone: 1                        # 1 × $750 = $750  (input $494 + fee $65 = $559 cost)
+    icon: MAP
+
+  produce_server_rack:
+    name: "§5Server Rack Integration"
+    factory-type: electronics_assembly
+    production-time: 800
+    money-cost: 120.0
+    inputs:
+      electronic_circuit: 4                # 4 × $85  = $340  (Advanced)
+      copper_wire: 3                       # 3 × $28  = $84   (Advanced)
+      reinforced_plate: 2                  # 2 × $60  = $120  (Advanced)
+      electric_motor: 2                    # 2 × $120 = $240  (Parts)
+      marine_fuel_oil: 1                   # 1 × $50  = $50   (Fuel)
+    outputs:
+      server_rack: 1                       # 1 × $1500 = $1500 (input $834 + fee $120 = $954 cost)
+    icon: OBSERVER
+
+  produce_laptop_computer:
+    name: "§fLaptop Computer Assembly"
+    factory-type: electronics_assembly
+    production-time: 650
+    money-cost: 100.0
+    inputs:
+      electronic_circuit: 3                # 3 × $85  = $255  (Advanced)
+      silicon_wafer: 2                     # 2 × $55  = $110  (Advanced)
+      tempered_glass: 2                    # 2 × $45  = $90   (Advanced)
+      cooling_fan: 2                       # 2 × $65  = $130  (Parts)
+      high_speed_diesel: 1                 # 1 × $18  = $18   (Fuel)
+    outputs:
+      laptop_computer: 1                   # 1 × $1200 = $1200 (input $603 + fee $100 = $703 cost)
+    icon: BOOK
+
+  produce_drone_controller:
+    name: "§aDrone Controller Build"
+    factory-type: electronics_assembly
+    production-time: 550
+    money-cost: 70.0
+    inputs:
+      electronic_circuit: 2                # 2 × $85  = $170  (Advanced)
+      fiber_optic_cable: 2                 # 2 × $75  = $150  (Advanced)
+      servo_motor: 1                       # 1 × $140 = $140  (Parts)
+      precision_lens: 1                    # 1 × $250 = $250  (Parts)
+    outputs:
+      drone_controller: 1                  # 1 × $950 = $950  (input $710 + fee $70 = $780 cost)
+    icon: REPEATER
+
+  produce_solar_panel:
+    name: "§eSolar Panel Array Assembly"
+    factory-type: electronics_assembly
+    production-time: 850
+    money-cost: 140.0
+    inputs:
+      silicon_wafer: 4                     # 4 × $55  = $220  (Advanced)
+      copper_wire: 4                       # 4 × $28  = $112  (Advanced)
+      tempered_glass: 3                    # 3 × $45  = $135  (Advanced)
+      aluminum_sheet: 4                    # 4 × $40  = $160  (Advanced)
+      electric_motor: 1                    # 1 × $120 = $120  (Parts)
+      marine_fuel_oil: 1                   # 1 × $50  = $50   (Fuel)
+    outputs:
+      solar_panel: 1                       # 1 × $1800 = $1800 (input $797 + fee $140 = $937 cost)
+    icon: DAYLIGHT_DETECTOR
+
+  produce_radar_system:
+    name: "§9Radar System Integration"
+    factory-type: electronics_assembly
+    production-time: 900
+    money-cost: 160.0
+    inputs:
+      electronic_circuit: 3                # 3 × $85  = $255  (Advanced)
+      fiber_optic_cable: 3                 # 3 × $75  = $225  (Advanced)
+      gold_alloy: 2                        # 2 × $70  = $140  (Advanced)
+      servo_motor: 2                       # 2 × $140 = $280  (Parts)
+      precision_lens: 1                    # 1 × $250 = $250  (Parts)
+      marine_fuel_oil: 1                   # 1 × $50  = $50   (Fuel)
+    outputs:
+      radar_system: 1                      # 1 × $2000 = $2000 (input $1200 + fee $160 = $1360 cost)
+    icon: SCULK_SENSOR
+
+  # ---------- AUTOMOTIVE PLANT ----------
+  # Produces vehicle components — heavy industry
+  # Requires: steel_ingot, reinforced_plate, hydraulic_piston, gears, fuel
+
+  produce_engine_block:
+    name: "§6Engine Block Manufacturing"
+    factory-type: automotive_plant
+    production-time: 700
+    money-cost: 80.0
+    inputs:
+      steel_ingot: 4                       # 4 × $35  = $140  (Advanced)
+      hydraulic_piston: 2                  # 2 × $90  = $180  (Parts)
+      advanced_gear: 2                     # 2 × $110 = $220  (Parts)
+      marine_fuel_oil: 1                   # 1 × $50  = $50   (Fuel)
+    outputs:
+      engine_block: 1                      # 1 × $1000 = $1000 (input $590 + fee $80 = $670 cost)
+    icon: FURNACE
+
+  produce_vehicle_chassis:
+    name: "§eVehicle Chassis Welding"
+    factory-type: automotive_plant
+    production-time: 750
     money-cost: 85.0
     inputs:
-      gold_ore: 8
-      iron_ore: 4
-      refined_fuel: 3
-      advanced_gear: 2
+      reinforced_plate: 6                  # 6 × $60  = $360  (Advanced)
+      steel_ingot: 4                       # 4 × $35  = $140  (Advanced)
+      basic_gear: 2                        # 2 × $45  = $90   (Parts)
+      high_speed_diesel: 1                 # 1 × $18  = $18   (Fuel)
     outputs:
-      gold_alloy: 6
-    console-commands:
-      - "eco give {player} 180"
-    icon: GOLD_INGOT
+      vehicle_chassis: 1                   # 1 × $1100 = $1100 (input $608 + fee $85 = $693 cost)
+    icon: MINECART
+
+  produce_turbocharger:
+    name: "§6Turbocharger Assembly"
+    factory-type: automotive_plant
+    production-time: 550
+    money-cost: 60.0
+    inputs:
+      tungsten_rod: 2                      # 2 × $95  = $190  (Advanced)
+      steel_ingot: 2                       # 2 × $35  = $70   (Advanced)
+      turbine_blade: 1                     # 1 × $200 = $200  (Parts)
+      ball_bearing: 2                      # 2 × $55  = $110  (Parts)
+      high_speed_diesel: 1                 # 1 × $18  = $18   (Fuel)
+    outputs:
+      turbocharger: 1                      # 1 × $800 = $800  (input $588 + fee $60 = $648 cost)
+    icon: DISPENSER
+
+  produce_transmission_system:
+    name: "§eTransmission System Build"
+    factory-type: automotive_plant
+    production-time: 800
+    money-cost: 110.0
+    inputs:
+      steel_ingot: 4                       # 4 × $35  = $140  (Advanced)
+      tungsten_rod: 2                      # 2 × $95  = $190  (Advanced)
+      advanced_gear: 2                     # 2 × $110 = $220  (Parts)
+      ball_bearing: 2                      # 2 × $55  = $110  (Parts)
+      pressure_valve: 2                    # 2 × $70  = $140  (Parts)
+      marine_fuel_oil: 1                   # 1 × $50  = $50   (Fuel)
+    outputs:
+      transmission_system: 1               # 1 × $1400 = $1400 (input $850 + fee $110 = $960 cost)
+    icon: CHEST_MINECART
+
+  produce_electric_battery:
+    name: "§bElectric Battery Pack Build"
+    factory-type: automotive_plant
+    production-time: 850
+    money-cost: 130.0
+    inputs:
+      copper_wire: 4                       # 4 × $28  = $112  (Advanced)
+      gold_alloy: 2                        # 2 × $70  = $140  (Advanced)
+      aluminum_sheet: 3                    # 3 × $40  = $120  (Advanced)
+      electric_motor: 2                    # 2 × $120 = $240  (Parts)
+      cooling_fan: 2                       # 2 × $65  = $130  (Parts)
+      marine_fuel_oil: 1                   # 1 × $50  = $50   (Fuel)
+    outputs:
+      electric_battery: 1                  # 1 × $1600 = $1600 (input $792 + fee $130 = $922 cost)
+    icon: SEA_LANTERN
+
+  # ---------- AEROSPACE FOUNDRY ----------
+  # Produces the most valuable items — long production, expensive inputs
+  # Requires: carbon_composite, gold_alloy, electric_motor, precision_lens, biosolar
+
+  produce_jet_engine:
+    name: "§bJet Engine Fabrication"
+    factory-type: aerospace_foundry
+    production-time: 1000
+    money-cost: 180.0
+    inputs:
+      carbon_composite: 4                  # 4 × $130 = $520  (Advanced)
+      advanced_gear: 3                     # 3 × $110 = $330  (Parts)
+      electric_motor: 2                    # 2 × $120 = $240  (Parts)
+      biosolar: 1                          # 1 × $120 = $120  (Fuel)
+    outputs:
+      jet_engine: 1                        # 1 × $2500 = $2500 (input $1210 + fee $180 = $1390 cost)
+    icon: BEACON
+
+  produce_satellite_module:
+    name: "§dSatellite Module Engineering"
+    factory-type: aerospace_foundry
+    production-time: 1200
+    money-cost: 200.0
+    inputs:
+      electronic_circuit: 3                # 3 × $85  = $255  (Advanced)
+      carbon_composite: 2                  # 2 × $130 = $260  (Advanced)
+      precision_lens: 2                    # 2 × $250 = $500  (Parts)
+      gold_alloy: 2                        # 2 × $70  = $140  (Advanced)
+      biosolar: 1                          # 1 × $120 = $120  (Fuel)
+    outputs:
+      satellite_module: 1                  # 1 × $3000 = $3000 (input $1275 + fee $200 = $1475 cost)
+    icon: END_CRYSTAL
+
+  produce_rocket_booster:
+    name: "§cRocket Booster Fabrication"
+    factory-type: aerospace_foundry
+    production-time: 1400
+    money-cost: 250.0
+    inputs:
+      titanium_plate: 4                    # 4 × $100 = $400  (Advanced)
+      carbon_composite: 3                  # 3 × $130 = $390  (Advanced)
+      tungsten_rod: 3                      # 3 × $95  = $285  (Advanced)
+      turbine_blade: 2                     # 2 × $200 = $400  (Parts)
+      pressure_valve: 2                    # 2 × $70  = $140  (Parts)
+      biosolar: 1                          # 1 × $120 = $120  (Fuel)
+    outputs:
+      rocket_booster: 1                    # 1 × $3500 = $3500 (input $1735 + fee $250 = $1985 cost)
+    icon: TNT
+
+  produce_navigation_system:
+    name: "§9Navigation System Build"
+    factory-type: aerospace_foundry
+    production-time: 1100
+    money-cost: 200.0
+    inputs:
+      electronic_circuit: 3                # 3 × $85  = $255  (Advanced)
+      fiber_optic_cable: 3                 # 3 × $75  = $225  (Advanced)
+      gold_alloy: 2                        # 2 × $70  = $140  (Advanced)
+      precision_lens: 2                    # 2 × $250 = $500  (Parts)
+      servo_motor: 2                       # 2 × $140 = $280  (Parts)
+      biosolar: 1                          # 1 × $120 = $120  (Fuel)
+    outputs:
+      navigation_system: 1                 # 1 × $2800 = $2800 (input $1520 + fee $200 = $1720 cost)
+    icon: RECOVERY_COMPASS
+
+  produce_space_suit:
+    name: "§3Space Suit Engineering"
+    factory-type: aerospace_foundry
+    production-time: 950
+    money-cost: 160.0
+    inputs:
+      carbon_composite: 3                  # 3 × $130 = $390  (Advanced)
+      titanium_plate: 2                    # 2 × $100 = $200  (Advanced)
+      tempered_glass: 2                    # 2 × $45  = $90   (Advanced)
+      electric_motor: 2                    # 2 × $120 = $240  (Parts)
+      cooling_fan: 2                       # 2 × $65  = $130  (Parts)
+      pressure_valve: 2                    # 2 × $70  = $140  (Parts)
+      marine_fuel_oil: 1                   # 1 × $50  = $50   (Fuel)
+    outputs:
+      space_suit: 1                        # 1 × $2000 = $2000 (input $1240 + fee $160 = $1400 cost)
+    icon: DIAMOND_CHESTPLATE

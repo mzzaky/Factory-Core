@@ -434,14 +434,15 @@ public class MyFactoriesGUI {
     }
 
     private Material getFactoryMaterial(FactoryType type) {
-        switch (type) {
-            case STEEL_MILL:
+        if (type == null) return Material.FURNACE;
+        switch (type.getId()) {
+            case "steel_mill":
                 return Material.IRON_BLOCK;
-            case REFINERY:
+            case "refinery":
                 return Material.BLAST_FURNACE;
-            case WORKSHOP:
+            case "workshop":
                 return Material.CRAFTING_TABLE;
-            case ADVANCED_FACTORY:
+            case "advanced_factory":
                 return Material.DIAMOND_BLOCK;
             default:
                 return Material.FURNACE;

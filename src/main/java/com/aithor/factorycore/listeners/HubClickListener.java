@@ -1125,6 +1125,19 @@ public class HubClickListener implements Listener {
                 case "close":
                     player.closeInventory();
                     return;
+                default:
+                    // Handle prefixed actions: "recipe_prev:{resourceId}" / "recipe_next:{resourceId}"
+                    if (action.startsWith("recipe_prev:")) {
+                        String resId = action.substring("recipe_prev:".length());
+                        gui.openRecipeDetail(resId, gui.getCurrentRecipePage() - 1);
+                        return;
+                    }
+                    if (action.startsWith("recipe_next:")) {
+                        String resId = action.substring("recipe_next:".length());
+                        gui.openRecipeDetail(resId, gui.getCurrentRecipePage() + 1);
+                        return;
+                    }
+                    break;
             }
         }
 
@@ -1144,6 +1157,42 @@ public class HubClickListener implements Listener {
 
     // ==================== DISTRIBUTION CENTER ====================
     private void handleDistributionCenterClick(Player player, ItemStack clicked, ItemMeta meta, String name) {
+        // Bossbar Toggle
+        Integer bbToggle = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "dist_toggle_bossbar"),
+                PersistentDataType.INTEGER);
+        
+        if (bbToggle != null) {
+            com.aithor.factorycore.managers.DistributionManager distManager = plugin.getDistributionManager();
+            boolean isEnabled = bbToggle == 1;
+            boolean newState = !isEnabled;
+            distManager.setBossbarEnabled(player.getUniqueId(), newState);
+            player.sendMessage("§aTimer reminder " + (newState ? "enabled" : "disabled") + "!");
+            try {
+                player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f);
+            } catch (Exception ignored) {}
+            new DistributionCenterGUI(plugin, player).openDistributionCenter();
+            return;
+        }
+
+        // Distribution Offers Toggle
+        Integer distOffersToggle = meta.getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "dist_toggle_offers"),
+                PersistentDataType.INTEGER);
+        
+        if (distOffersToggle != null) {
+            com.aithor.factorycore.managers.DistributionManager distManager = plugin.getDistributionManager();
+            boolean isEnabled = distOffersToggle == 1;
+            boolean newState = !isEnabled;
+            distManager.setDistributionEnabled(player.getUniqueId(), newState);
+            player.sendMessage("§aDistribution offers " + (newState ? "enabled" : "disabled") + "!");
+            try {
+                player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f);
+            } catch (Exception ignored) {}
+            new DistributionCenterGUI(plugin, player).openDistributionCenter();
+            return;
+        }
+
         // Back to Hub
         if (name.contains("Back to Hub")) {
             openHub(player);

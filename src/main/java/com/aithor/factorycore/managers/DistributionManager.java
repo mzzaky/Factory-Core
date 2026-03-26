@@ -10,6 +10,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.boss.BossBar;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +38,12 @@ public class DistributionManager {
     // Active requests per player: playerId -> list of active requests
     private final Map<UUID, List<ActiveDistributionRequest>> activeRequests = new HashMap<>();
 
-    // Player distribution tax records: playerId -> total tax paid through distribution
+    private final Map<String, BossBar> requestBossBars = new HashMap<>();
+    private final Set<UUID> bossbarEnabledPlayers = new HashSet<>();
+    private final Set<UUID> distributionDisabledPlayers = new HashSet<>();
+
+    // Player distribution tax records: playerId -> total tax paid through
+    // distribution
     private final Map<UUID, Double> distributionTaxRecords = new HashMap<>();
 
     // Data persistence
@@ -88,11 +96,13 @@ public class DistributionManager {
 
     private void loadCompanies() {
         ConfigurationSection section = companyConfig.getConfigurationSection("companies");
-        if (section == null) return;
+        if (section == null)
+            return;
 
         for (String id : section.getKeys(false)) {
             ConfigurationSection cs = section.getConfigurationSection(id);
-            if (cs == null) continue;
+            if (cs == null)
+                continue;
 
             String name = ChatColor.translateAlternateColorCodes('&', cs.getString("name", id));
             String description = cs.getString("description", "");
@@ -113,11 +123,13 @@ public class DistributionManager {
 
     private void loadEvents() {
         ConfigurationSection section = eventConfig.getConfigurationSection("events");
-        if (section == null) return;
+        if (section == null)
+            return;
 
         for (String id : section.getKeys(false)) {
             ConfigurationSection cs = section.getConfigurationSection(id);
-            if (cs == null) continue;
+            if (cs == null)
+                continue;
 
             String name = ChatColor.translateAlternateColorCodes('&', cs.getString("name", id));
             List<String> lore = cs.getStringList("lore").stream()
@@ -132,9 +144,11 @@ public class DistributionManager {
             int bonusCondition = cs.getInt("bonus_condition", 50);
             List<String> commandOnAppear = cs.getStringList("command-on-appear");
             List<String> commandOnComplete = cs.getStringList("command-on-complete");
+            List<String> commandOnLeave = cs.getStringList("command-on-leave");
 
             events.put(id, new DistributionEvent(id, name, lore, chance, time, companyId,
-                    demand, priceOffer, bonus, bonusCondition, commandOnAppear, commandOnComplete));
+                    demand, priceOffer, bonus, bonusCondition, commandOnAppear, commandOnComplete,
+                    commandOnLeave));
         }
 
         plugin.getLogger().info("Loaded " + events.size() + " distribution events.");
@@ -143,9 +157,30 @@ public class DistributionManager {
     // ==================== PLAYER DATA PERSISTENCE ====================
 
     private void loadPlayerData() {
-        if (!dataFile.exists()) return;
+        if (!dataFile.exists())
+            return;
 
         FileConfiguration data = YamlConfiguration.loadConfiguration(dataFile);
+
+        // Load bossbar settings
+        ConfigurationSection bbSection = data.getConfigurationSection("bossbar-players");
+        if (bbSection != null) {
+            for (String uuidStr : bbSection.getKeys(false)) {
+                if (bbSection.getBoolean(uuidStr, false)) {
+                    bossbarEnabledPlayers.add(UUID.fromString(uuidStr));
+                }
+            }
+        }
+
+        // Load event toggles
+        ConfigurationSection distToggleSection = data.getConfigurationSection("distribution-toggles");
+        if (distToggleSection != null) {
+            for (String uuidStr : distToggleSection.getKeys(false)) {
+                if (!distToggleSection.getBoolean(uuidStr, true)) {
+                    distributionDisabledPlayers.add(UUID.fromString(uuidStr));
+                }
+            }
+        }
 
         // Load active requests
         ConfigurationSection requestsSection = data.getConfigurationSection("active-requests");
@@ -153,12 +188,14 @@ public class DistributionManager {
             for (String uuidStr : requestsSection.getKeys(false)) {
                 UUID playerId = UUID.fromString(uuidStr);
                 ConfigurationSection playerSection = requestsSection.getConfigurationSection(uuidStr);
-                if (playerSection == null) continue;
+                if (playerSection == null)
+                    continue;
 
                 List<ActiveDistributionRequest> requests = new ArrayList<>();
                 for (String requestId : playerSection.getKeys(false)) {
                     ConfigurationSection reqSection = playerSection.getConfigurationSection(requestId);
-                    if (reqSection == null) continue;
+                    if (reqSection == null)
+                        continue;
 
                     String eventId = reqSection.getString("event-id", "");
                     long startTime = reqSection.getLong("start-time", 0);
@@ -173,7 +210,8 @@ public class DistributionManager {
                     }
 
                     // Skip expired requests
-                    if (System.currentTimeMillis() > expireTime) continue;
+                    if (System.currentTimeMillis() > expireTime)
+                        continue;
 
                     requests.add(new ActiveDistributionRequest(requestId, eventId, startTime, expireTime, delivered));
                 }
@@ -196,11 +234,22 @@ public class DistributionManager {
     public void saveAll() {
         FileConfiguration data = new YamlConfiguration();
 
+        // Save bossbar settings
+        for (UUID uuid : bossbarEnabledPlayers) {
+            data.set("bossbar-players." + uuid.toString(), true);
+        }
+
+        // Save distribution toggles
+        for (UUID uuid : distributionDisabledPlayers) {
+            data.set("distribution-toggles." + uuid.toString(), false);
+        }
+
         // Save active requests
         for (Map.Entry<UUID, List<ActiveDistributionRequest>> entry : activeRequests.entrySet()) {
             String basePath = "active-requests." + entry.getKey().toString();
             for (ActiveDistributionRequest req : entry.getValue()) {
-                if (req.isExpired()) continue;
+                if (req.isExpired())
+                    continue;
                 String reqPath = basePath + "." + req.getRequestId();
                 data.set(reqPath + ".event-id", req.getEventId());
                 data.set(reqPath + ".start-time", req.getStartTime());
@@ -230,22 +279,37 @@ public class DistributionManager {
      * Called by the scheduler.
      */
     public void tickDistributionEvents() {
-        if (!isEnabled()) return;
+        if (!isEnabled())
+            return;
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            List<ActiveDistributionRequest> playerRequests = activeRequests.getOrDefault(player.getUniqueId(), new ArrayList<>());
+            List<ActiveDistributionRequest> playerRequests = activeRequests.getOrDefault(player.getUniqueId(),
+                    new ArrayList<>());
 
-            // Remove expired requests
-            playerRequests.removeIf(ActiveDistributionRequest::isExpired);
+            // Check and process expired requests, executing command-on-leave
+            List<ActiveDistributionRequest> expiredRequests = new ArrayList<>();
+            for (ActiveDistributionRequest request : playerRequests) {
+                if (request.isExpired()) {
+                    handleExpiration(player, request);
+                    expiredRequests.add(request);
+                }
+            }
+            playerRequests.removeAll(expiredRequests);
             activeRequests.put(player.getUniqueId(), playerRequests);
+
+            if (!isDistributionEnabled(player.getUniqueId())) {
+                continue;
+            }
 
             // Check max active requests
             int maxRequests = plugin.getConfig().getInt("distribution.max-active-requests", 3);
-            if (playerRequests.size() >= maxRequests) continue;
+            if (playerRequests.size() >= maxRequests)
+                continue;
 
             // Roll for a new event
             DistributionEvent selectedEvent = rollEvent();
-            if (selectedEvent == null) continue;
+            if (selectedEvent == null)
+                continue;
 
             spawnRequest(player, selectedEvent);
         }
@@ -256,7 +320,8 @@ public class DistributionManager {
      */
     private DistributionEvent rollEvent() {
         double totalWeight = events.values().stream().mapToDouble(DistributionEvent::getChance).sum();
-        if (totalWeight <= 0) return null;
+        if (totalWeight <= 0)
+            return null;
 
         double roll = new Random().nextDouble() * totalWeight;
         double cumulative = 0;
@@ -289,13 +354,17 @@ public class DistributionManager {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
         }
 
+        // Send language custom message
+        sendDistributionMessage("distribution-event-spawn", player, event);
+
         // Play notification sound
         try {
             player.playSound(player.getLocation(),
                     org.bukkit.Sound.valueOf(plugin.getConfig().getString(
                             "notifications.sound.distribution-request", "BLOCK_NOTE_BLOCK_BELL")),
                     1.0f, 1.0f);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     // ==================== DELIVERY HANDLING ====================
@@ -304,21 +373,37 @@ public class DistributionManager {
      * Attempts to deliver a resource for an active request.
      * Returns true if the resource was accepted.
      */
-    public boolean deliverResource(Player player, String requestId, String resourceId) {
+    public boolean deliverResource(Player player, String requestId, String demandStr) {
         List<ActiveDistributionRequest> requests = activeRequests.get(player.getUniqueId());
-        if (requests == null) return false;
+        if (requests == null)
+            return false;
 
         for (ActiveDistributionRequest request : requests) {
-            if (!request.getRequestId().equals(requestId)) continue;
-            if (request.isExpired()) return false;
-            if (request.isResourceDelivered(resourceId)) return false;
+            if (!request.getRequestId().equals(requestId))
+                continue;
+            if (request.isExpired())
+                return false;
+            if (request.isResourceDelivered(demandStr))
+                return false;
+
+            String actualId = demandStr;
+            int amount = 1;
+            if (demandStr.contains(" ")) {
+                String[] parts = demandStr.split(" ");
+                actualId = parts[0];
+                try {
+                    amount = Integer.parseInt(parts[1]);
+                } catch (NumberFormatException ignored) {
+                }
+            }
 
             // Check if player has the resource and take it from inventory
             ResourceManager resourceManager = plugin.getResourceManager();
-            if (!resourceManager.takeResource(player, resourceId, 1)) return false;
+            if (!resourceManager.takeResource(player, actualId, amount))
+                return false;
 
             // Mark as delivered
-            request.markDelivered(resourceId);
+            request.markDelivered(demandStr);
 
             // Check if request is now complete
             if (request.isCompleted()) {
@@ -335,7 +420,8 @@ public class DistributionManager {
      */
     private void completeRequest(Player player, ActiveDistributionRequest request) {
         DistributionEvent event = events.get(request.getEventId());
-        if (event == null) return;
+        if (event == null)
+            return;
 
         double basePayment = event.getPriceOffer();
         double finalPayment = basePayment;
@@ -348,8 +434,14 @@ public class DistributionManager {
             bonusApplied = true;
         }
 
-        // Apply distribution tax
-        double taxRate = plugin.getConfig().getDouble("distribution.tax_distribution_rate", 25.0);
+        // Apply distribution tax with research reduction
+        double defaultTaxRate = plugin.getConfig().getDouble("distribution.tax_distribution_rate", 25.0);
+        double researchReduction = plugin.getResearchManager() != null 
+                ? plugin.getResearchManager().getDistributionTaxReduction(player.getUniqueId()) 
+                : 0.0;
+        
+        // Calculation: newRate = defaultRate - reduction
+        double taxRate = Math.max(0.0, defaultTaxRate - researchReduction);
         double taxAmount = finalPayment * (taxRate / 100.0);
         double afterTax = finalPayment - taxAmount;
 
@@ -370,10 +462,12 @@ public class DistributionManager {
         player.sendMessage("");
         player.sendMessage("\u00a7eBase Payment: \u00a76$" + String.format("%.2f", basePayment));
         if (bonusApplied) {
-            player.sendMessage("\u00a7aSpeed Bonus Applied! \u00a7e(x" + event.getBonus() + ") \u00a76$" + String.format("%.2f", finalPayment));
+            player.sendMessage("\u00a7aSpeed Bonus Applied! \u00a7e(x" + event.getBonus() + ") \u00a76$"
+                    + String.format("%.2f", finalPayment));
             player.sendMessage("\u00a77Time remaining: \u00a7a" + String.format("%.1f", timeRemainingPercent) + "%");
         }
-        player.sendMessage("\u00a7cDistribution Tax (" + String.format("%.0f", taxRate) + "%): \u00a7c-$" + String.format("%.2f", taxAmount));
+        player.sendMessage("\u00a7cDistribution Tax (" + String.format("%.1f", taxRate) + "%): \u00a7c-$"
+                + String.format("%.2f", taxAmount));
         player.sendMessage("\u00a7a\u00a7lYou received: \u00a76\u00a7l$" + String.format("%.2f", afterTax));
         player.sendMessage("\u00a76\u00a7l================================");
         player.sendMessage("");
@@ -381,7 +475,8 @@ public class DistributionManager {
         // Play completion sound
         try {
             player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         // Execute completion commands
         for (String cmd : event.getCommandOnComplete()) {
@@ -389,11 +484,25 @@ public class DistributionManager {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
         }
 
+        // Send language custom message
+        sendDistributionMessage("distribution-event-complete", player, event);
+
+        // Add daily quest progress for distribution completion
+        if (plugin.getDailyQuestManager() != null) {
+            plugin.getDailyQuestManager().addProgressByType(player, "DISTRIBUTION_COMPLETE", 1);
+        }
+
+        // Add achievement progress
+        if (plugin.getAchievementManager() != null) {
+            plugin.getAchievementManager().addProgress(player, "distribution_tycoon", afterTax);
+        }
+
         // Remove the completed request
         List<ActiveDistributionRequest> requests = activeRequests.get(player.getUniqueId());
         if (requests != null) {
             requests.remove(request);
         }
+        removeBossBar(request.getRequestId());
     }
 
     // ==================== GETTERS & UTILITY ====================
@@ -419,10 +528,15 @@ public class DistributionManager {
     }
 
     public List<ActiveDistributionRequest> getActiveRequests(UUID playerId) {
-        List<ActiveDistributionRequest> requests = activeRequests.getOrDefault(playerId, new ArrayList<>());
-        // Clean expired
-        requests.removeIf(ActiveDistributionRequest::isExpired);
-        return requests;
+        List<ActiveDistributionRequest> requests = activeRequests.get(playerId);
+        if (requests == null)
+            return new ArrayList<>();
+
+        // Return a filtered copy for display purposes. 
+        // Actual cleanup happens in updateBossbars and tickDistributionEvents.
+        return requests.stream()
+                .filter(req -> !req.isExpired())
+                .collect(Collectors.toList());
     }
 
     public int getActiveRequestCount(UUID playerId) {
@@ -445,7 +559,8 @@ public class DistributionManager {
      * Formats remaining time in a human-readable way.
      */
     public static String formatTime(long millis) {
-        if (millis <= 0) return "Expired";
+        if (millis <= 0)
+            return "Expired";
         long seconds = millis / 1000;
         long minutes = seconds / 60;
         long hours = minutes / 60;
@@ -459,5 +574,153 @@ public class DistributionManager {
         } else {
             return String.format("%ds", seconds);
         }
+    }
+
+    // ==================== BOSSBAR MANAGEMENT ====================
+
+    public boolean isDistributionEnabled(UUID playerId) {
+        return !distributionDisabledPlayers.contains(playerId);
+    }
+
+    public void setDistributionEnabled(UUID playerId, boolean enabled) {
+        if (enabled) {
+            distributionDisabledPlayers.remove(playerId);
+        } else {
+            distributionDisabledPlayers.add(playerId);
+        }
+    }
+
+    public boolean isBossbarEnabled(UUID playerId) {
+        return bossbarEnabledPlayers.contains(playerId);
+    }
+
+    public void setBossbarEnabled(UUID playerId, boolean enabled) {
+        if (enabled) {
+            bossbarEnabledPlayers.add(playerId);
+        } else {
+            bossbarEnabledPlayers.remove(playerId);
+            List<ActiveDistributionRequest> requests = activeRequests.get(playerId);
+            if (requests != null) {
+                for (ActiveDistributionRequest req : requests) {
+                    removeBossBar(req.getRequestId());
+                }
+            }
+        }
+    }
+
+    private void removeBossBar(String requestId) {
+        BossBar bar = requestBossBars.remove(requestId);
+        if (bar != null) {
+            bar.removeAll();
+        }
+    }
+
+    private void handleExpiration(Player player, ActiveDistributionRequest request) {
+        removeBossBar(request.getRequestId());
+        
+        DistributionEvent event = events.get(request.getEventId());
+        if (event != null) {
+            // Execute command-on-leave for expired request
+            if (event.getCommandOnLeave() != null) {
+                for (String cmd : event.getCommandOnLeave()) {
+                    String parsed = cmd.replace("%player%", player.getName());
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
+                }
+            }
+            // Send language custom message
+            sendDistributionMessage("distribution-event-leave", player, event);
+        }
+    }
+
+    public void updateBossbars() {
+        if (!isEnabled())
+            return;
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            List<ActiveDistributionRequest> playerRequests = activeRequests.get(player.getUniqueId());
+            if (playerRequests == null || playerRequests.isEmpty())
+                continue;
+
+            List<ActiveDistributionRequest> toRemove = new ArrayList<>();
+            for (ActiveDistributionRequest request : playerRequests) {
+                if (request.isExpired()) {
+                    handleExpiration(player, request);
+                    toRemove.add(request);
+                    continue;
+                }
+
+                if (bossbarEnabledPlayers.contains(player.getUniqueId())) {
+                    updateBossBar(player, request);
+                }
+            }
+
+            if (!toRemove.isEmpty()) {
+                playerRequests.removeAll(toRemove);
+            }
+        }
+    }
+
+    private void updateBossBar(Player player, ActiveDistributionRequest request) {
+        BossBar bar = requestBossBars.get(request.getRequestId());
+        DistributionEvent event = getEvent(request.getEventId());
+        if (event == null)
+            return;
+
+        double progress = request.getTimeRemainingPercent() / 100.0;
+        if (progress < 0)
+            progress = 0;
+        if (progress > 1)
+            progress = 1;
+
+        String titleTemplate = plugin.getConfig().getString("distribution.bossbar.title", "{event_name} &8- &e{time}");
+        String title = ChatColor.translateAlternateColorCodes('&', titleTemplate
+                .replace("{event_name}", event.getName())
+                .replace("{time}", formatTime(request.getRemainingTimeMillis())));
+
+        if (bar == null) {
+            String colorStr = plugin.getConfig().getString("distribution.bossbar.color", "BLUE");
+            String styleStr = plugin.getConfig().getString("distribution.bossbar.style", "SOLID");
+            BarColor color;
+            BarStyle style;
+            try {
+                color = BarColor.valueOf(colorStr.toUpperCase());
+            } catch (Exception e) {
+                color = BarColor.BLUE;
+            }
+            try {
+                style = BarStyle.valueOf(styleStr.toUpperCase());
+            } catch (Exception e) {
+                style = BarStyle.SOLID;
+            }
+
+            bar = Bukkit.createBossBar(title, color, style);
+            bar.addPlayer(player);
+            bar.setProgress(progress);
+            requestBossBars.put(request.getRequestId(), bar);
+        } else {
+            if (!bar.getPlayers().contains(player)) {
+                bar.addPlayer(player);
+            }
+            bar.setTitle(title);
+            bar.setProgress(progress);
+        }
+    }
+
+    /**
+     * Sends a custom distribution message defined in language.yml.
+     */
+    private void sendDistributionMessage(String path, Player player, DistributionEvent event) {
+        String msg = plugin.getLanguageManager().getMessage(path);
+        if (msg == null || msg.trim().isEmpty() || msg.contains("Message not found"))
+            return;
+
+        Company company = getCompany(event.getCompanyId());
+        String companyName = (company != null) ? company.getName() : "Unknown Company";
+
+        msg = msg.replace("{player}", player.getName())
+                .replace("{company}", companyName)
+                .replace("{event}", event.getName());
+
+        player.sendMessage(msg);
     }
 }

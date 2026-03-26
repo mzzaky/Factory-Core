@@ -2,6 +2,7 @@ package com.aithor.factorycore.commands;
 
 import com.aithor.factorycore.FactoryCore;
 import com.aithor.factorycore.gui.*;
+import com.aithor.factorycore.models.DistributionEvent;
 import com.aithor.factorycore.models.Factory;
 import com.aithor.factorycore.models.FactoryType;
 import com.aithor.factorycore.models.Recipe;
@@ -229,7 +230,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
         if (args.length < 2) {
             sender.sendMessage(
-                    "§cUsage: /fc admin <create|remove|list|info|reload|checkrecipes|setowner|teleport|give|npc|tax|market|research|backup|database>");
+                    "§cUsage: /fc admin <create|remove|list|info|reload|checkrecipes|setowner|teleport|give|npc|tax|market|research|backup|database|event>");
             sender.sendMessage("§cFor create: /fc admin create <region_id> <factory_id> <factory_type> <price_value>");
             return true;
         }
@@ -282,6 +283,9 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             case "database":
             case "db":
                 return adminDatabase(sender, args);
+
+            case "event":
+                return adminEvent(sender, args);
 
             default:
                 sender.sendMessage("§cInvalid admin command!");
@@ -402,6 +406,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             plugin.getLogger().info("Starting admin reload process...");
 
             plugin.reloadConfig();
+            com.aithor.factorycore.models.FactoryType.load(plugin.getConfig());
             plugin.getLanguageManager().reload();
             plugin.getResourceManager().reload();
             plugin.getRecipeManager().reload();
@@ -697,7 +702,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
     // New admin commands for tax and marketplace
     private boolean adminTax(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            sender.sendMessage("§cUsage: /fc admin tax <assess|check>");
+            sender.sendMessage("§cUsage: /fc admin tax <assess [id]|check>");
             return true;
         }
 
@@ -705,13 +710,25 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
         if (action.equals("assess")) {
             if (plugin.getTaxManager() != null) {
-                plugin.getTaxManager().assessTaxes();
-                sender.sendMessage("§aTaxes assessed for all factories!");
+                if (args.length >= 4) {
+                    String id = args[3];
+                    if (plugin.getTaxManager().assessTaxForFactory(id)) {
+                        sender.sendMessage("§aTax assessed for factory §e" + id + "§a!");
+                        Logger.logAdminCommand(sender.getName(), "assess tax for factory " + id);
+                    } else {
+                        sender.sendMessage("§cFactory §e" + id + " §cnot found or has no owner!");
+                    }
+                } else {
+                    plugin.getTaxManager().assessTaxes();
+                    sender.sendMessage("§aTaxes assessed for all factories!");
+                    Logger.logAdminCommand(sender.getName(), "assess taxes for all factories");
+                }
             }
         } else if (action.equals("check")) {
             if (plugin.getTaxManager() != null) {
                 plugin.getTaxManager().checkOverdueTaxes();
                 sender.sendMessage("§aOverdue taxes checked!");
+                Logger.logAdminCommand(sender.getName(), "check overdue taxes");
             }
         }
 
@@ -745,26 +762,22 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
     private boolean adminResearch(CommandSender sender, String[] args) {
         if (args.length < 5) {
             sender.sendMessage("§cUsage:");
-            sender.sendMessage("§c/fc admin research upgrade <factory_id> <factory_research_id>");
-            sender.sendMessage("§c/fc admin research set <factory_id> <factory_research_id> <level>");
+            sender.sendMessage("§c/fc admin research upgrade <player> <factory_research_id>");
+            sender.sendMessage("§c/fc admin research set <player> <factory_research_id> <level>");
             return true;
         }
 
         String action = args[2].toLowerCase();
-        String factoryId = args[3];
+        String playerName = args[3];
         String researchId = args[4];
 
-        Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null) {
-            sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
+        Player targetPlayer = Bukkit.getPlayer(playerName);
+        if (targetPlayer == null) {
+            sender.sendMessage("§cPlayer §e" + playerName + " §cnot found!");
             return true;
         }
 
-        UUID ownerId = factory.getOwner();
-        if (ownerId == null) {
-            sender.sendMessage("§cThis factory has no owner to apply research to!");
-            return true;
-        }
+        UUID ownerId = targetPlayer.getUniqueId();
 
         if (plugin.getResearchManager() == null) {
             sender.sendMessage("§cResearch system is currently disabled or unavailable!");
@@ -779,14 +792,14 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         if (action.equals("upgrade")) {
             if (plugin.getResearchManager().forceUpgradeResearch(ownerId, researchId)) {
                 sender.sendMessage(
-                        "§a✔ Force upgraded §e" + researchId + " §afor factory owner §e" + factoryId + "§a!");
-                Logger.logAdminCommand(sender.getName(), "research upgrade " + factoryId + " " + researchId);
+                        "§a✔ Force upgraded §e" + researchId + " §afor §e" + targetPlayer.getName() + "§a!");
+                Logger.logAdminCommand(sender.getName(), "research upgrade " + targetPlayer.getName() + " " + researchId);
             } else {
                 sender.sendMessage("§cFailed to upgrade research! Typically this means it is already at max level.");
             }
         } else if (action.equals("set")) {
             if (args.length < 6) {
-                sender.sendMessage("§cUsage: /fc admin research set <factory_id> <factory_research_id> <level>");
+                sender.sendMessage("§cUsage: /fc admin research set <player> <factory_research_id> <level>");
                 return true;
             }
             int level;
@@ -799,8 +812,8 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
             if (plugin.getResearchManager().forceSetResearchLevel(ownerId, researchId, level)) {
                 sender.sendMessage("§a✔ Force set §e" + researchId + " §ato level §e" + level
-                        + " §afor factory owner §e" + factoryId + "§a!");
-                Logger.logAdminCommand(sender.getName(), "research set " + factoryId + " " + researchId + " " + level);
+                        + " §afor §e" + targetPlayer.getName() + "§a!");
+                Logger.logAdminCommand(sender.getName(), "research set " + targetPlayer.getName() + " " + researchId + " " + level);
             } else {
                 sender.sendMessage("§cFailed to set research level! Make sure the level is valid (0 - max levels).");
             }
@@ -1109,6 +1122,48 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    private boolean adminEvent(CommandSender sender, String[] args) {
+        // /fc admin event <event_id> [player]
+        if (args.length < 3) {
+            sender.sendMessage("§cUsage: /fc admin event <event_id> [player]");
+            return true;
+        }
+
+        if (plugin.getDistributionManager() == null) {
+            sender.sendMessage("§cDistribution system is currently disabled or unavailable!");
+            return true;
+        }
+
+        String eventId = args[2];
+        DistributionEvent event = plugin.getDistributionManager().getEvent(eventId);
+
+        if (event == null) {
+            sender.sendMessage("§cEvent not found: §e" + eventId);
+            return true;
+        }
+
+        Player target;
+        if (args.length >= 4) {
+            target = Bukkit.getPlayer(args[3]);
+            if (target == null) {
+                sender.sendMessage("§cPlayer not found: §e" + args[3]);
+                return true;
+            }
+        } else {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage("§cYou must specify a player when running from console!");
+                return true;
+            }
+            target = (Player) sender;
+        }
+
+        plugin.getDistributionManager().spawnRequest(target, event);
+        sender.sendMessage("§a✔ Force spawned event §e" + eventId + " §afor §e" + target.getName() + "§a.");
+        Logger.logAdminCommand(sender.getName(), "force spawn event " + eventId + " for " + target.getName());
+
+        return true;
+    }
+
     private boolean handleVersion(CommandSender sender) {
         sender.sendMessage(plugin.getLanguageManager().getMessage("plugin-version")
                 .replace("{version}", plugin.getDescription().getVersion()));
@@ -1224,6 +1279,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage("§6/fc admin research §7- Manage factory research");
             sender.sendMessage("§6/fc admin backup §7- Manage backups");
             sender.sendMessage("§6/fc admin database §7- Manage database");
+            sender.sendMessage("§6/fc admin event <id> [player] §7- Force spawn event");
         }
 
         sender.sendMessage("");
@@ -1242,7 +1298,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length == 2 && args[0].equalsIgnoreCase("admin")) {
             completions.addAll(Arrays.asList("create", "remove", "list", "info", "reload", "checkrecipes",
-                    "setowner", "teleport", "give", "npc", "tax", "market", "research", "backup", "database"));
+                    "setowner", "teleport", "give", "npc", "tax", "market", "research", "backup", "database", "event"));
         } else if (args.length == 3 && args[0].equalsIgnoreCase("admin")) {
             if (args[1].equalsIgnoreCase("backup")) {
                 completions.addAll(Arrays.asList("start", "restore", "list", "delete", "auto", "status"));
@@ -1261,6 +1317,10 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             } else if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("info")) {
                 for (Factory factory : plugin.getFactoryManager().getAllFactories()) {
                     completions.add(factory.getId());
+                }
+            } else if (args.length == 3 && args[1].equalsIgnoreCase("event")) {
+                if (plugin.getDistributionManager() != null) {
+                    completions.addAll(plugin.getDistributionManager().getEvents().keySet());
                 }
             } else if (args[1].equalsIgnoreCase("give")) {
                 completions.addAll(plugin.getResourceManager().getAllResources().keySet());
@@ -1296,12 +1356,24 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                         .forEach(n -> completions.add(n.getId()));
             }
         } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("research")) {
-            // /fc admin research <upgrade|set> <factory_id>
+            // /fc admin research <upgrade|set> <player>
             String researchAction = args[2].toLowerCase();
             if (researchAction.equals("upgrade") || researchAction.equals("set")) {
+                Bukkit.getOnlinePlayers().forEach(p -> completions.add(p.getName()));
+            }
+        } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("tax")) {
+            // /fc admin tax assess <factory_id>
+            if (args[2].equalsIgnoreCase("assess")) {
+                // Suggest admin factories (that have owners)
                 plugin.getFactoryManager().getAllFactories().stream()
                         .filter(f -> f.getOwner() != null)
                         .forEach(f -> completions.add(f.getId()));
+                // Suggest player factories (that have owners)
+                if (plugin.getPlayerFactoryManager() != null) {
+                    plugin.getPlayerFactoryManager().getAllFactories().stream()
+                            .filter(pf -> pf.getOwner() != null)
+                            .forEach(pf -> completions.add(pf.getId()));
+                }
             }
         } else if (args.length == 5 && args[0].equalsIgnoreCase("admin")) {
             if (args[1].equalsIgnoreCase("npc") && args[2].equalsIgnoreCase("spawn")) {
@@ -1322,6 +1394,10 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     completions.add(p.getName());
                 }
+            } else if (args[1].equalsIgnoreCase("event")) {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    completions.add(p.getName());
+                }
             }
         } else if (args.length == 6 && args[0].equalsIgnoreCase("admin")) {
             if (args[1].equalsIgnoreCase("npc") && args[2].equalsIgnoreCase("spawn")) {
@@ -1335,7 +1411,7 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             } else if (args[1].equalsIgnoreCase("create")) {
                 completions.addAll(Arrays.asList("1000", "5000", "10000", "50000", "100000"));
             } else if (args[1].equalsIgnoreCase("research") && args[2].equalsIgnoreCase("set")) {
-                // /fc admin research set <factory_id> <research_id> <level>
+                // /fc admin research set <player> <research_id> <level>
                 completions.addAll(Arrays.asList("0", "1", "2", "3", "4", "5"));
             }
         } else if (args.length == 2) {

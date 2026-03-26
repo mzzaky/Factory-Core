@@ -30,6 +30,7 @@ public class RecipesWikiGUI {
     private final FactoryCore plugin;
     private final Player player;
     private int currentPage = 0;
+    private int currentRecipePage = 0;
     private SortMode sortMode = SortMode.NAME;
 
     // Sort modes
@@ -195,18 +196,28 @@ public class RecipesWikiGUI {
 
     /**
      * Opens the recipe detail sub-menu for a specific resource.
-     * Shows how this item is crafted (recipe inputs/outputs).
+     * Shows how this item is crafted using a crafting-table style layout.
      */
     public void openRecipeDetail(String resourceId) {
+        openRecipeDetail(resourceId, 0);
+    }
+
+    /**
+     * Opens recipe detail at a specific recipe page index.
+     */
+    public void openRecipeDetail(String resourceId, int recipePage) {
+        this.currentRecipePage = recipePage;
         ResourceItem resource = plugin.getResourceManager().getResource(resourceId);
         if (resource == null)
             return;
+
+        List<Recipe> recipes = findRecipesProducing(resourceId);
 
         Inventory inv = Bukkit.createInventory(null, 54,
                 ChatColor.translateAlternateColorCodes('&',
                         "&6&lRecipes Wiki &8- &eCrafting"));
 
-        // Border
+        // ── Border ────────────────────────────────────────────────────────────
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ", null);
         for (int i = 0; i < 9; i++)
             inv.setItem(i, border);
@@ -217,12 +228,13 @@ public class RecipesWikiGUI {
         for (int i = 17; i < 45; i += 9)
             inv.setItem(i, border);
 
-        // Header: the resource itself
+        // ── Header: slot 4 ────────────────────────────────────────────────────
         ItemStack headerItem = createResourceInfoItem(resource);
         inv.setItem(4, headerItem);
 
-        // Title
-        ItemStack titleItem = createItem(Material.CRAFTING_TABLE, "&a&lHow to Craft: " + resource.getName(),
+        // ── Title item: slot 2 ────────────────────────────────────────────────
+        ItemStack titleItem = createItem(Material.CRAFTING_TABLE,
+                "&a&lHow to Craft: " + resource.getName(),
                 Arrays.asList(
                         "&7Recipes that produce this item",
                         "",
@@ -231,9 +243,7 @@ public class RecipesWikiGUI {
                         "&7Rarity: " + getRarityColor(resource.getRarity()) + capitalize(resource.getRarity())));
         inv.setItem(2, titleItem);
 
-        // Find recipes that output this resource
-        List<Recipe> recipes = findRecipesProducing(resourceId);
-
+        // ── Crafting table layout ─────────────────────────────────────────────
         if (recipes.isEmpty()) {
             ItemStack noRecipe = createItem(Material.BARRIER, "&c&lNo Recipes Found",
                     Arrays.asList(
@@ -241,30 +251,244 @@ public class RecipesWikiGUI {
                             "&7It may be obtained through other means."));
             inv.setItem(22, noRecipe);
         } else {
-            int[] recipeSlots = { 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34 };
-            int slotIdx = 0;
+            // Clamp page
+            if (this.currentRecipePage >= recipes.size())
+                this.currentRecipePage = recipes.size() - 1;
+            if (this.currentRecipePage < 0)
+                this.currentRecipePage = 0;
 
-            for (Recipe recipe : recipes) {
-                if (slotIdx >= recipeSlots.length)
-                    break;
-                inv.setItem(recipeSlots[slotIdx], createRecipeItem(recipe, resourceId));
-                slotIdx++;
+            Recipe recipe = recipes.get(this.currentRecipePage);
+            buildCraftingTableLayout(inv, recipe, resourceId);
+
+            // ── Recipe pagination ──────────────────────────────────────────────
+            if (recipes.size() > 1) {
+                // Page indicator (slot 49)
+                ItemStack pageInfo = createItem(Material.BOOK,
+                        "&e&lRecipe " + (this.currentRecipePage + 1) + " / " + recipes.size(),
+                        Arrays.asList("&7Multiple recipes available",
+                                "&7Use arrows to navigate"));
+                inv.setItem(49, pageInfo);
+
+                if (this.currentRecipePage > 0) {
+                    ItemStack prev = createItem(Material.ARROW, "&a\u00AB Previous Recipe",
+                            Arrays.asList("&7Recipe " + this.currentRecipePage + " of " + recipes.size()));
+                    stampPDC(prev, "wiki_action", "recipe_prev:" + resourceId);
+                    inv.setItem(48, prev);
+                }
+                if (this.currentRecipePage < recipes.size() - 1) {
+                    ItemStack next = createItem(Material.ARROW, "&a Next Recipe \u00BB",
+                            Arrays.asList("&7Recipe " + (this.currentRecipePage + 2) + " of " + recipes.size()));
+                    stampPDC(next, "wiki_action", "recipe_next:" + resourceId);
+                    inv.setItem(50, next);
+                }
             }
         }
 
-        // Back button
-        ItemStack backButton = createItem(Material.ARROW, "&e&lBack to Wiki",
+        // ── Back button (slot 45) ─────────────────────────────────────────────
+        ItemStack backButton = createItem(Material.DARK_OAK_DOOR, "&e&lBack to Wiki",
                 Arrays.asList("&7Return to the wiki list"));
         stampPDC(backButton, "wiki_action", "back_to_wiki");
         inv.setItem(45, backButton);
 
-        // Close
+        // ── Close (slot 53) ───────────────────────────────────────────────────
         ItemStack closeButton = createItem(Material.BARRIER, "&c&lClose",
                 Arrays.asList("&7Click to close"));
         stampPDC(closeButton, "wiki_action", "close");
         inv.setItem(53, closeButton);
 
         player.openInventory(inv);
+    }
+
+    /**
+     * Fills the inventory with a crafting-table style layout for the given recipe.
+     *
+     * <pre>
+     *  Col:  1    2    3    4    5    6    7
+     *  Row1: [10] [11] [12] [13] [14] [15] [16]
+     *  Row2: [19] [20] [21] [22] [23] [24] [25]
+     *  Row3: [28] [29] [30] [31] [32] [33] [34]
+     * </pre>
+     *
+     * Input 3×3 grid: cols 1-3 → slots 10-12, 19-21, 28-30<br>
+     * Arrow col 4 : slots 13, 22, 31 (middle arrow at 22)<br>
+     * Output col 5 : slots 14, 23, 32 (output at 23)<br>
+     * Info panel : cols 6-7 → slots 15-16, 24-25, 33-34
+     */
+    private void buildCraftingTableLayout(Inventory inv, Recipe recipe, String highlightResourceId) {
+        // Input grid slots (3×3), mapped positionally
+        int[] inputSlots = { 10, 11, 12, 19, 20, 21, 28, 29, 30 };
+        // Arrow column centre
+        int[] arrowSlots = { 13, 31 };
+        int arrowCentre = 22;
+        // Output row centre
+        int outputSlot = 23;
+        // Info panel slots (2 cols × 3 rows)
+        int[] infoSlots = { 15, 16, 24, 25, 33, 34 };
+
+        ItemStack emptyBorder = createItem(Material.GRAY_STAINED_GLASS_PANE, " ", null);
+
+        // ── Input 3×3 grid ────────────────────────────────────────────────────
+        // Consolidate inputs: if multiple entries share the same resource key
+        // they are already distinct, so we place them positionally (slot order).
+        List<Map.Entry<String, Integer>> inputEntries = new ArrayList<>(recipe.getInputs().entrySet());
+
+        for (int i = 0; i < inputSlots.length; i++) {
+            if (i < inputEntries.size()) {
+                Map.Entry<String, Integer> entry = inputEntries.get(i);
+                String inputKey = entry.getKey();
+                int amount = entry.getValue();
+
+                // Choose material
+                Material mat = Material.STONE;
+                ResourceItem inputRes = plugin.getResourceManager().getResource(inputKey);
+                if (inputRes != null) {
+                    try {
+                        mat = Material.valueOf(inputRes.getMaterial());
+                    } catch (IllegalArgumentException ignored) {
+                    }
+                } else if (ResourceManager.isVanillaInput(inputKey)) {
+                    try {
+                        mat = Material.valueOf(inputKey.toUpperCase());
+                    } catch (IllegalArgumentException ignored) {
+                    }
+                }
+
+                // Build display name & lore
+                String displayName = getInputDisplayName(inputKey);
+                boolean isHighlight = inputKey.equals(highlightResourceId);
+                String nameColor = isHighlight ? "&e&l" : "&f&l";
+
+                List<String> lore = new ArrayList<>();
+                lore.add("&8┌─ &7Input Material");
+                lore.add("&8│ &7Amount: &e" + amount + "x");
+                if (inputRes != null) {
+                    lore.add(
+                            "&8│ &7Rarity: " + getRarityColor(inputRes.getRarity()) + capitalize(inputRes.getRarity()));
+                    lore.add("&8│ &7Price each: &6$" + String.format("%.2f", inputRes.getSellPrice()));
+                }
+                lore.add("&8└───────────────");
+
+                // Use amount as stack size (capped at 64 for display)
+                ItemStack inputItem = new ItemStack(mat, Math.min(amount, 64));
+                ItemMeta meta = inputItem.getItemMeta();
+                if (meta != null) {
+                    meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+                            nameColor + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', displayName))
+                                    + " &8x" + amount));
+                    List<String> coloredLore = new ArrayList<>();
+                    for (String l : lore)
+                        coloredLore.add(ChatColor.translateAlternateColorCodes('&', l));
+                    meta.setLore(coloredLore);
+                    if (inputRes != null && inputRes.getCustomModelData() > 0)
+                        meta.setCustomModelData(inputRes.getCustomModelData());
+                    inputItem.setItemMeta(meta);
+                }
+
+                inv.setItem(inputSlots[i], inputItem);
+            } else {
+                inv.setItem(inputSlots[i], emptyBorder);
+            }
+        }
+
+        // ── Arrow column ──────────────────────────────────────────────────────
+        ItemStack arrowTop = createItem(Material.GRAY_STAINED_GLASS_PANE, " ", null);
+        for (int slot : arrowSlots)
+            inv.setItem(slot, arrowTop);
+
+        // Centre arrow with recipe info
+        FactoryType ft = FactoryType.fromId(recipe.getFactoryType());
+        String factoryName = ft != null ? ft.getDisplayName() : "&7" + recipe.getFactoryType();
+        List<String> arrowLore = new ArrayList<>();
+        arrowLore.add("&8Factory: " + factoryName);
+        arrowLore.add("&8Time: &b" + formatTime(recipe.getProductionTime()));
+        arrowLore.add("&8Cost: &6$" + String.format("%.2f", recipe.getMoneyCost()));
+        if (recipe.isDisableItemOutput()) {
+            arrowLore.add("");
+            arrowLore.add("&8&oNo item output");
+        }
+        ItemStack arrow = createItem(Material.ARROW, "&a\u27A1 " + recipe.getName(), arrowLore);
+        inv.setItem(arrowCentre, arrow);
+
+        // ── Output ────────────────────────────────────────────────────────────
+        // Consolidate outputs – display first output in the main slot;
+        // additional outputs go into info slots.
+        List<Map.Entry<String, Integer>> outputEntries = new ArrayList<>(recipe.getOutputs().entrySet());
+
+        if (!outputEntries.isEmpty()) {
+            Map.Entry<String, Integer> primary = outputEntries.get(0);
+            String outKey = primary.getKey();
+            int outAmount = primary.getValue();
+
+            Material outMat = Material.STONE;
+            ResourceItem outRes = plugin.getResourceManager().getResource(outKey);
+            if (outRes != null) {
+                try {
+                    outMat = Material.valueOf(outRes.getMaterial());
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
+
+            List<String> outLore = new ArrayList<>();
+            outLore.add("&8┌─ &aOutput");
+            outLore.add("&8│ &7Amount: &e" + outAmount + "x");
+            if (outRes != null) {
+                outLore.add("&8│ &7Rarity: " + getRarityColor(outRes.getRarity()) + capitalize(outRes.getRarity()));
+                outLore.add("&8│ &7Value: &6$" + String.format("%.2f", outRes.getSellPrice() * outAmount));
+            }
+            // Additional outputs listed here if present
+            if (outputEntries.size() > 1) {
+                outLore.add("&8│");
+                outLore.add("&8│ &7Also produces:");
+                for (int i = 1; i < outputEntries.size(); i++) {
+                    Map.Entry<String, Integer> extra = outputEntries.get(i);
+                    ResourceItem extraRes = plugin.getResourceManager().getResource(extra.getKey());
+                    String extraName = extraRes != null ? extraRes.getName() : "&f" + extra.getKey();
+                    outLore.add("&8│  &7• " + extraName + " &8x" + extra.getValue());
+                }
+            }
+            outLore.add("&8└───────────────");
+
+            boolean isHighlight = outKey.equals(highlightResourceId);
+            String outColor = isHighlight ? "&a&l" : "&f&l";
+            String outName = outRes != null ? outRes.getName() : "&f" + outKey;
+
+            ItemStack outputItem = new ItemStack(outMat, Math.min(outAmount, 64));
+            ItemMeta outMeta = outputItem.getItemMeta();
+            if (outMeta != null) {
+                outMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+                        outColor + ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', outName)) + " &8x"
+                                + outAmount));
+                List<String> coloredOut = new ArrayList<>();
+                for (String l : outLore)
+                    coloredOut.add(ChatColor.translateAlternateColorCodes('&', l));
+                outMeta.setLore(coloredOut);
+                if (outRes != null && outRes.getCustomModelData() > 0)
+                    outMeta.setCustomModelData(outRes.getCustomModelData());
+                outputItem.setItemMeta(outMeta);
+            }
+
+            inv.setItem(outputSlot, outputItem);
+        }
+
+        // ── Info panel (slots 15,16,24,25,33,34) ─────────────────────────────
+        // Fill unused info slots with border
+        for (int slot : infoSlots)
+            inv.setItem(slot, emptyBorder);
+
+        // Slot 15: recipe info – factory
+        FactoryType ft2 = FactoryType.fromId(recipe.getFactoryType());
+        String factName = ft2 != null ? ft2.getDisplayName() : "&7" + recipe.getFactoryType();
+        List<String> factLore = new ArrayList<>();
+        factLore.add("");
+        factLore.add("&8Factory: " + factName);
+        factLore.add("&8Time: &b" + formatTime(recipe.getProductionTime()));
+        factLore.add("&8Cost: &6$" + String.format("%.2f", recipe.getMoneyCost()));
+        if (recipe.isDisableItemOutput()) {
+            factLore.add("");
+            factLore.add("&8&oNo item output (cmd only)");
+        }
+        ItemStack factItem = createItem(Material.FURNACE, "&e&l" + recipe.getName(), factLore);
+        inv.setItem(15, factItem);
     }
 
     /**
@@ -668,5 +892,9 @@ public class RecipesWikiGUI {
 
     public int getCurrentPage() {
         return currentPage;
+    }
+
+    public int getCurrentRecipePage() {
+        return currentRecipePage;
     }
 }

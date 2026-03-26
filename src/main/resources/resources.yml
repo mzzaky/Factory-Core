@@ -2,11 +2,11 @@
 # All items used in FactoryCore plugin
 
 # Resource Types:
-# 1. RAW_RESOURCES     - Raw plugin materials (produced by the Smeltery from vanilla inputs)
-# 2. ADVANCED_RESOURCES - Processed materials (produced by Steel Mill)
-# 3. FINAL_RESOURCES   - Finished products (produced by Advanced Factory)
-# 4. FUEL              - Fuel (produced by Refinery)
-# 5. MACHINE_PARTS     - Machine parts (produced by Workshop)
+# 1. RAW_RESOURCES      - TIER I   - Raw plugin materials (produced by the Smeltery)
+# 2. ADVANCED_RESOURCES - TIER II  - Processed materials (produced by Steel Mill)
+# 3. FUEL               - TIER II  - Fuel (produced by Refinery)
+# 4. MACHINE_PARTS      - TIER II  - Machine parts (produced by Workshop)
+# 5. FINAL_RESOURCES    - TIER III - Finished products (berikan ide nama factory)
 #
 # ==================== Smeltery — Vanilla Input Note ====================
 # The Smeltery factory type accepts REAL vanilla materials that players
@@ -57,11 +57,13 @@
 
 resources:
   # ==================== RAW RESOURCES ====================
-  iron_ore:
+  # Tier 1 — Entry-level materials produced by Smeltery
+  # Price range: $8 – $25 per unit
+  industrial_iron_ore:
     rarity: "common"
     type: RAW_RESOURCES
     material: IRON_ORE
-    name: "§fIron Ore"
+    name: "§fIndustrial Iron Ore"
     lore:
       - "%rarity%"
       - ""
@@ -69,13 +71,13 @@ resources:
       - "§7Can be processed into iron"
     custom-model-data: 1001
     glow: false
-    suggested_price: 10.0
-    
-  coal_ore:
+    suggested_price: 12.0
+
+  industrial_coal_ore:
     rarity: "common"
     type: RAW_RESOURCES
     material: COAL_ORE
-    name: "§8Coal Ore"
+    name: "§8Industrial Coal Ore"
     lore:
       - "%rarity%"
       - ""
@@ -83,13 +85,13 @@ resources:
       - "§7Fuel raw material"
     custom-model-data: 1002
     glow: false
-    suggested_price: 5.0
-    
-  copper_ore:
+    suggested_price: 8.0
+
+  industrial_copper_ore:
     rarity: "common"
     type: RAW_RESOURCES
     material: COPPER_ORE
-    name: "§6Copper Ore"
+    name: "§6Industrial Copper Ore"
     lore:
       - "%rarity%"
       - ""
@@ -98,12 +100,12 @@ resources:
     custom-model-data: 1003
     glow: false
     suggested_price: 15.0
-    
-  gold_ore:
+
+  industrial_gold_ore:
     rarity: "uncommon"
     type: RAW_RESOURCES
     material: GOLD_ORE
-    name: "§eGold Ore"
+    name: "§eIndustrial Gold Ore"
     lore:
       - "%rarity%"
       - ""
@@ -111,13 +113,13 @@ resources:
       - "§7Valuable material"
     custom-model-data: 1004
     glow: false
-    suggested_price: 50.0
-    
-  diamond_ore:
+    suggested_price: 40.0
+
+  industrial_diamond_ore:
     rarity: "rare"
     type: RAW_RESOURCES
     material: DIAMOND_ORE
-    name: "§bDiamond Ore"
+    name: "§bIndustrial Diamond Ore"
     lore:
       - "%rarity%"
       - ""
@@ -125,13 +127,13 @@ resources:
       - "§7Very rare material"
     custom-model-data: 1005
     glow: true
-    suggested_price: 200.0
-    
-  redstone_dust:
+    suggested_price: 150.0
+
+  industrial_redstone_dust:
     rarity: "uncommon"
     type: RAW_RESOURCES
     material: REDSTONE
-    name: "§cRedstone Dust"
+    name: "§cIndustrial Redstone Dust"
     lore:
       - "%rarity%"
       - ""
@@ -139,243 +141,725 @@ resources:
       - "§7Electronic component"
     custom-model-data: 1006
     glow: false
-    suggested_price: 10.0
+    suggested_price: 12.0
+
+  # ==================== FUEL ====================
+  # Support tier — consumed by factories as processing fuel
+  # Price range: $18 – $120 per unit
+  high_speed_diesel:
+    rarity: "common"
+    type: FUEL
+    material: COAL
+    name: "§8High Speed Diesel"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7High speed diesel"
+    custom-model-data: 0
+    glow: false
+    suggested_price: 18.0
+
+  marine_fuel_oil:
+    rarity: "uncommon"
+    type: FUEL
+    material: LAVA_BUCKET
+    name: "§6Marine Fuel Oil"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Marine fuel oil"
+    custom-model-data: 0
+    glow: false
+    suggested_price: 50.0
+
+  biosolar:
+    rarity: "rare"
+    type: FUEL
+    material: BLAZE_POWDER
+    name: "§eBio-Solar"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Bio-Solar"
+    custom-model-data: 0
+    glow: true
+    suggested_price: 120.0
 
   # ==================== ADVANCED RESOURCES ====================
+  # Tier 2 — Processed materials produced by Steel Mill
+  # Price range: $35 – $130 per unit
+
   steel_ingot:
-    rarity: "uncommon"
+    rarity: "common"
     type: ADVANCED_RESOURCES
     material: IRON_INGOT
     name: "§7Steel Ingot"
     lore:
       - "%rarity%"
       - ""
-      - "§7High-quality steel ingot"
-      - "§7Processed from Steel Mill"
+      - "§7Hardened steel ingot"
+      - "§7Primary construction material"
     custom-model-data: 2001
     glow: false
-    suggested_price: 100.0
-    
-  refined_copper:
-    rarity: "uncommon"
+    suggested_price: 35.0
+
+  copper_wire:
+    rarity: "common"
     type: ADVANCED_RESOURCES
-    material: COPPER_INGOT
-    name: "§6Refined Copper"
+    material: STRING
+    name: "§6Copper Wire"
     lore:
       - "%rarity%"
       - ""
-      - "§7Pure copper"
-      - "§7For electronic components"
+      - "§7Conductive copper wiring"
+      - "§7Used in electronics & motors"
     custom-model-data: 2002
     glow: false
-    suggested_price: 80.0
-    
+    suggested_price: 28.0
+
+  reinforced_plate:
+    rarity: "uncommon"
+    type: ADVANCED_RESOURCES
+    material: IRON_BLOCK
+    name: "§8Reinforced Steel Plate"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Heavy-duty armored plate"
+      - "§7Structural component"
+    custom-model-data: 2003
+    glow: false
+    suggested_price: 60.0
+
   gold_alloy:
-    rarity: "rare"
+    rarity: "uncommon"
     type: ADVANCED_RESOURCES
     material: GOLD_INGOT
     name: "§eGold Alloy"
     lore:
       - "%rarity%"
       - ""
-      - "§7High-quality gold alloy"
-      - "§7Premium material"
-    custom-model-data: 2003
-    glow: true
-    suggested_price: 250.0
-    
-  carbon_fiber:
-    rarity: "epic"
-    type: ADVANCED_RESOURCES
-    material: STRING
-    name: "§8Carbon Fiber"
-    lore:
-      - "%rarity%"
-      - ""
-      - "§7Strong carbon fiber"
-      - "§7Lightweight and strong material"
+      - "§7High-purity gold alloy"
+      - "§7Precision conductor"
     custom-model-data: 2004
     glow: false
-    suggested_price: 300.0
+    suggested_price: 70.0
 
-  # ==================== FINAL RESOURCES ====================
-  advanced_weapon:
-    rarity: "epic"
-    type: FINAL_RESOURCES
-    material: DIAMOND_SWORD
-    name: "§5Advanced Weapon"
-    lore:
-      - "%rarity%"
-      - ""
-      - "§7Advanced weapon"
-      - "§7High-value product"
-      - ""
-      - "§eSell Price: §6$5,000"
-    custom-model-data: 3001
-    glow: true
-    suggested_price: 5000.0
-    
-  advanced_armor:
-    rarity: "epic"
-    type: FINAL_RESOURCES
-    material: DIAMOND_CHESTPLATE
-    name: "§5Advanced Armor"
-    lore:
-      - "%rarity%"
-      - ""
-      - "§7Advanced armor"
-      - "§7Maximum protection"
-      - ""
-      - "§eSell Price: §6$4,500"
-    custom-model-data: 3002
-    glow: true
-    suggested_price: 4500.0
-    
-  electronic_component:
-    rarity: "rare"
-    type: FINAL_RESOURCES
-    material: REPEATER
-    name: "§bElectronic Component"
-    lore:
-      - "%rarity%"
-      - ""
-      - "§7Electronic component"
-      - "§7High technology"
-      - ""
-      - "§eSell Price: §6$3,000"
-    custom-model-data: 3003
-    glow: true
-    suggested_price: 3000.0
-    
-  luxury_item:
-    rarity: "epic"
-    type: FINAL_RESOURCES
-    material: NETHER_STAR
-    name: "§6Luxury Item"
-    lore:
-      - "%rarity%"
-      - ""
-      - "§7Luxury item"
-      - "§7Very valuable"
-      - ""
-      - "§eSell Price: §6$10,000"
-    custom-model-data: 3004
-    glow: true
-    suggested_price: 10000.0
-
-  # ==================== FUEL ====================
-  basic_fuel:
-    rarity: "common"
-    type: FUEL
-    material: COAL
-    name: "§8Basic Fuel"
-    lore:
-      - "%rarity%"
-      - ""
-      - "§7Basic fuel"
-      - "§7From Refinery"
-    custom-model-data: 4001
-    glow: false
-    suggested_price: 20.0
-    
-  refined_fuel:
+  electronic_circuit:
     rarity: "uncommon"
-    type: FUEL
-    material: LAVA_BUCKET
-    name: "§6Refined Fuel"
+    type: ADVANCED_RESOURCES
+    material: COMPARATOR
+    name: "§aElectronic Circuit"
     lore:
       - "%rarity%"
       - ""
-      - "§7High-quality fuel"
-      - "§7High efficiency"
-    custom-model-data: 4002
+      - "§7Integrated circuit board"
+      - "§7Core of all electronics"
+    custom-model-data: 2005
     glow: false
-    suggested_price: 60.0
-    
-  premium_fuel:
+    suggested_price: 85.0
+
+  carbon_composite:
     rarity: "rare"
-    type: FUEL
-    material: BLAZE_POWDER
-    name: "§ePremium Fuel"
+    type: ADVANCED_RESOURCES
+    material: NETHERITE_SCRAP
+    name: "§3Carbon Composite"
     lore:
       - "%rarity%"
       - ""
-      - "§7Premium fuel"
-      - "§7Maximum efficiency"
-    custom-model-data: 4003
+      - "§7Ultra-light carbon fiber"
+      - "§7Aerospace-grade material"
+    custom-model-data: 2006
     glow: true
-    suggested_price: 150.0
+    suggested_price: 130.0
+
+  titanium_plate:
+    rarity: "rare"
+    type: ADVANCED_RESOURCES
+    material: NETHERITE_INGOT
+    name: "§9Titanium Plate"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Forged titanium alloy plate"
+      - "§7Heat-resistant & ultra-strong"
+    custom-model-data: 2007
+    glow: true
+    suggested_price: 100.0
+
+  silicon_wafer:
+    rarity: "uncommon"
+    type: ADVANCED_RESOURCES
+    material: GLASS_PANE
+    name: "§fSilicon Wafer"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7High-purity silicon disc"
+      - "§7Semiconductor substrate"
+    custom-model-data: 2008
+    glow: false
+    suggested_price: 55.0
+
+  aluminum_sheet:
+    rarity: "common"
+    type: ADVANCED_RESOURCES
+    material: IRON_TRAPDOOR
+    name: "§7Aluminum Sheet"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Lightweight aluminum panel"
+      - "§7Corrosion-resistant alloy"
+    custom-model-data: 2009
+    glow: false
+    suggested_price: 40.0
+
+  tungsten_rod:
+    rarity: "uncommon"
+    type: ADVANCED_RESOURCES
+    material: LIGHTNING_ROD
+    name: "§8Tungsten Rod"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Ultra-dense tungsten bar"
+      - "§7Extreme heat tolerance"
+    custom-model-data: 2010
+    glow: false
+    suggested_price: 95.0
+
+  fiber_optic_cable:
+    rarity: "uncommon"
+    type: ADVANCED_RESOURCES
+    material: LEAD
+    name: "§eFiber Optic Cable"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7High-speed data transmission"
+      - "§7Glass-core optical fiber"
+    custom-model-data: 2011
+    glow: false
+    suggested_price: 75.0
+
+  tempered_glass:
+    rarity: "common"
+    type: ADVANCED_RESOURCES
+    material: TINTED_GLASS
+    name: "§fTempered Glass"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Impact-resistant glass panel"
+      - "§7For screens & optical housings"
+    custom-model-data: 2012
+    glow: false
+    suggested_price: 45.0
 
   # ==================== MACHINE PARTS ====================
+  # Tier 2 — Machine components produced by Workshop
+  # Price range: $45 – $250 per unit
+
   basic_gear:
     rarity: "common"
     type: MACHINE_PARTS
-    material: IRON_INGOT
+    material: CLOCK
     name: "§7Basic Gear"
     lore:
       - "%rarity%"
       - ""
-      - "§7Basic gear"
-      - "§7Machine component"
-    custom-model-data: 5001
+      - "§7Standard mechanical gear"
+      - "§7Foundation of all machinery"
+    custom-model-data: 3001
     glow: false
-    suggested_price: 30.0
-    
+    suggested_price: 45.0
+
   advanced_gear:
     rarity: "uncommon"
     type: MACHINE_PARTS
-    material: GOLD_INGOT
-    name: "§eAdvanced Gear"
+    material: COMPASS
+    name: "§bAdvanced Gear"
     lore:
       - "%rarity%"
       - ""
-      - "§7Advanced gear"
-      - "§7Quality component"
-    custom-model-data: 5002
+      - "§7Precision-machined gear set"
+      - "§7For high-performance machines"
+    custom-model-data: 3002
     glow: false
-    suggested_price: 100.0
-    
-  engine_part:
-    rarity: "rare"
+    suggested_price: 110.0
+
+  hydraulic_piston:
+    rarity: "uncommon"
     type: MACHINE_PARTS
     material: PISTON
-    name: "§6Engine Part"
+    name: "§6Hydraulic Piston"
     lore:
       - "%rarity%"
       - ""
-      - "§7Engine component"
-      - "§7For production"
-    custom-model-data: 5003
+      - "§7High-pressure hydraulic piston"
+      - "§7Converts fluid power to force"
+    custom-model-data: 3003
     glow: false
+    suggested_price: 90.0
+
+  electric_motor:
+    rarity: "uncommon"
+    type: MACHINE_PARTS
+    material: REDSTONE_LAMP
+    name: "§cElectric Motor"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Compact electric motor"
+      - "§7Powers automated systems"
+    custom-model-data: 3004
+    glow: false
+    suggested_price: 120.0
+
+  precision_lens:
+    rarity: "rare"
+    type: MACHINE_PARTS
+    material: SPYGLASS
+    name: "§dPrecision Lens"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Diamond-polished optical lens"
+      - "§7For targeting & sensors"
+    custom-model-data: 3005
+    glow: true
+    suggested_price: 250.0
+
+  ball_bearing:
+    rarity: "common"
+    type: MACHINE_PARTS
+    material: IRON_NUGGET
+    name: "§7Ball Bearing"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Precision steel ball bearing"
+      - "§7Reduces rotational friction"
+    custom-model-data: 3006
+    glow: false
+    suggested_price: 55.0
+
+  fuel_injector:
+    rarity: "uncommon"
+    type: MACHINE_PARTS
+    material: DROPPER
+    name: "§6Fuel Injector"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7High-pressure fuel atomizer"
+      - "§7Precision combustion control"
+    custom-model-data: 3007
+    glow: false
+    suggested_price: 80.0
+
+  servo_motor:
+    rarity: "rare"
+    type: MACHINE_PARTS
+    material: DAYLIGHT_DETECTOR
+    name: "§dServo Motor"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Digital servo actuator"
+      - "§7Precision position control"
+    custom-model-data: 3008
+    glow: true
+    suggested_price: 140.0
+
+  pressure_valve:
+    rarity: "uncommon"
+    type: MACHINE_PARTS
+    material: TRIPWIRE_HOOK
+    name: "§6Pressure Valve"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Industrial pressure regulator"
+      - "§7Controls fluid & gas flow"
+    custom-model-data: 3009
+    glow: false
+    suggested_price: 70.0
+
+  cooling_fan:
+    rarity: "common"
+    type: MACHINE_PARTS
+    material: HOPPER
+    name: "§bCooling Fan"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7High-RPM cooling unit"
+      - "§7Thermal management system"
+    custom-model-data: 3010
+    glow: false
+    suggested_price: 65.0
+
+  turbine_blade:
+    rarity: "rare"
+    type: MACHINE_PARTS
+    material: DIAMOND_AXE
+    name: "§3Turbine Blade"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Aerodynamic turbine blade"
+      - "§7Rated for extreme RPM"
+    custom-model-data: 3011
+    glow: true
     suggested_price: 200.0
-    
-  circuit_board:
-    rarity: "epic"
-    type: MACHINE_PARTS
-    material: COMPARATOR
-    name: "§bCircuit Board"
+
+  # ==================== FINAL RESOURCES ====================
+  # Tier 3 — Finished high-value products
+  # Produced by: Military Factory, Electronics Assembly,
+  #              Automotive Plant, Aerospace Foundry
+  # Price range: $850 – $3,000 per unit
+
+  # --- Military Factory ---
+  tactical_vest:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: LEATHER_CHESTPLATE
+    name: "§4Tactical Vest"
     lore:
       - "%rarity%"
       - ""
-      - "§7Circuit board"
-      - "§7Electronic component"
-    custom-model-data: 5004
+      - "§7Military-grade body armor"
+      - "§7Reinforced composite plating"
+      - ""
+      - "§eSell Price: §6$850"
+    custom-model-data: 4001
     glow: true
-    suggested_price: 400.0
-    
-  hydraulic_system:
-    rarity: "epic"
-    type: MACHINE_PARTS
-    material: HEAVY_WEIGHTED_PRESSURE_PLATE
-    name: "§9Hydraulic System"
+    suggested_price: 850.0
+
+  combat_rifle:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: CROSSBOW
+    name: "§4Combat Rifle"
     lore:
       - "%rarity%"
       - ""
-      - "§7Hydraulic system"
-      - "§7High-precision component"
-    custom-model-data: 5005
+      - "§7Precision assault weapon"
+      - "§7Optical sight equipped"
+      - ""
+      - "§eSell Price: §6$900"
+    custom-model-data: 4002
     glow: true
-    suggested_price: 600.0
+    suggested_price: 900.0
+
+  armored_vehicle:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: IRON_HORSE_ARMOR
+    name: "§4Armored Vehicle"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Fully armored transport unit"
+      - "§7Mine-resistant hull design"
+      - ""
+      - "§eSell Price: §6$1,800"
+    custom-model-data: 4009
+    glow: true
+    suggested_price: 1800.0
+
+  guided_missile:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: FIREWORK_ROCKET
+    name: "§4Guided Missile"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Precision-guided munition"
+      - "§7Thermal-tracking warhead"
+      - ""
+      - "§eSell Price: §6$2,200"
+    custom-model-data: 4010
+    glow: true
+    suggested_price: 2200.0
+
+  night_vision_goggles:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: LEATHER_HELMET
+    name: "§2Night Vision Goggles"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Infrared imaging headset"
+      - "§7Full-spectrum visibility"
+      - ""
+      - "§eSell Price: §6$650"
+    custom-model-data: 4011
+    glow: true
+    suggested_price: 650.0
+
+  # --- Electronics Assembly ---
+  smartphone:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: MAP
+    name: "§fSmartphone"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7High-end mobile device"
+      - "§7Touchscreen & wireless comms"
+      - ""
+      - "§eSell Price: §6$750"
+    custom-model-data: 4003
+    glow: false
+    suggested_price: 750.0
+
+  server_rack:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: OBSERVER
+    name: "§5Server Rack"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Data center server unit"
+      - "§7High-performance computing"
+      - ""
+      - "§eSell Price: §6$1,500"
+    custom-model-data: 4004
+    glow: true
+    suggested_price: 1500.0
+
+  laptop_computer:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: BOOK
+    name: "§fLaptop Computer"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Portable computing workstation"
+      - "§7Multi-core processor inside"
+      - ""
+      - "§eSell Price: §6$1,200"
+    custom-model-data: 4012
+    glow: false
+    suggested_price: 1200.0
+
+  drone_controller:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: REPEATER
+    name: "§aDrone Controller"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7UAV ground control station"
+      - "§7Real-time telemetry link"
+      - ""
+      - "§eSell Price: §6$950"
+    custom-model-data: 4013
+    glow: true
+    suggested_price: 950.0
+
+  solar_panel:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: DAYLIGHT_DETECTOR
+    name: "§eSolar Panel Array"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Photovoltaic power module"
+      - "§7Clean renewable energy"
+      - ""
+      - "§eSell Price: §6$1,800"
+    custom-model-data: 4014
+    glow: true
+    suggested_price: 1800.0
+
+  radar_system:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: SCULK_SENSOR
+    name: "§9Radar System"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Long-range detection array"
+      - "§7360° surveillance coverage"
+      - ""
+      - "§eSell Price: §6$2,000"
+    custom-model-data: 4015
+    glow: true
+    suggested_price: 2000.0
+
+  # --- Automotive Plant ---
+  engine_block:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: FURNACE
+    name: "§6Engine Block"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7V8 combustion engine"
+      - "§7Heart of any vehicle"
+      - ""
+      - "§eSell Price: §6$1,000"
+    custom-model-data: 4005
+    glow: true
+    suggested_price: 1000.0
+
+  vehicle_chassis:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: MINECART
+    name: "§eVehicle Chassis"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Armored vehicle frame"
+      - "§7Modular mounting platform"
+      - ""
+      - "§eSell Price: §6$1,100"
+    custom-model-data: 4006
+    glow: true
+    suggested_price: 1100.0
+
+  turbocharger:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: DISPENSER
+    name: "§6Turbocharger"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Exhaust-driven forced induction"
+      - "§7Boosts engine output 40%"
+      - ""
+      - "§eSell Price: §6$800"
+    custom-model-data: 4016
+    glow: true
+    suggested_price: 800.0
+
+  transmission_system:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: CHEST_MINECART
+    name: "§eTransmission System"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Automatic gearbox assembly"
+      - "§78-speed sequential shift"
+      - ""
+      - "§eSell Price: §6$1,400"
+    custom-model-data: 4017
+    glow: true
+    suggested_price: 1400.0
+
+  electric_battery:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: SEA_LANTERN
+    name: "§bElectric Battery Pack"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Lithium-ion power cell array"
+      - "§7High-density energy storage"
+      - ""
+      - "§eSell Price: §6$1,600"
+    custom-model-data: 4018
+    glow: true
+    suggested_price: 1600.0
+
+  # --- Aerospace Foundry ---
+  jet_engine:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: BEACON
+    name: "§bJet Engine"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Turbofan jet propulsion unit"
+      - "§7Aerospace-grade thrust system"
+      - ""
+      - "§eSell Price: §6$2,500"
+    custom-model-data: 4007
+    glow: true
+    suggested_price: 2500.0
+
+  satellite_module:
+    rarity: "legendary"
+    type: FINAL_RESOURCES
+    material: END_CRYSTAL
+    name: "§dSatellite Module"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Orbital communications satellite"
+      - "§7Cutting-edge space technology"
+      - ""
+      - "§eSell Price: §6$3,000"
+    custom-model-data: 4008
+    glow: true
+    suggested_price: 3000.0
+
+  rocket_booster:
+    rarity: "legendary"
+    type: FINAL_RESOURCES
+    material: TNT
+    name: "§cRocket Booster"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Solid-fuel rocket propulsion"
+      - "§7Multi-stage launch system"
+      - ""
+      - "§eSell Price: §6$3,500"
+    custom-model-data: 4019
+    glow: true
+    suggested_price: 3500.0
+
+  navigation_system:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: RECOVERY_COMPASS
+    name: "§9Navigation System"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7INS/GPS hybrid navigator"
+      - "§7Sub-meter precision guidance"
+      - ""
+      - "§eSell Price: §6$2,800"
+    custom-model-data: 4020
+    glow: true
+    suggested_price: 2800.0
+
+  space_suit:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: DIAMOND_CHESTPLATE
+    name: "§3Space Suit"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Extra-vehicular activity suit"
+      - "§7Life-support & thermal control"
+      - ""
+      - "§eSell Price: §6$2,000"
+    custom-model-data: 4021
+    glow: true
+    suggested_price: 2000.0
 
   # ==================== MMOItems RESOURCES (EXAMPLE) ====================
   # Uncomment and adjust to the MMOItems items available on your server.

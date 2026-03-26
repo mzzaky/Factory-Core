@@ -181,7 +181,7 @@ public class FactoryCorePlaceholder extends PlaceholderExpansion {
         if (params.equals("steel_mills_owned")) {
             long count = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId())
                     .stream()
-                    .filter(f -> f.getType() == com.aithor.factorycore.models.FactoryType.STEEL_MILL)
+                    .filter(f -> f.getType() != null && "steel_mill".equals(f.getType().getId()))
                     .count();
             return String.valueOf(count);
         }
@@ -190,7 +190,7 @@ public class FactoryCorePlaceholder extends PlaceholderExpansion {
         if (params.equals("refineries_owned")) {
             long count = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId())
                     .stream()
-                    .filter(f -> f.getType() == com.aithor.factorycore.models.FactoryType.REFINERY)
+                    .filter(f -> f.getType() != null && "refinery".equals(f.getType().getId()))
                     .count();
             return String.valueOf(count);
         }
@@ -199,7 +199,7 @@ public class FactoryCorePlaceholder extends PlaceholderExpansion {
         if (params.equals("workshops_owned")) {
             long count = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId())
                     .stream()
-                    .filter(f -> f.getType() == com.aithor.factorycore.models.FactoryType.WORKSHOP)
+                    .filter(f -> f.getType() != null && "workshop".equals(f.getType().getId()))
                     .count();
             return String.valueOf(count);
         }
@@ -208,7 +208,7 @@ public class FactoryCorePlaceholder extends PlaceholderExpansion {
         if (params.equals("advanced_factories_owned")) {
             long count = plugin.getFactoryManager().getFactoriesByOwner(player.getUniqueId())
                     .stream()
-                    .filter(f -> f.getType() == com.aithor.factorycore.models.FactoryType.ADVANCED_FACTORY)
+                    .filter(f -> f.getType() != null && "advanced_factory".equals(f.getType().getId()))
                     .count();
             return String.valueOf(count);
         }

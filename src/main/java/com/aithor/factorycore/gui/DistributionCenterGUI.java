@@ -21,7 +21,8 @@ import java.util.*;
 
 /**
  * DistributionCenterGUI - Custom GUI for the Distribution Center feature.
- * Displays active delivery requests, company info, and allows resource delivery.
+ * Displays active delivery requests, company info, and allows resource
+ * delivery.
  */
 public class DistributionCenterGUI {
 
@@ -50,6 +51,44 @@ public class DistributionCenterGUI {
 
         // Header info (slot 4)
         inv.setItem(4, createHeaderItem(requests));
+
+        // Toggle Timer Bossbar (slot 31)
+        boolean bbEnabled = manager.isBossbarEnabled(player.getUniqueId());
+        ItemStack bbToggle = createItem(Material.CLOCK, "§e§lToggle Timer Reminder",
+                Arrays.asList(
+                        "§7Toggle the visibility of a bossbar",
+                        "§7timer for your active requests.",
+                        "",
+                        "§eStatus: " + (bbEnabled ? "§aEnabled" : "§cDisabled"),
+                        "",
+                        "§eClick to toggle!"));
+        ItemMeta bbMeta = bbToggle.getItemMeta();
+        if (bbMeta != null) {
+            bbMeta.getPersistentDataContainer().set(
+                    new NamespacedKey(plugin, "dist_toggle_bossbar"),
+                    PersistentDataType.INTEGER, bbEnabled ? 1 : 0);
+            bbToggle.setItemMeta(bbMeta);
+        }
+        inv.setItem(31, bbToggle);
+
+        // Toggle Distribution Offers (slot 13)
+        boolean distEnabled = manager.isDistributionEnabled(player.getUniqueId());
+        ItemStack distToggle = createItem(Material.ENDER_PEARL, "§d§lToggle Distribution Offers",
+                Arrays.asList(
+                        "§7Toggle whether you want to receive",
+                        "§7new distribution event offers.",
+                        "",
+                        "§eStatus: " + (distEnabled ? "§aEnabled" : "§cDisabled"),
+                        "",
+                        "§eClick to toggle!"));
+        ItemMeta distMeta = distToggle.getItemMeta();
+        if (distMeta != null) {
+            distMeta.getPersistentDataContainer().set(
+                    new NamespacedKey(plugin, "dist_toggle_offers"),
+                    PersistentDataType.INTEGER, distEnabled ? 1 : 0);
+            distToggle.setItemMeta(distMeta);
+        }
+        inv.setItem(13, distToggle);
 
         // Active requests (row 2-3)
         for (int i = 0; i < Math.min(requests.size(), REQUEST_SLOTS.length); i++) {
@@ -174,7 +213,8 @@ public class DistributionCenterGUI {
         DistributionManager manager = plugin.getDistributionManager();
         DistributionEvent event = manager.getEvent(request.getEventId());
         if (event == null) {
-            return createItem(Material.BARRIER, "\u00a7cInvalid Request", Arrays.asList("\u00a77This request is corrupted."));
+            return createItem(Material.BARRIER, "\u00a7cInvalid Request",
+                    Arrays.asList("\u00a77This request is corrupted."));
         }
 
         Company company = manager.getCompany(event.getCompanyId());
@@ -197,7 +237,8 @@ public class DistributionCenterGUI {
         lore.add("");
 
         // Progress
-        lore.add("\u00a7eProgress: \u00a76" + request.getDeliveredCount() + "\u00a77/\u00a76" + request.getTotalDemand() + " resources");
+        lore.add("\u00a7eProgress: \u00a76" + request.getDeliveredCount() + "\u00a77/\u00a76" + request.getTotalDemand()
+                + " resources");
 
         // Progress bar
         int barLen = 20;
@@ -207,7 +248,8 @@ public class DistributionCenterGUI {
         int filled = (int) (barLen * progress);
         StringBuilder bar = new StringBuilder("\u00a7a");
         for (int i = 0; i < barLen; i++) {
-            if (i == filled) bar.append("\u00a77");
+            if (i == filled)
+                bar.append("\u00a77");
             bar.append("|");
         }
         lore.add(bar.toString());
@@ -224,11 +266,13 @@ public class DistributionCenterGUI {
         double taxRate = plugin.getConfig().getDouble("distribution.tax_distribution_rate", 25.0);
         double baseReward = event.getPriceOffer();
         double afterTax = baseReward * (1 - taxRate / 100.0);
-        lore.add("\u00a7eReward: \u00a76$" + String.format("%.2f", afterTax) + " \u00a78(after " + String.format("%.0f", taxRate) + "% tax)");
+        lore.add("\u00a7eReward: \u00a76$" + String.format("%.2f", afterTax) + " \u00a78(after "
+                + String.format("%.0f", taxRate) + "% tax)");
 
         // Bonus info
         if (event.getBonus() > 1.0) {
-            lore.add("\u00a7eSpeed Bonus: \u00a7ax" + event.getBonus() + " \u00a77if " + event.getBonusCondition() + "% time remains");
+            lore.add("\u00a7eSpeed Bonus: \u00a7ax" + event.getBonus() + " \u00a77if " + event.getBonusCondition()
+                    + "% time remains");
         }
 
         lore.add("");
@@ -326,14 +370,26 @@ public class DistributionCenterGUI {
         lore.add("\u00a7eDemanded Resources:");
 
         for (Map.Entry<String, Boolean> entry : request.getDeliveredResources().entrySet()) {
-            ResourceItem resource = plugin.getResourceManager().getResource(entry.getKey());
-            String resName = resource != null ? resource.getName() : entry.getKey();
+            String demandStr = entry.getKey();
+            String actualId = demandStr;
+            int amount = 1;
+            if (demandStr.contains(" ")) {
+                String[] parts = demandStr.split(" ");
+                actualId = parts[0];
+                try {
+                    amount = Integer.parseInt(parts[1]);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+            ResourceItem resource = plugin.getResourceManager().getResource(actualId);
+            String resName = resource != null ? resource.getName() : actualId;
             String status = entry.getValue() ? "\u00a7a\u2714 " : "\u00a7c\u2716 ";
-            lore.add("  " + status + resName);
+            lore.add("  " + status + amount + "x " + resName);
         }
 
         lore.add("");
-        lore.add("\u00a7eProgress: \u00a76" + request.getDeliveredCount() + "\u00a77/\u00a76" + request.getTotalDemand());
+        lore.add("\u00a7eProgress: \u00a76" + request.getDeliveredCount() + "\u00a77/\u00a76"
+                + request.getTotalDemand());
 
         return createItem(Material.PAPER, "\u00a7e\u00a7lRequest Details", lore);
     }
@@ -385,7 +441,8 @@ public class DistributionCenterGUI {
         if (event.getBonus() > 1.0) {
             lore.add("\u00a7e\u00a7lWith Speed Bonus (x" + event.getBonus() + "):");
             lore.add("\u00a7eBoosted Payment: \u00a76$" + String.format("%.2f", bonusReward));
-            lore.add("\u00a7cTax (" + String.format("%.0f", taxRate) + "%): \u00a7c-$" + String.format("%.2f", bonusTax));
+            lore.add("\u00a7cTax (" + String.format("%.0f", taxRate) + "%): \u00a7c-$"
+                    + String.format("%.2f", bonusTax));
             lore.add("\u00a7a\u00a7lBoosted Net: \u00a76\u00a7l$" + String.format("%.2f", bonusAfterTax));
             lore.add("");
             lore.add("\u00a77Bonus requires " + event.getBonusCondition() + "% time remaining");
@@ -394,14 +451,26 @@ public class DistributionCenterGUI {
         return createItem(Material.SUNFLOWER, "\u00a76\u00a7lReward Info", lore);
     }
 
-    private ItemStack createDemandItem(ActiveDistributionRequest request, String resourceId, boolean delivered) {
-        ResourceItem resource = plugin.getResourceManager().getResource(resourceId);
-        String resName = resource != null ? resource.getName() : resourceId;
+    private ItemStack createDemandItem(ActiveDistributionRequest request, String demandStr, boolean delivered) {
+        String actualId = demandStr;
+        int amount = 1;
+        if (demandStr.contains(" ")) {
+            String[] parts = demandStr.split(" ");
+            actualId = parts[0];
+            try {
+                amount = Integer.parseInt(parts[1]);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        ResourceItem resource = plugin.getResourceManager().getResource(actualId);
+        String resName = resource != null ? resource.getName() : actualId;
         Material material = Material.BARRIER;
         if (resource != null) {
             try {
                 material = Material.valueOf(resource.getMaterial());
-            } catch (IllegalArgumentException ignored) {}
+            } catch (IllegalArgumentException ignored) {
+            }
         }
 
         List<String> lore = new ArrayList<>();
@@ -415,13 +484,14 @@ public class DistributionCenterGUI {
             ItemStack item = new ItemStack(Material.LIME_DYE);
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
-                meta.setDisplayName("\u00a7a\u2714 " + resName + " \u00a7a(Delivered)");
+                meta.setDisplayName("\u00a7a\u2714 " + amount + "x " + resName + " \u00a7a(Delivered)");
                 meta.setLore(lore);
                 meta.addEnchant(Enchantment.UNBREAKING, 1, true);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 item.setItemMeta(meta);
             }
             return item;
+
         }
 
         // Not delivered
@@ -436,13 +506,14 @@ public class DistributionCenterGUI {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName("\u00a7c\u2716 " + resName + " \u00a7c(Needed)");
+            meta.setDisplayName("\u00a7c\u2716 " + amount + "x " + resName + " \u00a7c(Needed)");
             meta.setLore(lore);
             meta.getPersistentDataContainer().set(
                     new NamespacedKey(plugin, "dist_demand_resource"),
-                    PersistentDataType.STRING, resourceId);
+                    PersistentDataType.STRING, demandStr);
             meta.getPersistentDataContainer().set(
                     new NamespacedKey(plugin, "dist_demand_request"),
+
                     PersistentDataType.STRING, request.getRequestId());
             item.setItemMeta(meta);
         }
@@ -455,21 +526,28 @@ public class DistributionCenterGUI {
     private void fillBorder(Inventory inv) {
         Material borderMat = Material.matchMaterial(
                 plugin.getConfig().getString("gui.border-item", "BLACK_STAINED_GLASS_PANE"));
-        if (borderMat == null) borderMat = Material.BLACK_STAINED_GLASS_PANE;
+        if (borderMat == null)
+            borderMat = Material.BLACK_STAINED_GLASS_PANE;
         ItemStack border = createItem(borderMat, " ", null);
 
-        for (int i = 0; i < 9; i++) inv.setItem(i, border);
-        for (int i = 45; i < 54; i++) inv.setItem(i, border);
-        for (int i = 9; i < 45; i += 9) inv.setItem(i, border);
-        for (int i = 17; i < 45; i += 9) inv.setItem(i, border);
+        for (int i = 0; i < 9; i++)
+            inv.setItem(i, border);
+        for (int i = 45; i < 54; i++)
+            inv.setItem(i, border);
+        for (int i = 9; i < 45; i += 9)
+            inv.setItem(i, border);
+        for (int i = 17; i < 45; i += 9)
+            inv.setItem(i, border);
     }
 
     private ItemStack createItem(Material material, String name, List<String> lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            if (name != null) meta.setDisplayName(name);
-            if (lore != null) meta.setLore(lore);
+            if (name != null)
+                meta.setDisplayName(name);
+            if (lore != null)
+                meta.setLore(lore);
             item.setItemMeta(meta);
         }
         return item;

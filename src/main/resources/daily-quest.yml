@@ -59,24 +59,14 @@ quests:
       exp: 80
       money: 4000.0
 
-# ==================== BONUS REWARD ====================
-# Bonus reward when ALL daily quests are completed
-all-complete-bonus:
-  enabled: true
-  exp: 500
-  money: 25000.0
+  distribution_master:
+    name: "&5Distribution Master"
+    description: "Complete 20 delivery requests from the Distribution Center"
+    icon: MAP
+    target: 20
+    type: DISTRIBUTION_COMPLETE
+    reward:
+      exp: 150
+      money: 10000.0
 
-# ==================== SOUND EFFECTS ====================
-sound:
-  quest-complete: ENTITY_PLAYER_LEVELUP
-  quest-complete-volume: 1.0
-  quest-complete-pitch: 1.5
-  all-complete: UI_TOAST_CHALLENGE_COMPLETE
-  all-complete-volume: 1.0
-  all-complete-pitch: 1.0
 
-# ==================== NOTIFICATION SETTINGS ====================
-notifications:
-  toast-fade-in: 10
-  toast-stay: 60
-  toast-fade-out: 20

@@ -58,6 +58,7 @@ factory:
   max-level: 5
   base-storage-slots: 9 # Fixed storage slots for input & output storage (no longer scales with level)
   sell-price-multiplier: 0.5 # 50% of buy price
+  transfer-owner-tax-rate: 5.0 # Tax percentage charged to current owner when transferring ownership
   max-factories-per-player: 3 # Max factories a player can own (bypass: factorycore.bypass.factory-limit)
 
   # Production bonuses per level

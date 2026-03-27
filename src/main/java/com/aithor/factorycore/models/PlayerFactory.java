@@ -14,7 +14,7 @@ import java.util.UUID;
 public class PlayerFactory {
 
     private final String id;
-    private final UUID owner;
+    private UUID owner;
     private final FactoryType type;
     private final double price;
     private int level;
@@ -66,6 +66,7 @@ public class PlayerFactory {
 
     public String getId() { return id; }
     public UUID getOwner() { return owner; }
+    public void setOwner(UUID owner) { this.owner = owner; }
     public FactoryType getType() { return type; }
     public double getPrice() { return price; }
     public int getLevel() { return level; }

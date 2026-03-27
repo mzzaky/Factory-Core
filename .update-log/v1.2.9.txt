@@ -34,3 +34,14 @@
     - [Update] Improved the "My Employees" button lore in the shop to show live counts of owned and unassigned employees, matching the information provided in the Employees Center.
     - [Update] Standardized the "Back" button position to slot 51 across all employee-related menus for a more uniform navigation experience.
     - [Update] Enhanced the Shop and My Employees headers and navigation labels to clearly indicate "YOU ARE HERE" for better orientation within the NPC workforce system.
+
+- [New] Factory Ownership Transfer System:
+    - [Update] Added a new "Transfer Owner" button in `MainMenuGUI` at slot 50, enabling ownership transfer flow directly from the factory main menu.
+    - [Update] Implemented an online-player selection submenu for transfer targets, showing all currently active players except the current owner.
+    - [Update] Added a dedicated transfer confirmation submenu before ownership is changed to reduce accidental transfers.
+    - [Update] Added configurable transfer tax support via `factory.transfer-owner-tax-rate` in `config.yml` (default: `5.0%`).
+    - [Update] Applied transfer tax calculation based on original factory price and charged it to the current owner during transfer.
+    - [Update] Ownership transfer now preserves all existing factory data and only updates the owner UUID.
+    - [Update] Added validation safeguards for transfer flow: owner check, target online check, target factory-limit check, and owner balance check.
+    - [Update] Extended `InventoryClickListener` menu routing to support the new Transfer Owner submenus.
+    - [Update] Updated `PlayerFactory` model to allow owner reassignment through `setOwner(UUID)`.

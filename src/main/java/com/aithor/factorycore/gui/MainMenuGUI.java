@@ -199,6 +199,20 @@ public class MainMenuGUI {
                                 Arrays.asList(
                                                 "§7Return to My Factories")));
 
+                double transferTaxRate = plugin.getConfig().getDouble("factory.transfer-owner-tax-rate", 5.0);
+                double transferTax = factoryPrice * (transferTaxRate / 100.0);
+                inv.setItem(50, createItemWithTag(Material.PLAYER_HEAD,
+                                "§e§lTransfer Owner",
+                                Arrays.asList(
+                                                "§7Transfer this factory ownership",
+                                                "§7to another active player.",
+                                                "",
+                                                "§7Transfer tax: §c" + String.format("%.2f", transferTaxRate) + "%",
+                                                "§7Tax amount: §6$" + String.format("%.2f", transferTax),
+                                                "",
+                                                "§eClick to choose new owner"),
+                                "main_menu_action", "transfer_owner_menu"));
+
                 // Output destination toggle (slot 52)
                 StorageManager.OutputDestination currentDest = plugin.getStorageManager()
                                 .getOutputDestination(factoryId);

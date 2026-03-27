@@ -138,6 +138,10 @@ public class FactoryGUI {
                 plugin.getLogger().info("Handling confirm upgrade click");
             }
             handleConfirmUpgradeClick(clicked);
+        } else if (title.contains("Transfer Owner - Confirm")) {
+            handleTransferOwnerConfirmClick(clicked);
+        } else if (title.contains("Transfer Owner")) {
+            handleTransferOwnerMenuClick(clicked);
         }
     }
 
@@ -219,6 +223,11 @@ public class FactoryGUI {
                         PersistentDataType.STRING, "set_icon:" + currentFactoryId);
                 player.sendMessage("§eType the §bMaterial ID §efor the icon (e.g. §bDIAMOND§e), or type §ccancel§e to abort.");
             }
+            return;
+        }
+
+        if ("transfer_owner_menu".equals(mainAction)) {
+            openTransferOwnerMenu();
             return;
         }
 
@@ -327,6 +336,228 @@ public class FactoryGUI {
                 player.sendMessage("§cFailed to teleport to the factory!");
             }
         }
+    }
+
+    private void openTransferOwnerMenu() {
+        Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+        com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager() != null
+                ? plugin.getPlayerFactoryManager().getFactory(currentFactoryId)
+                : null;
+
+        if (factory == null && pf == null) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
+            return;
+        }
+
+        UUID owner = factory != null ? factory.getOwner() : pf.getOwner();
+        if (!player.getUniqueId().equals(owner)) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-owned"));
+            return;
+        }
+
+        Inventory inv = Bukkit.createInventory(null, 54, "§6§lTransfer Owner");
+        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ", null);
+        for (int i = 0; i < inv.getSize(); i++) {
+            inv.setItem(i, border);
+        }
+
+        List<Player> candidates = Bukkit.getOnlinePlayers().stream()
+                .filter(p -> !p.getUniqueId().equals(player.getUniqueId()))
+                .sorted(Comparator.comparing(Player::getName, String.CASE_INSENSITIVE_ORDER))
+                .collect(java.util.stream.Collectors.toList());
+
+        double taxRate = plugin.getConfig().getDouble("factory.transfer-owner-tax-rate", 5.0);
+        double factoryPrice = factory != null ? factory.getPrice() : pf.getPrice();
+        double taxAmount = factoryPrice * (taxRate / 100.0);
+
+        inv.setItem(4, createItem(Material.PAPER, "§e§lTransfer Information",
+                Arrays.asList(
+                        "§7New owner must be online.",
+                        "§7Current owner pays transfer tax.",
+                        "",
+                        "§7Tax rate: §c" + String.format("%.2f", taxRate) + "%",
+                        "§7Tax amount: §6$" + String.format("%.2f", taxAmount),
+                        "",
+                        "§7Select a player below.")));
+
+        int slot = 9;
+        for (Player target : candidates) {
+            if (slot >= 45) {
+                break;
+            }
+
+            ItemStack item = createItem(Material.PLAYER_HEAD,
+                    "§a" + target.getName(),
+                    Arrays.asList(
+                            "§7Click to transfer factory",
+                            "§7ownership to this player."));
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                meta.getPersistentDataContainer().set(
+                        new NamespacedKey(plugin, "transfer_owner_target"),
+                        PersistentDataType.STRING, target.getUniqueId().toString());
+                item.setItemMeta(meta);
+            }
+            inv.setItem(slot++, item);
+        }
+
+        if (candidates.isEmpty()) {
+            inv.setItem(22, createItem(Material.BARRIER,
+                    "§cNo eligible online players",
+                    Arrays.asList(
+                            "§7No other players are online.",
+                            "§7Ask another player to join first.")));
+        }
+
+        inv.setItem(49, createItem(Material.ARROW, "§c§lBack", Arrays.asList("§7Return to factory menu")));
+        player.openInventory(inv);
+    }
+
+    private void handleTransferOwnerMenuClick(ItemStack clicked) {
+        if (!clicked.hasItemMeta()) {
+            return;
+        }
+
+        String name = clicked.getItemMeta().getDisplayName();
+        if (name != null && name.contains("Back")) {
+            openMainMenu();
+            return;
+        }
+
+        String targetUuid = clicked.getItemMeta().getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "transfer_owner_target"),
+                PersistentDataType.STRING);
+        if (targetUuid == null) {
+            return;
+        }
+
+        Player target = Bukkit.getPlayer(UUID.fromString(targetUuid));
+        if (target == null || !target.isOnline()) {
+            player.sendMessage("§cTarget player is no longer online.");
+            openTransferOwnerMenu();
+            return;
+        }
+
+        openTransferOwnerConfirmMenu(target);
+    }
+
+    private void openTransferOwnerConfirmMenu(Player target) {
+        Inventory inv = Bukkit.createInventory(null, 27, "§c§lTransfer Owner - Confirm");
+        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ", null);
+        for (int i = 0; i < inv.getSize(); i++) {
+            inv.setItem(i, border);
+        }
+
+        Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+        com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager() != null
+                ? plugin.getPlayerFactoryManager().getFactory(currentFactoryId)
+                : null;
+        double factoryPrice = factory != null ? factory.getPrice() : (pf != null ? pf.getPrice() : 0.0);
+        double taxRate = plugin.getConfig().getDouble("factory.transfer-owner-tax-rate", 5.0);
+        double taxAmount = factoryPrice * (taxRate / 100.0);
+
+        inv.setItem(13, createItem(Material.PAPER, "§e§lTransfer Summary",
+                Arrays.asList(
+                        "§7Target: §f" + target.getName(),
+                        "§7Tax rate: §c" + String.format("%.2f", taxRate) + "%",
+                        "§7Tax to pay: §6$" + String.format("%.2f", taxAmount),
+                        "",
+                        "§cFactory data will be kept.",
+                        "§cOnly owner will change.")));
+
+        ItemStack confirm = createItem(Material.LIME_WOOL, "§a§lConfirm Transfer",
+                Arrays.asList("§7Transfer ownership now."));
+        ItemMeta confirmMeta = confirm.getItemMeta();
+        if (confirmMeta != null) {
+            confirmMeta.getPersistentDataContainer().set(
+                    new NamespacedKey(plugin, "transfer_owner_target"),
+                    PersistentDataType.STRING, target.getUniqueId().toString());
+            confirm.setItemMeta(confirmMeta);
+        }
+        inv.setItem(11, confirm);
+        inv.setItem(15, createItem(Material.RED_WOOL, "§c§lCancel", Arrays.asList("§7Back to player list")));
+        player.openInventory(inv);
+    }
+
+    private void handleTransferOwnerConfirmClick(ItemStack clicked) {
+        if (!clicked.hasItemMeta()) {
+            return;
+        }
+
+        String name = clicked.getItemMeta().getDisplayName();
+        if (name != null && name.contains("Cancel")) {
+            openTransferOwnerMenu();
+            return;
+        }
+
+        if (name == null || !name.contains("Confirm Transfer")) {
+            return;
+        }
+
+        String targetUuid = clicked.getItemMeta().getPersistentDataContainer().get(
+                new NamespacedKey(plugin, "transfer_owner_target"),
+                PersistentDataType.STRING);
+        if (targetUuid == null) {
+            player.sendMessage("§cTransfer target not found.");
+            openTransferOwnerMenu();
+            return;
+        }
+
+        Player target = Bukkit.getPlayer(UUID.fromString(targetUuid));
+        if (target == null || !target.isOnline()) {
+            player.sendMessage("§cTarget player is no longer online.");
+            openTransferOwnerMenu();
+            return;
+        }
+
+        int maxFactories = plugin.getConfig().getInt("factory.max-factories-per-player", 3);
+        int owned = plugin.getFactoryManager().getFactoryCountByOwner(target.getUniqueId());
+        if (plugin.getPlayerFactoryManager() != null) {
+            owned += plugin.getPlayerFactoryManager().getFactoryCountByOwner(target.getUniqueId());
+        }
+        if (!target.hasPermission("factorycore.bypass.factory-limit") && owned >= maxFactories) {
+            player.sendMessage("§cTransfer failed: target reached factory ownership limit.");
+            return;
+        }
+
+        Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
+        com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager() != null
+                ? plugin.getPlayerFactoryManager().getFactory(currentFactoryId)
+                : null;
+
+        if (factory == null && pf == null) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
+            return;
+        }
+
+        UUID owner = factory != null ? factory.getOwner() : pf.getOwner();
+        if (!player.getUniqueId().equals(owner)) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("factory-not-owned"));
+            return;
+        }
+
+        double factoryPrice = factory != null ? factory.getPrice() : pf.getPrice();
+        double taxRate = plugin.getConfig().getDouble("factory.transfer-owner-tax-rate", 5.0);
+        double taxAmount = factoryPrice * (taxRate / 100.0);
+        if (!plugin.getEconomy().has(player, taxAmount)) {
+            player.sendMessage("§cYou don't have enough money to pay transfer tax: §6$"
+                    + String.format("%.2f", taxAmount));
+            return;
+        }
+
+        plugin.getEconomy().withdrawPlayer(player, taxAmount);
+        if (factory != null) {
+            factory.setOwner(target.getUniqueId());
+            plugin.getFactoryManager().saveAll();
+        } else {
+            pf.setOwner(target.getUniqueId());
+            plugin.getPlayerFactoryManager().saveAll();
+        }
+
+        player.sendMessage("§aFactory ownership transferred to §e" + target.getName()
+                + "§a. Tax paid: §6$" + String.format("%.2f", taxAmount));
+        target.sendMessage("§aYou are now the owner of factory §e" + currentFactoryId + "§a.");
+        openMainMenu();
     }
 
     private void handleRecipeMenuClick(ItemStack clicked) {

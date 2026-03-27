@@ -1,0 +1,36 @@
+- [New] Standardized Factory Upgrade System:
+    - [Update] Added support for vanilla material requirements in factory upgrades using the `vanilla:MATERIAL` prefix in `config.yml`.
+    - [Update] Refactored `PlayerFactoryManager` to include a robust `startUpgrade` API, ensuring consistent resource and economy checks between Admin and Player factories.
+    - [Update] Enhanced `UpgradeGUI` with real-time inventory tracking for vanilla materials, providing accurate "Have/Required" feedback in the UI lore.
+    - [Bugfix] Fixed a major indentation bug in `UpgradeGUI.java` from previous version.
+    - [Bugfix] Fixed a critical issue where player-created factories bypassed material requirements during upgrades.
+    - [Update] Improved `FactoryManager` and `PlayerFactoryManager` to automatically consume required materials (custom resources OR vanilla items) when an upgrade starts.
+
+- [New] Complete Overhaul of Admin Factory Management System:
+    - [Update] Added support for player-created factories in `/fc admin list`, with clear categorization between "Admin Factories" and "Player Factories".
+    - [Update] Updated `/fc admin info <id>` to display detailed information for player-created factories, including world, min/max coordinates, and center location.
+    - [Update] Enhanced `/fc admin remove <id>` to support one-click administrative removal of player-created factories with full cleanup of associated NPCs, BossBars, and storage contents.
+    - [Update] Improved `/fc admin teleport <id>` to allow admins to teleport to any factory (admin or player-created) bypassing ownership restrictions.
+    - [Update] Implemented comprehensive tab-completion for all admin commands (`info`, `remove`, `teleport`, `setowner`), providing intelligent ID suggestions for both regular and player-created factories.
+- [Update] Refactored `PlayerFactoryManager` with a new `removeFactory(id)` internal API for safer and more robust management of player assets by administrators.
+- [New] Enhanced `FactoryCoreCommand` with improved validation, multi-manager lookup support, and comprehensive tab-completion for all admin-related sub-commands.
+- [Update] Integrated automatic `FactoryNPC` and `BossBar` cleanup mechanisms into the player factory removal workflow.
+- [Bugfix] Fixed NPC duplication by adding chunk-load guards in `NPCManager` to skip respawning NPCs in unloaded chunks.
+- [Bugfix] Improved `removeVillagerEntity` to force-load chunks briefly, ensuring stale/phantom NPC entities are properly deleted.
+- [Update] Optimized `NPCManager` performance by reducing behavior scheduler frequency from 20 ticks/sec to 5 ticks/sec, reducing teleport and entity-lookup overhead by 75%.
+- [Update] Added a deduplication guard in `spawnVillager` to automatically scan and remove any lingering villagers mapped to the same NPC ID.
+- [Update] Batch-optimized database saves in `NPCManager` to reduce file I/O operations during mass NPC respawns.
+
+- [New] Flexible Production Output Routing:
+    - [Update] Added a new toggle button in the Main Menu (Slot 53) to set the output destination: "Output Storage" (default) or "Player Inventory".
+    - [Update] Redesigned the output delivery system in `FactoryManager` and `PlayerFactoryManager` to route items directly to the owner's inventory if the player is online and has the routing set to inventory.
+    - [Update] Implemented a robust inventory-full fallback: if the player's inventory is full, overflow items are automatically redirected to the factory's Output Storage with a clear notification for the player.
+    - [Update] Added persistence for the output routing setting in `data/output-destination.yml`, ensuring that player preferences are saved across server restarts.
+    - [Update] Enhanced the Main Menu GUI to dynamically update the toggle button's icon (Chest vs Player Head) and lore to reflect the current setting.
+
+- [New] Employee GUI Consistency Standardization:
+    - [Update] Synchronized the navigation buttons in EmployeeShopGUI.java (Shop, My Employees, Factory Assign) with the layout of EmployeesCenterGUI.java (Slots 47-51).
+    - [Update] Added a dedicated "Employee Info" button (Slot 49) in the Shop and My Employees menus to provide a quick guide for NPC tiers (Apprentice to Master).
+    - [Update] Improved the "My Employees" button lore in the shop to show live counts of owned and unassigned employees, matching the information provided in the Employees Center.
+    - [Update] Standardized the "Back" button position to slot 51 across all employee-related menus for a more uniform navigation experience.
+    - [Update] Enhanced the Shop and My Employees headers and navigation labels to clearly indicate "YOU ARE HERE" for better orientation within the NPC workforce system.

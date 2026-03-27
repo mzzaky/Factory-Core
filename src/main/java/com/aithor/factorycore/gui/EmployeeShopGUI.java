@@ -81,16 +81,41 @@ public class EmployeeShopGUI {
             }
         }
 
-        // My Employees button (slot 46)
-        inv.setItem(46, createItem(Material.PLAYER_HEAD, "§b§lMy Employees",
-                Arrays.asList(
-                        "§7View employees you have purchased.",
-                        "§7Assign them to your factories.",
-                        "",
-                        "§eClick to view!")));
+        // Navigation and control buttons
+        List<FactoryNPC> ownedNPCs = plugin.getNPCManager().getOwnedNPCsByOwner(player.getUniqueId());
+        int unassignedCount = plugin.getNPCManager().getUnassignedNPCsByOwner(player.getUniqueId()).size();
 
-        // Back button (slot 49)
-        inv.setItem(49, createItem(Material.DARK_OAK_DOOR, "§c§lBack",
+        // Employee Shop button (slot 47) - active
+        List<String> shopLore = new ArrayList<>();
+        shopLore.add("§7Browse and purchase NPC employees.");
+        shopLore.add("§7Each employee provides a unique");
+        shopLore.add("§7production time reduction buff.");
+        shopLore.add("");
+        shopLore.add("§a§lYOU ARE HERE");
+        inv.setItem(47, createItem(Material.GOLD_INGOT, "§6§lEmployee Shop", shopLore));
+
+        // My Employees button (slot 48)
+        List<String> myEmpLore = new ArrayList<>();
+        myEmpLore.add("§7View all employees you own.");
+        myEmpLore.add("§7Assign unassigned employees");
+        myEmpLore.add("§7to your factories.");
+        myEmpLore.add("");
+        myEmpLore.add("§eOwned: §b" + ownedNPCs.size() + " §7| §eUnassigned: §e" + unassignedCount);
+        myEmpLore.add("");
+        myEmpLore.add("§eClick to manage!");
+        inv.setItem(48, createItem(Material.PLAYER_HEAD, "§b§lMy Employees", myEmpLore));
+
+        // Employee Info (slot 49)
+        inv.setItem(49, createEmployeeInfoItem());
+
+        // Page info (slot 50)
+        inv.setItem(50, createItem(Material.PAPER, "§e§lPage Info",
+                Arrays.asList(
+                        "§7Page: §e1 / 1",
+                        "§7Employees: §e" + (shopSection != null ? shopSection.getKeys(false).size() : 0))));
+
+        // Back button (slot 51)
+        inv.setItem(51, createItem(Material.DARK_OAK_DOOR, "§c§lBack",
                 Arrays.asList("§7Return to Employees Center")));
 
         player.openInventory(inv);
@@ -140,8 +165,41 @@ public class EmployeeShopGUI {
                             "§7Employee Shop to get started!")));
         }
 
-        // Back to shop (slot 49)
-        inv.setItem(49, createItem(Material.DARK_OAK_DOOR, "§c§lBack to Shop",
+        // Navigation and control buttons
+        List<FactoryNPC> ownedNPCs = plugin.getNPCManager().getOwnedNPCsByOwner(player.getUniqueId());
+        int unassignedCount = unassigned.size();
+
+        // Employee Shop button (slot 47)
+        List<String> shopLore = new ArrayList<>();
+        shopLore.add("§7Browse and purchase NPC employees.");
+        shopLore.add("§7Each employee provides a unique");
+        shopLore.add("§7production time reduction buff.");
+        shopLore.add("");
+        shopLore.add("§eClick to open Employee Shop!");
+        inv.setItem(47, createItem(Material.GOLD_INGOT, "§6§lEmployee Shop", shopLore));
+
+        // My Employees button (slot 48) - active
+        List<String> myEmpLore = new ArrayList<>();
+        myEmpLore.add("§7View all employees you own.");
+        myEmpLore.add("§7Assign unassigned employees");
+        myEmpLore.add("§7to your factories.");
+        myEmpLore.add("");
+        myEmpLore.add("§eOwned: §b" + ownedNPCs.size() + " §7| §eUnassigned: §e" + unassignedCount);
+        myEmpLore.add("");
+        myEmpLore.add("§a§lYOU ARE HERE");
+        inv.setItem(48, createItem(Material.PLAYER_HEAD, "§b§lMy Employees", myEmpLore));
+
+        // Employee Info (slot 49)
+        inv.setItem(49, createEmployeeInfoItem());
+
+        // Page info (slot 50)
+        inv.setItem(50, createItem(Material.PAPER, "§e§lPage Info",
+                Arrays.asList(
+                        "§7Page: §e1 / 1",
+                        "§7Employees: §e" + unassignedCount)));
+
+        // Back button (slot 51)
+        inv.setItem(51, createItem(Material.DARK_OAK_DOOR, "§c§lBack",
                 Arrays.asList("§7Return to Employee Shop")));
 
         player.openInventory(inv);
@@ -279,8 +337,35 @@ public class EmployeeShopGUI {
                     Arrays.asList("§7You don't own any factories!")));
         }
 
-        // Back (slot 49)
-        inv.setItem(49, createItem(Material.DARK_OAK_DOOR, "§c§lBack",
+        // Navigation and control buttons
+        List<FactoryNPC> ownedNPCs = plugin.getNPCManager().getOwnedNPCsByOwner(player.getUniqueId());
+        int unassignedCount = plugin.getNPCManager().getUnassignedNPCsByOwner(player.getUniqueId()).size();
+
+        // Employee Shop button (slot 47)
+        List<String> shopLore = new ArrayList<>();
+        shopLore.add("§7Browse and purchase NPC employees.");
+        shopLore.add("§7Each employee provides a unique");
+        shopLore.add("§7production time reduction buff.");
+        shopLore.add("");
+        shopLore.add("§eClick to open Employee Shop!");
+        inv.setItem(47, createItem(Material.GOLD_INGOT, "§6§lEmployee Shop", shopLore));
+
+        // My Employees button (slot 48)
+        List<String> myEmpLore = new ArrayList<>();
+        myEmpLore.add("§7View all employees you own.");
+        myEmpLore.add("§7Assign unassigned employees");
+        myEmpLore.add("§7to your factories.");
+        myEmpLore.add("");
+        myEmpLore.add("§eOwned: §b" + ownedNPCs.size() + " §7| §eUnassigned: §e" + unassignedCount);
+        myEmpLore.add("");
+        myEmpLore.add("§eClick to manage!");
+        inv.setItem(48, createItem(Material.PLAYER_HEAD, "§b§lMy Employees", myEmpLore));
+
+        // Employee Info (slot 49)
+        inv.setItem(49, createEmployeeInfoItem());
+
+        // Back button (slot 51)
+        inv.setItem(51, createItem(Material.DARK_OAK_DOOR, "§c§lBack",
                 Arrays.asList("§7Return to My Employees")));
 
         player.openInventory(inv);
@@ -401,6 +486,30 @@ public class EmployeeShopGUI {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    private ItemStack createEmployeeInfoItem() {
+        List<String> lore = new ArrayList<>();
+        lore.add("§7About Factory Employees");
+        lore.add("");
+        lore.add("§7Employees are NPCs that:");
+        lore.add("§7• §aEnable factory production");
+        lore.add("§7• §aReduce production time");
+        lore.add("§7• §aAllow output storage access");
+        lore.add("");
+        lore.add("§7§nHow to get an Employee:§r");
+        lore.add("§7• Open the §6Employee Shop");
+        lore.add("§7• Purchase an employee");
+        lore.add("§7• Assign them to your factory");
+        lore.add("");
+        lore.add("§7§nEmployee Tiers:§r");
+        lore.add("§7• §fApprentice §7(-5% time)");
+        lore.add("§7• §eSkilled §7(-15% time)");
+        lore.add("§7• §cForger §7(-20% time)");
+        lore.add("§7• §eOperator §7(-25% time)");
+        lore.add("§7• §5Master §7(-35% time)");
+
+        return createItem(Material.BOOK, "§b§lEmployee Guide", lore);
     }
 
     private ItemStack createItem(Material material, String name, List<String> lore) {

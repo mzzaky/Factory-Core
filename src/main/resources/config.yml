@@ -68,6 +68,8 @@ factory:
 
   # Resource requirements to upgrade to each level
   # Keys are the target level (e.g. '2' = upgrading FROM level 1 TO level 2)
+  # You can use standard resource IDs (e.g. basic_gear) or vanilla materials
+  # using the 'vanilla:MATERIAL_NAME' prefix (e.g. vanilla:IRON_INGOT).
   upgrade-requirements:
     2:
       basic_gear: 5

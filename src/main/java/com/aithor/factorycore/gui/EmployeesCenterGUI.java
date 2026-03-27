@@ -114,16 +114,16 @@ public class EmployeesCenterGUI {
             inv.setItem(45, createNavigationItem(Material.ARROW, "§e§l◄ Previous Page", page - 1));
         }
 
-        // Employee Shop button (slot 46)
+        // Employee Shop button (slot 47)
         List<String> shopLore = new ArrayList<>();
         shopLore.add("§7Browse and purchase NPC employees.");
         shopLore.add("§7Each employee provides a unique");
         shopLore.add("§7production time reduction buff.");
         shopLore.add("");
         shopLore.add("§eClick to open Employee Shop!");
-        inv.setItem(46, createItem(Material.GOLD_INGOT, "§6§lEmployee Shop", shopLore));
+        inv.setItem(47, createItem(Material.GOLD_INGOT, "§6§lEmployee Shop", shopLore));
 
-        // My Employees button (slot 47)
+        // My Employees button (slot 48)
         List<String> myEmpLore = new ArrayList<>();
         myEmpLore.add("§7View all employees you own.");
         myEmpLore.add("§7Assign unassigned employees");
@@ -132,7 +132,7 @@ public class EmployeesCenterGUI {
         myEmpLore.add("§eOwned: §b" + ownedNPCs.size() + " §7| §eUnassigned: §e" + unassignedCount);
         myEmpLore.add("");
         myEmpLore.add("§eClick to manage!");
-        inv.setItem(47, createItem(Material.PLAYER_HEAD, "§b§lMy Employees", myEmpLore));
+        inv.setItem(48, createItem(Material.PLAYER_HEAD, "§b§lMy Employees", myEmpLore));
 
         // Employee Info (slot 49)
         inv.setItem(49, createEmployeeInfoItem());

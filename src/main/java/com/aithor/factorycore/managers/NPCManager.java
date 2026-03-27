@@ -263,6 +263,19 @@ public class NPCManager {
         removeVillagerEntity(npc);
         removeHolograms(npc);
 
+        // ── Deduplication guard: remove any lingering stale villager mapped to this NPC ID ──
+        loc.getWorld().getNearbyEntities(loc, 2, 2, 2).forEach(e -> {
+            if (e instanceof Villager) {
+                String mappedId = entityToNpcId.get(e.getUniqueId());
+                if (npc.getId().equals(mappedId)) {
+                    entityToFactory.remove(e.getUniqueId());
+                    entityToNpcId.remove(e.getUniqueId());
+                    e.remove();
+                    plugin.getLogger().warning("[NPCManager] Removed stale duplicate villager for NPC: " + npc.getId());
+                }
+            }
+        });
+
         Villager villager = (Villager) loc.getWorld().spawnEntity(loc, EntityType.VILLAGER);
 
         // ── Basic properties ──────────────────────────────────────────────────
@@ -298,7 +311,9 @@ public class NPCManager {
         // ── Hologram ──────────────────────────────────────────────────────────
         spawnHolograms(npc, configPath, loc);
 
-        saveAll();
+        // NOTE: saveAll() is intentionally NOT called here.
+        // Callers (spawnNPCWithTemplate, assignNPCToFactory, startRespawnScheduler)
+        // are responsible for persisting data exactly once after spawning.
     }
 
     // ─── Hologram ─────────────────────────────────────────────────────────────
@@ -365,15 +380,30 @@ public class NPCManager {
         Entity entity = Bukkit.getEntity(npc.getEntityUUID());
         if (entity != null) {
             entity.remove();
-        } else {
-            // Fallback: search nearby
-            Location loc = npc.getLocation();
-            if (loc.getWorld() != null) {
-                loc.getWorld().getNearbyEntities(loc, 2, 2, 2).forEach(e -> {
-                    if (e.getUniqueId().equals(npc.getEntityUUID()))
-                        e.remove();
-                });
+            return;
+        }
+
+        // Fallback: if entity not found (chunk may be unloaded), force-load the chunk
+        // briefly to ensure the entity can be found and removed.
+        Location loc = npc.getLocation();
+        if (loc != null && loc.getWorld() != null) {
+            int cx = loc.getBlockX() >> 4;
+            int cz = loc.getBlockZ() >> 4;
+            // load=false means non-blocking load; only finds entity if chunk was in a
+            // partially-saved state. We force=false to avoid generating new chunks.
+            if (!loc.getWorld().isChunkLoaded(cx, cz)) {
+                loc.getWorld().loadChunk(cx, cz, false);
             }
+            Entity reloaded = Bukkit.getEntity(npc.getEntityUUID());
+            if (reloaded != null) {
+                reloaded.remove();
+                return;
+            }
+            // Last resort: proximity scan after load attempt
+            loc.getWorld().getNearbyEntities(loc, 2, 2, 2).forEach(e -> {
+                if (e.getUniqueId().equals(npc.getEntityUUID()))
+                    e.remove();
+            });
         }
     }
 
@@ -387,7 +417,8 @@ public class NPCManager {
         if (behaviorTask != null)
             behaviorTask.cancel();
 
-        // Run every tick (1 tick = 50ms) for smooth head tracking
+        // Run every 4 ticks (~5x per second) — smooth enough for head tracking
+        // while reducing entity-lookup and teleport overhead by 75% vs 1-tick interval.
         behaviorTask = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             long tick = tickCounter.getAndIncrement();
 
@@ -433,7 +464,7 @@ public class NPCManager {
                     playAmbientSound(npc, villager.getLocation());
                 }
             }
-        }, 1L, 1L);
+        }, 1L, 4L);
     }
 
     // ─── Look-at Logic ────────────────────────────────────────────────────────
@@ -598,10 +629,24 @@ public class NPCManager {
         int interval = npcSettings.getInt("global.respawn-check-interval", 200);
 
         respawnTask = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            boolean needsSave = false;
             for (FactoryNPC npc : npcs.values()) {
                 // Skip unassigned purchased NPCs (no location = not in world)
                 if (npc.getLocation() == null)
                     continue;
+
+                Location npcLoc = npc.getLocation();
+
+                // ── Chunk guard: skip NPCs in unloaded chunks to prevent phantom spawns ──
+                // Bukkit.getEntity() returns null for entities in unloaded chunks, which
+                // would cause isEntityAlive() to return false and trigger a duplicate spawn.
+                if (npcLoc.getWorld() != null) {
+                    int cx = npcLoc.getBlockX() >> 4;
+                    int cz = npcLoc.getBlockZ() >> 4;
+                    if (!npcLoc.getWorld().isChunkLoaded(cx, cz)) {
+                        continue; // Chunk not loaded — assume NPC is alive, skip respawn
+                    }
+                }
 
                 // Skip if the factory this NPC belongs to no longer exists
                 // (handles both admin factories and player-created factories)
@@ -627,7 +672,7 @@ public class NPCManager {
                         npc.setFactoryId(null);
                         npc.setLocation(null);
                         npc.setEntityUUID(null);
-                        saveAll();
+                        needsSave = true;
 
                         continue;
                     }
@@ -637,7 +682,12 @@ public class NPCManager {
                     plugin.getLogger().info("Respawning missing NPC: " + npc.getId());
                     String configPath = resolveConfigPath(npc.getTemplate());
                     spawnVillager(npc, configPath);
+                    needsSave = true;
                 }
+            }
+            // Batch save once after all respawn checks to avoid per-NPC I/O
+            if (needsSave) {
+                saveAll();
             }
         }, interval, interval);
     }
@@ -662,18 +712,21 @@ public class NPCManager {
         if (npc.getEntityUUID() == null)
             return false;
 
-        Entity entity = Bukkit.getEntity(npc.getEntityUUID());
-        if (entity != null && !entity.isDead())
-            return true;
-
-        // Fallback: search nearby
+        // If the NPC's chunk is not loaded, Bukkit.getEntity() will return null
+        // even though the entity actually still exists on disk. In that case we
+        // must NOT treat the NPC as dead — doing so would spawn a duplicate the
+        // moment this method is queried. Callers should check isChunkLoaded first.
         Location loc = npc.getLocation();
-        if (loc == null || loc.getWorld() == null)
-            return false;
+        if (loc != null && loc.getWorld() != null) {
+            int cx = loc.getBlockX() >> 4;
+            int cz = loc.getBlockZ() >> 4;
+            if (!loc.getWorld().isChunkLoaded(cx, cz)) {
+                return true; // Assume alive — cannot confirm death in unloaded chunk
+            }
+        }
 
-        return loc.getWorld().getNearbyEntities(loc, 2, 2, 2)
-                .stream()
-                .anyMatch(e -> e.getUniqueId().equals(npc.getEntityUUID()) && !e.isDead());
+        Entity entity = Bukkit.getEntity(npc.getEntityUUID());
+        return entity != null && !entity.isDead();
     }
 
     /**

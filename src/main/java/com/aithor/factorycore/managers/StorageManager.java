@@ -3,30 +3,39 @@ package com.aithor.factorycore.managers;
 import com.aithor.factorycore.FactoryCore;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.*;
 
 public class StorageManager {
+
+    /** Possible destinations for production output. */
+    public enum OutputDestination {
+        OUTPUT_STORAGE,
+        PLAYER_INVENTORY
+    }
+
     private final FactoryCore plugin;
-    private final Map<String, Map<String, Integer>> inputStorage; // factoryId -> resourceId -> amount (for input
-                                                                  // materials)
-    private final Map<String, Map<String, Integer>> outputStorage; // factoryId -> resourceId -> amount (for output
-                                                                   // products)
+    private final Map<String, Map<String, Integer>> inputStorage;  // factoryId -> resourceId -> amount
+    private final Map<String, Map<String, Integer>> outputStorage; // factoryId -> resourceId -> amount
+    /** Per-factory output routing preference. Defaults to OUTPUT_STORAGE. */
+    private final Map<String, OutputDestination> outputDestinations;
     private final File inputDataFile;
     private final File outputDataFile;
+    private final File destinationDataFile;
 
     public StorageManager(FactoryCore plugin) {
         this.plugin = plugin;
         this.inputStorage = new HashMap<>();
         this.outputStorage = new HashMap<>();
+        this.outputDestinations = new HashMap<>();
         File dataFolder = new File(plugin.getDataFolder(), "data");
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
         }
         this.inputDataFile = new File(dataFolder, "input-storage.yml");
         this.outputDataFile = new File(dataFolder, "output-storage.yml");
+        this.destinationDataFile = new File(dataFolder, "output-destination.yml");
         loadStorage();
     }
 
@@ -58,6 +67,19 @@ public class StorageManager {
                     }
                 }
                 outputStorage.put(factoryId, items);
+            }
+        }
+
+        // Load output destinations
+        if (destinationDataFile.exists()) {
+            FileConfiguration destConfig = YamlConfiguration.loadConfiguration(destinationDataFile);
+            for (String factoryId : destConfig.getKeys(false)) {
+                String raw = destConfig.getString(factoryId, "OUTPUT_STORAGE");
+                try {
+                    outputDestinations.put(factoryId, OutputDestination.valueOf(raw));
+                } catch (IllegalArgumentException ignored) {
+                    outputDestinations.put(factoryId, OutputDestination.OUTPUT_STORAGE);
+                }
             }
         }
 
@@ -110,6 +132,41 @@ public class StorageManager {
             plugin.getLogger().severe("Failed to save output storage!");
             e.printStackTrace();
         }
+
+        // Save output destinations
+        FileConfiguration destConfig = new YamlConfiguration();
+        for (Map.Entry<String, OutputDestination> entry : outputDestinations.entrySet()) {
+            destConfig.set(entry.getKey(), entry.getValue().name());
+        }
+        try {
+            destConfig.save(destinationDataFile);
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to save output destinations!");
+            e.printStackTrace();
+        }
+    }
+
+    // ── Output destination API ──────────────────────────────────────────────
+
+    /** Returns the current output destination for a factory (default: OUTPUT_STORAGE). */
+    public OutputDestination getOutputDestination(String factoryId) {
+        return outputDestinations.getOrDefault(factoryId, OutputDestination.OUTPUT_STORAGE);
+    }
+
+    /** Sets the output destination for a factory and persists the change. */
+    public void setOutputDestination(String factoryId, OutputDestination destination) {
+        outputDestinations.put(factoryId, destination);
+        saveAll();
+    }
+
+    /** Toggles the output destination between OUTPUT_STORAGE and PLAYER_INVENTORY. */
+    public OutputDestination toggleOutputDestination(String factoryId) {
+        OutputDestination current = getOutputDestination(factoryId);
+        OutputDestination next = (current == OutputDestination.OUTPUT_STORAGE)
+                ? OutputDestination.PLAYER_INVENTORY
+                : OutputDestination.OUTPUT_STORAGE;
+        setOutputDestination(factoryId, next);
+        return next;
     }
 
     public void addInputItem(String factoryId, String resourceId, int amount) {

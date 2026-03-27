@@ -2,6 +2,7 @@ package com.aithor.factorycore.gui;
 
 import com.aithor.factorycore.FactoryCore;
 import com.aithor.factorycore.managers.ResourceManager;
+import com.aithor.factorycore.managers.StorageManager;
 import com.aithor.factorycore.models.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -178,6 +179,18 @@ public class FactoryGUI {
         if ("sell_factory".equals(mainAction)) {
             // Open sell confirmation via MyFactoriesGUI (reuses existing dialog)
             new MyFactoriesGUI(plugin, player).openSellConfirmation(currentFactoryId);
+            return;
+        }
+
+        if ("toggle_output_dest".equals(mainAction)) {
+            StorageManager.OutputDestination next =
+                    plugin.getStorageManager().toggleOutputDestination(currentFactoryId);
+            if (next == StorageManager.OutputDestination.PLAYER_INVENTORY) {
+                player.sendMessage("§b[Factory] §7Output destination set to §aPlayer Inventory§7.");
+            } else {
+                player.sendMessage("§b[Factory] §7Output destination set to §eOutput Storage§7.");
+            }
+            openMainMenu();
             return;
         }
 
@@ -882,34 +895,7 @@ public class FactoryGUI {
                     openUpgradeMenu();
                 }
             } else if (plugin.getPlayerFactoryManager() != null) {
-                com.aithor.factorycore.models.PlayerFactory pf = plugin.getPlayerFactoryManager()
-                        .getFactory(currentFactoryId);
-                if (pf != null) {
-                    // PlayerFactory upgrade: same logic as FactoryManager.startUpgrade but for
-                    // PlayerFactory
-                    int maxLevel = plugin.getConfig().getInt("factory.max-level", 5);
-                    if (pf.getLevel() >= maxLevel) {
-                        player.sendMessage("§cFactory is already at max level!");
-                        return;
-                    }
-                    double upgradeCost = pf.getPrice() * 0.5 * pf.getLevel();
-                    if (!plugin.getEconomy().has(player, upgradeCost)) {
-                        player.sendMessage(plugin.getLanguageManager().getMessage("insufficient-funds")
-                                .replace("{amount}", String.format("%.2f", upgradeCost)));
-                        return;
-                    }
-                    plugin.getEconomy().withdrawPlayer(player, upgradeCost);
-                    int targetLevel = pf.getLevel() + 1;
-                    int duration = plugin.getConfig().getInt("factory.upgrade-time." + targetLevel, 60);
-                    if (plugin.getResearchManager() != null) {
-                        double rd = plugin.getResearchManager().getUpgradeTimeReduction(player.getUniqueId());
-                        if (rd > 0)
-                            duration = (int) (duration * (1 - rd / 100.0));
-                        duration = Math.max(1, duration);
-                    }
-                    pf.setUpgradeStartTime(System.currentTimeMillis());
-                    pf.setUpgradeDurationSeconds(duration);
-                    plugin.getPlayerFactoryManager().saveAll();
+                if (plugin.getPlayerFactoryManager().startUpgrade(player, currentFactoryId)) {
                     player.sendMessage("§a✔ §7Upgrade started! Your factory will reach the next level shortly.");
                     openUpgradeMenu();
                 }

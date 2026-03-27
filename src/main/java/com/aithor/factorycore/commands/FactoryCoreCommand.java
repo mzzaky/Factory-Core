@@ -5,6 +5,7 @@ import com.aithor.factorycore.gui.*;
 import com.aithor.factorycore.models.DistributionEvent;
 import com.aithor.factorycore.models.Factory;
 import com.aithor.factorycore.models.FactoryType;
+import com.aithor.factorycore.models.PlayerFactory;
 import com.aithor.factorycore.models.Recipe;
 import com.aithor.factorycore.utils.Logger;
 import com.aithor.factorycore.utils.WorldGuardUtils;
@@ -16,6 +17,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import com.aithor.factorycore.managers.BackupManager;
+import com.aithor.factorycore.managers.PlayerFactoryManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -349,7 +351,15 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         }
 
         String id = args[2];
+        boolean removed = false;
+
         if (plugin.getFactoryManager().removeFactory(id)) {
+            removed = true;
+        } else if (plugin.getPlayerFactoryManager().removeFactory(id)) {
+            removed = true;
+        }
+
+        if (removed) {
             sender.sendMessage(plugin.getLanguageManager().getMessage("factory-removed")
                     .replace("{id}", id));
             Logger.logAdminCommand(sender.getName(), "remove factory " + id);
@@ -362,13 +372,28 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
 
     private boolean adminList(CommandSender sender) {
         List<Factory> factories = plugin.getFactoryManager().getAllFactories();
+        List<PlayerFactory> playerFactories = plugin.getPlayerFactoryManager().getAllFactories();
+        
+        int total = factories.size() + playerFactories.size();
         sender.sendMessage(plugin.getLanguageManager().getMessage("admin-list")
-                .replace("{count}", String.valueOf(factories.size())));
+                .replace("{count}", String.valueOf(total)));
 
-        for (Factory factory : factories) {
-            String owner = factory.getOwner() == null ? "None" : Bukkit.getOfflinePlayer(factory.getOwner()).getName();
-            sender.sendMessage("§e" + factory.getId() + " §7- " +
-                    factory.getType().getDisplayName() + " §7- Owner: §e" + owner);
+        if (!factories.isEmpty()) {
+            sender.sendMessage("§6--- Admin Factories ---");
+            for (Factory factory : factories) {
+                String owner = factory.getOwner() == null ? "None" : Bukkit.getOfflinePlayer(factory.getOwner()).getName();
+                sender.sendMessage("§e" + factory.getId() + " §7- " +
+                        factory.getType().getDisplayName() + " §7- Owner: §e" + owner);
+            }
+        }
+
+        if (!playerFactories.isEmpty()) {
+            sender.sendMessage("§6--- Player Factories ---");
+            for (PlayerFactory pf : playerFactories) {
+                String owner = pf.getOwner() == null ? "None" : Bukkit.getOfflinePlayer(pf.getOwner()).getName();
+                sender.sendMessage("§e" + pf.getId() + " §7- " +
+                        pf.getType().getDisplayName() + " §7- Owner: §e" + owner);
+            }
         }
 
         return true;
@@ -380,23 +405,37 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        Factory factory = plugin.getFactoryManager().getFactory(args[2]);
-        if (factory == null) {
-            sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
+        String id = args[2];
+        Factory factory = plugin.getFactoryManager().getFactory(id);
+
+        if (factory != null) {
+            String owner = factory.getOwner() == null ? "None" : Bukkit.getOfflinePlayer(factory.getOwner()).getName();
+            sender.sendMessage("§6=== Factory Info (Admin) ===");
+            sender.sendMessage("§7ID: §e" + factory.getId());
+            sender.sendMessage("§7Type: §e" + factory.getType().getDisplayName());
+            sender.sendMessage("§7Owner: §e" + owner);
+            sender.sendMessage("§7Level: §e" + factory.getLevel());
+            sender.sendMessage("§7Region: §e" + factory.getRegionName());
+            sender.sendMessage("§7Price: §6$" + factory.getPrice());
+            sender.sendMessage("§7Status: " + factory.getStatus().getDisplay());
             return true;
         }
 
-        String owner = factory.getOwner() == null ? "None" : Bukkit.getOfflinePlayer(factory.getOwner()).getName();
+        PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(id);
+        if (pf != null) {
+            String owner = pf.getOwner() == null ? "None" : Bukkit.getOfflinePlayer(pf.getOwner()).getName();
+            sender.sendMessage("§6=== Factory Info (Player Created) ===");
+            sender.sendMessage("§7ID: §e" + pf.getId());
+            sender.sendMessage("§7Type: §e" + pf.getType().getDisplayName());
+            sender.sendMessage("§7Owner: §e" + owner);
+            sender.sendMessage("§7Level: §e" + pf.getLevel());
+            sender.sendMessage("§7World: §e" + pf.getWorldName());
+            sender.sendMessage("§7Price: §6$" + pf.getPrice());
+            sender.sendMessage("§7Status: " + pf.getStatus().getDisplay());
+            return true;
+        }
 
-        sender.sendMessage("§6=== Factory Info ===");
-        sender.sendMessage("§7ID: §e" + factory.getId());
-        sender.sendMessage("§7Type: §e" + factory.getType().getDisplayName());
-        sender.sendMessage("§7Owner: §e" + owner);
-        sender.sendMessage("§7Level: §e" + factory.getLevel());
-        sender.sendMessage("§7Region: §e" + factory.getRegionName());
-        sender.sendMessage("§7Price: §6$" + factory.getPrice());
-        sender.sendMessage("§7Status: " + factory.getStatus().getDisplay());
-
+        sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
         return true;
     }
 
@@ -493,23 +532,30 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
         String factoryId = args[2];
 
         Factory factory = plugin.getFactoryManager().getFactory(factoryId);
-        if (factory == null) {
-            sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
-            return true;
-        }
-
-        if (factory.getFastTravelLocation() == null) {
-            sender.sendMessage("§cFast travel location not set for this factory!");
-            return true;
-        }
-
-        if (plugin.getFactoryManager().teleportPlayer(player, factoryId)) {
+        if (factory != null) {
+            if (factory.getFastTravelLocation() == null) {
+                sender.sendMessage("§cFast travel location not set for this factory!");
+                return true;
+            }
+            player.teleport(factory.getFastTravelLocation());
             sender.sendMessage("§aSuccessfully teleported to factory §e" + factoryId + "§a!");
             Logger.logAdminCommand(sender.getName(), "teleport to factory " + factoryId);
-        } else {
-            sender.sendMessage("§cFailed to teleport to factory!");
+            return true;
         }
 
+        PlayerFactory pf = plugin.getPlayerFactoryManager().getFactory(factoryId);
+        if (pf != null) {
+            if (pf.getCenterLocation() == null) {
+                sender.sendMessage("§cCenter location not available for this player factory!");
+                return true;
+            }
+            player.teleport(pf.getCenterLocation());
+            sender.sendMessage("§aSuccessfully teleported to player factory §e" + factoryId + "§a!");
+            Logger.logAdminCommand(sender.getName(), "teleport to factory " + factoryId);
+            return true;
+        }
+
+        sender.sendMessage(plugin.getLanguageManager().getMessage("factory-not-found"));
         return true;
     }
 
@@ -1314,16 +1360,25 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                 completions.addAll(Arrays.asList("upgrade", "set"));
             } else if (args[1].equalsIgnoreCase("create")) {
                 completions.addAll(WorldGuardUtils.getAllRegionNames());
-            } else if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("info")) {
+            } else if (args[1].equalsIgnoreCase("remove") || args[1].equalsIgnoreCase("info") || args[1].equalsIgnoreCase("teleport") || args[1].equalsIgnoreCase("tp")) {
                 for (Factory factory : plugin.getFactoryManager().getAllFactories()) {
                     completions.add(factory.getId());
                 }
-            } else if (args.length == 3 && args[1].equalsIgnoreCase("event")) {
+                if (plugin.getPlayerFactoryManager() != null) {
+                    for (PlayerFactory pf : plugin.getPlayerFactoryManager().getAllFactories()) {
+                        completions.add(pf.getId());
+                    }
+                }
+            } else if (args[1].equalsIgnoreCase("event")) {
                 if (plugin.getDistributionManager() != null) {
                     completions.addAll(plugin.getDistributionManager().getEvents().keySet());
                 }
             } else if (args[1].equalsIgnoreCase("give")) {
                 completions.addAll(plugin.getResourceManager().getAllResources().keySet());
+            } else if (args[1].equalsIgnoreCase("setowner")) {
+                for (Factory factory : plugin.getFactoryManager().getAllFactories()) {
+                    completions.add(factory.getId());
+                }
             }
         } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("backup")) {
             String backupAction = args[2].toLowerCase();
@@ -1355,10 +1410,10 @@ public class FactoryCoreCommand implements CommandExecutor, TabCompleter {
                 plugin.getNPCManager().getAllNPCs()
                         .forEach(n -> completions.add(n.getId()));
             }
-        } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("research")) {
-            // /fc admin research <upgrade|set> <player>
-            String researchAction = args[2].toLowerCase();
-            if (researchAction.equals("upgrade") || researchAction.equals("set")) {
+        } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && (args[1].equalsIgnoreCase("research") || args[1].equalsIgnoreCase("setowner"))) {
+            // /fc admin research <upgrade|set> <player> OR /fc admin setowner <id> <player>
+            String subAction = args[2].toLowerCase();
+            if (args[1].equalsIgnoreCase("setowner") || subAction.equals("upgrade") || subAction.equals("set")) {
                 Bukkit.getOnlinePlayers().forEach(p -> completions.add(p.getName()));
             }
         } else if (args.length == 4 && args[0].equalsIgnoreCase("admin") && args[1].equalsIgnoreCase("tax")) {

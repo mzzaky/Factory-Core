@@ -388,10 +388,47 @@ public class FactoryManager {
         Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
 
         if (recipe != null) {
-            // Add outputs to output storage
+            StorageManager.OutputDestination dest =
+                    plugin.getStorageManager().getOutputDestination(factory.getId());
+
             if (!recipe.isDisableItemOutput()) {
                 for (Map.Entry<String, Integer> output : recipe.getOutputs().entrySet()) {
-                    plugin.getStorageManager().addOutputItem(factory.getId(), output.getKey(), output.getValue());
+                    if (dest == StorageManager.OutputDestination.PLAYER_INVENTORY) {
+                        // Try to deliver directly to the online owner
+                        Player online = Bukkit.getPlayer(factory.getOwner());
+                        if (online != null) {
+                            ItemStack toGive = plugin.getResourceManager()
+                                    .createItemStack(output.getKey(), output.getValue());
+                            if (toGive == null && output.getKey().startsWith("vanilla:")) {
+                                String matName = output.getKey().substring("vanilla:".length()).toUpperCase();
+                                try {
+                                    toGive = new ItemStack(org.bukkit.Material.valueOf(matName), output.getValue());
+                                } catch (IllegalArgumentException ignored) {}
+                            }
+                            if (toGive != null) {
+                                java.util.HashMap<Integer, ItemStack> leftover =
+                                        online.getInventory().addItem(toGive);
+                                if (!leftover.isEmpty()) {
+                                    // Overflow goes to output storage
+                                    int notAdded = leftover.values().stream()
+                                            .mapToInt(ItemStack::getAmount).sum();
+                                    plugin.getStorageManager().addOutputItem(
+                                            factory.getId(), output.getKey(), notAdded);
+                                    online.sendMessage("§c[Factory] Inventory full! §7Some items sent to Output Storage.");
+                                }
+                            } else {
+                                plugin.getStorageManager().addOutputItem(
+                                        factory.getId(), output.getKey(), output.getValue());
+                            }
+                        } else {
+                            // Owner is offline — fall back to output storage
+                            plugin.getStorageManager().addOutputItem(
+                                    factory.getId(), output.getKey(), output.getValue());
+                        }
+                    } else {
+                        plugin.getStorageManager().addOutputItem(
+                                factory.getId(), output.getKey(), output.getValue());
+                    }
                 }
             }
 
@@ -563,9 +600,15 @@ public class FactoryManager {
                 int found = countResourceInInventory(player, resourceId);
 
                 if (found < required) {
-                    com.aithor.factorycore.models.ResourceItem res = plugin.getResourceManager()
-                            .getResource(resourceId);
-                    String resName = (res != null) ? res.getName() : resourceId;
+                    String resName;
+                    if (com.aithor.factorycore.managers.ResourceManager.isVanillaInput(resourceId)) {
+                        resName = com.aithor.factorycore.managers.ResourceManager.getVanillaDisplayName(resourceId);
+                    } else {
+                        com.aithor.factorycore.models.ResourceItem res = plugin.getResourceManager()
+                                .getResource(resourceId);
+                        resName = (res != null) ? res.getName() : resourceId;
+                    }
+
                     player.sendMessage("§c✗ §7Not enough §f" + resName
                             + "§7! Need §e" + required + "§7, have §c" + found + "§7.");
                     return false;
@@ -641,6 +684,9 @@ public class FactoryManager {
      * Counts how many of a plugin-registered resource the player holds.
      */
     private int countResourceInInventory(Player player, String resourceId) {
+        if (com.aithor.factorycore.managers.ResourceManager.isVanillaInput(resourceId)) {
+            return plugin.getResourceManager().countVanillaInInventory(player, resourceId);
+        }
         int total = 0;
         for (ItemStack item : player.getInventory().getContents()) {
             if (item == null || item.getType() == org.bukkit.Material.AIR)
@@ -659,6 +705,10 @@ public class FactoryManager {
      * countResourceInInventory.
      */
     private void consumeResourceFromInventory(Player player, String resourceId, int amount) {
+        if (com.aithor.factorycore.managers.ResourceManager.isVanillaInput(resourceId)) {
+            plugin.getResourceManager().consumeVanillaFromInventory(player, resourceId, amount);
+            return;
+        }
         int remaining = amount;
         ItemStack[] contents = player.getInventory().getContents();
         for (int i = 0; i < contents.length && remaining > 0; i++) {

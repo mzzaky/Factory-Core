@@ -188,8 +188,15 @@ public class UpgradeGUI {
                     for (String resourceId : reqSection.getKeys(false)) {
                         int required = reqSection.getInt(resourceId);
                         int have = countResourceInInventory(resourceId);
-                        ResourceItem res = plugin.getResourceManager().getResource(resourceId);
-                        String resName = (res != null) ? res.getName() : "§f" + resourceId;
+                        
+                        String resName;
+                        if (com.aithor.factorycore.managers.ResourceManager.isVanillaInput(resourceId)) {
+                            resName = com.aithor.factorycore.managers.ResourceManager.getVanillaDisplayName(resourceId);
+                        } else {
+                            ResourceItem res = plugin.getResourceManager().getResource(resourceId);
+                            resName = (res != null) ? res.getName() : "§f" + resourceId;
+                        }
+                        
                         String countColor = (have >= required) ? "§a" : "§c";
                         nextLore.add("§8• " + resName + " §7(" + countColor + have + "§7/§e" + required + "§7)");
                     }
@@ -272,8 +279,13 @@ public class UpgradeGUI {
             summaryLore.add("§7Materials consumed:");
             for (String resourceId : reqSection.getKeys(false)) {
                 int required = reqSection.getInt(resourceId);
-                ResourceItem res = plugin.getResourceManager().getResource(resourceId);
-                String resName = (res != null) ? res.getName() : "§f" + resourceId;
+                String resName;
+                if (com.aithor.factorycore.managers.ResourceManager.isVanillaInput(resourceId)) {
+                    resName = com.aithor.factorycore.managers.ResourceManager.getVanillaDisplayName(resourceId);
+                } else {
+                    ResourceItem res = plugin.getResourceManager().getResource(resourceId);
+                    resName = (res != null) ? res.getName() : "§f" + resourceId;
+                }
                 summaryLore.add("§8• " + resName + " §7x§e" + required);
             }
             summaryLore.add("");
@@ -296,6 +308,9 @@ public class UpgradeGUI {
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     private int countResourceInInventory(String resourceId) {
+        if (com.aithor.factorycore.managers.ResourceManager.isVanillaInput(resourceId)) {
+            return plugin.getResourceManager().countVanillaInInventory(player, resourceId);
+        }
         int total = 0;
         for (ItemStack item : player.getInventory().getContents()) {
             if (item == null || item.getType() == Material.AIR)

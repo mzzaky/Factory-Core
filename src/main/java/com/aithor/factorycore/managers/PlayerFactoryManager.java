@@ -282,6 +282,30 @@ public class PlayerFactoryManager {
         return playerFactories.get(id);
     }
 
+    public boolean removeFactory(String id) {
+        PlayerFactory pf = playerFactories.remove(id);
+        if (pf != null) {
+            // Unassign NPC if any is attached
+            com.aithor.factorycore.models.FactoryNPC npc = plugin.getNPCManager().getAssignedNPCForFactory(id);
+            if (npc != null) {
+                plugin.getNPCManager().removeNPC(id);
+            }
+
+            // Remove bossbar if exists
+            if (productionBossBars.containsKey(id)) {
+                productionBossBars.get(id).removeAll();
+                productionBossBars.remove(id);
+            }
+
+            // Clear storage
+            plugin.getStorageManager().clearStorage(id);
+
+            saveAll();
+            return true;
+        }
+        return false;
+    }
+
     public List<PlayerFactory> getAllFactories() {
         return new ArrayList<>(playerFactories.values());
     }
@@ -375,9 +399,45 @@ public class PlayerFactoryManager {
     private void completeProduction(PlayerFactory pf, com.aithor.factorycore.models.ProductionTask task) {
         com.aithor.factorycore.models.Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
         if (recipe != null) {
+            StorageManager.OutputDestination dest =
+                    plugin.getStorageManager().getOutputDestination(pf.getId());
+
             if (!recipe.isDisableItemOutput()) {
                 for (java.util.Map.Entry<String, Integer> output : recipe.getOutputs().entrySet()) {
-                    plugin.getStorageManager().addOutputItem(pf.getId(), output.getKey(), output.getValue());
+                    if (dest == StorageManager.OutputDestination.PLAYER_INVENTORY) {
+                        org.bukkit.entity.Player online = org.bukkit.Bukkit.getPlayer(pf.getOwner());
+                        if (online != null) {
+                            org.bukkit.inventory.ItemStack toGive = plugin.getResourceManager()
+                                    .createItemStack(output.getKey(), output.getValue());
+                            if (toGive == null && output.getKey().startsWith("vanilla:")) {
+                                String matName = output.getKey().substring("vanilla:".length()).toUpperCase();
+                                try {
+                                    toGive = new org.bukkit.inventory.ItemStack(
+                                            org.bukkit.Material.valueOf(matName), output.getValue());
+                                } catch (IllegalArgumentException ignored) {}
+                            }
+                            if (toGive != null) {
+                                java.util.HashMap<Integer, org.bukkit.inventory.ItemStack> leftover =
+                                        online.getInventory().addItem(toGive);
+                                if (!leftover.isEmpty()) {
+                                    int notAdded = leftover.values().stream()
+                                            .mapToInt(org.bukkit.inventory.ItemStack::getAmount).sum();
+                                    plugin.getStorageManager().addOutputItem(
+                                            pf.getId(), output.getKey(), notAdded);
+                                    online.sendMessage("§c[Factory] Inventory full! §7Some items sent to Output Storage.");
+                                }
+                            } else {
+                                plugin.getStorageManager().addOutputItem(
+                                        pf.getId(), output.getKey(), output.getValue());
+                            }
+                        } else {
+                            // Owner is offline — fall back to output storage
+                            plugin.getStorageManager().addOutputItem(
+                                    pf.getId(), output.getKey(), output.getValue());
+                        }
+                    } else {
+                        plugin.getStorageManager().addOutputItem(pf.getId(), output.getKey(), output.getValue());
+                    }
                 }
             }
             // Execute console commands
@@ -540,5 +600,136 @@ public class PlayerFactoryManager {
 
         bossBar.setTitle(title);
         bossBar.setProgress(progress);
+    }
+
+    /**
+     * Start a timed upgrade for a player-created factory: consume money + resources, start the upgrade timer.
+     * Returns false (with a message to the player) on any failure.
+     */
+    public boolean startUpgrade(Player player, String id) {
+        PlayerFactory pf = getFactory(id);
+        if (pf == null)
+            return false;
+        if (!pf.getOwner().equals(player.getUniqueId()))
+            return false;
+
+        if (pf.isUpgrading()) {
+            player.sendMessage("§c⚠ Factory is already being upgraded!");
+            return false;
+        }
+
+        int maxLevel = plugin.getConfig().getInt("factory.max-level", 5);
+        if (pf.getLevel() >= maxLevel) {
+            player.sendMessage("§cFactory is already at max level!");
+            return false;
+        }
+
+        // ── Economy check ─────────────────────────────────────────────────────
+        double upgradeCost = pf.getPrice() * 0.5 * pf.getLevel();
+        if (!plugin.getEconomy().has(player, upgradeCost)) {
+            player.sendMessage(plugin.getLanguageManager().getMessage("insufficient-funds")
+                    .replace("{amount}", String.format("%.2f", upgradeCost)));
+            return false;
+        }
+
+        // ── Resource requirement check ────────────────────────────────────────
+        int targetLevel = pf.getLevel() + 1;
+        String reqPath = "factory.upgrade-requirements." + targetLevel;
+
+        if (plugin.getConfig().isConfigurationSection(reqPath)) {
+            org.bukkit.configuration.ConfigurationSection reqSection = plugin.getConfig()
+                    .getConfigurationSection(reqPath);
+
+            for (String resourceId : reqSection.getKeys(false)) {
+                int required = reqSection.getInt(resourceId);
+                int found = countResourceInInventory(player, resourceId);
+
+                if (found < required) {
+                    String resName;
+                    if (com.aithor.factorycore.managers.ResourceManager.isVanillaInput(resourceId)) {
+                        resName = com.aithor.factorycore.managers.ResourceManager.getVanillaDisplayName(resourceId);
+                    } else {
+                        com.aithor.factorycore.models.ResourceItem res = plugin.getResourceManager()
+                                .getResource(resourceId);
+                        resName = (res != null) ? res.getName() : resourceId;
+                    }
+
+                    player.sendMessage("§c✗ §7Not enough §f" + resName
+                            + "§7! Need §e" + required + "§7, have §c" + found + "§7.");
+                    return false;
+                }
+            }
+
+            // All resources confirmed — consume them
+            for (String resourceId : reqSection.getKeys(false)) {
+                consumeResourceFromInventory(player, resourceId, reqSection.getInt(resourceId));
+            }
+        }
+
+        // ── Deduct money ──────────────────────────────────────────────────────
+        plugin.getEconomy().withdrawPlayer(player, upgradeCost);
+
+        // ── Start upgrade timer ───────────────────────────────────────────────
+        int duration = plugin.getConfig().getInt("factory.upgrade-time." + targetLevel, 60);
+
+        // Apply Nano-Construction Framework research buff
+        if (plugin.getResearchManager() != null) {
+            double researchReduction = plugin.getResearchManager().getUpgradeTimeReduction(player.getUniqueId());
+            if (researchReduction > 0) {
+                duration = (int) (duration * (1 - (researchReduction / 100.0)));
+            }
+        }
+        duration = Math.max(duration, 1); // minimum 1 second
+
+        pf.setUpgradeStartTime(System.currentTimeMillis());
+        pf.setUpgradeDurationSeconds(duration);
+        saveAll();
+
+        return true;
+    }
+
+    /** Counts how many of a plugin-registered resource the player holds. */
+    private int countResourceInInventory(Player player, String resourceId) {
+        if (com.aithor.factorycore.managers.ResourceManager.isVanillaInput(resourceId)) {
+            return plugin.getResourceManager().countVanillaInInventory(player, resourceId);
+        }
+        int total = 0;
+        for (org.bukkit.inventory.ItemStack item : player.getInventory().getContents()) {
+            if (item == null || item.getType() == org.bukkit.Material.AIR)
+                continue;
+            String id = plugin.getResourceManager().getResourceId(item);
+            if (resourceId.equals(id))
+                total += item.getAmount();
+        }
+        return total;
+    }
+
+    /**
+     * Removes the specified amount of a plugin-registered resource from the player's
+     * inventory. Assumes availability was already confirmed.
+     */
+    private void consumeResourceFromInventory(Player player, String resourceId, int amount) {
+        if (com.aithor.factorycore.managers.ResourceManager.isVanillaInput(resourceId)) {
+            plugin.getResourceManager().consumeVanillaFromInventory(player, resourceId, amount);
+            return;
+        }
+        int remaining = amount;
+        org.bukkit.inventory.ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length && remaining > 0; i++) {
+            org.bukkit.inventory.ItemStack item = contents[i];
+            if (item == null || item.getType() == org.bukkit.Material.AIR)
+                continue;
+            String id = plugin.getResourceManager().getResourceId(item);
+            if (!resourceId.equals(id))
+                continue;
+
+            if (item.getAmount() <= remaining) {
+                remaining -= item.getAmount();
+                player.getInventory().setItem(i, null);
+            } else {
+                item.setAmount(item.getAmount() - remaining);
+                remaining = 0;
+            }
+        }
     }
 }

@@ -844,6 +844,12 @@ public class HubClickListener implements Listener {
             return;
         }
 
+        // Employee Shop button (from sub-menus)
+        if (name.contains("Employee Shop")) {
+            shopGui.openShop();
+            return;
+        }
+
         // Back buttons
         if (name.contains("Back to Shop")) {
             shopGui.openShop();

@@ -213,6 +213,22 @@ public class MainMenuGUI {
                                                 "§eClick to choose new owner"),
                                 "main_menu_action", "transfer_owner_menu"));
 
+                // Factory Protection (slot 48) – only for player-created factories
+                if (playerFactory != null) {
+                        inv.setItem(48, createItemWithTag(Material.SHIELD,
+                                        "§b§lFactory Protection",
+                                        Arrays.asList(
+                                                        "§7Configure protection flags",
+                                                        "§7for your factory region.",
+                                                        "",
+                                                        "§7Control who can break blocks,",
+                                                        "§7interact, damage entities,",
+                                                        "§7and more.",
+                                                        "",
+                                                        "§eClick to configure!"),
+                                        "main_menu_action", "factory_protection"));
+                }
+
                 // Output destination toggle (slot 52)
                 StorageManager.OutputDestination currentDest = plugin.getStorageManager()
                                 .getOutputDestination(factoryId);

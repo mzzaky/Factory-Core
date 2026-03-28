@@ -2,3 +2,11 @@
 - [add] Menambahkan informasi hitung mundur pajak baru di menu My Factories.
 - [add] Menambahkan informasi jumlah nilai pajak yang akan ditagih di menu My Factories.
 - [refactor] Refactor metode kalkulasi pajak agar bisa digunakan secara terpusat untuk semua tipe pabrik.
+- [add] Added new "Factory Protection" GUI accessible from the main factory menu (slot 48).
+- [add] Added ProtectionFlag enum with 18 protection types: Block Break, Block Place, Player Interact, Container Access, Entity Damage, PvP, Explosion, Mob Spawning, Item Pickup, Item Drop, Redstone, Vehicle Place, Fire Spread, Liquid Flow, Piston, Crop Trample, Hanging Break, Armor Stand.
+- [add] Each protection flag can be individually toggled on/off per factory via the Factory Protection GUI.
+- [add] All protection flags default to enabled (protected) for new and existing factories.
+- [add] Added "Enable All" and "Disable All" bulk toggle buttons in the Factory Protection GUI.
+- [add] Protection flags are persisted per factory in player_factories.yml.
+- [refactor] Refactored PlayerFactoryProtectionListener from 2 event handlers (BlockBreak, BlockPlace) to 16 event handlers covering all supported protection flags.
+- [add] Added language keys for protection toggle messages (protection-flag-enabled, protection-flag-disabled, protection-all-enabled, protection-all-disabled).

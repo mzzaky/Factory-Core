@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -35,6 +37,9 @@ public class PlayerFactory {
     private int upgradeDurationSeconds = 0;
     private String displayName;   // player-defined custom name (nullable)
     private String customIcon;    // material name for icon override (nullable)
+
+    // Protection flags – each flag defaults to true (enabled/protected)
+    private final Map<ProtectionFlag, Boolean> protectionFlags = new EnumMap<>(ProtectionFlag.class);
 
     public PlayerFactory(String id, UUID owner, FactoryType type, double price,
                          String worldName,
@@ -136,4 +141,26 @@ public class PlayerFactory {
     public void setDisplayName(String displayName) { this.displayName = displayName; }
     public String getCustomIcon() { return customIcon; }
     public void setCustomIcon(String customIcon) { this.customIcon = customIcon; }
+
+    // ── Protection flags ─────────────────────────────────────────────────────
+
+    /**
+     * Returns whether the given protection flag is enabled.
+     * Defaults to {@code true} (protected) if not explicitly set.
+     */
+    public boolean isProtectionEnabled(ProtectionFlag flag) {
+        return protectionFlags.getOrDefault(flag, true);
+    }
+
+    public void setProtectionFlag(ProtectionFlag flag, boolean enabled) {
+        protectionFlags.put(flag, enabled);
+    }
+
+    public void toggleProtectionFlag(ProtectionFlag flag) {
+        protectionFlags.put(flag, !isProtectionEnabled(flag));
+    }
+
+    public Map<ProtectionFlag, Boolean> getProtectionFlags() {
+        return protectionFlags;
+    }
 }

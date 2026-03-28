@@ -5,6 +5,7 @@ import com.aithor.factorycore.models.FactoryStatus;
 import com.aithor.factorycore.models.FactoryType;
 import com.aithor.factorycore.models.PlayerFactory;
 import com.aithor.factorycore.models.ProductionTask;
+import com.aithor.factorycore.models.ProtectionFlag;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
@@ -90,6 +91,18 @@ public class PlayerFactoryManager {
                     pf.setUpgradeDurationSeconds(config.getInt(key + ".upgrade.duration"));
                 }
 
+                // Load protection flags
+                if (config.isConfigurationSection(key + ".protection-flags")) {
+                    for (String flagName : config.getConfigurationSection(key + ".protection-flags").getKeys(false)) {
+                        try {
+                            ProtectionFlag flag = ProtectionFlag.valueOf(flagName);
+                            pf.setProtectionFlag(flag, config.getBoolean(key + ".protection-flags." + flagName, true));
+                        } catch (IllegalArgumentException ignored) {
+                            // Skip unknown flags (e.g. removed in a newer version)
+                        }
+                    }
+                }
+
                 playerFactories.put(key, pf);
             } catch (Exception e) {
                 plugin.getLogger().warning("Failed to load player factory: " + key);
@@ -135,6 +148,11 @@ public class PlayerFactoryManager {
                 config.set(path + ".upgrade.duration", pf.getUpgradeDurationSeconds());
             } else {
                 config.set(path + ".upgrade", null);
+            }
+
+            // Save protection flags (only save flags that are explicitly set)
+            for (java.util.Map.Entry<ProtectionFlag, Boolean> entry : pf.getProtectionFlags().entrySet()) {
+                config.set(path + ".protection-flags." + entry.getKey().name(), entry.getValue());
             }
         }
         try {

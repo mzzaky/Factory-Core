@@ -138,6 +138,8 @@ public class FactoryGUI {
                 plugin.getLogger().info("Handling confirm upgrade click");
             }
             handleConfirmUpgradeClick(clicked);
+        } else if (title.contains("Factory Protection")) {
+            new FactoryProtectionGUI(plugin, player, currentFactoryId).handleClick(event);
         } else if (title.contains("Transfer Owner - Confirm")) {
             handleTransferOwnerConfirmClick(clicked);
         } else if (title.contains("Transfer Owner")) {
@@ -228,6 +230,11 @@ public class FactoryGUI {
 
         if ("transfer_owner_menu".equals(mainAction)) {
             openTransferOwnerMenu();
+            return;
+        }
+
+        if ("factory_protection".equals(mainAction)) {
+            new FactoryProtectionGUI(plugin, player, currentFactoryId).open();
             return;
         }
 

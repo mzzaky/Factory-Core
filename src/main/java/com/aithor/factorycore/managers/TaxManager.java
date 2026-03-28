@@ -143,6 +143,33 @@ public class TaxManager {
     }
 
     /**
+     * Calculate tax for a specific player-created factory
+     */
+    public double calculateTax(PlayerFactory pf) {
+        if (pf == null || pf.getOwner() == null) {
+            return 0;
+        }
+
+        double baseRate = plugin.getConfig().getDouble("tax.rate", 5.0) / 100.0;
+        double levelMultiplier = plugin.getConfig().getDouble("tax.level-multiplier", 2.5) / 100.0;
+
+        // Total rate = base rate + (level - 1) * level multiplier
+        double totalRate = baseRate + (levelMultiplier * (pf.getLevel() - 1));
+
+        double taxAmount = pf.getPrice() * totalRate;
+
+        // Apply Fiscal Optimization research buff
+        if (plugin.getResearchManager() != null) {
+            double reduction = plugin.getResearchManager().getTaxReduction(pf.getOwner());
+            if (reduction > 0) {
+                taxAmount *= (1 - (reduction / 100.0));
+            }
+        }
+
+        return taxAmount;
+    }
+
+    /**
      * Assess taxes for all owned factories
      */
     public void assessTaxes() {
@@ -186,18 +213,7 @@ public class TaxManager {
             applyTaxAssessment(adminFactory.getId(), adminFactory.getOwner(), taxAmount, currentTime, dueDate);
             return true;
         } else if (playerFactory != null && playerFactory.getOwner() != null) {
-            // Manual calculation for player factories since calculateTax takes Factory model
-            double baseRate = plugin.getConfig().getDouble("tax.rate", 5.0) / 100.0;
-            double levelMultiplier = plugin.getConfig().getDouble("tax.level-multiplier", 2.5) / 100.0;
-            double totalRate = baseRate + (levelMultiplier * (playerFactory.getLevel() - 1));
-            double taxAmount = playerFactory.getPrice() * totalRate;
-
-            if (plugin.getResearchManager() != null) {
-                double reduction = plugin.getResearchManager().getTaxReduction(playerFactory.getOwner());
-                if (reduction > 0)
-                    taxAmount *= (1 - (reduction / 100.0));
-            }
-
+            double taxAmount = calculateTax(playerFactory);
             applyTaxAssessment(playerFactory.getId(), playerFactory.getOwner(), taxAmount, currentTime, dueDate);
             return true;
         }

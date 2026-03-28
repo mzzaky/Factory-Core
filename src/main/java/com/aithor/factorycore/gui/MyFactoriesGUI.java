@@ -191,9 +191,14 @@ public class MyFactoriesGUI {
             material = (custom != null) ? custom : Material.LIME_CONCRETE;
         } else {
             switch (factory.getStatus()) {
-                case RUNNING: material = Material.LIME_CONCRETE; break;
-                case NO_PARTS: material = Material.YELLOW_CONCRETE; break;
-                default: material = Material.RED_CONCRETE;
+                case RUNNING:
+                    material = Material.LIME_CONCRETE;
+                    break;
+                case NO_PARTS:
+                    material = Material.YELLOW_CONCRETE;
+                    break;
+                default:
+                    material = Material.RED_CONCRETE;
             }
         }
 
@@ -265,6 +270,14 @@ public class MyFactoriesGUI {
         lore.add("§7Level: §e" + pf.getLevel());
         lore.add("§7Status: " + pf.getStatus().getDisplay());
         lore.add("§d§oPlayer-Created Factory");
+        lore.add("");
+
+        long nextTaxMs = plugin.getTaxManager().getTimeUntilNextCollection();
+        double nextTaxAmount = plugin.getTaxManager().calculateTax(pf);
+        lore.add("§7Next Tax: §e"
+                + (nextTaxMs > 0 ? com.aithor.factorycore.utils.TimeFormatter.formatTime((int) (nextTaxMs / 1000))
+                        : "Calculating..."));
+        lore.add("§7Tax Amount: §6$" + String.format("%.2f", nextTaxAmount));
         lore.add("");
 
         if (pf.getCurrentProduction() != null) {
@@ -434,7 +447,8 @@ public class MyFactoriesGUI {
     }
 
     private Material getFactoryMaterial(FactoryType type) {
-        if (type == null) return Material.FURNACE;
+        if (type == null)
+            return Material.FURNACE;
         switch (type.getId()) {
             case "steel_mill":
                 return Material.IRON_BLOCK;

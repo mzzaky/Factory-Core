@@ -25,7 +25,7 @@ backup:
 tax:
   enabled: true
   rate: 5.0 # Percentage of factory price
-  interval-ticks: 41472000 # 1 days in Real Life
+  interval-ticks: 1728000 # 1 days in Real Life
   level-multiplier: 2.5 # Additional tax per level (%)
   # NEW: Tax Center settings
   due-days: 7 # Days until tax is considered overdue
@@ -37,7 +37,7 @@ tax:
 salary:
   enabled: true
   rate: 1.0 # Percentage of factory price
-  interval-ticks: 41472000 # 1 day in Real Life
+  interval-ticks: 1728000 # 1 day in Real Life
 
 # ==================== NEW: MARKETPLACE SETTINGS ====================
 marketplace:

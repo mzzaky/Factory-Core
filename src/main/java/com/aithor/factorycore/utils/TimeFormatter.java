@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-class TimeFormatter {
+public class TimeFormatter {
     
     public static String formatTime(int seconds) {
         if (seconds < 60) {

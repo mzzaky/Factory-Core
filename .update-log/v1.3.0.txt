@@ -1,0 +1,4 @@
+- [fix] default tax interval and salary interval now to 1 day tick.
+- [add] Menambahkan informasi hitung mundur pajak baru di menu My Factories.
+- [add] Menambahkan informasi jumlah nilai pajak yang akan ditagih di menu My Factories.
+- [refactor] Refactor metode kalkulasi pajak agar bisa digunakan secara terpusat untuk semua tipe pabrik.

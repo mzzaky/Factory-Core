@@ -134,6 +134,12 @@ messages:
   player-factory-border-disabled: "{prefix} §eBorder visualization §cDISABLED§e."
   player-factory-no-factories: "{prefix} §cYou don't have any player-created factories!"
 
+  # ==================== FACTORY PROTECTION MESSAGES ====================
+  protection-flag-enabled: "{prefix} §aProtection §e{flag} §ahas been §2ENABLED§a."
+  protection-flag-disabled: "{prefix} §eProtection §6{flag} §ehas been §cDISABLED§e."
+  protection-all-enabled: "{prefix} §aAll protection flags have been §2ENABLED§a."
+  protection-all-disabled: "{prefix} §eAll protection flags have been §cDISABLED§e."
+
   # ==================== BACKUP MESSAGES ====================
   backup-created: "{prefix} §aBackup created successfully: §e{filename}"
   backup-restored: "{prefix} §aBackup restored successfully: §e{filename}"

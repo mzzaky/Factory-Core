@@ -49,7 +49,8 @@ public class InventoryClickListener implements Listener {
                 title.contains("Upgrade Factory") ||
                 title.contains("Production Recipe") ||
                 title.contains("Output Storage") ||
-                title.contains("Transfer Owner")) {
+                title.contains("Transfer Owner") ||
+                title.contains("Factory Protection")) {
 
             if (plugin.getConfig().getBoolean("debug.gui-debug", false)) {
                 plugin.getLogger().info("Factory GUI detected, processing click...");

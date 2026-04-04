@@ -79,7 +79,8 @@ public class FactoryManager {
                     long startTime = config.getLong(key + ".production.start-time");
                     int duration = config.getInt(key + ".production.duration");
 
-                    ProductionTask task = new ProductionTask(recipeId, startTime, duration);
+                    boolean continuous = config.getBoolean(key + ".production.continuous", false);
+                    ProductionTask task = new ProductionTask(recipeId, startTime, duration, continuous);
                     factory.setCurrentProduction(task);
                 }
 
@@ -106,6 +107,9 @@ public class FactoryManager {
                     factory.setUpgradeStartTime(config.getLong(key + ".upgrade.start-time"));
                     factory.setUpgradeDurationSeconds(config.getInt(key + ".upgrade.duration"));
                 }
+
+                // Load total product value
+                factory.setTotalProductValue(config.getDouble(key + ".total-product-value", 0.0));
 
                 factories.put(factory.getId(), factory);
             } catch (Exception e) {
@@ -136,6 +140,7 @@ public class FactoryManager {
                 config.set(path + ".production.recipe", task.getRecipeId());
                 config.set(path + ".production.start-time", task.getStartTime());
                 config.set(path + ".production.duration", task.getDuration());
+                config.set(path + ".production.continuous", task.isContinuous());
             }
 
             // Save fast travel location if exists
@@ -157,6 +162,9 @@ public class FactoryManager {
             } else {
                 config.set(path + ".upgrade", null); // clear if not upgrading
             }
+
+            // Save total product value
+            config.set(path + ".total-product-value", factory.getTotalProductValue());
         }
 
         try {
@@ -314,6 +322,10 @@ public class FactoryManager {
     }
 
     public void startProduction(Factory factory, String recipeId) {
+        startProduction(factory, recipeId, false);
+    }
+
+    public void startProduction(Factory factory, String recipeId, boolean continuous) {
         Recipe recipe = plugin.getRecipeManager().getRecipe(recipeId);
         if (recipe == null)
             return;
@@ -343,13 +355,13 @@ public class FactoryManager {
         // Ensure minimum duration of 1 second
         duration = Math.max(duration, 1);
 
-        ProductionTask task = new ProductionTask(recipeId, System.currentTimeMillis(), duration);
+        ProductionTask task = new ProductionTask(recipeId, System.currentTimeMillis(), duration, continuous);
         factory.setCurrentProduction(task);
         factory.setStatus(FactoryStatus.RUNNING);
 
         // Create bossbar
         if (plugin.getConfig().getBoolean("production.show-bossbar", true)) {
-            createProductionBossBar(factory, recipe);
+            createProductionBossBar(factory, recipe, continuous);
         }
 
         saveAll();
@@ -385,6 +397,7 @@ public class FactoryManager {
         }
 
         ProductionTask task = factory.getCurrentProduction();
+        boolean wasContinuous = task.isContinuous();
         Recipe recipe = plugin.getRecipeManager().getRecipe(task.getRecipeId());
 
         if (recipe != null) {
@@ -429,6 +442,16 @@ public class FactoryManager {
                         plugin.getStorageManager().addOutputItem(
                                 factory.getId(), output.getKey(), output.getValue());
                     }
+                }
+            }
+
+            // Accumulate total product value using suggested_price from resources
+            for (Map.Entry<String, Integer> output : recipe.getOutputs().entrySet()) {
+                com.aithor.factorycore.models.ResourceItem resource =
+                        plugin.getResourceManager().getResource(output.getKey());
+                if (resource != null) {
+                    double itemValue = resource.getSellPrice() * output.getValue();
+                    factory.addProductValue(itemValue);
                 }
             }
 
@@ -504,20 +527,73 @@ public class FactoryManager {
         }
 
         saveAll();
+
+        if (wasContinuous && recipe != null) {
+            startContinuousProduction(factory, recipe);
+        }
     }
 
-    private void createProductionBossBar(Factory factory, Recipe recipe) {
+    private void startContinuousProduction(Factory factory, Recipe recipe) {
+        if (!plugin.getNPCManager().factoryHasEmployee(factory.getId())) return;
+        
+        double moneyCost = recipe.getMoneyCost();
+        if (moneyCost > 0 && plugin.getResearchManager() != null && factory.getOwner() != null) {
+            double costReduction = plugin.getResearchManager().getProductionCostReduction(factory.getOwner());
+            if (costReduction > 0) {
+                moneyCost *= (1 - (costReduction / 100.0));
+            }
+        }
+        
+        org.bukkit.OfflinePlayer offlineOwner = factory.getOwner() != null ? Bukkit.getOfflinePlayer(factory.getOwner()) : null;
+        if (moneyCost > 0) {
+            if (offlineOwner == null || !plugin.getEconomy().has(offlineOwner, moneyCost)) {
+                return;
+            }
+        }
+
+        for (Map.Entry<String, Integer> input : recipe.getInputs().entrySet()) {
+            int available = plugin.getStorageManager().getInputAmount(factory.getId(), input.getKey());
+            if (available < input.getValue()) {
+                return;
+            }
+        }
+
+        for (Map.Entry<String, Integer> input : recipe.getInputs().entrySet()) {
+            plugin.getStorageManager().removeInputItem(factory.getId(), input.getKey(), input.getValue());
+        }
+
+        if (moneyCost > 0 && offlineOwner != null) {
+            plugin.getEconomy().withdrawPlayer(offlineOwner, moneyCost);
+            if (plugin.getAchievementManager() != null) {
+                Player p = Bukkit.getPlayer(factory.getOwner());
+                if (p != null) {
+                    plugin.getAchievementManager().addProgress(p, "relentless_grinder", moneyCost);
+                } else {
+                    plugin.getAchievementManager().addProgressOffline(factory.getOwner(), "relentless_grinder", moneyCost);
+                }
+            }
+        }
+
+        startProduction(factory, recipe.getId(), true);
+    }
+
+    private void createProductionBossBar(Factory factory, Recipe recipe, boolean continuous) {
         Player owner = Bukkit.getPlayer(factory.getOwner());
         if (owner == null)
             return;
 
-        String title = plugin.getLanguageManager().getMessage("bossbar.production")
+        String titleKey = continuous ? "bossbar.production-multi" : "bossbar.production";
+        String title = plugin.getLanguageManager().getMessage(titleKey)
                 .replace("{recipe}", recipe.getName())
                 .replace("{percent}", "0");
 
+        BarColor color = continuous
+                ? BarColor.GREEN
+                : BarColor.valueOf(plugin.getConfig().getString("production.bossbar-color", "BLUE"));
+
         BossBar bossBar = Bukkit.createBossBar(
                 title,
-                BarColor.valueOf(plugin.getConfig().getString("production.bossbar-color", "BLUE")),
+                color,
                 BarStyle.valueOf(plugin.getConfig().getString("production.bossbar-style", "SOLID")));
 
         bossBar.addPlayer(owner);
@@ -540,7 +616,7 @@ public class FactoryManager {
 
         if (bossBar == null) {
             if (plugin.getConfig().getBoolean("production.show-bossbar", true)) {
-                createProductionBossBar(factory, recipe);
+                createProductionBossBar(factory, recipe, task.isContinuous());
                 bossBar = productionBossBars.get(factoryId);
                 if (bossBar == null)
                     return;
@@ -554,7 +630,8 @@ public class FactoryManager {
         double progress = task.getProgress();
         int percent = (int) (progress * 100);
 
-        String title = plugin.getLanguageManager().getMessage("bossbar.production")
+        String titleKey = task.isContinuous() ? "bossbar.production-multi" : "bossbar.production";
+        String title = plugin.getLanguageManager().getMessage(titleKey)
                 .replace("{recipe}", recipe.getName())
                 .replace("{percent}", String.valueOf(percent));
 

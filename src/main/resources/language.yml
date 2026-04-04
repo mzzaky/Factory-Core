@@ -378,6 +378,8 @@ messages:
   # Bossbar messages
   bossbar:
     production: "§6Producing §e{recipe} §6- §e{percent}%"
+    production-multi: "§a♻ §aAuto-Producing §e{recipe} §a- §e{percent}%"
+
     
   # Logging messages
   log:

@@ -90,6 +90,66 @@ recipes:
       industrial_redstone_dust: 4            # 4 × $12 = $48 - 12 = profit $36
     icon: REDSTONE_ORE
 
+  smelt_industrial_lapis_ore:
+    name: "§9Lapis Ore Processing"
+    factory-type: smeltery
+    production-time: 120
+    money-cost: 15.0
+    inputs:
+      vanilla:LAPIS_ORE: 4
+    outputs:
+      industrial_lapis_lazuli: 4              # 4 × $20 = $80
+    icon: LAPIS_ORE
+
+  smelt_industrial_emerald_ore:
+    name: "§aEmerald Ore Processing"
+    factory-type: smeltery
+    production-time: 240
+    money-cost: 60.0
+    inputs:
+      vanilla:EMERALD_ORE: 4
+      vanilla:COAL: 4
+    outputs:
+      industrial_emerald_ore: 4               # 4 × $80 = $320
+    icon: EMERALD_ORE
+
+  smelt_ancient_debris:
+    name: "§dAncient Debris Processing"
+    factory-type: smeltery
+    production-time: 500
+    money-cost: 180.0
+    inputs:
+      vanilla:ANCIENT_DEBRIS: 2
+      vanilla:COAL: 10
+    outputs:
+      industrial_netherite_scrap: 2           # 2 × $450 = $900
+    icon: ANCIENT_DEBRIS
+
+# DEEPSLATE ORE 
+
+  smelt_deepslate_coal:
+    name: "§8Deepslate Coal Processing"
+    factory-type: smeltery
+    production-time: 110
+    money-cost: 12.0
+    inputs:
+      vanilla:DEEPSLATE_COAL_ORE: 4
+    outputs:
+      industrial_coal_ore: 8                  # 8 × $8 = $64
+    icon: DEEPSLATE_COAL_ORE
+
+  smelt_deepslate_copper:
+    name: "§6Deepslate Copper Processing"
+    factory-type: smeltery
+    production-time: 150
+    money-cost: 25.0
+    inputs:
+      vanilla:DEEPSLATE_COPPER_ORE: 4
+      vanilla:COAL: 4
+    outputs:
+      industrial_copper_ore: 8                # 8 × $15 = $120
+    icon: DEEPSLATE_COPPER_ORE
+  
   smelt_deepslate_iron:
     name: "§7Deepslate Iron Processing"
     factory-type: smeltery
@@ -126,41 +186,39 @@ recipes:
       industrial_diamond_ore: 4                 # 4 × $150 = $600 - 130 = profit $470
     icon: DEEPSLATE_DIAMOND_ORE
 
-  smelt_raw_iron_batch:
-    name: "§fRaw Iron Batch Smelting"
+  smelt_deepslate_redstone:
+    name: "§cDeepslate Redstone Processing"
     factory-type: smeltery
-    production-time: 200
+    production-time: 150
+    money-cost: 18.0
+    inputs:
+      vanilla:DEEPSLATE_REDSTONE_ORE: 4
+    outputs:
+      industrial_redstone_dust: 8             # 8 × $12 = $96
+    icon: DEEPSLATE_REDSTONE_ORE
+
+  smelt_deepslate_lapis:
+    name: "§9Deepslate Lapis Processing"
+    factory-type: smeltery
+    production-time: 150
     money-cost: 25.0
     inputs:
-      vanilla:RAW_IRON: 16         # 16x Raw Iron (Fortune pickaxe drops)
-      vanilla:COAL: 4
+      vanilla:DEEPSLATE_LAPIS_ORE: 4
     outputs:
-      industrial_iron_ore: 20                 # 20 × $12 = $240
-    icon: RAW_IRON
+      industrial_lapis_lazuli: 8               # 8 × $20 = $160
+    icon: DEEPSLATE_LAPIS_ORE
 
-  smelt_raw_copper_batch:
-    name: "§6Raw Copper Batch Smelting"
+  smelt_deepslate_emerald:
+    name: "§aDeepslate Emerald Processing"
     factory-type: smeltery
-    production-time: 200
-    money-cost: 30.0
+    production-time: 300
+    money-cost: 90.0
     inputs:
-      vanilla:RAW_COPPER: 16
-      vanilla:COAL: 4
-    outputs:
-      industrial_copper_ore: 18               # 18 × $15 = $270
-    icon: RAW_COPPER
-
-  smelt_raw_gold_batch:
-    name: "§eRaw Gold Batch Smelting"
-    factory-type: smeltery
-    production-time: 240
-    money-cost: 65.0
-    inputs:
-      vanilla:RAW_GOLD: 12
+      vanilla:DEEPSLATE_EMERALD_ORE: 4
       vanilla:COAL: 6
     outputs:
-      industrial_gold_ore: 10                 # 10 × $40 = $400
-    icon: RAW_GOLD
+      industrial_emerald_ore: 8                # 8 × $80 = $640
+    icon: DEEPSLATE_EMERALD_ORE
 
 
   # ==================== STEEL MILL RECIPES ====================
@@ -840,3 +898,236 @@ recipes:
     outputs:
       space_suit: 1                        # 1 × $2000 = $2000 (input $1240 + fee $160 = $1400 cost)
     icon: DIAMOND_CHESTPLATE
+
+
+  # ==================== NEW STEEL MILL RECIPES (from new raw resources) ====================
+  # Produces ADVANCED_RESOURCES from industrial_lapis_lazuli, industrial_emerald_ore,
+  # and industrial_netherite_scrap
+
+  produce_lapis_pigment_paste:
+    name: "§9Lapis Pigment Paste Processing"
+    factory-type: steel_mill
+    production-time: 160
+    money-cost: 12.0
+    inputs:
+      industrial_lapis_lazuli: 6           # 6 × $20 = $120
+      industrial_coal_ore: 2               # 2 × $8  = $16
+    outputs:
+      lapis_pigment_paste: 3               # 3 × $55 = $165  (input $136 + fee $12 = $148 cost)
+    icon: BLUE_DYE
+
+  produce_emerald_catalyst:
+    name: "§aEmerald Catalyst Synthesis"
+    factory-type: steel_mill
+    production-time: 350
+    money-cost: 40.0
+    inputs:
+      industrial_emerald_ore: 4            # 4 × $80 = $320
+      industrial_redstone_dust: 4          # 4 × $12 = $48
+      industrial_gold_ore: 1              # 1 × $40 = $40
+    outputs:
+      emerald_catalyst: 2                  # 2 × $200 = $400  (input $408 + fee $40 = $448 cost)
+    icon: EMERALD
+
+  produce_netherite_alloy_bar:
+    name: "§5Netherite Alloy Bar Forging"
+    factory-type: steel_mill
+    production-time: 600
+    money-cost: 100.0
+    inputs:
+      industrial_netherite_scrap: 2        # 2 × $450 = $900
+      industrial_iron_ore: 4              # 4 × $12  = $48
+      industrial_coal_ore: 6              # 6 × $8   = $48
+    outputs:
+      netherite_alloy_bar: 2              # 2 × $500 = $1000  (input $996 + fee $100 = $1096 cost)
+    icon: NETHERITE_INGOT
+
+
+  # ==================== NEW WORKSHOP RECIPES (from new materials) ====================
+  # Produces MACHINE_PARTS using lapis, emerald, and netherite inputs
+
+  produce_arc_welder_tip:
+    name: "§eArc Welder Tip Fabrication"
+    factory-type: workshop
+    production-time: 220
+    money-cost: 14.0
+    inputs:
+      industrial_lapis_lazuli: 8           # 8 × $20 = $160
+      industrial_copper_ore: 3             # 3 × $15 = $45
+      industrial_coal_ore: 2              # 2 × $8  = $16
+    outputs:
+      arc_welder_tip: 2                    # 2 × $80 = $160  (input $221 + fee $14 = $235 cost)
+    icon: BLAZE_ROD
+
+  produce_resonance_coil:
+    name: "§aResonance Coil Winding"
+    factory-type: workshop
+    production-time: 360
+    money-cost: 30.0
+    inputs:
+      industrial_emerald_ore: 3            # 3 × $80  = $240
+      industrial_redstone_dust: 4          # 4 × $12  = $48
+      industrial_gold_ore: 1              # 1 × $40  = $40
+    outputs:
+      resonance_coil: 2                    # 2 × $180 = $360  (input $328 + fee $30 = $358 cost)
+    icon: AMETHYST_SHARD
+
+  produce_netherite_drill_bit:
+    name: "§5Netherite Drill Bit Machining"
+    factory-type: workshop
+    production-time: 500
+    money-cost: 60.0
+    inputs:
+      industrial_netherite_scrap: 1        # 1 × $450 = $450
+      industrial_diamond_ore: 1           # 1 × $150 = $150
+      industrial_iron_ore: 4              # 4 × $12  = $48
+    outputs:
+      netherite_drill_bit: 2              # 2 × $450 = $900  (input $648 + fee $60 = $708 cost)
+    icon: NETHERITE_AXE
+
+
+  # ==================== NEW FINAL PRODUCT RECIPES ====================
+  # Tier 3 — Uses new Advanced Resources & Machine Parts
+
+  # ---------- MILITARY FACTORY (new) ----------
+
+  produce_plasma_cannon:
+    name: "§5Plasma Cannon Fabrication"
+    factory-type: military_factory
+    production-time: 1200
+    money-cost: 280.0
+    inputs:
+      netherite_alloy_bar: 3              # 3 × $500 = $1500  (Advanced)
+      netherite_drill_bit: 2              # 2 × $450 = $900   (Parts)
+      electronic_circuit: 2              # 2 × $85  = $170   (Advanced)
+      biosolar: 1                        # 1 × $120 = $120   (Fuel)
+    outputs:
+      plasma_cannon: 1                    # 1 × $3200 = $3200  (input $2690 + fee $280 = $2970 cost)
+    icon: NETHERITE_SWORD
+
+  produce_exo_armor_suit:
+    name: "§5Exo-Armor Suit Assembly"
+    factory-type: military_factory
+    production-time: 1100
+    money-cost: 240.0
+    inputs:
+      netherite_alloy_bar: 4              # 4 × $500 = $2000  (Advanced)
+      carbon_composite: 2               # 2 × $130 = $260   (Advanced)
+      arc_welder_tip: 3                  # 3 × $80  = $240   (Parts)
+      hydraulic_piston: 2               # 2 × $90  = $180   (Parts)
+      marine_fuel_oil: 1                # 1 × $50  = $50    (Fuel)
+    outputs:
+      exo_armor_suit: 1                  # 1 × $2800 = $2800  (input $2730 + fee $240 = $2970 cost)
+    icon: NETHERITE_CHESTPLATE
+
+  produce_heavy_sniper_rifle:
+    name: "§4Heavy Sniper Rifle Production"
+    factory-type: military_factory
+    production-time: 700
+    money-cost: 100.0
+    inputs:
+      steel_ingot: 3                    # 3 × $35  = $105   (Advanced)
+      emerald_catalyst: 1              # 1 × $200 = $200   (Advanced)
+      precision_lens: 1               # 1 × $250 = $250   (Parts)
+      resonance_coil: 1               # 1 × $180 = $180   (Parts)
+      high_speed_diesel: 1            # 1 × $18  = $18    (Fuel)
+    outputs:
+      heavy_sniper_rifle: 1            # 1 × $1400 = $1400  (input $753 + fee $100 = $853 cost)
+    icon: CROSSBOW
+
+  # ---------- ELECTRONICS ASSEMBLY (new) ----------
+
+  produce_holographic_display:
+    name: "§bHolographic Display Assembly"
+    factory-type: electronics_assembly
+    production-time: 700
+    money-cost: 110.0
+    inputs:
+      lapis_pigment_paste: 4            # 4 × $55  = $220   (Advanced)
+      electronic_circuit: 2            # 2 × $85  = $170   (Advanced)
+      tempered_glass: 3               # 3 × $45  = $135   (Advanced)
+      resonance_coil: 1              # 1 × $180 = $180   (Parts)
+      high_speed_diesel: 1           # 1 × $18  = $18    (Fuel)
+    outputs:
+      holographic_display: 1          # 1 × $1600 = $1600  (input $723 + fee $110 = $833 cost)
+    icon: GLASS
+
+  produce_quantum_processor:
+    name: "§dQuantum Processor Fabrication"
+    factory-type: electronics_assembly
+    production-time: 950
+    money-cost: 200.0
+    inputs:
+      emerald_catalyst: 2             # 2 × $200 = $400   (Advanced)
+      silicon_wafer: 3               # 3 × $55  = $165   (Advanced)
+      gold_alloy: 2                  # 2 × $70  = $140   (Advanced)
+      resonance_coil: 2             # 2 × $180 = $360   (Parts)
+      biosolar: 1                    # 1 × $120 = $120   (Fuel)
+    outputs:
+      quantum_processor: 1            # 1 × $3500 = $3500  (input $1185 + fee $200 = $1385 cost)
+    icon: CONDUIT
+
+  # ---------- AUTOMOTIVE PLANT (new) ----------
+
+  produce_netherite_exhaust_system:
+    name: "§8Netherite Exhaust System Build"
+    factory-type: automotive_plant
+    production-time: 650
+    money-cost: 130.0
+    inputs:
+      netherite_alloy_bar: 2            # 2 × $500 = $1000  (Advanced)
+      tungsten_rod: 2                  # 2 × $95  = $190   (Advanced)
+      arc_welder_tip: 2               # 2 × $80  = $160   (Parts)
+      turbine_blade: 1                # 1 × $200 = $200   (Parts)
+      high_speed_diesel: 1            # 1 × $18  = $18    (Fuel)
+    outputs:
+      netherite_exhaust_system: 1      # 1 × $1800 = $1800  (input $1568 + fee $130 = $1698 cost)
+    icon: DISPENSER
+
+  produce_emerald_fuel_cell:
+    name: "§aEmerald Fuel Cell Engineering"
+    factory-type: automotive_plant
+    production-time: 850
+    money-cost: 160.0
+    inputs:
+      emerald_catalyst: 3             # 3 × $200 = $600   (Advanced)
+      copper_wire: 4                 # 4 × $28  = $112   (Advanced)
+      aluminum_sheet: 3             # 3 × $40  = $120   (Advanced)
+      pressure_valve: 2             # 2 × $70  = $140   (Parts)
+      resonance_coil: 1            # 1 × $180 = $180   (Parts)
+      marine_fuel_oil: 1           # 1 × $50  = $50    (Fuel)
+    outputs:
+      emerald_fuel_cell: 1          # 1 × $2400 = $2400  (input $1202 + fee $160 = $1362 cost)
+    icon: LIME_GLAZED_TERRACOTTA
+
+  # ---------- AEROSPACE FOUNDRY (new) ----------
+
+  produce_plasma_thruster:
+    name: "§5Plasma Thruster Fabrication"
+    factory-type: aerospace_foundry
+    production-time: 1300
+    money-cost: 320.0
+    inputs:
+      netherite_alloy_bar: 4           # 4 × $500 = $2000  (Advanced)
+      carbon_composite: 3             # 3 × $130 = $390   (Advanced)
+      netherite_drill_bit: 2         # 2 × $450 = $900   (Parts)
+      turbine_blade: 2              # 2 × $200 = $400   (Parts)
+      biosolar: 2                   # 2 × $120 = $240   (Fuel)
+    outputs:
+      plasma_thruster: 1             # 1 × $4000 = $4000  (input $3930 + fee $320 = $4250 cost)
+    icon: BEACON
+
+  produce_orbital_resonator:
+    name: "§dOrbital Resonator Engineering"
+    factory-type: aerospace_foundry
+    production-time: 1500
+    money-cost: 400.0
+    inputs:
+      emerald_catalyst: 4            # 4 × $200 = $800   (Advanced)
+      netherite_alloy_bar: 3        # 3 × $500 = $1500  (Advanced)
+      resonance_coil: 3            # 3 × $180 = $540   (Parts)
+      precision_lens: 2           # 2 × $250 = $500   (Parts)
+      biosolar: 2                 # 2 × $120 = $240   (Fuel)
+    outputs:
+      orbital_resonator: 1          # 1 × $5000 = $5000  (input $3580 + fee $400 = $3980 cost)
+    icon: END_CRYSTAL

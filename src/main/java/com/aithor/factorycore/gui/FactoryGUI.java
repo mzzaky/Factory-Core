@@ -116,7 +116,7 @@ public class FactoryGUI {
             if (plugin.getConfig().getBoolean("debug.gui-debug", false)) {
                 plugin.getLogger().info("Handling confirm click");
             }
-            handleConfirmClick(clicked);
+            handleConfirmClick(event, clicked);
         }
         // Storage clicks
         else if (title.contains("Storage")) {
@@ -659,11 +659,11 @@ public class FactoryGUI {
         }
     }
 
-    private void handleConfirmClick(ItemStack clicked) {
+    private void handleConfirmClick(InventoryClickEvent event, ItemStack clicked) {
         String name = clicked.getItemMeta().getDisplayName();
 
         if (name.contains("Confirm")) {
-            startProduction();
+            startProduction(event.isRightClick());
         } else if (name.contains("Cancel")) {
             // Clear recipe ID when canceling
             player.getPersistentDataContainer().remove(new NamespacedKey(plugin, "current_recipe_id"));
@@ -671,7 +671,7 @@ public class FactoryGUI {
         }
     }
 
-    private void startProduction() {
+    private void startProduction(boolean continuous) {
         // Resolve factory from either admin or player factory
         Factory factory = plugin.getFactoryManager().getFactory(currentFactoryId);
         com.aithor.factorycore.models.PlayerFactory playerFactory = null;
@@ -739,10 +739,10 @@ public class FactoryGUI {
 
         // Start production on the correct factory type
         if (factory != null) {
-            plugin.getFactoryManager().startProduction(factory, currentRecipeId);
+            plugin.getFactoryManager().startProduction(factory, currentRecipeId, continuous);
         } else {
             // PlayerFactory production start (mirrors FactoryManager logic)
-            plugin.getPlayerFactoryManager().startProduction(playerFactory, currentRecipeId);
+            plugin.getPlayerFactoryManager().startProduction(playerFactory, currentRecipeId, continuous);
         }
 
         // Clear recipe ID after successful production start

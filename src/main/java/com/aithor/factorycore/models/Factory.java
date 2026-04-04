@@ -161,4 +161,19 @@ public class Factory {
     public void setDisplayName(String displayName) { this.displayName = displayName; }
     public String getCustomIcon() { return customIcon; }
     public void setCustomIcon(String customIcon) { this.customIcon = customIcon; }
+
+    // ── Total product value ──────────────────────────────────────────────────
+    private double totalProductValue = 0.0;
+
+    public double getTotalProductValue() {
+        return totalProductValue;
+    }
+
+    public void setTotalProductValue(double totalProductValue) {
+        this.totalProductValue = totalProductValue;
+    }
+
+    public void addProductValue(double value) {
+        this.totalProductValue += value;
+    }
 }

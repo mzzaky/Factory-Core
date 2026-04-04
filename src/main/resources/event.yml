@@ -1371,3 +1371,361 @@ events:
     # value: 1800+1600+4×120 = 1800+1600+480 = $3880 | markup: ~18%
     bonus: 1.3
     bonus_condition: 40
+
+  # ================================================================
+  #  NEW RESOURCE ORDERS — From Lapis / Emerald / Netherite
+  # ================================================================
+
+  # ---------------------------------------------------------------
+  #  ADVANCED RESOURCE ORDERS (new)
+  # ---------------------------------------------------------------
+
+  quantum_lapis_pigment_order:
+    name: "Lapis Pigment Paste Supply"
+    lore:
+      - "§7Quantum Optics is developing a new display"
+      - "§7coating. They need refined lapis pigment paste."
+    chance: 5.0
+    time: 500
+    company: quantum_optics
+    demand:
+      - lapis_pigment_paste 8
+    price_offer: 530
+    # value: 8×$55 = $440 | markup: ~20%
+    bonus: 1.2
+    bonus_condition: 60
+
+  nexgen_emerald_catalyst_order:
+    name: "Emerald Catalyst Procurement"
+    lore:
+      - "§7NexGen's quantum division is synthesizing next-gen"
+      - "§7chips. They need a batch of emerald catalyst."
+    chance: 3.5
+    time: 700
+    company: nexgen_electronics
+    demand:
+      - emerald_catalyst 4
+    price_offer: 960
+    # value: 4×$200 = $800 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 55
+
+  blackrock_netherite_alloy_order:
+    name: "Netherite Alloy Bar Requisition"
+    lore:
+      - "§7Blackrock's advanced metallurgy lab needs"
+      - "§7netherite alloy bars for extreme-duty tooling."
+    chance: 2.0
+    time: 900
+    company: blackrock_foundry
+    demand:
+      - netherite_alloy_bar 3
+    price_offer: 1800
+    # value: 3×$500 = $1500 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 50
+
+  # ---------------------------------------------------------------
+  #  MACHINE PARTS ORDERS (new)
+  # ---------------------------------------------------------------
+
+  vulcan_arc_welder_tip_order:
+    name: "Arc Welder Tip Batch Order"
+    lore:
+      - "§7Vulcan's heavy fabrication workshop is expanding."
+      - "§7Precision arc welder tips are in high demand."
+    chance: 5.0
+    time: 550
+    company: vulcan_industries
+    demand:
+      - arc_welder_tip 6
+    price_offer: 575
+    # value: 6×$80 = $480 | markup: ~20%
+    bonus: 1.2
+    bonus_condition: 60
+
+  redstone_resonance_coil_order:
+    name: "Resonance Coil R&D Order"
+    lore:
+      - "§7Redstone Dynamics is prototyping energy amplifiers."
+      - "§7Emerald-core resonance coils are critical."
+    chance: 3.5
+    time: 700
+    company: redstone_dynamics
+    demand:
+      - resonance_coil 4
+    price_offer: 865
+    # value: 4×$180 = $720 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 55
+
+  cobalt_netherite_drill_order:
+    name: "Netherite Drill Bit Order"
+    lore:
+      - "§7Cobalt Mining is drilling into deep granite veins."
+      - "§7Only netherite drill bits will survive the pressure."
+    chance: 2.0
+    time: 800
+    company: cobalt_mining
+    demand:
+      - netherite_drill_bit 2
+    price_offer: 1080
+    # value: 2×$450 = $900 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 50
+
+  # ---------------------------------------------------------------
+  #  FINAL PRODUCT ORDERS (new) — Military
+  # ---------------------------------------------------------------
+
+  ironclad_plasma_cannon_contract:
+    name: "Plasma Cannon Procurement"
+    lore:
+      - "§7Ironclad's special weapons division has a black"
+      - "§7budget contract for plasma energy weaponry."
+    chance: 1.0
+    time: 1800
+    company: ironclad_defense
+    demand:
+      - plasma_cannon 1
+    price_offer: 3840
+    # value: 1×$3200 = $3200 | markup: ~20%
+    bonus: 1.45
+    bonus_condition: 40
+
+  ironclad_exo_armor_order:
+    name: "Exo-Armor Suit Contract"
+    lore:
+      - "§7The ministry requested powered exo-armor suits"
+      - "§7for Ironclad's elite assault battalion."
+    chance: 1.5
+    time: 1600
+    company: ironclad_defense
+    demand:
+      - exo_armor_suit 1
+    price_offer: 3360
+    # value: 1×$2800 = $2800 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 40
+
+  valkyrie_sniper_rifle_order:
+    name: "Heavy Sniper Rifle Procurement"
+    lore:
+      - "§7Valkyrie's precision strike team needs anti-materiel"
+      - "§7sniper platforms for their next deployment."
+    chance: 3.0
+    time: 1200
+    company: valkyrie_munitions
+    demand:
+      - heavy_sniper_rifle 2
+    price_offer: 3360
+    # value: 2×$1400 = $2800 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  # ---------------------------------------------------------------
+  #  FINAL PRODUCT ORDERS (new) — Electronics
+  # ---------------------------------------------------------------
+
+  nexgen_holographic_display_order:
+    name: "Holographic Display Shipment"
+    lore:
+      - "§7NexGen is launching a holographic phone line."
+      - "§7Projection display units are the key component."
+    chance: 3.5
+    time: 1100
+    company: nexgen_electronics
+    demand:
+      - holographic_display 2
+    price_offer: 3840
+    # value: 2×$1600 = $3200 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  circuitbay_quantum_processor_order:
+    name: "Quantum Processor Commission"
+    lore:
+      - "§7CircuitBay won a quantum computing research grant."
+      - "§7They need quantum processors for prototype builds."
+    chance: 1.5
+    time: 1500
+    company: circuitbay_tech
+    demand:
+      - quantum_processor 1
+    price_offer: 4200
+    # value: 1×$3500 = $3500 | markup: ~20%
+    bonus: 1.4
+    bonus_condition: 40
+
+  # ---------------------------------------------------------------
+  #  FINAL PRODUCT ORDERS (new) — Automotive
+  # ---------------------------------------------------------------
+
+  titan_netherite_exhaust_order:
+    name: "Netherite Exhaust System Order"
+    lore:
+      - "§7Titan's race engineering team wants heat-proof"
+      - "§7netherite exhaust manifolds for track cars."
+    chance: 3.0
+    time: 1200
+    company: titan_automotive
+    demand:
+      - netherite_exhaust_system 2
+    price_offer: 4320
+    # value: 2×$1800 = $3600 | markup: ~20%
+    bonus: 1.3
+    bonus_condition: 50
+
+  vanguard_emerald_fuel_cell_order:
+    name: "Emerald Fuel Cell Supply"
+    lore:
+      - "§7Vanguard is commercializing hydrogen EVs."
+      - "§7Catalyst-enhanced fuel cells are the power source."
+    chance: 2.0
+    time: 1400
+    company: vanguard_motors
+    demand:
+      - emerald_fuel_cell 1
+    price_offer: 2880
+    # value: 1×$2400 = $2400 | markup: ~20%
+    bonus: 1.35
+    bonus_condition: 45
+
+  # ---------------------------------------------------------------
+  #  FINAL PRODUCT ORDERS (new) — Aerospace
+  # ---------------------------------------------------------------
+
+  orbital_plasma_thruster_order:
+    name: "Plasma Thruster Fabrication"
+    lore:
+      - "§7Orbital Solutions needs ion propulsion thrusters"
+      - "§7for their deep-space probe fleet."
+    chance: 1.0
+    time: 1800
+    company: orbital_solutions
+    demand:
+      - plasma_thruster 1
+    price_offer: 4800
+    # value: 1×$4000 = $4000 | markup: ~20%
+    bonus: 1.5
+    bonus_condition: 35
+
+  stellar_orbital_resonator_order:
+    name: "Orbital Resonator Commission"
+    lore:
+      - "§7Stellar's space program reached orbit insertion phase."
+      - "§7Gravimetric resonators are mission-critical."
+    chance: 0.8
+    time: 2000
+    company: stellar_aerospace
+    demand:
+      - orbital_resonator 1
+    price_offer: 6000
+    # value: 1×$5000 = $5000 | markup: ~20%
+    bonus: 1.5
+    bonus_condition: 35
+
+  # ---------------------------------------------------------------
+  #  MIXED / CROSS-TIER ORDERS (new)
+  # ---------------------------------------------------------------
+
+  ironclad_netherite_assault_package:
+    name: "Netherite Assault Package"
+    lore:
+      - "§7A classified special forces unit needs full kit:"
+      - "§7exo-armor, plasma cannon, and sniper support."
+    chance: 0.8
+    time: 2400
+    company: ironclad_defense
+    demand:
+      - plasma_cannon 1
+      - exo_armor_suit 1
+      - heavy_sniper_rifle 1
+    price_offer: 8880
+    # value: 3200+2800+1400 = $7400 | markup: ~20%
+    bonus: 1.5
+    bonus_condition: 35
+
+  nexgen_next_gen_tech_bundle:
+    name: "Next-Gen Technology Bundle"
+    lore:
+      - "§7NexGen is showcasing their full product lineup."
+      - "§7Holo displays and quantum processors required."
+    chance: 1.2
+    time: 1800
+    company: nexgen_electronics
+    demand:
+      - holographic_display 2
+      - quantum_processor 1
+    price_offer: 7320
+    # value: 2×1600+3500 = $6700 | markup: ~9%
+    bonus: 1.35
+    bonus_condition: 45
+
+  vanguard_next_gen_ev_package:
+    name: "Next-Gen EV Powertrain"
+    lore:
+      - "§7Vanguard's hydrogen EV program needs a full"
+      - "§7powertrain: fuel cells, battery, and exhaust."
+    chance: 1.0
+    time: 2000
+    company: vanguard_motors
+    demand:
+      - emerald_fuel_cell 1
+      - electric_battery 1
+      - netherite_exhaust_system 1
+    price_offer: 7440
+    # value: 2400+1600+1800 = $5800 | markup: ~28%
+    bonus: 1.4
+    bonus_condition: 40
+
+  stellar_deep_space_mission_kit:
+    name: "Deep Space Mission Package"
+    lore:
+      - "§7Stellar's interplanetary mission requires advanced"
+      - "§7propulsion, resonators, and navigation systems."
+    chance: 0.6
+    time: 2800
+    company: stellar_aerospace
+    demand:
+      - plasma_thruster 1
+      - orbital_resonator 1
+      - navigation_system 1
+    price_offer: 11040
+    # value: 4000+5000+2800 = $11800 | close to cost
+    bonus: 1.5
+    bonus_condition: 30
+
+  blackrock_rare_materials_mega_order:
+    name: "Rare Materials Mega Order"
+    lore:
+      - "§7Blackrock is stocking up on cutting-edge materials"
+      - "§7for an upcoming classified government contract."
+    chance: 1.5
+    time: 1000
+    company: blackrock_foundry
+    demand:
+      - netherite_alloy_bar 3
+      - emerald_catalyst 4
+      - lapis_pigment_paste 6
+    price_offer: 2850
+    # value: 3×500+4×200+6×55 = 1500+800+330 = $2630 | markup: ~8%
+    bonus: 1.3
+    bonus_condition: 50
+
+  cobalt_advanced_drill_package:
+    name: "Advanced Drilling Package"
+    lore:
+      - "§7Cobalt Mining is sinking ultra-deep shafts."
+      - "§7Netherite drill bits and arc welders are vital."
+    chance: 2.5
+    time: 900
+    company: cobalt_mining
+    demand:
+      - netherite_drill_bit 2
+      - arc_welder_tip 4
+      - resonance_coil 2
+    price_offer: 2040
+    # value: 2×450+4×80+2×180 = 900+320+360 = $1580 | markup: ~29%
+    bonus: 1.25
+    bonus_condition: 55

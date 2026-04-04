@@ -214,7 +214,7 @@ distribution:
     style: SOLID
     title: "{event_name} &8- &e{time}"
   # Tax rate deducted from distribution center payouts (%)
-  tax_distribution_rate: 25.0
+  tax_distribution_rate: 5.0
   # Maximum number of active requests per player
   max-active-requests: 3
   # Interval in ticks between distribution event spawn checks (6000 = 5 minutes)

@@ -11,6 +11,7 @@ import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,7 +19,6 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.vehicle.VehiclePlaceEvent;
 
 /**
  * Protects player-created factory regions using per-factory protection flags.
@@ -223,11 +223,14 @@ public class PlayerFactoryProtectionListener implements Listener {
     // ── Vehicle Place ───────────────────────────────────────────────────────
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onVehiclePlace(VehiclePlaceEvent event) {
+    public void onVehiclePlace(EntityPlaceEvent event) {
         if (!isProtectionMasterEnabled()) return;
         if (event.getPlayer() == null) return;
 
-        PlayerFactory factory = getFactoryAt(event.getVehicle().getLocation());
+        // Ensure we only handle vehicle types (Boats, Minecarts) for this specific flag
+        if (!(event.getEntity() instanceof Vehicle)) return;
+
+        PlayerFactory factory = getFactoryAt(event.getEntity().getLocation());
         if (factory == null) return;
         if (!factory.isProtectionEnabled(ProtectionFlag.VEHICLE_PLACE)) return;
         if (isAllowed(factory, event.getPlayer())) return;

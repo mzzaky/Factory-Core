@@ -143,6 +143,48 @@ resources:
     glow: false
     suggested_price: 12.0
 
+  industrial_lapis_lazuli:
+    rarity: "common"
+    type: RAW_RESOURCES
+    material: LAPIS_LAZULI
+    name: "§9Industrial Lapis Lazuli"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Lapis lazuli"
+      - "§7Blue dye & magical component"
+    custom-model-data: 1007
+    glow: false
+    suggested_price: 20.0
+
+  industrial_emerald_ore:
+    rarity: "uncommon"
+    type: RAW_RESOURCES
+    material: EMERALD
+    name: "§aIndustrial Emerald"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Emerald"
+      - "§7High-value currency & component"
+    custom-model-data: 1008
+    glow: false
+    suggested_price: 80.0
+
+  industrial_netherite_scrap:
+    rarity: "epic"
+    type: RAW_RESOURCES
+    material: NETHERITE_SCRAP
+    name: "§dIndustrial Netherite Scrap"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Netherite scrap"
+      - "§7Ultimate industrial material"
+    custom-model-data: 1009
+    glow: true
+    suggested_price: 450.0
+
   # ==================== FUEL ====================
   # Support tier — consumed by factories as processing fuel
   # Price range: $18 – $120 per unit
@@ -860,6 +902,252 @@ resources:
     custom-model-data: 4021
     glow: true
     suggested_price: 2000.0
+
+  # ==================== NEW ADVANCED RESOURCES (from new raw inputs) ====================
+  # Derived from: industrial_lapis_lazuli, industrial_emerald_ore, industrial_netherite_scrap
+  # Tier 2 — produced by Steel Mill
+  # Price range: $55 – $500 per unit
+
+  lapis_pigment_paste:
+    rarity: "common"
+    type: ADVANCED_RESOURCES
+    material: BLUE_DYE
+    name: "§9Lapis Pigment Paste"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Ultra-pure lapis pigment suspension"
+      - "§7Used in optical coatings & displays"
+    custom-model-data: 2013
+    glow: false
+    suggested_price: 55.0
+
+  emerald_catalyst:
+    rarity: "uncommon"
+    type: ADVANCED_RESOURCES
+    material: EMERALD
+    name: "§aEmerald Catalyst"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Refined emerald crystalline compound"
+      - "§7Accelerates chemical reactions"
+    custom-model-data: 2014
+    glow: true
+    suggested_price: 200.0
+
+  netherite_alloy_bar:
+    rarity: "epic"
+    type: ADVANCED_RESOURCES
+    material: NETHERITE_INGOT
+    name: "§5Netherite Alloy Bar"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Pure netherite-steel composite ingot"
+      - "§7Unmatched hardness & heat resistance"
+    custom-model-data: 2015
+    glow: true
+    suggested_price: 500.0
+
+  # ==================== NEW MACHINE PARTS (from new materials) ====================
+  # Tier 2 — produced by Workshop
+  # Price range: $80 – $450 per unit
+
+  arc_welder_tip:
+    rarity: "uncommon"
+    type: MACHINE_PARTS
+    material: BLAZE_ROD
+    name: "§eArc Welder Tip"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Lapis-plasma arc electrode"
+      - "§7Precision fusion welding head"
+    custom-model-data: 3012
+    glow: false
+    suggested_price: 80.0
+
+  resonance_coil:
+    rarity: "rare"
+    type: MACHINE_PARTS
+    material: AMETHYST_SHARD
+    name: "§aResonance Coil"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Emerald-core resonant winding"
+      - "§7Amplifies signal & energy transfer"
+    custom-model-data: 3013
+    glow: true
+    suggested_price: 180.0
+
+  netherite_drill_bit:
+    rarity: "epic"
+    type: MACHINE_PARTS
+    material: NETHERITE_AXE
+    name: "§5Netherite Drill Bit"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Netherite-tipped rotary drill head"
+      - "§7Cuts through any known material"
+    custom-model-data: 3014
+    glow: true
+    suggested_price: 450.0
+
+  # ==================== NEW FINAL RESOURCES ====================
+  # Products derived from the 3 new raw materials
+  # Factory: military_factory, electronics_assembly, automotive_plant, aerospace_foundry
+  # Price range: $950 – $5,000 per unit
+
+  # --- Military Factory (new) ---
+  plasma_cannon:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: NETHERITE_SWORD
+    name: "§5Plasma Cannon"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Netherite-core energy weapon"
+      - "§7Superheated plasma discharge"
+      - ""
+      - "§eSell Price: §6$3,200"
+    custom-model-data: 4022
+    glow: true
+    suggested_price: 3200.0
+
+  exo_armor_suit:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: NETHERITE_CHESTPLATE
+    name: "§5Exo-Armor Suit"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Full-body netherite exoskeleton"
+      - "§7Powered combat armor system"
+      - ""
+      - "§eSell Price: §6$2,800"
+    custom-model-data: 4023
+    glow: true
+    suggested_price: 2800.0
+
+  heavy_sniper_rifle:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: CROSSBOW
+    name: "§4Heavy Sniper Rifle"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Anti-materiel sniper platform"
+      - "§7Emerald-lensed long-range scope"
+      - ""
+      - "§eSell Price: §6$1,400"
+    custom-model-data: 4024
+    glow: true
+    suggested_price: 1400.0
+
+  # --- Electronics Assembly (new) ---
+  holographic_display:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: GLASS
+    name: "§bHolographic Display"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Lapis-photonic projection unit"
+      - "§7Full-color 3D hologram emitter"
+      - ""
+      - "§eSell Price: §6$1,600"
+    custom-model-data: 4025
+    glow: true
+    suggested_price: 1600.0
+
+  quantum_processor:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: CONDUIT
+    name: "§dQuantum Processor"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Emerald-resonance quantum chip"
+      - "§7Next-gen computing substrate"
+      - ""
+      - "§eSell Price: §6$3,500"
+    custom-model-data: 4026
+    glow: true
+    suggested_price: 3500.0
+
+  # --- Automotive Plant (new) ---
+  netherite_exhaust_system:
+    rarity: "rare"
+    type: FINAL_RESOURCES
+    material: DISPENSER
+    name: "§8Netherite Exhaust System"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Heat-proof netherite alloy manifold"
+      - "§7Reduces backpressure by 60%"
+      - ""
+      - "§eSell Price: §6$1,800"
+    custom-model-data: 4027
+    glow: true
+    suggested_price: 1800.0
+
+  emerald_fuel_cell:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: LIME_GLAZED_TERRACOTTA
+    name: "§aEmerald Fuel Cell"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Catalyst-enhanced hydrogen cell"
+      - "§7Zero-emission power module"
+      - ""
+      - "§eSell Price: §6$2,400"
+    custom-model-data: 4028
+    glow: true
+    suggested_price: 2400.0
+
+  # --- Aerospace Foundry (new) ---
+  plasma_thruster:
+    rarity: "epic"
+    type: FINAL_RESOURCES
+    material: BEACON
+    name: "§5Plasma Thruster"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Netherite-shielded ion propulsion"
+      - "§7Deep-space maneuver engine"
+      - ""
+      - "§eSell Price: §6$4,000"
+    custom-model-data: 4029
+    glow: true
+    suggested_price: 4000.0
+
+  orbital_resonator:
+    rarity: "legendary"
+    type: FINAL_RESOURCES
+    material: END_CRYSTAL
+    name: "§dOrbital Resonator"
+    lore:
+      - "%rarity%"
+      - ""
+      - "§7Emerald-core gravimetric array"
+      - "§7Precision orbital insertion device"
+      - ""
+      - "§eSell Price: §6$5,000"
+    custom-model-data: 4030
+    glow: true
+    suggested_price: 5000.0
 
   # ==================== MMOItems RESOURCES (EXAMPLE) ====================
   # Uncomment and adjust to the MMOItems items available on your server.

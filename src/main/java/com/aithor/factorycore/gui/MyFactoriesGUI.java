@@ -225,6 +225,7 @@ public class MyFactoriesGUI {
 
         // Calculate sell value
         double sellValue = factory.getPrice() * plugin.getConfig().getDouble("factory.sell-price-multiplier", 0.5);
+        lore.add("§7Total Produced: §a$" + String.format("%.2f", factory.getTotalProductValue()));
         lore.add("§7Value: §6$" + String.format("%.2f", factory.getPrice()));
         lore.add("§7Sell Value: §6$" + String.format("%.2f", sellValue));
         lore.add("");
@@ -292,6 +293,7 @@ public class MyFactoriesGUI {
         }
 
         double sellValue = pf.getPrice() * plugin.getConfig().getDouble("factory.sell-price-multiplier", 0.5);
+        lore.add("§7Total Produced: §a$" + String.format("%.2f", pf.getTotalProductValue()));
         lore.add("§7Value: §6$" + String.format("%.2f", pf.getPrice()));
         lore.add("§7Sell Value: §6$" + String.format("%.2f", sellValue));
         lore.add("");

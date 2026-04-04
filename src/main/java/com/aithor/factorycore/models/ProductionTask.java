@@ -5,16 +5,23 @@ public class ProductionTask {
     private String recipeId;
     private long startTime;
     private int duration; // in seconds
+    private boolean continuous;
     
     public ProductionTask(String recipeId, long startTime, int duration) {
+        this(recipeId, startTime, duration, false);
+    }
+    
+    public ProductionTask(String recipeId, long startTime, int duration, boolean continuous) {
         this.recipeId = recipeId;
         this.startTime = startTime;
         this.duration = duration;
+        this.continuous = continuous;
     }
     
     public String getRecipeId() { return recipeId; }
     public long getStartTime() { return startTime; }
     public int getDuration() { return duration; }
+    public boolean isContinuous() { return continuous; }
     
     public boolean isComplete() {
         long elapsed = (System.currentTimeMillis() - startTime) / 1000;

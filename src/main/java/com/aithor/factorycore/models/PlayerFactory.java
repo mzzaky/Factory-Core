@@ -41,6 +41,9 @@ public class PlayerFactory {
     // Protection flags – each flag defaults to true (enabled/protected)
     private final Map<ProtectionFlag, Boolean> protectionFlags = new EnumMap<>(ProtectionFlag.class);
 
+    // Total value of all products ever produced by this factory
+    private double totalProductValue = 0.0;
+
     public PlayerFactory(String id, UUID owner, FactoryType type, double price,
                          String worldName,
                          int minX, int minY, int minZ,
@@ -162,5 +165,19 @@ public class PlayerFactory {
 
     public Map<ProtectionFlag, Boolean> getProtectionFlags() {
         return protectionFlags;
+    }
+
+    // ── Total product value ──────────────────────────────────────────────────
+
+    public double getTotalProductValue() {
+        return totalProductValue;
+    }
+
+    public void setTotalProductValue(double totalProductValue) {
+        this.totalProductValue = totalProductValue;
+    }
+
+    public void addProductValue(double value) {
+        this.totalProductValue += value;
     }
 }

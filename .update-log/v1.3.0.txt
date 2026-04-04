@@ -1,12 +1,43 @@
-- [fix] default tax interval and salary interval now to 1 day tick.
-- [add] Menambahkan informasi hitung mundur pajak baru di menu My Factories.
-- [add] Menambahkan informasi jumlah nilai pajak yang akan ditagih di menu My Factories.
-- [refactor] Refactor metode kalkulasi pajak agar bisa digunakan secara terpusat untuk semua tipe pabrik.
-- [add] Added new "Factory Protection" GUI accessible from the main factory menu (slot 48).
-- [add] Added ProtectionFlag enum with 18 protection types: Block Break, Block Place, Player Interact, Container Access, Entity Damage, PvP, Explosion, Mob Spawning, Item Pickup, Item Drop, Redstone, Vehicle Place, Fire Spread, Liquid Flow, Piston, Crop Trample, Hanging Break, Armor Stand.
-- [add] Each protection flag can be individually toggled on/off per factory via the Factory Protection GUI.
-- [add] All protection flags default to enabled (protected) for new and existing factories.
+v1.3.0 Update Log
+
+[FEATURES & ENHANCEMENTS]
+- [add] Added "Factory Protection" system with a dedicated GUI (accessible via slot 48 in the main factory menu).
+- [add] Introduced 18 Protection Flags: Block Break, Block Place, Player Interact, Container Access, Entity Damage, PvP, Explosion, Mob Spawning, Item Pickup, Item Drop, Redstone, Vehicle Place, Fire Spread, Liquid Flow, Piston, Crop Trample, Hanging Break, and Armor Stand.
 - [add] Added "Enable All" and "Disable All" bulk toggle buttons in the Factory Protection GUI.
-- [add] Protection flags are persisted per factory in player_factories.yml.
-- [refactor] Refactored PlayerFactoryProtectionListener from 2 event handlers (BlockBreak, BlockPlace) to 16 event handlers covering all supported protection flags.
-- [add] Added language keys for protection toggle messages (protection-flag-enabled, protection-flag-disabled, protection-all-enabled, protection-all-disabled).
+- [add] Added tax countdown timer and total tax amount information in the "My Factories" menu.
+- [add] Implemented "Total Produced" value accumulation based on suggested prices, displayed in factory information lore.
+- [add] Added right-click functionality on production confirmation to enable continuous production until resources or funds are exhausted.
+- [add] Added language keys for protection toggle messages (protection-flag-enabled, protection-flag-disabled, etc.).
+- [add] Added a distinct "Auto-Producing" bossbar (green with ♻ icon) for multi-production to differentiate it from single production.
+
+[MECHANICS & REFACTORING]
+- [refactor] Centralized tax calculation method for all factory types.
+- [refactor] Expanded PlayerFactoryProtectionListener with 16 event handlers for comprehensive flag support.
+- [fix] Standardized default tax and salary intervals to 1-day ticks.
+- [balance] Reduced default distribution tax from 25% to 5% in config.yml.
+- [system] Protection flags are now persisted per factory in player_factories.yml.
+
+[NEW RESOURCES]
+- Added 3 Advanced Resources (Tier II): Lapis Pigment Paste, Emerald Catalyst, Netherite Alloy Bar.
+- Added 3 Machine Parts (Tier II): Arc Welder Tip, Resonance Coil, Netherite Drill Bit.
+- Added 9 Final Products (Tier III) across Military, Electronics, Automotive, and Aerospace sectors.
+- Added Industrial Netherite Scrap and its processing recipe from Ancient Debris.
+
+[RECIPE & CONTENT UPDATES]
+- Steel Mill: Added recipes for Lapis Paste, Emerald Catalyst, and Netherite Alloy.
+- Workshop: Added recipes for Arc Welder Tips, Resonance Coils, and Netherite Drill Bits.
+- Smeltery: Added recipes for Lapis Lazuli, Emerald, and Deepslate variants (Coal, Iron, Gold, Diamond, Copper, Redstone).
+- Smeltery: Removed batch raw ore recipes (Iron/Copper/Gold) for better balancing.
+- New assembly lines implemented for Military, Electronics, Automotive, and Aerospace factories.
+
+[ECONOMY & EVENTS]
+- Balanced all production times and costs (targeting ~20% profit margin).
+- Added 15+ new company demand events in events.yml.
+- Introduced "Mega-Orders" and mixed-tier contracts for late-game supply chain challenges.
+- Integrated new resources into existing company portfolios (Quantum Optics, NexGen, Ironclad, etc.).
+
+[CONSISTENCY & MISCELLANEOUS]
+- All content standardized to English for global compatibility.
+- Unique Custom Model Data assigned for future texture pack integration.
+- Balanced rarity distribution across all items (Common to Legendary).
+- [consistency] Translated all remaining Indonesian GUI strings to English, ensuring a uniform language experience.

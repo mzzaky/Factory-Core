@@ -140,10 +140,13 @@ public class RecipeConfirmationGUI {
         }
         inv.setItem(13, createItem(confirmMaterial, recipe.getName(), lore));
 
-        // Confirm button
         Material confirmMat = Material.matchMaterial(plugin.getConfig().getString("gui.confirm-item", "GREEN_WOOL"));
         inv.setItem(11, createItem(confirmMat != null ? confirmMat : Material.GREEN_WOOL, "§a§lConfirm",
-                Arrays.asList("§7Start production")));
+                Arrays.asList(
+                        "§7Left-click to start single production",
+                        "§7Right-click to start multi-production",
+                        "§8(will produce continuously until",
+                        "§8resources or funds are exhausted)")));
 
         // Cancel button
         Material cancelMat = Material.matchMaterial(plugin.getConfig().getString("gui.cancel-item", "RED_WOOL"));
